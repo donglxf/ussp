@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: ussp-registry-app
+  profiles:
+    active: test
+server:
+  port: 0
+eureka:
+    instance:
+      hostname: localhost
+    client:
+      register-with-eureka: false
+      fetch-registry: false
+
+
+
