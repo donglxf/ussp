@@ -37,6 +37,7 @@
                 <groupId>com.ht.cloud</groupId>
                 <artifactId>ht-cloud-release</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
+                <version>dev-2017121504</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -46,32 +47,19 @@
     </dependencyManagement>
     <repositories>
         <repository>
-            <id>maven-public</id>
-            <name>maven-public</name>
-            <url>http://10.110.1.240:8081/repository/maven-public/</url>
+            <!-- Maven 自带的中央仓库使用的Id为central 如果其他的仓库声明也是用该Id 就会覆盖中央仓库的配置 -->
+            <id>central</id>
+            <name>maven-central</name>
+            <url>http://10.110.1.240:8081/repository/maven-central/</url>
             <layout>default</layout>
             <releases>
                 <enabled>true</enabled>
             </releases>
             <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
+                <enabled>false</enabled>
             </snapshots>
         </repository>
     </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>maven-public</id>
-            <name>maven-public</name>
-            <url>http://10.110.1.240:8081/repository/maven-public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
     <distributionManagement>
         <repository>
             <id>nexus-releases</id>

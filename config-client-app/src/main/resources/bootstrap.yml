@@ -1,0 +1,28 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:11111/eureka/  # 配置注册中心url
+    fetch-registry: false
+    register-with-eureka: false
+
+spring:
+  application:
+      name: ht-config-client # 根据该值,去config-center中查找service0.yml
+  profiles: dev
+
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: ussp-config-app # 配置中心的spring.application.name
+      fail-fast: true # 如果连接配置中心出错,则中断程序
+#      username: root
+#      password: 123456
+      profile: test
+      label: config-repo
+    bus:
+      trace:
+        enabled: true
+server:
+  port: 11112
+
