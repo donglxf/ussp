@@ -9,6 +9,8 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>ussp-registry-app</module>
+        <module>ussp-config-app</module>
+        <module>config-client-app</module>
     </modules>
 
     <packaging>pom</packaging>
@@ -31,12 +33,22 @@
         <maven-assembly-plugin.version>3.1.0</maven-assembly-plugin.version>
     </properties>
 
+    <scm>
+        <connection>scm:git:git@10.6.222.54:cnc/yak.git</connection>
+        <developerConnection>scm:git:git@10.110.1.240:dev2/ussp.git</developerConnection>
+    </scm>
+
+    <ciManagement>
+        <system>Jenkins</system>
+        <url>http://10.110.1.240:8000/</url>
+    </ciManagement>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>com.ht.cloud</groupId>
                 <artifactId>ht-cloud-release</artifactId>
-                <version>dev-2017121301</version>
+                <version>dev-2017121504</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
