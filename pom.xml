@@ -9,6 +9,8 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>ussp-registry-app</module>
+        <module>ussp-config-app</module>
+        <module>config-client-app</module>
     </modules>
 
     <packaging>pom</packaging>
@@ -31,13 +33,22 @@
         <maven-assembly-plugin.version>3.1.0</maven-assembly-plugin.version>
     </properties>
 
+    <scm>
+        <connection>scm:git:git@10.6.222.54:cnc/yak.git</connection>
+        <developerConnection>scm:git:git@10.110.1.240:dev2/ussp.git</developerConnection>
+    </scm>
+
+    <ciManagement>
+        <system>Jenkins</system>
+        <url>http://10.110.1.240:8000/</url>
+    </ciManagement>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>com.ht.cloud</groupId>
                 <artifactId>ht-cloud-release</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
-                <version>dev-2017121504</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -47,19 +58,32 @@
     </dependencyManagement>
     <repositories>
         <repository>
-            <!-- Maven 自带的中央仓库使用的Id为central 如果其他的仓库声明也是用该Id 就会覆盖中央仓库的配置 -->
-            <id>central</id>
-            <name>maven-central</name>
-            <url>http://10.110.1.240:8081/repository/maven-central/</url>
+            <id>maven-public</id>
+            <name>maven-public</name>
+            <url>http://10.110.1.240:8081/repository/maven-public/</url>
             <layout>default</layout>
             <releases>
                 <enabled>true</enabled>
             </releases>
             <snapshots>
-                <enabled>false</enabled>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
             </snapshots>
         </repository>
     </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>maven-public</id>
+            <name>maven-public</name>
+            <url>http://10.110.1.240:8081/repository/maven-public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
     <distributionManagement>
         <repository>
             <id>nexus-releases</id>
