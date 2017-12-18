@@ -2,6 +2,7 @@ package com.ht.config.client.app;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,7 +19,7 @@ public class Service0Controller {
     @Value("${from}")
     String from1;
 
-    @RequestMapping("froms")
+    @GetMapping("froms")
     public String froms() {
         return from1;
     }
