@@ -6,6 +6,12 @@ eureka:
 spring:
   application:
       name: ht-config-client # 根据该值,去config-center中查找service0.yml
+  rabbitmq:
+      host: 10.110.1.240
+      port: 5672
+      username: admin
+      password: admin
+      virtual-host: /
 
   cloud:
     config:
