@@ -2,7 +2,6 @@ package com.ht.config.client.app;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 /**
  * 摘要:
