@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ussp-registry-app</artifactId>
+    <name>服务注册中心</name>
     <properties>
         <start-class>com.ht.ussp.registry.app.RegistryApplication</start-class>
     </properties>

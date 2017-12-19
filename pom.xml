@@ -11,6 +11,9 @@
         <module>ussp-registry-app</module>
         <module>ussp-config-app</module>
         <module>config-client-app</module>
+        <module>ussp-zipkin-server</module>
+        <module>trace-stream1</module>
+        <module>trace-stream2</module>
     </modules>
 
     <packaging>pom</packaging>
@@ -48,7 +51,7 @@
             <dependency>
                 <groupId>com.ht.cloud</groupId>
                 <artifactId>ht-cloud-release</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
+                <version>dev-20171219-01</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

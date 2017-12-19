@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: ussp-zipkin-app
+  profiles:
+    active: test
+  rabbitmq:
+      host: 10.110.1.240
+      port: 5672
+      username: admin
+      password: admin
+      virtual-host: /
+  datasource:
+    schema: classpath:/mysql_init.sql
+    url: jdbc:mysql://10.110.1.240:3306/zipkin
+    username: root
+    password: tuandai_bm2015
+    continue-on-error: true
+    initialize: true
+server:
+  port: 0
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:11111/eureka/
+zipkin:
+  storage:
+    type: mysql
+
+
+
+
+
