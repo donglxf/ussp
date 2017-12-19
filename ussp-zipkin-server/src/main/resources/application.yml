@@ -9,13 +9,13 @@ spring:
       username: admin
       password: admin
       virtual-host: /
-  datasource:
-    schema: classpath:/mysql_init.sql
-    url: jdbc:mysql://10.110.1.240:3306/zipkin
-    username: root
-    password: tuandai_bm2015
-    continue-on-error: true
-    initialize: true
+#  datasource:
+#    schema: classpath:/mysql_init.sql
+#    url: jdbc:mysql://10.110.1.240:3306/zipkin
+#    username: root
+#    password: tuandai_bm2015
+#    continue-on-error: true
+#    initialize: true
 server:
   port: 0
 eureka:
@@ -24,7 +24,15 @@ eureka:
       defaultZone: http://localhost:11111/eureka/
 zipkin:
   storage:
-    type: mysql
+    type: elasticsearch
+    elasticsearch:
+      cluster: elasticsearch
+      hosts: http://10.110.1.240:9200
+      index: zipkin
+      index-shards: 5
+      index-replicas: 1
+
+
 
 
 
