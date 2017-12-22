@@ -13,7 +13,7 @@
     <name>zipin路径跟踪应用</name>
 
     <properties>
-        <start-class>com.ht.ussp.registry.app.RegistryApplication</start-class>
+        <start-class>com.ht.zipkin.server.app.ZipkinApplication</start-class>
     </properties>
 
     <dependencies>
@@ -51,6 +51,7 @@
         <dependency>
             <groupId>io.zipkin.java</groupId>
             <artifactId>zipkin-autoconfigure-ui</artifactId>
+            <version>2.4.1</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
