@@ -5,7 +5,7 @@
         <property name="LOG_HOME">logs</property>
         <property name="SERVICE_NAME">ussp-config-app</property>
         <!-- 日期时间 级别 [线程名][类名:行号]    -    信息(换行)-->
-        <Property name="pattern">%d{yyyy-MM-dd HH:mm:ss,SSS} %5p [%t][%c{1}:%L] - %m%n</Property>
+        <Property name="pattern"> %highlight{%d{yyyy-MM-dd HH:mm:ss,SSS} %5p [%t][%c{1}:%L] - %m%n%throwable}{FATAL=white, ERROR=red, WARN=blue, INFO=black, DEBUG=green, TRACE=blue}</Property>
     </properties>
     <appenders>
         <!-- 定义控制台输出 -->
