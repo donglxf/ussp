@@ -14,6 +14,10 @@
         <module>ussp-zipkin-server</module>
         <module>trace-stream1</module>
         <module>trace-stream2</module>
+        <module>ussp-hystrix-app</module>
+        <module>ussp-turbine-app</module>
+        <module>ussp-hystrix-turbine-app</module>
+        <module>hytrix-helloworld</module>
     </modules>
 
     <packaging>pom</packaging>
@@ -51,7 +55,7 @@
             <dependency>
                 <groupId>com.ht.cloud</groupId>
                 <artifactId>ht-cloud-release</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
+                <version>dev-20171220-02</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

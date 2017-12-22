@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: ussp-turbine-app
+  profiles:
+    active: test
+  rabbitmq:
+        host: 10.110.1.240
+        port: 5672
+        username: admin
+        password: admin
+        virtual-host: /
+server:
+  port: 13020
+turbine:
+  amqp:
+  port: 8989
+#  app-config: eureka-consumer-ribbon-hystrix
+#  cluster-name-expression: "default"
+#  combine-host-port: true
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:11111/eureka/
+#  instance:
+#    prefer-ip-address: true
+management:
+  security:
+    enabled: false

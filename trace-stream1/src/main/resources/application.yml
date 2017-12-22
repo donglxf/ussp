@@ -10,7 +10,7 @@ spring:
       password: admin
       virtual-host: /
 server:
-  port: 0
+  port: 7001
 eureka:
   client:
     serviceUrl:

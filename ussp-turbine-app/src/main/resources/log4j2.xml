@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<configuration status="off" monitorInterval="1800">
+    <properties>
+        <property name="LOG_HOME">logs</property>
+        <property name="SERVICE_NAME">ussp-turbine-app</property>
+        <!-- 日期时间 级别 [线程名][类名:行号]    -    信息(换行)-->
+        <Property name="pattern">%d{yyyy-MM-dd HH:mm:ss,SSS} %5p [%t][%c{1}:%L] - %m%n</Property>
+    </properties>
+    <appenders>
+        <!-- 定义控制台输出 -->
+        <Console name="Console" target="SYSTEM_OUT" follow="true">
+            <!--<PatternLayout-->
+                    <!--pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread][%file:%line] === %msg%n" />-->
+            <PatternLayout>
+                <Pattern>${pattern}</Pattern>
+            </PatternLayout>
+        </Console>
+
+
+        <!-- 同一来源的Appender可以定义多个RollingFile，定义按天存储日志 -->
+        <RollingFile name="rolling_file"
+                     fileName="${LOG_HOME}/${SERVICE_NAME}.log"
+                     filePattern="${LOG_HOME}/${SERVICE_NAME}_%d{yyyy-MM-dd}.log">
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout>
+                <Pattern>${pattern}</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+    </appenders>
+    <loggers>
+        <!--记录 org.springframework.core 包及其子包 info 及其以上的记录，并输出到文件中,此处仅作示例-->
+        <!--若此处日志级别低于rolling_file设置的级别，低于rolling_file级别的日志内容不会存储在文件只会打印在控制台-->
+        <AsyncLogger name="org.springframework.core" level="info" includeLocation="true">
+            <AppenderRef ref="rolling_file"/>
+        </AsyncLogger>
+
+
+        <!-- Root Logger -->
+        <asyncRoot level="INFO">
+            <appender-ref ref="rolling_file" />
+            <appender-ref ref="Console" />
+        </asyncRoot>
+
+    </loggers>
+</configuration>

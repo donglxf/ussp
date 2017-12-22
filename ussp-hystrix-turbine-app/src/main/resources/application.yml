@@ -1,0 +1,19 @@
+server:
+  port: 8089
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://eureka.didispace.com/eureka/
+  instance:
+    instance-id: ${spring.application.name}:${spring.cloud.client.ipAddress}:${server.port}
+    prefer-ip-address: true
+spring:
+  application:
+    name: hystrix-turbine
+
+info:
+  description: 监控数据聚合画板
+turbine:
+  app-config: helloworld,helloworldfeign
+  cluster-name-expression: "'default'"
