@@ -1,18 +1,12 @@
 spring:
   application:
     name: ussp-registry-app
-  profiles:
-    active: test
 server:
-  port: 11111
+  port: 10001
 eureka:
-    instance:
-      hostname: localhost
     client:
       register-with-eureka: false
       fetch-registry: false
-      service-url:
-        defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
 
 
 
