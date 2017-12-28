@@ -1,7 +1,7 @@
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:11111/eureka/  # 配置注册中心url
+      defaultZone: http://localhost:10001/eureka/  # 配置注册中心url
 
 spring:
   application:
@@ -12,7 +12,6 @@ spring:
       username: admin
       password: admin
       virtual-host: /
-
   cloud:
     config:
       discovery:

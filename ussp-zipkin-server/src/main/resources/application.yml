@@ -21,9 +21,8 @@ server:
   port: 0
 eureka:
   instance:
-      instance-id: ${spring.application.name}:${random.int}
-      lease-renewal-interval-in-seconds: 2 #契约更新间隔
-      lease-expiration-duration-in-seconds: 4 #契约过期时间
+    prefer-ip-address: true
+    #instance-id: ${spring.application.name}:${random.int}
   client:
     serviceUrl:
       defaultZone: http://localhost:10001/eureka/,http://localhost:10002/eureka/,http://localhost:10003/eureka/

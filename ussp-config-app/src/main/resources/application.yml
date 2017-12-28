@@ -1,3 +1,5 @@
+server:
+  port: 0
 spring:
   application:
     hostname: 10.110.1.240
@@ -15,32 +17,25 @@ spring:
       bus:
         trace:
           enabled: true
-
       server:
         git:
           uri: http://10.110.1.240/dev2/ussp.git
-          search-paths: config-repo
-          username: xiayutai@hongte.info
-          password: 171717xia
+          search-paths: config-repo/*
+          username: config
+          password: ht_config
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    #instance-id: ${spring.application.name}:${random.int}
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:10001/eureka/,http://localhost:10002/eureka/,http://localhost:10003/eureka/
 
 security:
   user:
     name: root
     password: 123456
-
-
-server:
-  port: 0
-
-eureka:
-  instance:
-      instance-id: ${spring.application.name}:${random.int}
-      lease-renewal-interval-in-seconds: 2 #契约更新间隔
-      lease-expiration-duration-in-seconds: 4 #契约过期时间
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:10001/eureka/,http://localhost:10002/eureka/,http://localhost:10003/eureka/
-
 
 management:
   security:
