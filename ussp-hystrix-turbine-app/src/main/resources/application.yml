@@ -2,6 +2,7 @@ server:
   port: 8089
 management:
   port: 10000
+
 eureka:
   client:
     serviceUrl:
@@ -12,6 +13,12 @@ eureka:
 spring:
   application:
     name: hystrix-turbine
+#  rabbitmq:
+#    host: 10.110.1.240
+#    port: 5672
+#    username: admin
+#    password: admin
+#    virtualHost: /
 
 info:
   description: 监控数据聚合画板
@@ -19,3 +26,5 @@ turbine:
   app-config: helloworld,helloworldfeign
   cluster-name-expression: "'default'"
   combine-host-port: true
+  stream:
+      port: 8989
