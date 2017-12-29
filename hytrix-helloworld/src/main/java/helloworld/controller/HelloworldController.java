@@ -64,13 +64,18 @@ public class HelloworldController {
        return helloworldMessage;
     }
     private HelloMessage getMessageFromHelloService() {
-        HelloMessage hello = restTemplate.getForObject("http://hello/message", HelloMessage.class);
+//        HelloMessage hello = restTemplate.getForObject("http://hello/message", HelloMessage.class);
+        HelloMessage hello=new HelloMessage();
+        hello.setMessage("测试");
+        hello.setName("谭荣巧");
 //        log.debug("From hello service : {}.", hello);
         return hello;
     }
 
     private WorldMessage getMessageFromWorldService() {
-        WorldMessage world = restTemplate.getForObject("http://world/message", WorldMessage.class);
+        //WorldMessage world = restTemplate.getForObject("http://world/message", WorldMessage.class);
+        WorldMessage world=new WorldMessage();
+        world.setMessage("测试2");
 //        log.debug("From world service : {}.", world);
         return world;
     }

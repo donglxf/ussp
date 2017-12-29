@@ -1,12 +1,13 @@
 server:
   port: 8089
-
+management:
+  port: 10000
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://eureka.didispace.com/eureka/
+      defaultZone: http://localhost:10001/eureka/
   instance:
-    instance-id: ${spring.application.name}:${spring.cloud.client.ipAddress}:${server.port}
+    #instance-id: ${spring.application.name}:${spring.cloud.client.ipAddress}:${server.port}
     prefer-ip-address: true
 spring:
   application:
@@ -17,3 +18,4 @@ info:
 turbine:
   app-config: helloworld,helloworldfeign
   cluster-name-expression: "'default'"
+  combine-host-port: true
