@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-
-<configuration status="off" monitorInterval="1800">
-    <properties>
-        <property name="LOG_HOME">logs</property>
-        <property name="SERVICE_NAME">ussp-registry-app-server3</property>
-    </properties>
-</configuration>
