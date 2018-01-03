@@ -2,13 +2,13 @@ spring:
   application:
     name: ussp-registry-app
 server:
-  port: 10001
+  port: 10002
 eureka:
     client:
       register-with-eureka: false
       fetch-registry: false
       serviceUrl:
-        defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+        defaultZone: http://localhost:10001/eureka/
     server:
       #eureka server刷新readCacheMap的时间，注意，client读取的是readCacheMap，这个时间决定了多久会把readWriteCacheMap的缓存更新到readCacheMap上
       #默认30s
@@ -23,8 +23,4 @@ eureka:
       enable-self-preservation: false
     instance:
       prefer-ip-address: true
-      hostname: localhost
-
-
-
-
+      hostname: localhost    

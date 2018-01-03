@@ -1,30 +1,31 @@
 spring:
+    profiles.active: dev
+
+---
+spring:
   application:
-    name: ussp-registry-app
+    name: ussp-gateway-app
+  cloud: 
+    inetutils: 
+      preferred-networks: 192.169.0
 server:
   port: 9000
+  
+zuul:
+  routes:
+    ussp-risk:
+      path: /risk/**
+      serviceId: ussp-risk
+    ussp-cisp:
+      path: /car/**
+      serviceId: ussp-cisp
+    ussp-cams:
+      path: /cams/**
+      serviceId: ussp-cams
+      
 eureka:
-    client:
-      register-with-eureka: false
-      fetch-registry: false
-      serviceUrl:
-        defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
-    server:
-      #eureka server刷新readCacheMap的时间，注意，client读取的是readCacheMap，这个时间决定了多久会把readWriteCacheMap的缓存更新到readCacheMap上
-      #默认30s
-      response-cache-update-interval-ms: 3000
-      #eureka server缓存readWriteCacheMap失效时间，这个只有在这个时间过去后缓存才会失效，失效前不会更新，过期后从registry重新读取注册服务信息，registry是一个ConcurrentHashMap。
-      #由于启用了evict其实就用不太上改这个配置了
-      #默认180s
-      responseCacheAutoExpirationInSeconds: 180
-      #启用主动失效，并且每次主动失效检测间隔为3s
-      eviction-interval-timer-in-ms: 3000
-      #关闭保护机制，以确保注册中心将不可用的实例正确剔除
-      enable-self-preservation: false
-    instance:
-      prefer-ip-address: true
-      hostname: localhost
-
-
-
-
+  instance:
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:10003/eureka/

@@ -13,10 +13,10 @@ import com.netflix.zuul.context.RequestContext;
 
 /**
  * 
- * @ClassName:  AccessFilter   
- * @Description:请求过滤
- * @author: wim 
- * @date:   2017年8月8日 上午11:40:47
+* @ClassName: AccessFilter
+* @Description: TODO
+* @author wim qiuwenwu@hongte.info
+* @date 2018年1月3日 下午6:23:22
  */
 public class AccessFilter extends ZuulFilter{
 	@Value("${whiteList}")
