@@ -19,9 +19,10 @@ public class HtBoaOutResource implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name = "ID", unique = true, nullable = false)
 	private String id;
 
+	@Column(name="APP")
 	private String app;
 
 	@Column(name="CREATE_OPERATOR")
@@ -65,8 +66,10 @@ public class HtBoaOutResource implements Serializable {
 	@Column(name="RES_TYPE")
 	private String resType;
 
+	@Column(name="SEQUENCE")
 	private int sequence;
 
+	@Column(name="status")
 	private String status;
 
 	@Column(name="UPDATE_OPERATOR")

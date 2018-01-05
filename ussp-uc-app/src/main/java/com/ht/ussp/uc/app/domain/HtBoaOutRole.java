@@ -19,7 +19,7 @@ public class HtBoaOutRole implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name = "ID", unique = true, nullable = false)
 	private String id;
 
 	@Column(name="CREATE_OPERATOR")
@@ -48,6 +48,7 @@ public class HtBoaOutRole implements Serializable {
 	@Column(name="ROLE_NAME_CN")
 	private String roleNameCn;
 
+	@Column(name="STATUS")
 	private String status;
 
 	@Column(name="UPDATE_OPERATOR")

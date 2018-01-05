@@ -19,9 +19,10 @@ public class HtBoaOutApp implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name = "ID", unique = true, nullable = false)
 	private String id;
 
+	@Column(name="APP")
 	private String app;
 
 	@Column(name="CREATE_OPERATOR")
@@ -41,11 +42,13 @@ public class HtBoaOutApp implements Serializable {
 	@Column(name="LAST_MODIFIED_DATETIME")
 	private Date lastModifiedDatetime;
 
+	@Column(name="NAME")
 	private String name;
 
 	@Column(name="NAME_CN")
 	private String nameCn;
 
+	@Column(name="STATUS")
 	private String status;
 
 	@Column(name="UPDATE_OPERATOR")

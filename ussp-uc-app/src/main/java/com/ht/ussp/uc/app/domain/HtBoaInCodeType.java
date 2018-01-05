@@ -19,9 +19,10 @@ public class HtBoaInCodeType implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name = "ID", unique = true, nullable = false)
 	private String id;
 
+	@Column(name="APP")
 	private String app;
 
 	@Column(name="CODE_PATH")
@@ -46,12 +47,14 @@ public class HtBoaInCodeType implements Serializable {
 
 	@Column(name="PARENT_CODE")
 	private String parentCode;
-
+	
+	@Column(name="REMARK")
 	private String remark;
 
 	@Column(name="ROOT_ORG_CODE")
 	private String rootOrgCode;
-
+	
+	@Column(name="SEQUENCE")
 	private int sequence;
 
 	@Column(name="TYPE_CODE")

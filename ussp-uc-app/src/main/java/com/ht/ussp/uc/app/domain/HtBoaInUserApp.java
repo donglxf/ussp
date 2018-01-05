@@ -19,11 +19,13 @@ public class HtBoaInUserApp implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name = "ID", unique = true, nullable = false)
 	private String id;
 
+	@Column(name="APP")
 	private String app;
 
+	@Column(name="CONTROLLER")
 	private String controller;
 
 	@Column(name="CREATE_OPERATOR")

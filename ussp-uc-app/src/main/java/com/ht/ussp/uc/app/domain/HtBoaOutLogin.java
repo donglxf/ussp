@@ -19,7 +19,7 @@ public class HtBoaOutLogin implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name = "ID", unique = true, nullable = false)
 	private String id;
 
 	@Column(name="CREATE_OPERATOR")
@@ -49,12 +49,14 @@ public class HtBoaOutLogin implements Serializable {
 	@Column(name="LOGIN_ID")
 	private String loginId;
 
+	@Column(name="PASSWORD")
 	private String password;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="PWD_EXP_DATE")
 	private Date pwdExpDate;
-
+	
+	@Column(name="STATUS")
 	private String status;
 
 	@Column(name="UPDATE_OPERATOR")

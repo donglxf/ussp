@@ -19,7 +19,7 @@ public class HtBoaOutUser implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name = "ID", unique = true, nullable = false)
 	private String id;
 
 	@Column(name="CREATE_OPERATOR")
@@ -32,6 +32,7 @@ public class HtBoaOutUser implements Serializable {
 	@Column(name="DEL_FLAG")
 	private int delFlag;
 
+	@Column(name="EMAIL")
 	private String email;
 
 	@Column(name="ID_NO")
@@ -44,6 +45,7 @@ public class HtBoaOutUser implements Serializable {
 	@Column(name="LAST_MODIFIED_DATETIME")
 	private Date lastModifiedDatetime;
 
+	@Column(name="MOBILE")
 	private String mobile;
 
 	@Column(name="UPDATE_OPERATOR")

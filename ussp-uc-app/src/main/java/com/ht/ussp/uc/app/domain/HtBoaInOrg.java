@@ -19,7 +19,7 @@ public class HtBoaInOrg implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name = "ID", unique = true, nullable = false)
 	private String id;
 
 	@Column(name="CREATE_OPERATOR")
@@ -56,12 +56,14 @@ public class HtBoaInOrg implements Serializable {
 
 	@Column(name="PARENT_ORG_CODE")
 	private String parentOrgCode;
-
+	
+	@Column(name="REMARK")
 	private String remark;
 
 	@Column(name="ROOT_ORG_CODE")
 	private String rootOrgCode;
 
+	@Column(name="SEQUENCE")
 	private int sequence;
 
 	@Column(name="UPDATE_OPERATOR")

@@ -20,7 +20,7 @@ public class HtBoaOutPwdHist implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name = "ID", unique = true, nullable = false)
 	private String id;
 
 	@Column(name="CREATE_OPERATOR")
@@ -40,6 +40,7 @@ public class HtBoaOutPwdHist implements Serializable {
 	@Column(name="LAST_MODIFIED_DATETIME")
 	private Date lastModifiedDatetime;
 
+	@Column(name="PASSWORD")
 	private String password;
 
 	@Column(name="PWD_CRE_TIME")

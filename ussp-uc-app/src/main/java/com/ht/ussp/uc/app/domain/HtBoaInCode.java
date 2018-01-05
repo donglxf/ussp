@@ -19,7 +19,7 @@ public class HtBoaInCode implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name = "ID", unique = true, nullable = false)
 	private String id;
 
 	@Column(name="BIZ_CODE")
@@ -41,7 +41,8 @@ public class HtBoaInCode implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="LAST_MODIFIED_DATETIME")
 	private Date lastModifiedDatetime;
-
+	
+	@Column(name="NAME")
 	private String name;
 
 	@Column(name="NAME_CN")
@@ -49,9 +50,11 @@ public class HtBoaInCode implements Serializable {
 
 	@Column(name="ROOT_ORG_CODE")
 	private String rootOrgCode;
-
+	
+	@Column(name="SEQUENCE")
 	private int sequence;
-
+	
+	@Column(name="STATUS")
 	private String status;
 
 	@Column(name="TYPE_CODE")

@@ -19,9 +19,10 @@ public class HtBoaInResource implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name = "ID", unique = true, nullable = false)
 	private String id;
 
+	@Column(name="APP")
 	private String app;
 
 	@Column(name="CREATE_OPERATOR")
@@ -41,6 +42,7 @@ public class HtBoaInResource implements Serializable {
 	@Column(name="LAST_MODIFIED_DATETIME")
 	private Date lastModifiedDatetime;
 
+	@Column(name="REMARK")
 	private String remark;
 
 	@Column(name="RES_CODE")

@@ -19,7 +19,7 @@ public class HtBoaOutDevice implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name = "ID", unique = true, nullable = false)
 	private String id;
 
 	@Column(name="CREATE_OPERATOR")
@@ -45,6 +45,7 @@ public class HtBoaOutDevice implements Serializable {
 	@Column(name="LAST_MODIFIED_DATETIME")
 	private Date lastModifiedDatetime;
 
+	@Column(name="STATUS")
 	private String status;
 
 	@Column(name="UPDATE_OPERATOR")
