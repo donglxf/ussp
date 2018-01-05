@@ -20,7 +20,7 @@ public class HtBoaInPosition implements Serializable {
 
 	@Id
 	@Column(name = "ID", unique = true, nullable = false)
-	private String id;
+	private Long id;
 
 	@Column(name="CREATE_OPERATOR")
 	private String createOperator;
@@ -72,11 +72,11 @@ public class HtBoaInPosition implements Serializable {
 	public HtBoaInPosition() {
 	}
 
-	public String getId() {
+	public Long getId() {
 		return this.id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

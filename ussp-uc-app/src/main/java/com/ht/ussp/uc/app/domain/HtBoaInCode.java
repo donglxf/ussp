@@ -20,7 +20,7 @@ public class HtBoaInCode implements Serializable {
 
 	@Id
 	@Column(name = "ID", unique = true, nullable = false)
-	private String id;
+	private Long id;
 
 	@Column(name="BIZ_CODE")
 	private String bizCode;
@@ -66,11 +66,11 @@ public class HtBoaInCode implements Serializable {
 	public HtBoaInCode() {
 	}
 
-	public String getId() {
+	public Long getId() {
 		return this.id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

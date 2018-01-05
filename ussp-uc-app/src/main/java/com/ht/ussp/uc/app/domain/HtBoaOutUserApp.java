@@ -20,7 +20,7 @@ public class HtBoaOutUserApp implements Serializable {
 
 	@Id
 	@Column(name = "ID", unique = true, nullable = false)
-	private String id;
+	private Long id;
 
 	private String app;
 
@@ -50,11 +50,11 @@ public class HtBoaOutUserApp implements Serializable {
 	public HtBoaOutUserApp() {
 	}
 
-	public String getId() {
+	public Long getId() {
 		return this.id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
