@@ -14,10 +14,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 public class GatewayApplication {
-    private static final Logger LOG = LoggerFactory.getLogger(GatewayApplication.class);
+    private static final Logger log = LoggerFactory.getLogger(GatewayApplication.class);
 	public static void  main(String[] args) {
 		SpringApplication.run(GatewayApplication.class, args);
-        LOG.info("网关启动成功！");
+        log.info("网关启动成功！");
 
 	}
 }

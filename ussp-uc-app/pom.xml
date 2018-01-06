@@ -8,53 +8,52 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>ussp-gateway-app</artifactId>
-	<name>网关</name>
+	<artifactId>ussp-uc-app</artifactId>
+	<name>用户中心</name>
 	<properties>
-		<start-class>com.ht.ussp.gateway.app.GatewayApplication</start-class>
+		<start-class>com.ht.ussp.uc.app.UcApplication</start-class>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-zuul</artifactId>
+			<artifactId>spring-cloud-starter-eureka-server</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-eureka</artifactId>
-		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-		
+
+		<!-- jpa -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
-		
+
 		<!-- mysql -->
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 		</dependency>
 
-		<!-- redis -->
+		<!-- druid -->
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-redis</artifactId>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid</artifactId>
+			<version>1.1.6</version>
 		</dependency>
 
-		<!-- jwt依赖 -->
+		<!-- swagger -->
 		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-jwt</artifactId>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.7.0</version>
 		</dependency>
 		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt</artifactId>
-			<version>0.9.0</version>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.7.0</version>
 		</dependency>
 
 		<dependency>
@@ -68,8 +67,7 @@
 			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
-
 	<build>
-		<finalName>ussp-gateway-app</finalName>
+		<finalName>ussp-registry-app</finalName>
 	</build>
 </project>
