@@ -15,6 +15,7 @@
 	<modules>
 		<module>ussp-registry-app</module>
 		<module>ussp-gateway-app</module>
+		<module>ussp-uc-app</module>
 		<module>ussp-config-app</module>
 		<module>config-client-app</module>
 		<module>ussp-zipkin-server</module>
