@@ -1,4 +1,6 @@
-package com.ht.ussp.uc.app.model;
+package com.ht.ussp.gateway.app.model;
+
+import com.ht.ussp.gateway.app.util.SysStatus;
 
 public class Modal {
 	

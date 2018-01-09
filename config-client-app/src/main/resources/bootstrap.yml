@@ -1,7 +1,7 @@
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://10.110.1.240:10001/eureka/  # 配置注册中心url
+      defaultZone: http://localhost:8870/eureka/  # 配置注册中心url
 
 spring:
   application:

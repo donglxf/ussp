@@ -6,9 +6,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * 
+ * @ClassName: EchoResouce
+ * @Description: demo
+ * @author wim qiuwenwu@hongte.info
+ * @date 2018年1月8日 下午8:20:32
+ */
 @RestController
 @RequestMapping(value="/echo")
 public class EchoResouce {
