@@ -44,6 +44,11 @@
 			<version>1.1.6</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+		</dependency>
+
 		<!-- swagger -->
 		<dependency>
 			<groupId>io.springfox</groupId>

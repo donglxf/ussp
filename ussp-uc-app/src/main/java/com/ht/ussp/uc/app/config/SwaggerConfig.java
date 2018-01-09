@@ -14,7 +14,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 /**
  * 
 * @ClassName: SwaggerConfig
-* @Description: 用于展示resful接口
+* @Description: swagger配置
 * @author wim qiuwenwu@hongte.info
 * @date 2018年1月5日 下午5:53:49
  */
@@ -30,6 +30,7 @@ public class SwaggerConfig {@Bean
             .build();
 }
 
+@SuppressWarnings("deprecation")
 private ApiInfo apiInfo() {
     return new ApiInfoBuilder()
             .title("统一用户中心")

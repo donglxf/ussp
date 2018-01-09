@@ -11,7 +11,7 @@ Configuration:
       - name: LOG_HOME
         value: logs
       - name: PROJECT_NAME
-        value: ussp-registry-app
+        value: ussp-gateway-app
       - name: CONAOLE_LOG_PATTERN
         value: "%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{%5p} %style{%X{pid}}{magenta} [%15.15t] %style{%-40.40c{1}}{Cyan} %L : %m%n"
       - name: FILE_LOG_PATTERN
@@ -45,7 +45,7 @@ Configuration:
       level: info  
       AppenderRef:  
         - ref: CONSOLE
-        ##- ref: ROLLING_FILE #开发环境无需产生日志文件
+        - ref: ROLLING_FILE #开发环境无需产生日志文件
     Logger: # 为com.xjj包配置特殊的Log级别，方便调试  
       - name: com.xjj  
         additivity: false  
