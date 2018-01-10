@@ -2,7 +2,7 @@ package com.ht.ussp.uc.app.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.ht.ussp.uc.app.domain.HtBoaInUser;
+import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 
 /**
  * 
@@ -11,7 +11,7 @@ import com.ht.ussp.uc.app.domain.HtBoaInUser;
  * @author wim qiuwenwu@hongte.info
  * @date 2018年1月8日 上午11:35:49
  */
-public interface HtBoaInLoginRepository extends JpaRepository <HtBoaInUser, Long>{
+public interface HtBoaInLoginRepository extends JpaRepository <HtBoaInLogin, Long>{
 	
   /**
    * 
@@ -20,6 +20,6 @@ public interface HtBoaInLoginRepository extends JpaRepository <HtBoaInUser, Long
    * @return HtBoaInUser
    * @throws
    */
-	public HtBoaInUser findByUserId(String userId);
+	public HtBoaInLogin findByUserId(String userId);
 	
 }

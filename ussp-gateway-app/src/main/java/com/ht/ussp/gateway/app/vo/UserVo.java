@@ -1,4 +1,4 @@
-package com.ht.ussp.uc.app.vo;
+package com.ht.ussp.gateway.app.vo;
 import java.util.Date;
 
 public class UserVo {

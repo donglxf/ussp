@@ -32,6 +32,7 @@ import com.ht.ussp.gateway.app.jwt.TokenVerifier;
 import com.ht.ussp.gateway.app.model.UserContext;
 import com.ht.ussp.gateway.app.service.User;
 import com.ht.ussp.gateway.app.service.UserService;
+import com.ht.ussp.gateway.app.vo.UserVo;
 
 
 /**
@@ -70,8 +71,8 @@ public class RefreshTokenEndpoint {
                 .map(authority -> new SimpleGrantedAuthority(authority.getRole().authority()))
                 .collect(Collectors.toList());
 
-        UserContext userContext = UserContext.create(user.getUsername(), authorities);
-
-        return tokenFactory.createAccessJwtToken(userContext);
+//        UserContext userContext = UserContext.create(user.getUsername(), authorities);
+        UserVo userVo=new UserVo();
+        return tokenFactory.createAccessJwtToken(userVo);
     }
 }

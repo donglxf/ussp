@@ -29,13 +29,14 @@ public interface UserClient {
 	
 	/**
 	 * 
-	 * @Title: getLoginInfo 
-	 * @Description: 获取登录信息 
-	 * @return ResponseModal
-	 * @throws
+	  * @Title: getRoleCodes 
+	  * @Description: 获取用户角色编码 
+	  * @return ResponseModal
+	  * @throws
 	 */
 	@RequestMapping(value = "/getLoginInfo")
-	public ResponseModal getLoginInfo(String password);
+	public ResponseModal getRoleCodes(@RequestParam("userId") String userId);
+	
 	/**
 	 * 
 	 * @Title: getResources 
