@@ -2,7 +2,6 @@ package com.ht.ussp.gateway.app.feignClients;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ht.ussp.gateway.app.model.ResponseModal;
