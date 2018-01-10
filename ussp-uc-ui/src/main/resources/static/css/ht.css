@@ -1,0 +1,35 @@
+.layui-layout-admin .layui-body .layadmin-tabsbody-item {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+    overflow-y: auto;
+}
+
+.layui-fluid {
+    padding: 15px;
+}
+
+/*输入框样式*/
+.layui-input-sm {
+    height: 30px;
+}
+
+.layui-input-lg {
+    height: 46px;
+}
+
+/**/
+.input-group-addon {
+    background: white;
+}
+
+/*解决bootstrap的兼容问题*/
+.layui-nav-child dd {
+    line-height: 36px;
+}
+a,a:hover {
+    text-decoration: none !important;
+}

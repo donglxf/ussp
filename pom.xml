@@ -23,6 +23,7 @@
 		<module>trace-stream2</module>
 		<module>ussp-hystrix-turbine-app</module>
 		<module>hytrix-helloworld</module>
+		<module>ussp-uc-ui</module>
 	</modules>
 
 	<packaging>pom</packaging>

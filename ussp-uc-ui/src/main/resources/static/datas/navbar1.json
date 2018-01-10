@@ -1,0 +1,101 @@
+[
+  {
+    "id": "1",
+    "title": "用户管理",
+    "icon": "fa-cubes",
+    "spread": true,
+    "children": [
+      {
+        "id": "7",
+        "title": "用户管理",
+        "icon": "&#xe6c6;",
+        "url": "/html/user/user.html"
+      },
+      {
+        "id": "8",
+        "title": "岗位管理",
+        "icon": "&#xe63c;",
+        "url": "/html/test2.html"
+      },
+      {
+        "id": "9",
+        "title": "机构管理",
+        "icon": "&#xe628;",
+        "url": "nav.html"
+      }
+    ]
+  },
+  {
+    "id": "2",
+    "title": "资源管理",
+    "icon": "fa-cogs",
+    "spread": false,
+    "children": [
+      {
+        "id": "12",
+        "title": "资源管理",
+        "icon": "fa-table",
+        "url": "navbar.html"
+      }
+    ]
+  },
+  {
+    "id": "4",
+    "title": "权限管理",
+    "icon": "fa-address-book",
+    "spread": false,
+    "children": [
+      {
+        "id": "17",
+        "title": "角色管理",
+        "icon": "fa-github",
+        "url": "https://www.github.com/"
+      },
+      {
+        "id": "18",
+        "title": "用户系统管理",
+        "icon": "fa-qq",
+        "url": "http://www.qq.com/"
+      },
+      {
+        "id": "18",
+        "title": "用户角色管理",
+        "icon": "fa-qq",
+        "url": "http://www.qq.com/"
+      },
+      {
+        "id": "19",
+        "title": "用户岗位管理",
+        "icon": "&#xe609;",
+        "url": "http://fly.layui.com/"
+      },
+      {
+        "id": "20",
+        "title": "岗位角色管理",
+        "icon": "fa-weibo",
+        "url": "http://weibo.com/"
+      },
+      {
+        "id": "20",
+        "title": "角色资源管理",
+        "icon": "fa-weibo",
+        "url": "http://weibo.com/"
+      }
+    ]
+  },
+  {
+    "id": "6",
+    "title": "系统管理",
+    "icon": "fa-stop-circle",
+    "url": "#",
+    "spread": false,
+    "children": [
+      {
+        "id": "21",
+        "title": "系统信息管理",
+        "icon": "fa-github",
+        "url": "cop.html"
+      }
+    ]
+  }
+]
