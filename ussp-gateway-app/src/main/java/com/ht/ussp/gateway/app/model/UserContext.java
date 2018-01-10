@@ -2,7 +2,7 @@ package com.ht.ussp.gateway.app.model;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 
 /**

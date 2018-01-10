@@ -25,7 +25,7 @@ public interface UserClient {
 	 * @throws
 	 */
 	@RequestMapping(value = "/member/validateUser")
-	public ResponseModal validateUser(@RequestParam("app")String app,@RequestParam("userName")String userName);
+	public ResponseModal validateUser(String app,String userName);
 	
 	/**
 	 * 
