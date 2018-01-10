@@ -78,6 +78,7 @@ public class UserResource {
 		
 		UserVo userVo=new UserVo();
 		BeanUtils.deepCopy(htBoaInUser, userVo);
+		BeanUtils.deepCopy(htBoaInUserApp, userVo);
 		rm.setSysStatus(SysStatus.SUCCESS);
 		rm.setResult(userVo);
 		return rm;
