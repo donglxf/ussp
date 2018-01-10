@@ -24,7 +24,7 @@
 		<module>ussp-hystrix-turbine-app</module>
 		<module>hytrix-helloworld</module>
 		<module>ussp-uc-ui</module>
-        <module>ussp-util</module>
+        <module>ussp-common</module>
     </modules>
 
 	<packaging>pom</packaging>
