@@ -21,6 +21,9 @@ public class HtBoaInUser implements Serializable {
 	@Id
 	@Column(name = "ID", unique = true, nullable = false)
 	private Long id;
+	
+	@Column(name="JOB_NUMBER")
+	private String jobNumber;
 
 	@Column(name="CREATE_OPERATOR")
 	private String createOperator;
@@ -71,6 +74,14 @@ public class HtBoaInUser implements Serializable {
 
 	public Long getId() {
 		return this.id;
+	}
+	
+	public String getJobNumber() {
+		return jobNumber;
+	}
+
+	public void setJobNumber(String jobNumber) {
+		this.jobNumber = jobNumber;
 	}
 
 	public void setId(Long id) {
