@@ -8,26 +8,29 @@ public class UserVo {
 
 	// 用户ID
 	private String userId;
-
 	// 工号
 	private String jobNumber;
-
 	// 用户名
 	private String userName;
 	// 机构编码
 	private String orgCode;
-	// 使用状态
+	// 使用状态  0正常  1删除
 	private int delFlag;
 	// 邮箱
 	private String email;
 	// 身份证号
 	private String idNo;
-
 	// 最后修改时间
 	private Date lastModifiedDatetime;
 	// 手机号
 	private String mobile;
-
+	
+	//系统编码
+	private String app;
+	
+	//是否管理员  Y是  N不是
+	private String controller;
+	
 	public int getDelFlag() {
 		return this.delFlag;
 	}
@@ -98,6 +101,22 @@ public class UserVo {
 
 	public void setJobNumber(String jobNumber) {
 		this.jobNumber = jobNumber;
+	}
+
+	public String getApp() {
+		return app;
+	}
+
+	public void setApp(String app) {
+		this.app = app;
+	}
+
+	public String getController() {
+		return controller;
+	}
+
+	public void setController(String controller) {
+		this.controller = controller;
 	}
 
 	
