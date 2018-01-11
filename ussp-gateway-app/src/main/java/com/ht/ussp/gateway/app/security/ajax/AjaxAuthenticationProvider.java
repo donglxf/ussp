@@ -1,13 +1,20 @@
 package com.ht.ussp.gateway.app.security.ajax;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -50,13 +57,12 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
         	userName=params.split(";")[1];
         }
         ResponseModal loginJson = userClient.validateUser(app,userName);
-        UserVo userVo=new UserVo();
-        userVo=FastJsonUtil.objectToPojo(loginJson.getResult(), UserVo.class);
-        
         if(loginJson.getStatus_code()!=1) {
         	throw new UsernameNotFoundException(loginJson.getResult_msg());
         }
-        
+        UserVo userVo=new UserVo();
+        userVo=FastJsonUtil.objectToPojo(loginJson.getResult(), UserVo.class);
+
         String presentPassword = (String) authentication.getCredentials(); 
         
  //     Bcrypt加密方法，在注册加密时加用
@@ -69,7 +75,25 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
         
         //获取用户角色编码
         if("N".equals(userVo.getController())) {
+        	 ResponseModal roleCodes = userClient.getRoleCodes(userVo.getUserId());
+        	 
+        	 if(loginJson.getStatus_code()!=1) {
+             	throw new AuthenticationCredentialsNotFoundException(loginJson.getResult_msg());
+             }
         	
+        	Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(); 
+        	
+        	//将角色编码转换为list
+        	List<String> list=new ArrayList<String>();
+        	String str= FastJsonUtil.objectToJson(roleCodes.getResult());
+        	list=FastJsonUtil.jsonToList(str, String.class);
+        	
+        	//转换成GrantedAuthority集合
+        	for(String roleCode:list) {
+        		SimpleGrantedAuthority authority = new SimpleGrantedAuthority(roleCode); 
+        		authorities.add(authority);
+        	}
+        	 return new UsernamePasswordAuthenticationToken(userVo, null, authorities);
         }
         
         return new UsernamePasswordAuthenticationToken(userVo, null, null);

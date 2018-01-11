@@ -34,7 +34,7 @@ public interface UserClient {
 	  * @return ResponseModal
 	  * @throws
 	 */
-	@RequestMapping(value = "/getLoginInfo")
+	@RequestMapping(value = "/member/getRoleCodes")
 	public ResponseModal getRoleCodes(@RequestParam("userId") String userId);
 	
 	/**

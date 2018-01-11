@@ -51,6 +51,13 @@ public class FastJsonUtil {
 		return null;
 	}
 	
+	/**
+	 * 
+	  * @Title: objectToPojo 
+	  * @Description: 将对象转为POJO 
+	  * @return T
+	  * @throws
+	 */
 	public static <T> T objectToPojo(Object data, Class<T> beanType) {
 		try {
 			String str = MAPPER.writeValueAsString(data);
