@@ -1,5 +1,8 @@
 package com.ht.ussp.uc.app.resource;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +17,10 @@ import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.model.SysStatus;
 import com.ht.ussp.uc.app.service.HtBoaInLoginService;
+import com.ht.ussp.uc.app.service.HtBoaInPositionRoleService;
+import com.ht.ussp.uc.app.service.HtBoaInPositionUserService;
 import com.ht.ussp.uc.app.service.HtBoaInUserAppService;
+import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.util.BeanUtils;
 import com.ht.ussp.uc.app.util.LogicUtil;
@@ -45,7 +51,16 @@ public class UserResource {
 	@Autowired
 	private HtBoaInLoginService htBoaInLoginService;
 	
-
+	@Autowired
+	private HtBoaInUserRoleService htBoaInUserRoleService;
+	
+	@Autowired
+	private HtBoaInPositionUserService htBoaInPositionUserService;
+	
+	@Autowired
+	private HtBoaInPositionRoleService htBoaInPositionRoleService;
+	
+	
 	/**
 	 * 
 	 * @Title: validateUser 
@@ -104,9 +119,21 @@ public class UserResource {
 	@ApiOperation( value = "获取用户角色编码")
 	public ResponseModal getRoleCodes(@RequestParam(value="userId",required=true) String userId) {
 		ResponseModal rm = new ResponseModal();
+		List<String> roleCodes=new ArrayList<>();
+		//查找当前用户的角色编码
+		List<String> userRoleCodes= htBoaInUserRoleService.queryRoleCodes(userId);
+		if(!userRoleCodes.isEmpty()) {
+		userRoleCodes.forEach(userRoleCode->{
+			roleCodes.add(userRoleCode);
+		});
+		}
 		
-		
-		
+		//查找当前用户岗位编码
+		List<String> positionCodes=htBoaInPositionUserService.queryRoleCodes(userId);
+		List<String> userRoleCodesByPosition=htBoaInPositionRoleService.queryRoleCodesByPosition(positionCodes);
+		userRoleCodesByPosition.forEach(userRoleCode->{
+			roleCodes.add(userRoleCode);
+		});
 		
 		return rm;
 	}
