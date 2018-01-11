@@ -2,6 +2,7 @@ package com.ht.ussp.gateway.app.feignClients;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ht.ussp.gateway.app.model.ResponseModal;
@@ -24,17 +25,18 @@ public interface UserClient {
 	 * @throws
 	 */
 	@RequestMapping(value = "/member/validateUser")
-	public ResponseModal validateUser(String app,String userName);
+	public ResponseModal validateUser(@RequestParam("app")String app,@RequestParam("userName")String userName);
 	
 	/**
 	 * 
-	 * @Title: getLoginInfo 
-	 * @Description: 获取登录信息 
-	 * @return ResponseModal
-	 * @throws
+	  * @Title: getRoleCodes 
+	  * @Description: 获取用户角色编码 
+	  * @return ResponseModal
+	  * @throws
 	 */
 	@RequestMapping(value = "/getLoginInfo")
-	public ResponseModal getLoginInfo(String password);
+	public ResponseModal getRoleCodes(@RequestParam("userId") String userId);
+	
 	/**
 	 * 
 	 * @Title: getResources 

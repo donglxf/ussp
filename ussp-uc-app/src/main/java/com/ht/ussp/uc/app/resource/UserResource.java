@@ -1,7 +1,5 @@
 package com.ht.ussp.uc.app.resource;
 
-import javax.validation.constraints.NotNull;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +8,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.model.SysStatus;
+import com.ht.ussp.uc.app.service.HtBoaInLoginService;
 import com.ht.ussp.uc.app.service.HtBoaInUserAppService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.util.BeanUtils;
@@ -41,6 +41,10 @@ public class UserResource {
 
 	@Autowired
 	private HtBoaInUserAppService htBoaInUserAppService;
+	
+	@Autowired
+	private HtBoaInLoginService htBoaInLoginService;
+	
 
 	/**
 	 * 
@@ -53,6 +57,7 @@ public class UserResource {
 	@ApiOperation( value = "验证用户")
 	public ResponseModal validateUser(@RequestParam(value="app",required=true) String app, @RequestParam(value="userName",required=true) String userName) {
 		ResponseModal rm = new ResponseModal();
+		UserVo userVo=new UserVo();
 		// 查找用户
 		HtBoaInUser htBoaInUser = htBoaInUserService.findByUserName(userName);
 		if (LogicUtil.isNull(htBoaInUser)||LogicUtil.isNullOrEmpty(htBoaInUser.getUserId())) {
@@ -61,6 +66,8 @@ public class UserResource {
 		}else if(htBoaInUser.getDelFlag()==1){
 			logger.info("该用户已被删除！");
 			rm.setSysStatus(SysStatus.USER_HAS_DELETED);
+		}else {
+			BeanUtils.deepCopy(htBoaInUser, userVo);
 		}
 		
 		// 验证用户与系统是否匹配
@@ -68,18 +75,39 @@ public class UserResource {
 		if (LogicUtil.isNull(htBoaInUserApp) || LogicUtil.isNullOrEmpty(htBoaInUserApp.getApp())) {
 			rm.setSysStatus(SysStatus.USER_NOT_RELATE_APP);
 			return rm;
-		} else if (app.equalsIgnoreCase(htBoaInUserApp.getApp())) {
+		} else if (app.equals(htBoaInUserApp.getApp())) {
 			logger.info("用户与系统匹配正确！");
+			BeanUtils.deepCopy(htBoaInUserApp, userVo);
 		} else {
 			logger.info("用户来源不正确！");
 			rm.setSysStatus(SysStatus.USER_NOT_MATCH_APP);
 			return rm;
 		}
-		
-		UserVo userVo=new UserVo();
-		BeanUtils.deepCopy(htBoaInUser, userVo);
+		//获取用户登录信息
+		HtBoaInLogin htBoaInLogin=htBoaInLoginService.findByUserId(htBoaInUser.getUserId());
+		if(LogicUtil.isNotNull((htBoaInUserApp))){
+			BeanUtils.deepCopy(htBoaInLogin, userVo);
+		}
 		rm.setSysStatus(SysStatus.SUCCESS);
 		rm.setResult(userVo);
+		return rm;
+	}
+	
+	/**
+	 * 
+	  * @Title: getRoleCodes 
+	  * @Description: 获取用户角色编码 
+	  * @return ResponseModal
+	  * @throws
+	 */
+	@GetMapping("/getRoleCodes")
+	@ApiOperation( value = "获取用户角色编码")
+	public ResponseModal getRoleCodes(@RequestParam(value="userId",required=true) String userId) {
+		ResponseModal rm = new ResponseModal();
+		
+		
+		
+		
 		return rm;
 	}
 }

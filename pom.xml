@@ -24,7 +24,8 @@
 		<module>ussp-hystrix-turbine-app</module>
 		<module>hytrix-helloworld</module>
 		<module>ussp-uc-ui</module>
-	</modules>
+        <module>ussp-common</module>
+    </modules>
 
 	<packaging>pom</packaging>
 	<name>统一服务支撑平台 USSP</name>

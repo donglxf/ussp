@@ -20,12 +20,12 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.ussp.gateway.app.jwt.JwtToken;
 import com.ht.ussp.gateway.app.jwt.JwtTokenFactory;
-import com.ht.ussp.gateway.app.model.UserContext;
+import com.ht.ussp.gateway.app.vo.UserVo;
 
 /**
  * 
 * @ClassName: AjaxAwareAuthenticationSuccessHandler
-* @Description: TODO
+* @Description: 用户验证成功后的处理
 * @author wim qiuwenwu@hongte.info
 * @date 2018年1月6日 上午11:47:40
  */
@@ -43,10 +43,10 @@ public class AjaxAwareAuthenticationSuccessHandler implements AuthenticationSucc
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
-        UserContext userContext = (UserContext) authentication.getPrincipal();
+    	UserVo userVo = (UserVo) authentication.getPrincipal();
         
-        JwtToken accessToken = tokenFactory.createAccessJwtToken(userContext);
-        JwtToken refreshToken = tokenFactory.createRefreshToken(userContext);
+        JwtToken accessToken = tokenFactory.createAccessJwtToken(userVo);
+        JwtToken refreshToken = tokenFactory.createRefreshToken(userVo);
         
         Map<String, String> tokenMap = new HashMap<String, String>();
         tokenMap.put("token", accessToken.getToken());
