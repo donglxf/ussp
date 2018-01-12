@@ -65,7 +65,7 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
 
         String presentPassword = (String) authentication.getCredentials(); 
         
- //     Bcrypt加密方法，在注册加密时加用
+ //     Bcrypt加密方法，在注册加密时用
 //      BCryptPasswordEncoder encode = new BCryptPasswordEncoder();
 //		String hashPass = encode.encode(presentPassword);
 //		logger.info("加密后的密码为："+hashPass);

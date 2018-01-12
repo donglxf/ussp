@@ -110,7 +110,10 @@ public class UserResource {
 
 	/**
 	 * 
-	 * @Title: getRoleCodes @Description: 获取用户角色编码 @return ResponseModal @throws
+	 * @Title: getRoleCodes 
+	 * @Description: 获取用户角色编码
+	 * @return ResponseModal 
+	 * @throws
 	 */
 	@GetMapping("/getRoleCodes")
 	@ApiOperation(value = "获取用户角色编码")

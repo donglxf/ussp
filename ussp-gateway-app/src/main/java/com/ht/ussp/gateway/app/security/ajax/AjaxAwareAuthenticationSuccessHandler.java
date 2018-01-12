@@ -1,6 +1,7 @@
 package com.ht.ussp.gateway.app.security.ajax;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,10 +44,8 @@ public class AjaxAwareAuthenticationSuccessHandler implements AuthenticationSucc
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
-    	UserVo userVo = (UserVo) authentication.getPrincipal();
-        
-        JwtToken accessToken = tokenFactory.createAccessJwtToken(userVo);
-        JwtToken refreshToken = tokenFactory.createRefreshToken(userVo);
+        JwtToken accessToken = tokenFactory.createAccessJwtToken(authentication);
+        JwtToken refreshToken = tokenFactory.createRefreshToken(authentication);
         
         Map<String, String> tokenMap = new HashMap<String, String>();
         tokenMap.put("token", accessToken.getToken());
@@ -60,9 +59,11 @@ public class AjaxAwareAuthenticationSuccessHandler implements AuthenticationSucc
     }
 
     /**
-     * Removes temporary authentication-related data which may have been stored
-     * in the session during the authentication process..
      * 
+      * @Title: clearAuthenticationAttributes 
+      * @Description: 清除有可能存储的authentication 
+      * @return void
+      * @throws
      */
     protected final void clearAuthenticationAttributes(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
