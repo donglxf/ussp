@@ -1,12 +1,6 @@
 package com.ht.ussp.gateway.app.jwt;
 
-import java.util.List;
 import java.util.Optional;
-
-import org.springframework.security.authentication.BadCredentialsException;
-
-import com.ht.ussp.gateway.app.exception.JwtExpiredTokenException;
-import com.ht.ussp.gateway.app.model.Scopes;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -27,24 +21,21 @@ public class RefreshToken implements JwtToken {
     }
 
     /**
-     * Creates and validates Refresh token 
      * 
-     * @param token
-     * @param signingKey
-     * 
-     * @throws BadCredentialsException
-     * @throws JwtExpiredTokenException
-     * 
-     * @return
+      * @Title: create 
+      * @Description: 创建并验证refresh token 
+      * @return Optional<RefreshToken>
+      * @throws
      */
     public static Optional<RefreshToken> create(RawAccessJwtToken token, String signingKey) {
         Jws<Claims> claims = token.parseClaims(signingKey);
-
-        List<String> scopes = claims.getBody().get("scopes", List.class);
-        if (scopes == null || scopes.isEmpty() 
-                || !scopes.stream().filter(scope -> Scopes.REFRESH_TOKEN.authority().equals(scope)).findFirst().isPresent()) {
-            return Optional.empty();
-        }
+//        String userId=claims.getBody().get("userId").toString();
+//        String controller=claims.getBody().get("controller").toString();
+//        List<String> scopes = claims.getBody().get("role", List.class);
+//        if (scopes == null || scopes.isEmpty() 
+//                || !scopes.stream().filter(scope -> Scopes.REFRESH_TOKEN.authority().equals(scope)).findFirst().isPresent()) {
+//            return Optional.empty();
+//        }
 
         return Optional.of(new RefreshToken(claims));
     }
@@ -64,5 +55,13 @@ public class RefreshToken implements JwtToken {
     
     public String getSubject() {
         return claims.getBody().getSubject();
+    }
+    
+    public String getUserId() {
+    	return claims.getBody().get("userId").toString();
+    }
+    
+    public String getController() {
+    	return claims.getBody().get("controller").toString();
     }
 }

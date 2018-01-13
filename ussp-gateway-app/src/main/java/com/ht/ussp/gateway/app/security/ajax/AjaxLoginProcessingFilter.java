@@ -29,7 +29,7 @@ import com.ht.ussp.gateway.app.util.WebUtil;
 /**
  * 
 * @ClassName: AjaxLoginProcessingFilter
-* @Description: 拦截前端登录请求，验证登录
+* @Description: 拦截前端登录请求的过滤器
 * @author wim qiuwenwu@hongte.info
 * @date 2018年1月6日 下午4:47:34
  */

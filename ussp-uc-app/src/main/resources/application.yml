@@ -47,3 +47,5 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://10.110.1.240:10001/eureka/
+
+ 

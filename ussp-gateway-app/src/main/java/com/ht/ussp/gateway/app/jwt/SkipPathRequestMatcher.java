@@ -13,7 +13,7 @@ import org.springframework.util.Assert;
 /**
  * 
  * @ClassName: SkipPathRequestMatcher
- * @Description: TODO
+ * @Description: 忽略哪些请求不过滤
  * @author wim qiuwenwu@hongte.info
  * @date 2018年1月8日 上午10:04:49
  */

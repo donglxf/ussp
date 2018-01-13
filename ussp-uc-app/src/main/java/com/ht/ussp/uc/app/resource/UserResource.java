@@ -7,8 +7,6 @@ import com.ht.ussp.core.PageResult;
 import com.ht.ussp.uc.app.vo.Page;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
@@ -31,9 +29,10 @@ import com.ht.ussp.uc.app.vo.UserVo;
 import io.swagger.annotations.ApiOperation;
 
 /**
- * @author wim qiuwenwu@hongte.info
+ * 
  * @ClassName: UserResource
  * @Description: TODO
+ * @author wim qiuwenwu@hongte.info
  * @date 2018年1月8日 下午8:13:27
  */
 @RestController
@@ -43,101 +42,114 @@ import io.swagger.annotations.ApiOperation;
 @Log4j2
 public class UserResource {
 
-    private static final Logger logger = LoggerFactory.getLogger(EchoResouce.class);
-    @Autowired
-    private HtBoaInUserService htBoaInUserService;
+	@Autowired
+	private HtBoaInUserService htBoaInUserService;
 
-    @Autowired
-    private HtBoaInUserAppService htBoaInUserAppService;
+	@Autowired
+	private HtBoaInUserAppService htBoaInUserAppService;
 
-    @Autowired
-    private HtBoaInLoginService htBoaInLoginService;
+	@Autowired
+	private HtBoaInLoginService htBoaInLoginService;
 
-    @Autowired
-    private HtBoaInUserRoleService htBoaInUserRoleService;
+	@Autowired
+	private HtBoaInUserRoleService htBoaInUserRoleService;
 
-    @Autowired
-    private HtBoaInPositionUserService htBoaInPositionUserService;
+	@Autowired
+	private HtBoaInPositionUserService htBoaInPositionUserService;
 
-    @Autowired
-    private HtBoaInPositionRoleService htBoaInPositionRoleService;
+	@Autowired
+	private HtBoaInPositionRoleService htBoaInPositionRoleService;
 
+	/**
+	 *
+	 * @Title: validateUser
+	 * @Description: 验证用户有效性
+	 * @return ResponseModal @throws
+	 */
 
-    /**
-     * @return ResponseModal @throws
-     * @Title: validateUser
-     * @Description: 验证用户有效性
-     */
-
-    @GetMapping("/validateUser")
-    @ApiOperation(value = "验证用户")
-    public ResponseModal validateUser(@RequestParam(value = "app", required = true) String app, @RequestParam(value = "userName", required = true) String userName) {
-        ResponseModal rm = new ResponseModal();
-        UserVo userVo = new UserVo();
-        // 查找用户
-        HtBoaInUser htBoaInUser = htBoaInUserService.findByUserName(userName);
-        if (LogicUtil.isNull(htBoaInUser) || LogicUtil.isNullOrEmpty(htBoaInUser.getUserId())) {
-            rm.setSysStatus((SysStatus.USER_NOT_FOUND));
-            return rm;
-        } else if (htBoaInUser.getDelFlag() == 1) {
+	@GetMapping("/validateUser")
+	@ApiOperation(value = "验证用户")
+	public ResponseModal validateUser(@RequestParam(value = "app", required = true) String app,
+			@RequestParam(value = "userName", required = true) String userName) {
+		ResponseModal rm = new ResponseModal();
+		UserVo userVo = new UserVo();
+		// 查找用户
+		HtBoaInUser htBoaInUser = htBoaInUserService.findByUserName(userName);
+		if (LogicUtil.isNull(htBoaInUser) || LogicUtil.isNullOrEmpty(htBoaInUser.getUserId())) {
+			rm.setSysStatus((SysStatus.USER_NOT_FOUND));
+			return rm;
+		} else if (htBoaInUser.getDelFlag() == 1) {
             log.info("该用户已被删除！");
-            rm.setSysStatus(SysStatus.USER_HAS_DELETED);
-        } else {
-            BeanUtils.deepCopy(htBoaInUser, userVo);
-        }
+			rm.setSysStatus(SysStatus.USER_HAS_DELETED);
+		} else {
+			BeanUtils.deepCopy(htBoaInUser, userVo);
+		}
 
-        // 验证用户与系统是否匹配
-        HtBoaInUserApp htBoaInUserApp = htBoaInUserAppService.findUserAndAppInfo(htBoaInUser.getUserId());
-        if (LogicUtil.isNull(htBoaInUserApp) || LogicUtil.isNullOrEmpty(htBoaInUserApp.getApp())) {
-            rm.setSysStatus(SysStatus.USER_NOT_RELATE_APP);
-            return rm;
-        } else if (app.equals(htBoaInUserApp.getApp())) {
+		// 验证用户与系统是否匹配
+		HtBoaInUserApp htBoaInUserApp = htBoaInUserAppService.findUserAndAppInfo(htBoaInUser.getUserId());
+		if (LogicUtil.isNull(htBoaInUserApp) || LogicUtil.isNullOrEmpty(htBoaInUserApp.getApp())) {
+			rm.setSysStatus(SysStatus.USER_NOT_RELATE_APP);
+			return rm;
+		} else if (app.equals(htBoaInUserApp.getApp())) {
             log.info("用户与系统匹配正确！");
-            BeanUtils.deepCopy(htBoaInUserApp, userVo);
-        } else {
+			BeanUtils.deepCopy(htBoaInUserApp, userVo);
+		} else {
             log.info("用户来源不正确！");
-            rm.setSysStatus(SysStatus.USER_NOT_MATCH_APP);
-            return rm;
-        }
-        //获取用户登录信息
-        HtBoaInLogin htBoaInLogin = htBoaInLoginService.findByUserId(htBoaInUser.getUserId());
-        if (LogicUtil.isNotNull((htBoaInUserApp))) {
-            BeanUtils.deepCopy(htBoaInLogin, userVo);
-        }
-        rm.setSysStatus(SysStatus.SUCCESS);
-        rm.setResult(userVo);
-        return rm;
-    }
+			rm.setSysStatus(SysStatus.USER_NOT_MATCH_APP);
+			return rm;
+		}
+		// 获取用户登录信息
+		HtBoaInLogin htBoaInLogin = htBoaInLoginService.findByUserId(htBoaInUser.getUserId());
+		if (LogicUtil.isNotNull((htBoaInUserApp))) {
+			BeanUtils.deepCopy(htBoaInLogin, userVo);
+		}
+		rm.setSysStatus(SysStatus.SUCCESS);
+		rm.setResult(userVo);
+		return rm;
+	}
 
-    /**
-     * @return ResponseModal
-     * @throws
-     * @Title: getRoleCodes
-     * @Description: 获取用户角色编码
-     */
-    @GetMapping("/getRoleCodes")
-    @ApiOperation(value = "获取用户角色编码")
-    public ResponseModal getRoleCodes(@RequestParam(value = "userId", required = true) String userId) {
-        ResponseModal rm = new ResponseModal();
-        List<String> roleCodes = new ArrayList<>();
-        //查找当前用户的角色编码
-        List<String> userRoleCodes = htBoaInUserRoleService.queryRoleCodes(userId);
-        if (!userRoleCodes.isEmpty()) {
-            userRoleCodes.forEach(userRoleCode -> {
-                roleCodes.add(userRoleCode);
-            });
-        }
+	/**
+	 *
+	 * @Title: getRoleCodes
+	 * @Description: 获取用户角色编码
+	 * @return ResponseModal
+	 * @throws
+	 */
+	@GetMapping("/getRoleCodes")
+	@ApiOperation(value = "获取用户角色编码")
+	public ResponseModal getRoleCodes(@RequestParam(value = "userId", required = true) String userId) {
+		ResponseModal rm = new ResponseModal();
+		List<String> roleCodes = new ArrayList<>();
+		// 查找当前用户的角色编码
+		List<String> userRoleCodes = htBoaInUserRoleService.queryRoleCodes(userId);
+		if (!userRoleCodes.isEmpty()) {
+			userRoleCodes.forEach(userRoleCode -> {
+				roleCodes.add(userRoleCode);
+			});
+		}
 
-        //查找当前用户岗位编码
-        List<String> positionCodes = htBoaInPositionUserService.queryRoleCodes(userId);
-        List<String> userRoleCodesByPosition = htBoaInPositionRoleService.queryRoleCodesByPosition(positionCodes);
-        userRoleCodesByPosition.forEach(userRoleCode -> {
-            roleCodes.add(userRoleCode);
-        });
+		// 查找当前用户岗位编码
+		List<String> positionCodes = htBoaInPositionUserService.queryRoleCodes(userId);
+		// 通过岗位编码查用关联的角色编码
+		if (positionCodes != null && positionCodes.size() > 0) {
+			List<String> userRoleCodesByPosition = htBoaInPositionRoleService.queryRoleCodesByPosition(positionCodes);
+			if (!userRoleCodesByPosition.isEmpty()) {
+				userRoleCodesByPosition.forEach(userRoleCode -> {
+					roleCodes.add(userRoleCode);
+				});
+			}
+		}
 
-        return rm;
-    }
+		if (roleCodes.isEmpty()) {
+			rm.setSysStatus(SysStatus.NO_ROLE);
+			return rm;
+		} else {
+			rm.setSysStatus(SysStatus.SUCCESS);
+			rm.setResult(roleCodes);
+			return rm;
+		}
 
+	}
     /**
      * 用户信息分页查询<br>
      *

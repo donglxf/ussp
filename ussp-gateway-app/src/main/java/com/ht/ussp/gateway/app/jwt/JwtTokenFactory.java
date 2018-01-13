@@ -2,18 +2,20 @@ package com.ht.ussp.gateway.app.jwt;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import com.ht.ussp.gateway.app.config.JwtSettings;
-import com.ht.ussp.gateway.app.model.Scopes;
-import com.ht.ussp.gateway.app.model.UserContext;
 import com.ht.ussp.gateway.app.vo.UserVo;
 
 import io.jsonwebtoken.Claims;
@@ -23,72 +25,87 @@ import io.jsonwebtoken.SignatureAlgorithm;
 /**
  * 
  * @ClassName: JwtTokenFactory
- * @Description: 创建JWT
+ * @Description: 分离TOKEN创建逻辑
  * @author wim qiuwenwu@hongte.info
  * @date 2018年1月8日 上午10:05:04
  */
 @Component
 public class JwtTokenFactory {
-    private final JwtSettings settings;
+	private static final Logger logger = LoggerFactory.getLogger(JwtTokenFactory.class);
+	private final JwtSettings settings;
 
-    @Autowired
-    public JwtTokenFactory(JwtSettings settings) {
-        this.settings = settings;
-    }
+	@Autowired
+	public JwtTokenFactory(JwtSettings settings) {
+		this.settings = settings;
+	}
 
-    /**
-     * Factory method for issuing new JWT Tokens.
-     * 
-     * @param username
-     * @param roles
-     * @return
-     */
-    public AccessJwtToken createAccessJwtToken(UserVo userVo) {
-        if (StringUtils.isBlank(userVo.getUserId())) 
-            throw new IllegalArgumentException("Cannot create JWT Token without userId");
+	/**
+	 * 
+	 * @Title: createAccessJwtToken 
+	 * @Description: 生成TOKEN 
+	 * @return AccessJwtToken
+	 * @throws
+	 */
+	public AccessJwtToken createAccessJwtToken(Authentication authentication) {
+		// 从authentication中获取uservo
+		UserVo userVo = (UserVo) authentication.getPrincipal();
+		if (StringUtils.isBlank(userVo.getUserId())) {
+			throw new IllegalArgumentException("Cannot create JWT Token without userId");
+		}
+		// 从authentication中获取用户角色编码
+//		List<String> list = new ArrayList<String>();
+//		for (GrantedAuthority roleCode : authentication.getAuthorities()) {
+//			list.add(roleCode.getAuthority());
+//		}
+//		
+//		if (list.isEmpty() || !("N").equals(userVo.getController())) {
+//			throw new IllegalArgumentException("User doesn't have any privileges");
+//		}
+		
+		Claims claims = Jwts.claims().setSubject("User Authorize");
+		claims.put("userId", userVo.getUserId());
+		claims.put("controller", userVo.getController());
+//		if(("N").equals(userVo.getController())&&list.size()>0) {
+//			claims.put("roles", list);
+//		}
+		
+		LocalDateTime currentTime = LocalDateTime.now();
 
-//        if (userContext.getAuthorities() == null || userContext.getAuthorities().isEmpty()) 
-//            throw new IllegalArgumentException("User doesn't have any privileges");
-//
-        Claims claims = Jwts.claims().setSubject(userVo.getUserId());
-//        claims.put("scopes", userContext.getAuthorities().stream().map(s -> s.toString()).collect(Collectors.toList()));
+		String token = Jwts.builder().setClaims(claims).setIssuer(settings.getTokenIssuer())
+				.setIssuedAt(Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant()))
+				.setExpiration(Date.from(currentTime.plusMinutes(settings.getTokenExpirationTime())
+						.atZone(ZoneId.systemDefault()).toInstant()))
+				.setAudience(userVo.getUserName()).signWith(SignatureAlgorithm.HS512, settings.getTokenSigningKey())
+				.compact();
+		logger.info("jwt has created:" + token);
+		return new AccessJwtToken(token, claims);
+	}
 
-        LocalDateTime currentTime = LocalDateTime.now();
-        
-        String token = Jwts.builder()
-          .setClaims(claims)
-          .setIssuer(settings.getTokenIssuer())
-          .setIssuedAt(Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant()))
-          .setExpiration(Date.from(currentTime
-              .plusMinutes(settings.getTokenExpirationTime())
-              .atZone(ZoneId.systemDefault()).toInstant()))
-          .signWith(SignatureAlgorithm.HS512, settings.getTokenSigningKey())
-        .compact();
+	/**
+	 * 
+	  * @Title: createRefreshToken 
+	  * @Description: 生成REFRESH TOKEN 
+	  * @return JwtToken
+	  * @throws
+	 */
+	public JwtToken createRefreshToken(Authentication authentication) {
+		UserVo userVo = (UserVo) authentication.getPrincipal();
+		if (StringUtils.isBlank(userVo.getUserId())) {
+			throw new IllegalArgumentException("Cannot create refreshToken without userId");
+		}
 
-        return new AccessJwtToken(token, claims);
-    }
+		LocalDateTime currentTime = LocalDateTime.now();
 
-    public JwtToken createRefreshToken(UserVo userVo) {
-//        if (StringUtils.isBlank(userContext.getUsername())) {
-//            throw new IllegalArgumentException("Cannot create JWT Token without username");
-//        }
-
-        LocalDateTime currentTime = LocalDateTime.now();
-
-        Claims claims = Jwts.claims().setSubject(userVo.getUserId());
-        claims.put("scopes", Arrays.asList(Scopes.REFRESH_TOKEN.authority()));
-        
-        String token = Jwts.builder()
-          .setClaims(claims)
-          .setIssuer(settings.getTokenIssuer())
-          .setId(UUID.randomUUID().toString())
-          .setIssuedAt(Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant()))
-          .setExpiration(Date.from(currentTime
-              .plusMinutes(settings.getRefreshTokenExpTime())
-              .atZone(ZoneId.systemDefault()).toInstant()))
-          .signWith(SignatureAlgorithm.HS512, settings.getTokenSigningKey())
-        .compact();
-
-        return new AccessJwtToken(token, claims);
-    }
+		Claims claims = Jwts.claims().setSubject("User refresh token");
+		claims.put("userId", userVo.getUserId());
+		claims.put("controller", userVo.getController());
+		String token = Jwts.builder().setClaims(claims).setIssuer(settings.getTokenIssuer())
+				.setId(UUID.randomUUID().toString())
+				.setIssuedAt(Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant()))
+				.setExpiration(Date.from(currentTime.plusMinutes(settings.getRefreshTokenExpTime())
+						.atZone(ZoneId.systemDefault()).toInstant()))
+				.signWith(SignatureAlgorithm.HS512, settings.getTokenSigningKey()).compact();
+		logger.info("refreshToken has created:" + token);
+		return new AccessJwtToken(token, claims);
+	}
 }

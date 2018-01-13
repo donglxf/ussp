@@ -18,6 +18,9 @@ public class JwtSettings {
 	 */
 	private Integer tokenExpirationTime;
 
+	/**
+	 * 发布者
+	 */
 	private String tokenIssuer;
 
 	/**
