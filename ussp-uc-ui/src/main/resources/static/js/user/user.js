@@ -36,6 +36,20 @@ layui.use(['form', 'ztree', 'table'], function () {
                         });
                     }
                 })
+            },
+            search: function () {
+                //执行重载
+                table.reload('user_datatable', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    , where: {
+                        keyWord: $("#user_search_keyword").val()
+                        , query: {
+                            orgCode: "DEV1"
+                        }
+                    }
+                });
             }
         }
     //渲染组织机构树
@@ -67,21 +81,36 @@ layui.use(['form', 'ztree', 'table'], function () {
     );
     //渲染用户数据表格
     table.render({
-        elem: '#user_datatable'
-        , url: '/datas/table.json'
+        id: 'user_datatable'
+        , elem: '#user_datatable'
+        , url: 'http://localhost:9999/member/loadListByPage.json'
+        , method: 'post' //如果无需自定义HTTP类型，可不加该参数
+        , where: {
+            query: {
+                orgCode: "DEV1"
+            }
+        }
+        , response: {
+            statusName: 'returnCode' //数据状态的字段名称，默认：code
+            , statusCode: "0000" //成功的状态码，默认：0
+            , msgName: 'msg' //状态信息的字段名称，默认：msg
+            , countName: 'count' //数据总数的字段名称，默认：count
+            , dataName: 'data' //数据列表的字段名称，默认：data
+        } //如果无需自定义数据响应名称，可不加该参数
         , page: true
         , height: 'full-200'
         , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
         , cols: [[
             {field: 'id', width: 80, title: 'ID', sort: true}
-            , {field: 'username', width: 80, title: '用户名'}
-            , {field: 'sex', width: 80, title: '性别', sort: true}
-            , {field: 'city', width: 80, title: '城市'}
-            , {field: 'sign', title: '签名', width: '30%', minWidth: 100} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
-            , {field: 'experience', title: '积分', sort: true}
-            , {field: 'score', title: '评分', sort: true}
-            , {field: 'classify', title: '职业'}
-            , {field: 'wealth', width: 100, title: '财富', sort: true}
+            , {field: 'userId', width: 80, title: '用户编号'}
+            , {field: 'jboNumber', width: 80, title: '工号', sort: true}
+            , {field: 'userName', width: 80, title: '用户名'}
+            , {field: 'email', title: '邮箱', width: '30%', minWidth: 100} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+            , {field: 'mobile', title: '手机', sort: true}
+            , {field: 'idNo', title: '身份证', sort: true}
+            , {field: 'orgCode', title: '所属机构'}
+            , {field: 'updateOperator', width: 100, title: '更新人', sort: true}
+            , {field: 'lastModifiedDatetime', width: 100, title: '更新时间', sort: true}
             , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#user_datatable_bar'}
         ]]
     });

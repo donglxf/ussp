@@ -6,13 +6,18 @@
  */
 package com.ht.ussp.core;
 
+import lombok.Data;
+
+import java.io.Serializable;
+
 /**
  * Rest接口请求结果对象<br>
  * 
  * @author 谭荣巧
  * @date 2017年11月20日 下午3:40:50
  */
-public class Result<T> {
+@Data
+public class Result<T> implements Serializable {
 	/**
 	 * 返回码
 	 */

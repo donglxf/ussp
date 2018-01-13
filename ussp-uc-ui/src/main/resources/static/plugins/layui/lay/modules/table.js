@@ -1149,8 +1149,7 @@ layui.define(['laytpl', 'laypage', 'layer', 'form'], function(exports){
 
     _WIN.on('resize', function(){ //自适应
        that.fullSize();
-       console.info(_WIN.width(),_WIN.height()) ;
-        that.scrollPatch();
+       that.scrollPatch();
     });
   };
 

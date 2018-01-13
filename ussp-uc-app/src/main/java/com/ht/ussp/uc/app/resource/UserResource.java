@@ -3,13 +3,13 @@ package com.ht.ussp.uc.app.resource;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.ht.ussp.core.PageResult;
+import com.ht.ussp.uc.app.vo.Page;
+import lombok.Data;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.web.bind.annotation.*;
 
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
@@ -31,16 +31,16 @@ import io.swagger.annotations.ApiOperation;
 /**
  * 
  * @ClassName: UserResource
- * @Description: 用户资源
+ * @Description: TODO
  * @author wim qiuwenwu@hongte.info
  * @date 2018年1月8日 下午8:13:27
  */
-
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping(value = "/member")
+@Data
+@Log4j2
 public class UserResource {
-
-	private static final Logger logger = LoggerFactory.getLogger(EchoResouce.class);
 
 	@Autowired
 	private HtBoaInUserService htBoaInUserService;
@@ -61,7 +61,7 @@ public class UserResource {
 	private HtBoaInPositionRoleService htBoaInPositionRoleService;
 
 	/**
-	 * 
+	 *
 	 * @Title: validateUser
 	 * @Description: 验证用户有效性
 	 * @return ResponseModal @throws
@@ -79,7 +79,7 @@ public class UserResource {
 			rm.setSysStatus((SysStatus.USER_NOT_FOUND));
 			return rm;
 		} else if (htBoaInUser.getDelFlag() == 1) {
-			logger.info("该用户已被删除！");
+            log.info("该用户已被删除！");
 			rm.setSysStatus(SysStatus.USER_HAS_DELETED);
 		} else {
 			BeanUtils.deepCopy(htBoaInUser, userVo);
@@ -91,10 +91,10 @@ public class UserResource {
 			rm.setSysStatus(SysStatus.USER_NOT_RELATE_APP);
 			return rm;
 		} else if (app.equals(htBoaInUserApp.getApp())) {
-			logger.info("用户与系统匹配正确！");
+            log.info("用户与系统匹配正确！");
 			BeanUtils.deepCopy(htBoaInUserApp, userVo);
 		} else {
-			logger.info("用户来源不正确！");
+            log.info("用户来源不正确！");
 			rm.setSysStatus(SysStatus.USER_NOT_MATCH_APP);
 			return rm;
 		}
@@ -109,10 +109,10 @@ public class UserResource {
 	}
 
 	/**
-	 * 
-	 * @Title: getRoleCodes 
+	 *
+	 * @Title: getRoleCodes
 	 * @Description: 获取用户角色编码
-	 * @return ResponseModal 
+	 * @return ResponseModal
 	 * @throws
 	 */
 	@GetMapping("/getRoleCodes")
@@ -150,4 +150,17 @@ public class UserResource {
 		}
 
 	}
+    /**
+     * 用户信息分页查询<br>
+     *
+     * @param page 分页参数对象
+     * @return 结果对象
+     * @author 谭荣巧
+     * @Date 2018/1/12 9:01
+     */
+    @ApiOperation(value = "用户信息分页查询")
+    @PostMapping(value = "/loadListByPage")
+    public PageResult<HtBoaInUser> loadListByPage(Page page) {
+        return htBoaInUserService.getUserListPage(new PageRequest(page.getPage(), page.getLimit()), page.getKeyWord(), page.getQuery());
+    }
 }
