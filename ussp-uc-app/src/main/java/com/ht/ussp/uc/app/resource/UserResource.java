@@ -3,14 +3,16 @@ package com.ht.ussp.uc.app.resource;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ht.ussp.core.PageResult;
-import com.ht.ussp.uc.app.vo.Page;
-import lombok.Data;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.ht.ussp.core.PageResult;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
@@ -24,9 +26,11 @@ import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.util.BeanUtils;
 import com.ht.ussp.uc.app.util.LogicUtil;
+import com.ht.ussp.uc.app.vo.Page;
 import com.ht.ussp.uc.app.vo.UserVo;
 
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * 
@@ -38,10 +42,9 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping(value = "/member")
-@Data
 @Log4j2
 public class UserResource {
-
+	
 	@Autowired
 	private HtBoaInUserService htBoaInUserService;
 
