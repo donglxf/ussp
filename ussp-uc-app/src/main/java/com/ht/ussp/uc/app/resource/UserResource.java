@@ -2,17 +2,19 @@ package com.ht.ussp.uc.app.resource;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import java.util.UUID;
 
 import com.ht.ussp.core.PageResult;
+import com.ht.ussp.core.Result;
+import com.ht.ussp.uc.app.vo.Page;
+import com.ht.ussp.uc.app.vo.UserMessageVo;
+import com.ht.ussp.util.DtoUtil;
+import com.ht.ussp.util.EncryptUtil;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.web.bind.annotation.*;
+
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
@@ -26,17 +28,14 @@ import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.util.BeanUtils;
 import com.ht.ussp.uc.app.util.LogicUtil;
-import com.ht.ussp.uc.app.vo.Page;
 import com.ht.ussp.uc.app.vo.UserVo;
 
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.log4j.Log4j2;
 
 /**
- * 
+ * @author wim qiuwenwu@hongte.info
  * @ClassName: UserResource
  * @Description: TODO
- * @author wim qiuwenwu@hongte.info
  * @date 2018年1月8日 下午8:13:27
  */
 @RestController
@@ -44,115 +43,114 @@ import lombok.extern.log4j.Log4j2;
 @RequestMapping(value = "/member")
 @Log4j2
 public class UserResource {
-	
-	@Autowired
-	private HtBoaInUserService htBoaInUserService;
 
-	@Autowired
-	private HtBoaInUserAppService htBoaInUserAppService;
+    @Autowired
+    private HtBoaInUserService htBoaInUserService;
 
-	@Autowired
-	private HtBoaInLoginService htBoaInLoginService;
+    @Autowired
+    private HtBoaInUserAppService htBoaInUserAppService;
 
-	@Autowired
-	private HtBoaInUserRoleService htBoaInUserRoleService;
+    @Autowired
+    private HtBoaInLoginService htBoaInLoginService;
 
-	@Autowired
-	private HtBoaInPositionUserService htBoaInPositionUserService;
+    @Autowired
+    private HtBoaInUserRoleService htBoaInUserRoleService;
 
-	@Autowired
-	private HtBoaInPositionRoleService htBoaInPositionRoleService;
+    @Autowired
+    private HtBoaInPositionUserService htBoaInPositionUserService;
 
-	/**
-	 *
-	 * @Title: validateUser
-	 * @Description: 验证用户有效性
-	 * @return ResponseModal @throws
-	 */
+    @Autowired
+    private HtBoaInPositionRoleService htBoaInPositionRoleService;
 
-	@GetMapping("/validateUser")
-	@ApiOperation(value = "验证用户")
-	public ResponseModal validateUser(@RequestParam(value = "app", required = true) String app,
-			@RequestParam(value = "userName", required = true) String userName) {
-		ResponseModal rm = new ResponseModal();
-		UserVo userVo = new UserVo();
-		// 查找用户
-		HtBoaInUser htBoaInUser = htBoaInUserService.findByUserName(userName);
-		if (LogicUtil.isNull(htBoaInUser) || LogicUtil.isNullOrEmpty(htBoaInUser.getUserId())) {
-			rm.setSysStatus((SysStatus.USER_NOT_FOUND));
-			return rm;
-		} else if (htBoaInUser.getDelFlag() == 1) {
+    /**
+     * @return ResponseModal @throws
+     * @Title: validateUser
+     * @Description: 验证用户有效性
+     */
+
+    @GetMapping("/validateUser")
+    @ApiOperation(value = "验证用户")
+    public ResponseModal validateUser(@RequestParam(value = "app", required = true) String app,
+                                      @RequestParam(value = "userName", required = true) String userName) {
+        ResponseModal rm = new ResponseModal();
+        UserVo userVo = new UserVo();
+        // 查找用户
+        HtBoaInUser htBoaInUser = htBoaInUserService.findByUserName(userName);
+        if (LogicUtil.isNull(htBoaInUser) || LogicUtil.isNullOrEmpty(htBoaInUser.getUserId())) {
+            rm.setSysStatus((SysStatus.USER_NOT_FOUND));
+            return rm;
+        } else if (htBoaInUser.getDelFlag() == 1) {
             log.info("该用户已被删除！");
-			rm.setSysStatus(SysStatus.USER_HAS_DELETED);
-		} else {
-			BeanUtils.deepCopy(htBoaInUser, userVo);
-		}
+            rm.setSysStatus(SysStatus.USER_HAS_DELETED);
+        } else {
+            BeanUtils.deepCopy(htBoaInUser, userVo);
+        }
 
-		// 验证用户与系统是否匹配
-		HtBoaInUserApp htBoaInUserApp = htBoaInUserAppService.findUserAndAppInfo(htBoaInUser.getUserId());
-		if (LogicUtil.isNull(htBoaInUserApp) || LogicUtil.isNullOrEmpty(htBoaInUserApp.getApp())) {
-			rm.setSysStatus(SysStatus.USER_NOT_RELATE_APP);
-			return rm;
-		} else if (app.equals(htBoaInUserApp.getApp())) {
+        // 验证用户与系统是否匹配
+        HtBoaInUserApp htBoaInUserApp = htBoaInUserAppService.findUserAndAppInfo(htBoaInUser.getUserId());
+        if (LogicUtil.isNull(htBoaInUserApp) || LogicUtil.isNullOrEmpty(htBoaInUserApp.getApp())) {
+            rm.setSysStatus(SysStatus.USER_NOT_RELATE_APP);
+            return rm;
+        } else if (app.equals(htBoaInUserApp.getApp())) {
             log.info("用户与系统匹配正确！");
-			BeanUtils.deepCopy(htBoaInUserApp, userVo);
-		} else {
+            BeanUtils.deepCopy(htBoaInUserApp, userVo);
+        } else {
             log.info("用户来源不正确！");
-			rm.setSysStatus(SysStatus.USER_NOT_MATCH_APP);
-			return rm;
-		}
-		// 获取用户登录信息
-		HtBoaInLogin htBoaInLogin = htBoaInLoginService.findByUserId(htBoaInUser.getUserId());
-		if (LogicUtil.isNotNull((htBoaInUserApp))) {
-			BeanUtils.deepCopy(htBoaInLogin, userVo);
-		}
-		rm.setSysStatus(SysStatus.SUCCESS);
-		rm.setResult(userVo);
-		return rm;
-	}
+            rm.setSysStatus(SysStatus.USER_NOT_MATCH_APP);
+            return rm;
+        }
+        // 获取用户登录信息
+        HtBoaInLogin htBoaInLogin = htBoaInLoginService.findByUserId(htBoaInUser.getUserId());
+        if (LogicUtil.isNotNull((htBoaInUserApp))) {
+            BeanUtils.deepCopy(htBoaInLogin, userVo);
+        }
+        rm.setSysStatus(SysStatus.SUCCESS);
+        rm.setResult(userVo);
+        return rm;
+    }
 
-	/**
-	 *
-	 * @Title: getRoleCodes
-	 * @Description: 获取用户角色编码
-	 * @return ResponseModal
-	 * @throws
-	 */
-	@GetMapping("/getRoleCodes")
-	@ApiOperation(value = "获取用户角色编码")
-	public ResponseModal getRoleCodes(@RequestParam(value = "userId", required = true) String userId) {
-		ResponseModal rm = new ResponseModal();
-		List<String> roleCodes = new ArrayList<>();
-		// 查找当前用户的角色编码
-		List<String> userRoleCodes = htBoaInUserRoleService.queryRoleCodes(userId);
-		if (!userRoleCodes.isEmpty()) {
-			userRoleCodes.forEach(userRoleCode -> {
-				roleCodes.add(userRoleCode);
-			});
-		}
+    /**
+     * @return ResponseModal
+     * @throws
+     * @Title: getRoleCodes
+     * @Description: 获取用户角色编码
+     */
+    @GetMapping("/getRoleCodes")
+    @ApiOperation(value = "获取用户角色编码")
+    public ResponseModal getRoleCodes(@RequestParam(value = "userId", required = true) String userId) {
+        ResponseModal rm = new ResponseModal();
+        List<String> roleCodes = new ArrayList<>();
+        // 查找当前用户的角色编码
+        List<String> userRoleCodes = htBoaInUserRoleService.queryRoleCodes(userId);
+        if (!userRoleCodes.isEmpty()) {
+            userRoleCodes.forEach(userRoleCode -> {
+                roleCodes.add(userRoleCode);
+            });
+        }
 
-		// 查找当前用户岗位编码
-		List<String> positionCodes = htBoaInPositionUserService.queryRoleCodes(userId);
-		// 通过岗位编码查用关联的角色编码
-		if (positionCodes != null && positionCodes.size() > 0) {
-			List<String> userRoleCodesByPosition = htBoaInPositionRoleService.queryRoleCodesByPosition(positionCodes);
-			if (!userRoleCodesByPosition.isEmpty()) {
-				userRoleCodesByPosition.forEach(userRoleCode -> {
-					roleCodes.add(userRoleCode);
-				});
-			}
-		}
+        // 查找当前用户岗位编码
+        List<String> positionCodes = htBoaInPositionUserService.queryRoleCodes(userId);
+        // 通过岗位编码查用关联的角色编码
+        if (positionCodes != null && positionCodes.size() > 0) {
+            List<String> userRoleCodesByPosition = htBoaInPositionRoleService.queryRoleCodesByPosition(positionCodes);
+            if (!userRoleCodesByPosition.isEmpty()) {
+                userRoleCodesByPosition.forEach(userRoleCode -> {
+                    roleCodes.add(userRoleCode);
+                });
+            }
+        }
 
-		if (roleCodes.isEmpty()) {
-			rm.setSysStatus(SysStatus.NO_ROLE);
-			return rm;
-		} else {
-			rm.setSysStatus(SysStatus.SUCCESS);
-			rm.setResult(roleCodes);
-			return rm;
-		}
+        if (roleCodes.isEmpty()) {
+            rm.setSysStatus(SysStatus.NO_ROLE);
+            return rm;
+        } else {
+            rm.setSysStatus(SysStatus.SUCCESS);
+            rm.setResult(roleCodes);
+            return rm;
+        }
 
-	}
+    }
+
     /**
      * 用户信息分页查询<br>
      *
@@ -164,6 +162,41 @@ public class UserResource {
     @ApiOperation(value = "用户信息分页查询")
     @PostMapping(value = "/loadListByPage")
     public PageResult<HtBoaInUser> loadListByPage(Page page) {
-        return htBoaInUserService.getUserListPage(new PageRequest(page.getPage(), page.getLimit()), page.getKeyWord(), page.getQuery());
+        // PageResult<UserMessageVo> umv = new UserMessageVo();
+        PageResult<HtBoaInUser> userList = htBoaInUserService.getUserListPage(new PageRequest(page.getPage(), page.getLimit()), page.getKeyWord(), page.getQuery());
+        return userList;
+    }
+
+    /**
+     * 新增用户信息<br>
+     *
+     * @param user 用户信息数据对象
+     * @return com.ht.ussp.core.Result
+     * @author 谭荣巧
+     * @Date 2018/1/14 12:08
+     */
+    @RequestMapping(value = "/add")
+    public Result addAsync(@RequestBody HtBoaInUser user) {
+        if (user != null) {
+            String userId = UUID.randomUUID().toString().replace("-", "");
+            user.setUserId(userId);
+            user.setCreateOperator("10003");
+            user.setUpdateOperator("10003");
+            user.setDelFlag(0);
+            HtBoaInLogin loginInfo = new HtBoaInLogin();
+            loginInfo.setLoginId(UUID.randomUUID().toString().replace("-", ""));
+            loginInfo.setUserId(userId);
+            loginInfo.setCreateOperator("10003");
+            loginInfo.setUpdateOperator("10003");
+            loginInfo.setStatus("0");
+            loginInfo.setPassword(EncryptUtil.passwordEncrypt("123456"));
+            loginInfo.setFailedCount(0);
+            loginInfo.setDelFlag(0);
+            boolean isAdd = htBoaInUserService.saveUserInfoAndLoginInfo(user, loginInfo);
+            if (isAdd) {
+                return Result.buildSuccess();
+            }
+        }
+        return Result.buildFail();
     }
 }

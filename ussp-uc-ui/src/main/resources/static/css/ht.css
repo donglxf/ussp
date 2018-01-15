@@ -31,8 +31,14 @@ a,a:hover {
     line-height: 30px;
     height: 30px;
     margin-bottom: 0px;
-
 }
+
+/*表单标签必填*号样式*/
+.layui-form .layui-form-label b{
+    position: absolute;
+    color: red;
+}
+
 .layui-form .layui-input-block{
     min-height: 30px;
 }

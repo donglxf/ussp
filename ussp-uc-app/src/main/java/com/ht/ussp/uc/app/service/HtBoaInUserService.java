@@ -163,4 +163,5 @@ public class HtBoaInUserService {
     public HtBoaInUser update(HtBoaInUser u) {
         return this.htBoaInUserRepository.save(u);
     }
+
 }

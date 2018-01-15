@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -38,7 +37,6 @@ import com.ht.ussp.gateway.app.vo.UserVo;
 public class RefreshTokenEndpoint {
     @Autowired private JwtTokenFactory tokenFactory;
     @Autowired private JwtSettings jwtSettings;
-//    @Autowired private UserService userService;
     @Autowired private TokenVerifier tokenVerifier;
     @Autowired @Qualifier("jwtHeaderTokenExtractor") private TokenExtractor tokenExtractor;
     
@@ -57,9 +55,6 @@ public class RefreshTokenEndpoint {
         UserVo userVo=new UserVo();
         userVo.setUserId(refreshToken.getUserId());
         userVo.setController(refreshToken.getController());
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userVo, null,null);
-        
-        
-        return tokenFactory.createAccessJwtToken(authentication);
+        return tokenFactory.createAccessJwtToken(userVo);
     }
 }

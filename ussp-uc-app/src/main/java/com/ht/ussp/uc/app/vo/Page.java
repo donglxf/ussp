@@ -1,7 +1,7 @@
 /*
  * Copyright (C), 2017-2018 广东鸿特信息咨询有限公司
- * FileName: 谭荣巧
- * Author:   tanrq
+ * FileName: Page.java
+ * Author:   谭荣巧
  * Date:     2018/1/12 18:52
  * History:
  * <author>          <time>          <version>          <desc>
@@ -9,7 +9,9 @@
  */
 package com.ht.ussp.uc.app.vo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Map;
 
@@ -21,6 +23,8 @@ import java.util.Map;
  * @Date 2018/1/12 18:52
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Page {
     int page;
     int limit;

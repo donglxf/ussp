@@ -18,19 +18,20 @@ import java.util.Date;
 public class HtBoaInUser implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@Column(name = "ID", unique = true, nullable = false)
-	private Long id;
-	
-	@Column(name="JOB_NUMBER")
-	private String jobNumber;
+    @Id
+    @Column(name = "ID", unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @Column(name = "JOB_NUMBER")
+    private String jobNumber;
 
 	@Column(name="CREATE_OPERATOR")
 	private String createOperator;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="CREATED_DATETIME")
-	private Date createdDatetime;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "CREATED_DATETIME", insertable = false, updatable = false)
+    private Date createdDatetime;
 
 	@Column(name="DEL_FLAG")
 	private int delFlag;
@@ -44,10 +45,9 @@ public class HtBoaInUser implements Serializable {
 	@Column(name="JPA_VERSION")
 	private int jpaVersion;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="LAST_MODIFIED_DATETIME")
-//	@Column(name="LAST_MODIFIED_DATETIME",columnDefinition="timestamp default current_timestamp")
-	private Date lastModifiedDatetime;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "LAST_MODIFIED_DATETIME", insertable = false, updatable = false)
+    private Date lastModifiedDatetime;
 
 	@Column(name="mobile")
 	private String mobile;

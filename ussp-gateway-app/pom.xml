@@ -85,10 +85,10 @@
 			<artifactId>fastjson</artifactId>
 		</dependency>
 
-		<!-- 临时用 -->
 		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
 		</dependency>
 	</dependencies>
 
