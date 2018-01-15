@@ -1,8 +1,6 @@
 package com.ht.ussp.gateway.app.security.point;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -11,10 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -29,9 +23,6 @@ import com.ht.ussp.gateway.app.jwt.RawAccessJwtToken;
 import com.ht.ussp.gateway.app.jwt.RefreshToken;
 import com.ht.ussp.gateway.app.jwt.TokenExtractor;
 import com.ht.ussp.gateway.app.jwt.TokenVerifier;
-import com.ht.ussp.gateway.app.model.UserContext;
-import com.ht.ussp.gateway.app.service.User;
-import com.ht.ussp.gateway.app.service.UserService;
 import com.ht.ussp.gateway.app.vo.UserVo;
 
 
@@ -46,7 +37,6 @@ import com.ht.ussp.gateway.app.vo.UserVo;
 public class RefreshTokenEndpoint {
     @Autowired private JwtTokenFactory tokenFactory;
     @Autowired private JwtSettings jwtSettings;
-//    @Autowired private UserService userService;
     @Autowired private TokenVerifier tokenVerifier;
     @Autowired @Qualifier("jwtHeaderTokenExtractor") private TokenExtractor tokenExtractor;
     
@@ -62,17 +52,9 @@ public class RefreshTokenEndpoint {
             throw new InvalidJwtToken();
         }
 
-        String subject = refreshToken.getSubject();
-//        User user = userService.getByUsername(subject).orElseThrow(() -> new UsernameNotFoundException("User not found: " + subject));
-        User user = new User();
-
-        if (user.getRoles() == null) throw new InsufficientAuthenticationException("User has no roles assigned");
-        List<GrantedAuthority> authorities = user.getRoles().stream()
-                .map(authority -> new SimpleGrantedAuthority(authority.getRole().authority()))
-                .collect(Collectors.toList());
-
-//        UserContext userContext = UserContext.create(user.getUsername(), authorities);
         UserVo userVo=new UserVo();
+        userVo.setUserId(refreshToken.getUserId());
+        userVo.setController(refreshToken.getController());
         return tokenFactory.createAccessJwtToken(userVo);
     }
 }

@@ -3,8 +3,9 @@
 
 <head>
     <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>用户权限管理系统</title>
     <link rel="stylesheet" href="/plugins/bootstrap/css/bootstrap.min.css" media="all"/>
     <!--<link rel="stylesheet" href="/plugins/bootstrap/fonts/font-awesome-4.5.0/css/font-awesome.min.css" media="all"/>-->
@@ -141,7 +142,7 @@
     var message;
     layui.config({
         base: '/js/modules/',
-        version: true
+        version: false
     }).use(['app', 'message'], function () {
         var app = layui.app,
             $ = layui.jquery,

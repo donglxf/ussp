@@ -15,6 +15,13 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 
+/**
+ * 
+ * @ClassName: RawAccessJwtToken
+ * @Description: 验证TOKEN签名
+ * @author wim qiuwenwu@hongte.info
+ * @date 2018年1月12日 上午9:14:26
+ */
 public class RawAccessJwtToken implements JwtToken {
     private static Logger logger = LoggerFactory.getLogger(RawAccessJwtToken.class);
             
@@ -24,13 +31,6 @@ public class RawAccessJwtToken implements JwtToken {
         this.token = token;
     }
 
-    /**
-     * Parses and validates JWT Token signature.
-     * 
-     * @throws BadCredentialsException
-     * @throws JwtExpiredTokenException
-     * 
-     */
     public Jws<Claims> parseClaims(String signingKey) {
         try {
             return Jwts.parser().setSigningKey(signingKey).parseClaimsJws(this.token);

@@ -23,7 +23,7 @@ import com.ht.ussp.gateway.app.util.ErrorResponse;
 /**
  * 
 * @ClassName: AjaxAwareAuthenticationFailureHandler
-* @Description: TODO
+* @Description: 授权失败处理
 * @author wim qiuwenwu@hongte.info
 * @date 2018年1月6日 上午11:47:17
  */

@@ -11,6 +11,7 @@ spring:
     cloud: 
       inetutils: 
         preferred-networks: 192.169.0
+    jackson.date-format: yyyy-MM-dd HH:mm
     #指定使用sping的数据源
     datasource:
         url: jdbc:mysql://10.110.1.240:3306/BOA?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
@@ -46,6 +47,4 @@ eureka:
     prefer-ip-address: true
   client:
     serviceUrl:
-      defaultZone: http://localhost:8870/eureka/
-
- 
+      defaultZone: http://10.110.1.240:10001/eureka/
