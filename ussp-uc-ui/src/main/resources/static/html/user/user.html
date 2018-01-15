@@ -3,11 +3,8 @@
         <div>
             <div class="tree_search">
                 <div class="input-group input-group-sm">
-                    <input type="text" id="search_tree" class="form-control" placeholder="请输入机构名"/>
-                    <div class="input-group-addon btn">
-                        <i class="fa fa-search"></i>
-                    </div>
-                    <div id="btn_refresh_tree" class="input-group-addon btn">
+                    <input type="text" id="user_search_tree_org" class="form-control" placeholder="请输入机构名"/>
+                    <div id="user_btn_refresh_tree" class="input-group-addon btn" title="刷新">
                         <i class="fa fa-refresh"></i>
                     </div>
                 </div>
@@ -68,67 +65,112 @@
     </div>
     <!--新增表单-->
     <div id="user_add_data_div" class="hide">
-        <div class="layui-form" lay-filter="filter_add_data_form">
-            <form id="filter_add_data_form" method="post" enctype="application/x-www-form-urlencoded">
-                <div class="layui-form-item">
-                    <label class="layui-form-label">用户编号</label>
-                    <div class="layui-input-block">
-                        <input type="text" name="userId" autocomplete="off" lay-verify="required" lay-verType="tips"
-                               readonly
-                               class="layui-input layui-input-sm">
-                    </div>
+        <form method="post" class="layui-form" lay-filter="filter_add_data_form">
+            <div class="layui-form-item">
+                <label class="layui-form-label">工号<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="jobNumber" lay-verify="required" autocomplete="off" lay-verType="tips"
+                           class="layui-input layui-input-sm">
                 </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">工号</label>
-                    <div class="layui-input-block">
-                        <input type="text" name="jobNumber" lay-verify="required" autocomplete="off" lay-verType="tips"
-                               class="layui-input layui-input-sm">
-                    </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户名<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="userName" lay-verify="required" autocomplete="off" lay-verType="tips"
+                           class="layui-input layui-input-sm">
                 </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">用户名</label>
-                    <div class="layui-input-block">
-                        <input type="text" name="userName" lay-verify="required" autocomplete="off" lay-verType="tips"
-                               class="layui-input layui-input-sm">
-                    </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">手机号</label>
+                <div class="layui-input-block">
+                    <input type="tel" name="mobile" lay-verify="phone" autocomplete="off" lay-verType="tips"
+                           class="layui-input layui-input-sm">
                 </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">手机号</label>
-                    <div class="layui-input-block">
-                        <input type="tel" name="mobile" lay-verify="phone" autocomplete="off" lay-verType="tips"
-                               class="layui-input layui-input-sm">
-                    </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">邮箱</label>
+                <div class="layui-input-block">
+                    <input type="text" name="email" lay-verify="email" autocomplete="off" lay-verType="tips"
+                           class="layui-input layui-input-sm">
                 </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">邮箱</label>
-                    <div class="layui-input-block">
-                        <input type="text" name="email" lay-verify="email" autocomplete="off" lay-verType="tips"
-                               class="layui-input layui-input-sm">
-                    </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">身份证</label>
+                <div class="layui-input-block">
+                    <input type="text" name="idNo" lay-verify="identity" autocomplete="off"
+                           lay-verType="tips"
+                           class="layui-input layui-input-sm">
                 </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">身份证</label>
-                    <div class="layui-input-block">
-                        <input type="text" name="idNo" lay-verify="identity" autocomplete="off" lay-verType="tips"
-                               class="layui-input layui-input-sm">
-                    </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属机构<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" id="user_org_tree_select" name="orgName" autocomplete="off"
+                           lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="orgCode" autocomplete="off" readonly
+                           lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="orgPath" autocomplete="off" readonly
+                           lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="rootOrgCode" autocomplete="off" readonly
+                           lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">所属机构</label>
-                    <div class="layui-input-block">
-                        <input type="text" name="orgCode" lay-verify="required" autocomplete="off" readonly
-                               lay-verType="tips"
-                               class="layui-input layui-input-sm">
-                    </div>
-                </div>
-                <button class="layui-btn hide" lay-submit="" lay-filter="filter_add_data_form_btn">跳转式提交</button>
-            </form>
-        </div>
+            </div>
+            <button class="layui-btn hide" lay-submit="" lay-filter="filter_add_data_form"></button>
+        </form>
     </div>
     <!--修改表单-->
-    <div id="modify_data_div" class=" hide" class="hide">
-        <form id="modify_data_form" class="form-horizontal" method="post" enctype="application/x-www-form-urlencoded">
-
+    <div id="user_modify_data_div" class=" hide" class="hide">
+        <form method="post" class="layui-form" lay-filter="filter_modify_data_form">
+            <div class="layui-form-item">
+                <label class="layui-form-label">工号<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="jobNumber" lay-verify="required" autocomplete="off" lay-verType="tips"
+                           class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户名<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="userName" lay-verify="required" autocomplete="off" lay-verType="tips"
+                           class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">手机号</label>
+                <div class="layui-input-block">
+                    <input type="tel" name="mobile" lay-verify="phone" autocomplete="off" lay-verType="tips"
+                           class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">邮箱</label>
+                <div class="layui-input-block">
+                    <input type="text" name="email" lay-verify="email" autocomplete="off" lay-verType="tips"
+                           class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">身份证</label>
+                <div class="layui-input-block">
+                    <input type="text" name="idNo" lay-verify="identity" autocomplete="off"
+                           lay-verType="tips"
+                           class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属机构<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="orgName" autocomplete="off" readonly
+                           lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="orgCode" autocomplete="off" readonly
+                           lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="orgPath" autocomplete="off" readonly
+                           lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="rootOrgCode" autocomplete="off" readonly
+                           lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <button class="layui-btn hide" lay-submit="" lay-filter="filter_add_data_form"></button>
         </form>
     </div>
     <!--查看表单-->

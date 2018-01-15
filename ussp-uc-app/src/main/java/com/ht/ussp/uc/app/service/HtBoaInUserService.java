@@ -2,16 +2,21 @@ package com.ht.ussp.uc.app.service;
 
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.ReturnCodeEnum;
+import com.ht.ussp.uc.app.domain.HtBoaInLogin;
+import com.ht.ussp.uc.app.repository.HtBoaInLoginRepository;
 import com.ht.ussp.util.DtoUtil;
 import com.ht.ussp.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.repository.HtBoaInUserRepository;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +31,10 @@ import java.util.Map;
 public class HtBoaInUserService {
     @Autowired
     private HtBoaInUserRepository htBoaInUserRepository;
+    @Autowired
+    private HtBoaInLoginRepository htBoaInLoginRepository;
+    @Autowired
+    private EntityManager entityManager;
 
     public HtBoaInUser findByUserName(String userName) {
 
@@ -76,5 +85,20 @@ public class HtBoaInUserService {
         }
         result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
         return result;
+    }
+
+    /**
+     * 新增用户信息<br>
+     *
+     * @param user 用户信息
+     * @return 新的用户信息
+     * @author 谭荣巧
+     * @Date 2018/1/13 16:49
+     */
+    @Transactional()
+    public boolean saveUserInfoAndLoginInfo(HtBoaInUser user, HtBoaInLogin logininfo) {
+        htBoaInUserRepository.save(user);
+        htBoaInLoginRepository.save(logininfo);
+        return true;
     }
 }

@@ -27,12 +27,12 @@ public class UserVo {
 	// 最后修改时间
 	private Date lastModifiedDatetime;
 	// 手机号
-	private String mobile;	
+	private String mobile;
 	//系统编码
-	private String app;	
+	private String app;
 	//是否管理员  Y是  N不是
 	private String controller;
-	
+
 	public int getDelFlag() {
 		return this.delFlag;
 	}
@@ -137,5 +137,5 @@ public class UserVo {
 		this.failedCount = failedCount;
 	}
 
-	
+
 }

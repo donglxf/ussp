@@ -6,198 +6,198 @@ import java.util.Date;
 
 
 /**
- * 
-* @ClassName: HtBoaInUser
-* @Description: 用户表
-* @author wim qiuwenwu@hongte.info
-* @date 2018年1月5日 下午2:57:24
+ * @author wim qiuwenwu@hongte.info
+ * @ClassName: HtBoaInUser
+ * @Description: 用户表
+ * @date 2018年1月5日 下午2:57:24
  */
 @Entity
-@Table(name="HT_BOA_IN_USER")
-@NamedQuery(name="HtBoaInUser.findAll", query="SELECT h FROM HtBoaInUser h")
+@Table(name = "HT_BOA_IN_USER")
+@NamedQuery(name = "HtBoaInUser.findAll", query = "SELECT h FROM HtBoaInUser h")
 public class HtBoaInUser implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@Column(name = "ID", unique = true, nullable = false)
-	private Long id;
-	
-	@Column(name="JOB_NUMBER")
-	private String jobNumber;
+    @Id
+    @Column(name = "ID", unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
-	@Column(name="CREATE_OPERATOR")
-	private String createOperator;
+    @Column(name = "JOB_NUMBER")
+    private String jobNumber;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="CREATED_DATETIME")
-	private Date createdDatetime;
+    @Column(name = "CREATE_OPERATOR")
+    private String createOperator;
 
-	@Column(name="DEL_FLAG")
-	private int delFlag;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "CREATED_DATETIME", insertable = false, updatable = false)
+    private Date createdDatetime;
 
-	@Column(name="email")
-	private String email;
+    @Column(name = "DEL_FLAG")
+    private int delFlag;
 
-	@Column(name="ID_NO")
-	private String idNo;
+    @Column(name = "email")
+    private String email;
 
-	@Column(name="JPA_VERSION")
-	private int jpaVersion;
+    @Column(name = "ID_NO")
+    private String idNo;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="LAST_MODIFIED_DATETIME")
-	private Date lastModifiedDatetime;
+    @Column(name = "JPA_VERSION")
+    private int jpaVersion;
 
-	@Column(name="mobile")
-	private String mobile;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "LAST_MODIFIED_DATETIME", insertable = false, updatable = false)
+    private Date lastModifiedDatetime;
 
-	@Column(name="ORG_CODE")
-	private String orgCode;
+    @Column(name = "mobile")
+    private String mobile;
 
-	@Column(name="ORG_PATH")
-	private String orgPath;
+    @Column(name = "ORG_CODE")
+    private String orgCode;
 
-	@Column(name="ROOT_ORG_CODE")
-	private String rootOrgCode;
+    @Column(name = "ORG_PATH")
+    private String orgPath;
 
-	@Column(name="UPDATE_OPERATOR")
-	private String updateOperator;
+    @Column(name = "ROOT_ORG_CODE")
+    private String rootOrgCode;
 
-	@Column(name="USER_ID")
-	private String userId;
+    @Column(name = "UPDATE_OPERATOR")
+    private String updateOperator;
 
-	@Column(name="USER_NAME")
-	private String userName;
+    @Column(name = "USER_ID")
+    private String userId;
 
-	public HtBoaInUser() {
-	}
+    @Column(name = "USER_NAME")
+    private String userName;
 
-	public Long getId() {
-		return this.id;
-	}
-	
-	public String getJobNumber() {
-		return jobNumber;
-	}
+    public HtBoaInUser() {
+    }
 
-	public void setJobNumber(String jobNumber) {
-		this.jobNumber = jobNumber;
-	}
+    public Long getId() {
+        return this.id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public String getJobNumber() {
+        return jobNumber;
+    }
 
-	public String getCreateOperator() {
-		return this.createOperator;
-	}
+    public void setJobNumber(String jobNumber) {
+        this.jobNumber = jobNumber;
+    }
 
-	public void setCreateOperator(String createOperator) {
-		this.createOperator = createOperator;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public Date getCreatedDatetime() {
-		return this.createdDatetime;
-	}
+    public String getCreateOperator() {
+        return this.createOperator;
+    }
 
-	public void setCreatedDatetime(Date createdDatetime) {
-		this.createdDatetime = createdDatetime;
-	}
+    public void setCreateOperator(String createOperator) {
+        this.createOperator = createOperator;
+    }
 
-	public int getDelFlag() {
-		return this.delFlag;
-	}
+    public Date getCreatedDatetime() {
+        return this.createdDatetime;
+    }
 
-	public void setDelFlag(int delFlag) {
-		this.delFlag = delFlag;
-	}
+    public void setCreatedDatetime(Date createdDatetime) {
+        this.createdDatetime = createdDatetime;
+    }
 
-	public String getEmail() {
-		return this.email;
-	}
+    public int getDelFlag() {
+        return this.delFlag;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public void setDelFlag(int delFlag) {
+        this.delFlag = delFlag;
+    }
 
-	public String getIdNo() {
-		return this.idNo;
-	}
+    public String getEmail() {
+        return this.email;
+    }
 
-	public void setIdNo(String idNo) {
-		this.idNo = idNo;
-	}
+    public void setEmail(String email) {
+        this.email = "".equals(email) ? null : email;
+    }
 
-	public int getJpaVersion() {
-		return this.jpaVersion;
-	}
+    public String getIdNo() {
+        return this.idNo;
+    }
 
-	public void setJpaVersion(int jpaVersion) {
-		this.jpaVersion = jpaVersion;
-	}
+    public void setIdNo(String idNo) {
+        this.idNo = "".equals(idNo) ? null : idNo;
+    }
 
-	public Date getLastModifiedDatetime() {
-		return this.lastModifiedDatetime;
-	}
+    public int getJpaVersion() {
+        return this.jpaVersion;
+    }
 
-	public void setLastModifiedDatetime(Date lastModifiedDatetime) {
-		this.lastModifiedDatetime = lastModifiedDatetime;
-	}
+    public void setJpaVersion(int jpaVersion) {
+        this.jpaVersion = jpaVersion;
+    }
 
-	public String getMobile() {
-		return this.mobile;
-	}
+    public Date getLastModifiedDatetime() {
+        return this.lastModifiedDatetime;
+    }
 
-	public void setMobile(String mobile) {
-		this.mobile = mobile;
-	}
+    public void setLastModifiedDatetime(Date lastModifiedDatetime) {
+        this.lastModifiedDatetime = lastModifiedDatetime;
+    }
 
-	public String getOrgCode() {
-		return this.orgCode;
-	}
+    public String getMobile() {
+        return this.mobile;
+    }
 
-	public void setOrgCode(String orgCode) {
-		this.orgCode = orgCode;
-	}
+    public void setMobile(String mobile) {
+        this.mobile = "".equals(mobile) ? null : mobile;;
+    }
 
-	public String getOrgPath() {
-		return this.orgPath;
-	}
+    public String getOrgCode() {
+        return this.orgCode;
+    }
 
-	public void setOrgPath(String orgPath) {
-		this.orgPath = orgPath;
-	}
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode;
+    }
 
-	public String getRootOrgCode() {
-		return this.rootOrgCode;
-	}
+    public String getOrgPath() {
+        return this.orgPath;
+    }
 
-	public void setRootOrgCode(String rootOrgCode) {
-		this.rootOrgCode = rootOrgCode;
-	}
+    public void setOrgPath(String orgPath) {
+        this.orgPath = orgPath;
+    }
 
-	public String getUpdateOperator() {
-		return this.updateOperator;
-	}
+    public String getRootOrgCode() {
+        return this.rootOrgCode;
+    }
 
-	public void setUpdateOperator(String updateOperator) {
-		this.updateOperator = updateOperator;
-	}
+    public void setRootOrgCode(String rootOrgCode) {
+        this.rootOrgCode = rootOrgCode;
+    }
 
-	public String getUserId() {
-		return this.userId;
-	}
+    public String getUpdateOperator() {
+        return this.updateOperator;
+    }
 
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
+    public void setUpdateOperator(String updateOperator) {
+        this.updateOperator = updateOperator;
+    }
 
-	public String getUserName() {
-		return this.userName;
-	}
+    public String getUserId() {
+        return this.userId;
+    }
 
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getUserName() {
+        return this.userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
 }

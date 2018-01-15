@@ -141,7 +141,7 @@ public class DtoUtil {
                 for (Field e_field : e_fields) { // 遍历所有属性
                     e_field.setAccessible(true);
                     String e_name = e_field.getName(); // 获取属性的名字
-                    if (e_name != null && e_name.equals(m_name)) {
+                    if (e_name != null && !"serialVersionUID".equals(e_name) && e_name.equals(m_name)) {
                         try {
                             if (updatable) {
                                 // 把dto的字符属性值赋给entity
@@ -239,7 +239,7 @@ public class DtoUtil {
                 for (Field e_field : e_fields) { // 遍历所有属性
                     e_field.setAccessible(true);
                     String e_name = e_field.getName(); // 获取属性的名字
-                    if (e_name != null && e_name.equals(m_name)) {
+                    if (e_name != null && !"serialVersionUID".equals(e_field) && e_name.equals(m_name)) {
                         Object obj = null;
                         try {
                             // 获取entity的字段属性值
