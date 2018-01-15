@@ -46,6 +46,7 @@ public class HtBoaInUser implements Serializable {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="LAST_MODIFIED_DATETIME")
+//	@Column(name="LAST_MODIFIED_DATETIME",columnDefinition="timestamp default current_timestamp")
 	private Date lastModifiedDatetime;
 
 	@Column(name="mobile")

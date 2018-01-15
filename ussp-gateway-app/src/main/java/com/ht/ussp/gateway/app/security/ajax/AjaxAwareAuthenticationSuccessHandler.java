@@ -1,7 +1,6 @@
 package com.ht.ussp.gateway.app.security.ajax;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.ussp.gateway.app.jwt.JwtToken;
 import com.ht.ussp.gateway.app.jwt.JwtTokenFactory;
-import com.ht.ussp.gateway.app.vo.UserVo;
 
 /**
  * 
