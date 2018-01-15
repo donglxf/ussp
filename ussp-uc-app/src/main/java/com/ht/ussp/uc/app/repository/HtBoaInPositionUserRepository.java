@@ -19,4 +19,6 @@ public interface HtBoaInPositionUserRepository extends JpaRepository<HtBoaInPosi
 	
 	@Query(value="select POSITION_CODE from HT_BOA_IN_POSITION_USER where USER_ID= :userId",nativeQuery=true)
 	public List<String> queryPositionCodes(@Param("userId") String userId);
+	
+	 public HtBoaInPositionUser findById(Long id);
 }

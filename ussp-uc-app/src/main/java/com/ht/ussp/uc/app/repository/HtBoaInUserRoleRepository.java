@@ -26,4 +26,6 @@ public interface HtBoaInUserRoleRepository extends JpaRepository<HtBoaInUserRole
 	 */
 	@Query(value="select ROLE_CODE from HT_BOA_IN_USER_ROLE where USER_ID= :userId",nativeQuery=true)
 	public List<String> queryRoleCodes(@Param("userId") String userId);
+	
+	 public HtBoaInUserRole findById(Long id);
 }

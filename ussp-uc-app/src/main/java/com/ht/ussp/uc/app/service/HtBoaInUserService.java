@@ -1,17 +1,42 @@
 package com.ht.ussp.uc.app.service;
 
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.criteria.Predicate;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.ReturnCodeEnum;
+import com.ht.ussp.uc.app.domain.HtBoaInUser;
+import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
+import com.ht.ussp.uc.app.repository.HtBoaInUserRepository;
+import com.ht.ussp.util.DtoUtil;
+import com.ht.ussp.util.StringUtil;
+import com.ht.ussp.core.PageResult;
+import com.ht.ussp.core.ReturnCodeEnum;
+import com.ht.ussp.uc.app.domain.HtBoaInLogin;
+import com.ht.ussp.uc.app.repository.HtBoaInLoginRepository;
 import com.ht.ussp.util.DtoUtil;
 import com.ht.ussp.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.repository.HtBoaInUserRepository;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +51,10 @@ import java.util.Map;
 public class HtBoaInUserService {
     @Autowired
     private HtBoaInUserRepository htBoaInUserRepository;
+    @Autowired
+    private HtBoaInLoginRepository htBoaInLoginRepository;
+    @Autowired
+    private EntityManager entityManager;
 
     public HtBoaInUser findByUserName(String userName) {
 
@@ -76,5 +105,62 @@ public class HtBoaInUserService {
         }
         result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
         return result;
+    }
+    
+    /**
+     * 新增用户信息<br>
+     *
+     * @param user 用户信息
+     * @return 新的用户信息
+     * @author 谭荣巧
+     * @Date 2018/1/13 16:49
+     */
+    @Transactional()
+    public boolean saveUserInfoAndLoginInfo(HtBoaInUser user, HtBoaInLogin logininfo) {
+        htBoaInUserRepository.save(user);
+        htBoaInLoginRepository.save(logininfo);
+        return true;
+    }
+    
+    public List<HtBoaInUser> findAll(HtBoaInUser u) {
+        ExampleMatcher matcher = ExampleMatcher.matching();
+        Example<HtBoaInUser> ex = Example.of(u, matcher);
+        return this.htBoaInUserRepository.findAll(ex);
+    }
+
+    public List<SelfBoaInUserInfo> findAll(SelfBoaInUserInfo u) {
+        List<SelfBoaInUserInfo> list = this.htBoaInUserRepository
+                .listSelfUserInfo(u.getUserId());
+        for (SelfBoaInUserInfo s : list) {
+            List<Map<String, Object>> roles = this.htBoaInUserRepository
+                    .listSelfUserInfo4Role(s.getUserId());
+            for (Map<String, Object> o : roles) {
+                s.getRoleCodes()
+                        .add(null != o.get("0") ? o.get("0").toString() : null);
+                s.getRoleNames()
+                        .add(null != o.get("1") ? o.get("1").toString() : null);
+                s.getRoleNameChs()
+                        .add(null != o.get("2") ? o.get("2").toString() : null);
+            }
+            List<Map<String, Object>> positions = this.htBoaInUserRepository
+                    .listSelfUserInfo4Position(s.getUserId());
+            for (Map<String, Object> o : positions) {
+                s.getPositionCodes()
+                        .add(null != o.get("0") ? o.get("0").toString() : null);
+                s.getPositionNames()
+                        .add(null != o.get("1") ? o.get("1").toString() : null);
+                s.getPositionNameChs()
+                        .add(null != o.get("2") ? o.get("2").toString() : null);
+            }
+        }
+        return list;
+    }
+
+    public HtBoaInUser add(HtBoaInUser u) {
+        return this.htBoaInUserRepository.saveAndFlush(u);
+    }
+
+    public HtBoaInUser update(HtBoaInUser u) {
+        return this.htBoaInUserRepository.save(u);
     }
 }
