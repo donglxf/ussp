@@ -3,6 +3,8 @@ layui.use(['form', 'ztree', 'table'], function () {
         , form = layui.form
         , table = layui.table
         , addDialog = 0 //新增弹出框的ID
+        , viewDialog = 0 //查询弹出框的ID
+        , editDialog = 0 //修改弹出框的ID
         , orgTree //组织机构树控件
         , active = {
         add: function () { //弹出用户新增弹出框
@@ -15,7 +17,6 @@ layui.use(['form', 'ztree', 'table'], function () {
             addDialog = layer.open({
                 type: 1,
                 area: ['400px', '400px'],
-                maxmin: true,
                 shadeClose: true,
                 title: "新增用户",
                 content: $("#user_add_data_div").html(),
@@ -48,17 +49,7 @@ layui.use(['form', 'ztree', 'table'], function () {
                             success: function (message) {
                                 layer.close(addDialog);
                                 if (message.returnCode == '0000') {
-                                    table.reload('user_datatable', {
-                                        page: {
-                                            curr: 1 //重新从第 1 页开始
-                                        }
-                                        , where: {
-                                            //keyWord: $("#user_search_keyword").val(),
-                                            query: {
-                                                orgCode: nodes[0]["orgCode"]
-                                            }
-                                        }
-                                    });
+                                    refreshTable();
                                     layer.alert("用户新增成功。");
                                 }
                             },
@@ -87,6 +78,19 @@ layui.use(['form', 'ztree', 'table'], function () {
             });
         }
     };
+    var refreshTable = function () {
+        table.reload('user_datatable', {
+            page: {
+                curr: 1 //重新从第 1 页开始
+            }
+            , where: {
+                //keyWord: $("#user_search_keyword").val(),
+                query: {
+                    orgCode: orgTree.getSelectedNodes()[0]["orgCode"]
+                }
+            }
+        });
+    }
     //渲染组织机构树
     orgTree = $.fn.zTree.init($('#user_org_ztree_left'), {
             async: {
@@ -180,30 +184,58 @@ layui.use(['form', 'ztree', 'table'], function () {
     table.on('tool(filter_user_datatable)', function (obj) {
             var data = obj.data;
             if (obj.event === 'detail') {
-                layer.msg('ID：' + data.id + ' 的查看操作');
-            } else if (obj.event === 'del') {
-                layer.confirm('真的删除行么', function (index) {
-                    obj.del();
-                    layer.close(index);
-                });
-            } else if (obj.event === 'edit') {
-                layer.close(addDialog);
-                $.ajax({
-                    type: "POST",
-                    url: "http://localhost:9999/member/add",
-                    data: JSON.stringify(data.field),
-                    contentType: "application/json; charset=utf-8",
-                    success: function (message) {
-                        addDialog = layer.open({
+                $.post("http://localhost:9999/member/view/" + data.userId, null, function (result) {
+                    if (result.returnCode == "0000") {
+                        viewDialog = layer.open({
                             type: 1,
-                            area: ['400px', '400px'],
-                            maxmin: true,
+                            area: ['680px', '360px'],
                             shadeClose: true,
                             title: "修改用户",
-                            content: $("#user_add_data_div").html(),
+                            content: $("#user_view_data_div").html(),
+                            btn: ['取消'],
+                            btn2: function () {
+                                layer.closeAll('tips');
+                            },
+                            success: function (layero) {
+                                var status = result.data.status;
+                                result.data.status = status === "0" ? "正常" : (status === "1" ? "禁用" : (status === "4" ? "冻结" : (status === "1" ? "锁定" : result.data.status)));
+                                $.each(result.data, function (name, value) {
+                                    var $input = $("input[name=" + name + "]", layero);
+                                    if ($input && $input.length == 1) {
+                                        $input.val(value);
+                                    }
+                                });
+                            }
+                        })
+                    } else {
+                        layer.msg(result.codeDesc);
+                    }
+                });
+            } else if (obj.event === 'del') {
+                layer.confirm('是否删除用户' + data.userName + "？", function (index) {
+                    $.post("http://localhost:9999/member/delete/" + data.userId, null, function (result) {
+                        if (result.returnCode == "0000") {
+                            refreshTable();
+                            layer.close(index);
+                            layer.msg("删除用户成功。");
+                        } else {
+                            layer.msg(result.codeDesc);
+                        }
+                    });
+                });
+            } else if (obj.event === 'edit') {
+                layer.close(editDialog);
+                $.post("http://localhost:9999/member/view/" + data.userId, null, function (result) {
+                    if (result["returnCode"] == "0000") {
+                        editDialog = layer.open({
+                            type: 1,
+                            area: ['400px', '380px'],
+                            shadeClose: true,
+                            title: "修改用户",
+                            content: $("#user_modify_data_div").html(),
                             btn: ['保存', '取消'],
                             yes: function (index, layero) {
-                                var $submitBtn = $("button[lay-filter=filter_add_data_form]", layero);
+                                var $submitBtn = $("button[lay-filter=user_filter_modify_data_form]", layero);
                                 if ($submitBtn) {
                                     $submitBtn.click();
                                 } else {
@@ -214,38 +246,30 @@ layui.use(['form', 'ztree', 'table'], function () {
                                 layer.closeAll('tips');
                             },
                             success: function (layero, index) {
-                                //填充选中的组织机构
-                                $("input[name=orgName]", layero).val(nodes[0]["orgNameCn"]);
-                                $("input[name=orgCode]", layero).val(nodes[0]["orgCode"]);
-                                $("input[name=orgPath]", layero).val(nodes[0]["orgPath"]);
-                                $("input[name=rootOrgCode]", layero).val(nodes[0]["rootOrgCode"]);
-                                form.render(null, "filter_add_data_form");
-                                form.on('submit(filter_add_data_form)', function (data) {
-                                    console.info(data);
+                                //表单数据填充
+                                $.each(result.data, function (name, value) {
+                                    var $input = $("input[name=" + name + "]", layero);
+                                    if ($input && $input.length == 1) {
+                                        $input.val(value);
+                                    }
+                                });
+                                form.render(null, "user_filter_modify_data_form");
+                                form.on('submit(user_filter_modify_data_form)', function (data) {
                                     $.ajax({
                                         type: "POST",
-                                        url: "http://localhost:9999/member/add",
+                                        url: "http://localhost:9999/member/update",
                                         data: JSON.stringify(data.field),
                                         contentType: "application/json; charset=utf-8",
-                                        success: function (message) {
-                                            layer.close(addDialog);
-                                            if (message.returnCode == '0000') {
-                                                table.reload('user_datatable', {
-                                                    page: {
-                                                        curr: 1 //重新从第 1 页开始
-                                                    }
-                                                    , where: {
-                                                        //keyWord: $("#user_search_keyword").val(),
-                                                        query: {
-                                                            orgCode: nodes[0]["orgCode"]
-                                                        }
-                                                    }
-                                                });
-                                                layer.alert("用户新增成功。");
+                                        success: function (result2) {
+                                            layer.close(index);
+                                            if (result2["returnCode"] == '0000') {
+                                                refreshTable();
+                                                layer.alert("用户修改成功。");
                                             }
                                         },
                                         error: function (message) {
                                             layer.msg("用户新增发生异常，请联系管理员。");
+                                            layer.close(index);
                                             console.error(message);
                                         }
                                     });
@@ -253,10 +277,8 @@ layui.use(['form', 'ztree', 'table'], function () {
                                 });
                             }
                         })
-                    },
-                    error: function (message) {
-                        layer.msg("用户新增发生异常，请联系管理员。");
-                        console.error(message);
+                    } else {
+                        layer.msg(result.codeDesc);
                     }
                 });
             }

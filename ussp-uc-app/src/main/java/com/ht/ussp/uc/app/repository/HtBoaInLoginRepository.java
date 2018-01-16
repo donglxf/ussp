@@ -20,6 +20,5 @@ public interface HtBoaInLoginRepository extends JpaRepository <HtBoaInLogin, Lon
    * @return HtBoaInUser
    * @throws
    */
-	public HtBoaInLogin findByUserId(String userId);
-	
+	 HtBoaInLogin findByUserId(String userId);
 }

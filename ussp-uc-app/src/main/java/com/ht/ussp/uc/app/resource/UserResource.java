@@ -173,7 +173,7 @@ public class UserResource {
      * @author 谭荣巧
      * @Date 2018/1/14 12:08
      */
-    @RequestMapping(value = "/add")
+    @PostMapping(value = "/add")
     public Result addAsync(@RequestBody HtBoaInUser user) {
         if (user != null) {
             String userId = UUID.randomUUID().toString().replace("-", "");
@@ -189,9 +189,40 @@ public class UserResource {
             loginInfo.setStatus("0");
             loginInfo.setPassword(EncryptUtil.passwordEncrypt("123456"));
             loginInfo.setFailedCount(0);
+            loginInfo.setRootOrgCode(user.getRootOrgCode());
             loginInfo.setDelFlag(0);
             boolean isAdd = htBoaInUserService.saveUserInfoAndLoginInfo(user, loginInfo);
             if (isAdd) {
+                return Result.buildSuccess();
+            }
+        }
+        return Result.buildFail();
+    }
+
+    @PostMapping("/delete/{userId}")
+    public Result delAsync(@PathVariable String userId) {
+        if (userId != null && !"".equals(userId.trim())) {
+            boolean isDel = htBoaInUserService.setDelFlagByUserId(userId);
+            if (isDel) {
+                return Result.buildSuccess();
+            }
+        }
+        return Result.buildFail();
+    }
+
+    @PostMapping("/view/{userId}")
+    public Result viewAsync(@PathVariable String userId) {
+        if (userId != null && !"".equals(userId.trim())) {
+            return Result.buildSuccess(htBoaInUserService.getUserByUserId(userId));
+        }
+        return Result.buildFail();
+    }
+
+    @PostMapping("/update")
+    public Result updateAsync(@RequestBody HtBoaInUser user) {
+        if (user != null) {
+            boolean isUpdate = htBoaInUserService.updateUserByUserId(user);
+            if (isUpdate) {
                 return Result.buildSuccess();
             }
         }

@@ -124,7 +124,7 @@ public class HtBoaInUser implements Serializable {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = "".equals(email) ? null : email;
     }
 
     public String getIdNo() {
@@ -132,7 +132,7 @@ public class HtBoaInUser implements Serializable {
     }
 
     public void setIdNo(String idNo) {
-        this.idNo = idNo;
+        this.idNo = "".equals(idNo) ? null : idNo;
     }
 
     public int getJpaVersion() {
@@ -156,7 +156,7 @@ public class HtBoaInUser implements Serializable {
     }
 
     public void setMobile(String mobile) {
-        this.mobile = mobile;
+        this.mobile = "".equals(mobile) ? null : mobile;
     }
 
     public String getOrgCode() {

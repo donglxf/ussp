@@ -1,44 +1,21 @@
 package com.ht.ussp.uc.app.service;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.criteria.Predicate;
-
+import com.ht.ussp.core.PageResult;
+import com.ht.ussp.core.ReturnCodeEnum;
+import com.ht.ussp.uc.app.domain.HtBoaInLogin;
+import com.ht.ussp.uc.app.domain.HtBoaInUser;
+import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
+import com.ht.ussp.uc.app.repository.HtBoaInLoginRepository;
+import com.ht.ussp.uc.app.repository.HtBoaInUserRepository;
+import com.ht.ussp.uc.app.vo.UserMessageVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
-import com.ht.ussp.core.PageResult;
-import com.ht.ussp.core.ReturnCodeEnum;
-import com.ht.ussp.uc.app.domain.HtBoaInUser;
-import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
-import com.ht.ussp.uc.app.repository.HtBoaInUserRepository;
-import com.ht.ussp.util.DtoUtil;
-import com.ht.ussp.util.StringUtil;
-import com.ht.ussp.core.PageResult;
-import com.ht.ussp.core.ReturnCodeEnum;
-import com.ht.ussp.uc.app.domain.HtBoaInLogin;
-import com.ht.ussp.uc.app.repository.HtBoaInLoginRepository;
-import com.ht.ussp.uc.app.vo.UserMessageVo;
-import com.ht.ussp.util.DtoUtil;
-import com.ht.ussp.util.StringUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.domain.*;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
-
-import com.ht.ussp.uc.app.domain.HtBoaInUser;
-import com.ht.ussp.uc.app.repository.HtBoaInUserRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.*;
 import java.util.List;
 import java.util.Map;
 
@@ -108,7 +85,7 @@ public class HtBoaInUserService {
         result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
         return result;
     }
-    
+
     /**
      * 新增用户信息<br>
      *
@@ -117,13 +94,13 @@ public class HtBoaInUserService {
      * @author 谭荣巧
      * @Date 2018/1/13 16:49
      */
-    @Transactional()
+    @Transactional
     public boolean saveUserInfoAndLoginInfo(HtBoaInUser user, HtBoaInLogin logininfo) {
         htBoaInUserRepository.save(user);
         htBoaInLoginRepository.save(logininfo);
         return true;
     }
-    
+
     public List<HtBoaInUser> findAll(HtBoaInUser u) {
         ExampleMatcher matcher = ExampleMatcher.matching();
         Example<HtBoaInUser> ex = Example.of(u, matcher);
@@ -166,4 +143,17 @@ public class HtBoaInUserService {
         return this.htBoaInUserRepository.save(u);
     }
 
+    @Transactional
+    public boolean setDelFlagByUserId(String userId) {
+        return htBoaInUserRepository.setDelFlagByUserId(userId) == 1;
+    }
+
+    public UserMessageVo getUserByUserId(String userId) {
+        return htBoaInUserRepository.queryUserByUserId(userId);
+    }
+
+    @Transactional
+    public boolean updateUserByUserId(HtBoaInUser user) {
+        return htBoaInUserRepository.updateUserByUserId(user.getUserId(), user.getUserName(), user.getJobNumber(), user.getMobile(), user.getIdNo(), user.getEmail(), user.getUpdateOperator()) == 1;
+    }
 }
