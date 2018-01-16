@@ -61,6 +61,19 @@
                 <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
                 <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
             </script>
+            <script type="text/html" id="user_status_laytpl">
+                {{#  if(d.status === '0'){ }}
+                正常
+                {{#  } else if(d.status === '1') { }}
+                禁用
+                {{#  } else if(d.status === '4') { }}
+                冻结
+                {{#  } else if(d.status === '5') { }}
+                冻结
+                {{#  } else { }}
+                {{ d.status }}
+                {{#  } }}
+            </script>
         </div>
     </div>
     <!--新增表单-->

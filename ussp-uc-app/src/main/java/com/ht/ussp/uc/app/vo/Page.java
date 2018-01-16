@@ -29,6 +29,7 @@ public class Page {
     int page;
     int limit;
     String keyWord;
+    String orgCode;
     Map<String, String> query;
 
     public int getPage() {

@@ -9,10 +9,13 @@
  */
 package com.ht.ussp.uc.app.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Date;
 
 /**
@@ -25,9 +28,9 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserMessageVo {
+public class UserMessageVo implements Serializable {
     //主键
-    private String id;
+    private long id;
     // 用户ID
     private String userId;
     // 工号
@@ -37,7 +40,7 @@ public class UserMessageVo {
     // 机构编码
     private String orgCode;
     // 机构名称
-    private String orgCodeName;
+    private String orgName;
     // 手机号
     private String mobile;
     // 邮箱
@@ -49,10 +52,12 @@ public class UserMessageVo {
     //创建人
     private String createOperator;
     //创建时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date createdDatetime;
     //修改人
     private String updateOperator;
     // 最后修改时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date lastModifiedDatetime;
     // 用户状态 0正常 1禁用 2密码初始化 4冻结 5锁定
     private String status;
@@ -62,4 +67,6 @@ public class UserMessageVo {
     private Date pwdExpDate;
     //生效时间
     private Date effectiveDate;
+
+
 }

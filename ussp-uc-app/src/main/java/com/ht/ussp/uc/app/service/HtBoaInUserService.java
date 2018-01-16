@@ -4,6 +4,7 @@ import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.repository.HtBoaInLoginRepository;
+import com.ht.ussp.uc.app.vo.UserMessageVo;
 import com.ht.ussp.util.DtoUtil;
 import com.ht.ussp.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +34,6 @@ public class HtBoaInUserService {
     private HtBoaInUserRepository htBoaInUserRepository;
     @Autowired
     private HtBoaInLoginRepository htBoaInLoginRepository;
-    @Autowired
-    private EntityManager entityManager;
 
     public HtBoaInUser findByUserName(String userName) {
 
@@ -51,35 +50,38 @@ public class HtBoaInUserService {
      * @author 谭荣巧
      * @Date 2018/1/12 8:58
      */
-    public PageResult<HtBoaInUser> getUserListPage(PageRequest pageRequest, String keyWord, Map<String, String> query) {
+    public PageResult<List<UserMessageVo>> getUserListPage(PageRequest pageRequest, String orgCode, String keyWord, Map<String, String> query) {
         PageResult result = new PageResult();
-        Page<HtBoaInUser> pageData = null;
-        if (query != null && query.size() > 0 && query.get("orgCode") != null) {
-            if (!StringUtil.isEmpty(keyWord)) {
-                Specification<HtBoaInUser> specification = (root, query1, cb) -> {
-                    Predicate p1 = cb.like(root.get("jobNumber").as(String.class), "%" + keyWord + "%");
-                    Predicate p2 = cb.like(root.get("userName").as(String.class), "%" + keyWord + "%");
-                    Predicate p3 = cb.like(root.get("mobile").as(String.class), "%" + keyWord + "%");
-                    Predicate p4 = cb.equal(root.get("orgCode").as(String.class), query.get("orgCode"));
-                    //把Predicate应用到CriteriaQuery中去,因为还可以给CriteriaQuery添加其他的功能，比如排序、分组啥的
-                    query1.where(cb.and(cb.or(p1, p2, p3), p4));
-                    return query1.getRestriction();
-                };
-                pageData = htBoaInUserRepository.findAll(specification, pageRequest);
-            } else {//高级查询
-                //创建查询条件数据对象
-                HtBoaInUser customer = DtoUtil.mapToEntity(query, new HtBoaInUser());
-                //创建匹配器，即如何使用查询条件
-                ExampleMatcher matcher = ExampleMatcher.matching() //构建对象
-                        // 忽略 id 和 createTime 字段。
-                        .withIgnorePaths("id", "createdDatetime", "orgPath", "jpaVersion")
-                        // 忽略为空字段。
-                        .withIgnoreNullValues();
-                //创建实例
-                Example<HtBoaInUser> ex = Example.of(customer, matcher);
-                pageData = htBoaInUserRepository.findAll(ex, pageRequest);
-            }
-        }
+        Page<UserMessageVo> pageData = htBoaInUserRepository.queryUserPage(orgCode, keyWord, pageRequest);
+//        Page<HtBoaInUser> pageData = null;
+//        if (query != null && query.size() > 0 && query.get("orgCode") != null) {
+//            if (!StringUtil.isEmpty(keyWord)) {
+//                Specification<HtBoaInUser> specification = (root, query1, cb) -> {
+//                    Predicate p1 = cb.like(root.get("jobNumber").as(String.class), "%" + keyWord + "%");
+//                    Predicate p2 = cb.like(root.get("userName").as(String.class), "%" + keyWord + "%");
+//                    Predicate p3 = cb.like(root.get("mobile").as(String.class), "%" + keyWord + "%");
+//                    Predicate p4 = cb.equal(root.get("orgCode").as(String.class), query.get("orgCode"));
+////                    Join<HtBoaInUser, HtBoaInLogin> join = root.join("htBoaInLogin", JoinType.LEFT);
+////                    Predicate p5 = cb.equal(join.get("userId").as(String.class), root.get("userId").as(String.class));
+//                    //把Predicate应用到CriteriaQuery中去,因为还可以给CriteriaQuery添加其他的功能，比如排序、分组啥的
+//                    query1.where(cb.and(cb.or(p1, p2, p3), p4));
+//                    return query1.getRestriction();
+//                };
+//                pageData = htBoaInUserRepository.findAll(specification, pageRequest);
+//            } else {//高级查询
+//                //创建查询条件数据对象
+//                HtBoaInUser customer = DtoUtil.mapToEntity(query, new HtBoaInUser());
+//                //创建匹配器，即如何使用查询条件
+//                ExampleMatcher matcher = ExampleMatcher.matching() //构建对象
+//                        // 忽略 id 和 createTime 字段。
+//                        .withIgnorePaths("id", "createdDatetime", "orgPath", "jpaVersion")
+//                        // 忽略为空字段。
+//                        .withIgnoreNullValues();
+//                //创建实例
+//                Example<HtBoaInUser> ex = Example.of(customer, matcher);
+//                pageData = htBoaInUserRepository.findAll(ex, pageRequest);
+//            }
+//        }
         if (pageData != null) {
             result.count(pageData.getTotalElements()).data(pageData.getContent());
         }

@@ -161,10 +161,8 @@ public class UserResource {
      */
     @ApiOperation(value = "用户信息分页查询")
     @PostMapping(value = "/loadListByPage")
-    public PageResult<HtBoaInUser> loadListByPage(Page page) {
-        // PageResult<UserMessageVo> umv = new UserMessageVo();
-        PageResult<HtBoaInUser> userList = htBoaInUserService.getUserListPage(new PageRequest(page.getPage(), page.getLimit()), page.getKeyWord(), page.getQuery());
-        return userList;
+    public PageResult<List<UserMessageVo>> loadListByPage(Page page) {
+        return htBoaInUserService.getUserListPage(new PageRequest(page.getPage(), page.getLimit()), page.getOrgCode(), page.getKeyWord(), page.getQuery());
     }
 
     /**
