@@ -178,12 +178,14 @@ public class UserResource {
         if (user != null) {
             String userId = UUID.randomUUID().toString().replace("-", "");
             user.setUserId(userId);
+            //TODO 需要获取登录信息，设置创建人，修改人
             user.setCreateOperator("10003");
             user.setUpdateOperator("10003");
             user.setDelFlag(0);
             HtBoaInLogin loginInfo = new HtBoaInLogin();
             loginInfo.setLoginId(UUID.randomUUID().toString().replace("-", ""));
             loginInfo.setUserId(userId);
+            //TODO 需要获取登录信息，设置创建人，修改人
             loginInfo.setCreateOperator("10003");
             loginInfo.setUpdateOperator("10003");
             loginInfo.setStatus("0");
@@ -221,6 +223,8 @@ public class UserResource {
     @PostMapping("/update")
     public Result updateAsync(@RequestBody HtBoaInUser user) {
         if (user != null) {
+            //TODO 需要获取登录信息，设置修改人
+            user.setUpdateOperator("测试人");
             boolean isUpdate = htBoaInUserService.updateUserByUserId(user);
             if (isUpdate) {
                 return Result.buildSuccess();

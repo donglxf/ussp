@@ -40,22 +40,21 @@ layui.use(['form', 'ztree', 'table'], function () {
                     $("input[name=rootOrgCode]", layero).val(nodes[0]["rootOrgCode"]);
                     form.render(null, "filter_add_data_form");
                     form.on('submit(filter_add_data_form)', function (data) {
-                        console.info(data);
                         $.ajax({
                             type: "POST",
                             url: "http://localhost:9999/member/add",
                             data: JSON.stringify(data.field),
                             contentType: "application/json; charset=utf-8",
-                            success: function (message) {
-                                layer.close(addDialog);
-                                if (message.returnCode == '0000') {
+                            success: function (result) {
+                                layer.close(index);
+                                if (result["returnCode"] == '0000') {
                                     refreshTable();
                                     layer.alert("用户新增成功。");
                                 }
                             },
-                            error: function (message) {
+                            error: function (result) {
                                 layer.msg("用户新增发生异常，请联系管理员。");
-                                console.error(message);
+                                console.error(result);
                             }
                         });
                         return false;
@@ -65,31 +64,25 @@ layui.use(['form', 'ztree', 'table'], function () {
         },
         search: function () {
             //执行重载
+            refreshTable($("#user_search_keyword").val());
+        }
+    };
+    var refreshTable = function (keyword) {
+        if (!keyword) {
+            keyword = null;
+        }
+        var selectNodes = orgTree.getSelectedNodes();
+        if (selectNodes && selectNodes.length == 1) {
             table.reload('user_datatable', {
                 page: {
                     curr: 1 //重新从第 1 页开始
                 }
                 , where: {
-                    keyWord: $("#user_search_keyword").val()
-                    , query: {
-                        orgCode: "DEV1"
-                    }
+                    keyWord: keyword,
+                    orgCode: selectNodes[0]["orgCode"]
                 }
             });
         }
-    };
-    var refreshTable = function () {
-        table.reload('user_datatable', {
-            page: {
-                curr: 1 //重新从第 1 页开始
-            }
-            , where: {
-                //keyWord: $("#user_search_keyword").val(),
-                query: {
-                    orgCode: orgTree.getSelectedNodes()[0]["orgCode"]
-                }
-            }
-        });
     }
     //渲染组织机构树
     orgTree = $.fn.zTree.init($('#user_org_ztree_left'), {
@@ -116,19 +109,11 @@ layui.use(['form', 'ztree', 'table'], function () {
                 }
             }
             , callback: {
-                onClick: function (event, treeId, treeNode, clickFlag) {
+                onClick: function (event, treeId, treeNode) {
                     //执行重载
-                    table.reload('user_datatable', {
-                        page: {
-                            curr: 1 //重新从第 1 页开始
-                        }
-                        , where: {
-                            //keyWord: $("#user_search_keyword").val(),
-                            orgCode: treeNode["orgCode"]
-                        }
-                    });
+                    refreshTable();
                 },
-                onAsyncSuccess: function (event, treeId, treeNode, msgString) {
+                onAsyncSuccess: function (event, treeId, treeNode) {
                     var node = orgTree.getNodeByParam("level ", "0");
                     console.info(treeNode, node)
                     if (node) {
@@ -185,7 +170,7 @@ layui.use(['form', 'ztree', 'table'], function () {
             var data = obj.data;
             if (obj.event === 'detail') {
                 $.post("http://localhost:9999/member/view/" + data.userId, null, function (result) {
-                    if (result.returnCode == "0000") {
+                    if (result["returnCode"] == "0000") {
                         viewDialog = layer.open({
                             type: 1,
                             area: ['680px', '360px'],
@@ -214,7 +199,7 @@ layui.use(['form', 'ztree', 'table'], function () {
             } else if (obj.event === 'del') {
                 layer.confirm('是否删除用户' + data.userName + "？", function (index) {
                     $.post("http://localhost:9999/member/delete/" + data.userId, null, function (result) {
-                        if (result.returnCode == "0000") {
+                        if (result["returnCode"] == "0000") {
                             refreshTable();
                             layer.close(index);
                             layer.msg("删除用户成功。");
