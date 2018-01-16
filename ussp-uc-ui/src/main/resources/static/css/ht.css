@@ -1,4 +1,5 @@
 .layui-fluid {
+    background: white;
     padding: 15px;
 }
 
@@ -7,6 +8,7 @@
     height: 30px;
     line-height: 30px;
 }
+
 .layui-input-lg {
     height: 46px;
     line-height: 46px;
@@ -21,10 +23,12 @@
 .layui-nav-child dd {
     line-height: 36px;
 }
-a,a:hover {
+
+a, a:hover {
     text-decoration: none !important;
 }
-.layui-form .layui-form-label{
+
+.layui-form .layui-form-label {
     width: 110px;
     padding: 0px 9px 0px 0px;
     text-align: right;
@@ -34,22 +38,44 @@ a,a:hover {
 }
 
 /*表单标签必填*号样式*/
-.layui-form .layui-form-label b{
+.layui-form .layui-form-label b {
     position: absolute;
     color: red;
 }
 
-.layui-form .layui-input-block{
+.layui-form .layui-input-block {
     min-height: 30px;
 }
+
 /*样式优化*/
-.layui-form-item{
+.layui-form-item {
     margin-bottom: 10px;
 }
-.layui-form-item .layui-inline{
+
+.layui-form-item .layui-inline {
     margin-bottom: 0px;
 }
+
 /*弹出框样式*/
-.layui-layer-content{
+.layui-layer-content {
     padding: 10px;
+}
+
+/*功能页面内部tab*/
+.view_tab {
+    margin: 0 -15px
+}
+
+.view_tab .layui-tab-title {
+    left: auto;
+    height: 30px;
+    width: 100%;
+}
+
+.view_tab .layui-tab-title li {
+    line-height: 30px;
+}
+
+.view_tab .layui-tab-title .layui-this:after {
+    height: 30px;
 }
