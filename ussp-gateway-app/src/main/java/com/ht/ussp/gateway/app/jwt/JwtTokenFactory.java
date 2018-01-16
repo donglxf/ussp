@@ -46,22 +46,10 @@ public class JwtTokenFactory {
 	 * @return AccessJwtToken
 	 * @throws
 	 */
-	public AccessJwtToken createAccessJwtToken(Authentication authentication) {
-		// 从authentication中获取uservo
-		UserVo userVo = (UserVo) authentication.getPrincipal();
+	public AccessJwtToken createAccessJwtToken(UserVo userVo) {
 		if (StringUtils.isBlank(userVo.getUserId())) {
 			throw new IllegalArgumentException("Cannot create JWT Token without userId");
 		}
-		// 从authentication中获取用户角色编码
-//		List<String> list = new ArrayList<String>();
-//		for (GrantedAuthority roleCode : authentication.getAuthorities()) {
-//			list.add(roleCode.getAuthority());
-//		}
-//		
-//		if (list.isEmpty() || !("N").equals(userVo.getController())) {
-//			throw new IllegalArgumentException("User doesn't have any privileges");
-//		}
-		
 		Claims claims = Jwts.claims().setSubject("User Authorize");
 		claims.put("userId", userVo.getUserId());
 		claims.put("controller", userVo.getController());
@@ -88,8 +76,7 @@ public class JwtTokenFactory {
 	  * @return JwtToken
 	  * @throws
 	 */
-	public JwtToken createRefreshToken(Authentication authentication) {
-		UserVo userVo = (UserVo) authentication.getPrincipal();
+	public JwtToken createRefreshToken(UserVo userVo) {
 		if (StringUtils.isBlank(userVo.getUserId())) {
 			throw new IllegalArgumentException("Cannot create refreshToken without userId");
 		}

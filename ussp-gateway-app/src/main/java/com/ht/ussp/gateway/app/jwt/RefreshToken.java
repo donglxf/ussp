@@ -12,7 +12,6 @@ import io.jsonwebtoken.Jws;
  * @author wim qiuwenwu@hongte.info
  * @date 2018年1月6日 上午11:50:30
  */
-@SuppressWarnings("unchecked")
 public class RefreshToken implements JwtToken {
     private Jws<Claims> claims;
 
