@@ -1,8 +1,18 @@
 package com.ht.ussp.uc.app.domain;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import com.ht.ussp.uc.app.vo.ResVo;
 
 
 /**
@@ -50,6 +60,9 @@ public class HtBoaInResource implements Serializable {
 
 	@Column(name="RES_CONTENT")
 	private String resContent;
+	
+	@Column(name="FONT_ICON")
+	private String fontIcon;
 
 	@Lob
 	@Column(name="RES_ICON")
@@ -67,8 +80,10 @@ public class HtBoaInResource implements Serializable {
 	@Column(name="RES_TYPE")
 	private String resType;
 
+	@Column(name="SEQUENCE")
 	private int sequence;
 
+	@Column(name="STATUS")
 	private String status;
 
 	@Column(name="UPDATE_OPERATOR")
@@ -221,4 +236,12 @@ public class HtBoaInResource implements Serializable {
 		this.updateOperator = updateOperator;
 	}
 
+	public String getFontIcon() {
+		return fontIcon;
+	}
+
+	public void setFontIcon(String fontIcon) {
+		this.fontIcon = fontIcon;
+	}
+	
 }

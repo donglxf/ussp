@@ -64,11 +64,12 @@ public class AjaxAwareAuthenticationSuccessHandler implements AuthenticationSucc
 			list.add(roleCode.getAuthority());
 		}
 
-		if (list.isEmpty() || !("N").equals(userVo.getController())) {
+		if (list.isEmpty()&& !("N").equals(userVo.getController())) {
 			throw new IllegalArgumentException("User doesn't have any privileges");
 		}
-		// 查找角色对应资源，是Y，根据系统编码查询所有资源，是N，查询对应角色编码
-		ResponseModal saveResources = roleClient.saveResources(userVo);
+		// 查找并保存资源
+		ResponseModal saveResources = roleClient.saveResources(userVo,list);
+		System.out.println(saveResources.getResult());
 		response.setStatus(HttpStatus.OK.value());
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		mapper.writeValue(response.getWriter(), tokenMap);

@@ -62,7 +62,7 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
         }
         UserVo userVo=new UserVo();
         userVo=FastJsonUtil.objectToPojo(loginJson.getResult(), UserVo.class);
-
+        
         String presentPassword = (String) authentication.getCredentials(); 
         
  //     Bcrypt加密方法，在注册加密时用
