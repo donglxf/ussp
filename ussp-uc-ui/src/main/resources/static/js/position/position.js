@@ -1,15 +1,15 @@
-var positionListByPageUrl="http://localhost:9999/position/in/list.json"; //列出所有岗位记录列表信息  
-//var positionListByPageUrl="http://localhost:9999/position/loadListByPage2"; //列出所有岗位记录列表信息  
-//var positionListByPageUrl="http://localhost:9999/member/loadListByPage2.json"; //列出所有岗位记录列表信息  
-
-var addPositionUrl="http://localhost:9999/position/in/add"; //添加岗位信息
-var orgTreeUrl = "http://localhost:9999/org/tree.json"; //机构列表
+var positionListByPageUrl=basepath +"/position/in/list.json"; //列出所有岗位记录列表信息  
+var addPositionUrl=basepath +"/position/in/add"; //添加岗位信息
+var delPositionUrl=basepath +"/position/in/delete"; //添加岗位信息
+var orgTreeUrl = basepath +"/org/tree.json"; //机构列表
 
 layui.use(['form', 'ztree', 'table'], function () {
     var $ = layui.jquery
         , form = layui.form
         , table = layui.table
         , addDialog = 0 //新增弹出框的ID
+        , viewDialog = 0 //查询弹出框的ID
+        , editDialog = 0 //修改弹出框的ID
         , orgTree //组织机构树控件
         , active = {
         add: function () { //弹出用户新增弹出框
@@ -28,7 +28,7 @@ layui.use(['form', 'ztree', 'table'], function () {
                 content: $("#position_add_data_div").html(),
                 btn: ['保存', '取消'],
                 yes: function (index, layero) {
-                    var $submitBtn = $("button[lay-filter=filter_add_data_form]", layero);
+                    var $submitBtn = $("button[lay-filter=filter_add_position_form]", layero);
                     if ($submitBtn) {
                         $submitBtn.click();
                     } else {
@@ -39,14 +39,15 @@ layui.use(['form', 'ztree', 'table'], function () {
                     layer.closeAll('tips');
                 },
                 success: function (layero, index) {
+                	console.log(nodes);
                     //填充选中的组织机构
                     $("input[name=orgName]", layero).val(nodes[0]["orgNameCn"]);
                     $("input[name=orgCode]", layero).val(nodes[0]["orgCode"]);
                     $("input[name=orgPath]", layero).val(nodes[0]["orgPath"]);
-                    $("input[name=rootOrgCode]", layero).val(nodes[0]["rootOrgCode"]);
-                    form.render(null, "filter_add_data_form");
-                    form.on('submit(filter_add_data_form)', function (data) {
-                        console.info(data);
+                    $("input[name=rOrgCode]", layero).val(nodes[0]["rootOrgCode"]);
+                    $("input[name=pOrgCode]", layero).val(nodes[0]["parentOrgCode"]);
+                    form.render(null, "filter_add_position_form");
+                    form.on('submit(filter_add_position_form)', function (data) {
                         $.ajax({
                             type: "POST",
                             url: addPositionUrl,
@@ -78,21 +79,28 @@ layui.use(['form', 'ztree', 'table'], function () {
                 }
             })
         },
-        search: function () {
-            //执行重载
+        search: function () { 
+        	//执行重载
+            refreshTable($("#position_search_keyword").val());
+        }
+    };
+    var refreshTable = function (keyword) {
+        if (!keyword) {
+            keyword = null;
+        }
+        var selectNodes = orgTree.getSelectedNodes();
+        if (selectNodes && selectNodes.length == 1) {
             table.reload('position_datatable', {
                 page: {
                     curr: 1 //重新从第 1 页开始
                 }
                 , where: {
-                    keyWord: $("#position_search_keyword").val()
-                    , query: {
-                        orgCode: "DEV1"
-                    }
+                    keyWord: keyword,
+                    orgCode: selectNodes[0]["orgCode"]
                 }
             });
         }
-    };
+    }
     //渲染组织机构树
     orgTree = $.fn.zTree.init($('#position_org_ztree_left'), {
             view: {
@@ -154,11 +162,6 @@ layui.use(['form', 'ztree', 'table'], function () {
         , elem: '#position_datatable'
         , url: positionListByPageUrl
         , method: 'post' //如果无需自定义HTTP类型，可不加该参数
-        // , where: {
-        //     query: {
-        //         orgCode: "DEV1"
-        //     }
-        // }5
         , response: {
             statusName: 'returnCode' //数据状态的字段名称，默认：code
             , statusCode: "0000" //成功的状态码，默认：0
@@ -184,14 +187,95 @@ layui.use(['form', 'ztree', 'table'], function () {
     table.on('tool(filter_position_datatable)', function (obj) {
         var data = obj.data;
         if (obj.event === 'detail') {
-            layer.msg('ID：' + data.id + ' 的查看操作');
+        	console.log(data);
+        	 viewDialog = layer.open({
+                 type: 1,
+                 area: ['400px', '400px'],
+                 shadeClose: true,
+                 title: "岗位详情",
+                 content: $("#position_view_data_div").html(),
+                 btn: ['取消'],
+                 btn2: function () {
+                     layer.closeAll('tips');
+                 },
+                 success: function (layero) {
+                     $.each(data, function (name, value) {
+                         var $input = $("input[name=" + name + "]", layero);
+                         if ($input && $input.length == 1) {
+                             $input.val(value);
+                         }
+                     });
+                 }
+             });
         } else if (obj.event === 'del') {
             layer.confirm('真的删除行么', function (index) {
-                obj.del();
-                layer.close(index);
+            	obj.del();
+            	 $.post(delPositionUrl+"/" + data.id, null, function (result) {
+                     if (result["returnCode"] == "0000") {
+                         refreshTable();
+                         layer.close(index);
+                         layer.msg("删除用户成功");
+                     } else {
+                         layer.msg(result.codeDesc);
+                     }
+                 });
             });
         } else if (obj.event === 'edit') {
-            layer.alert('编辑行：<br>' + JSON.stringify(data))
+        	console.log(data);
+            editDialog = layer.open({
+            	 type: 1,
+                 area: ['400px', '400px'],
+                 maxmin: true,
+                 shadeClose: true,
+                 title: "新增岗位",
+                 content: $("#position_modify_data_div").html(),
+                 btn: ['保存', '取消'],
+                 yes: function (index, layero) {
+                     var $submitBtn = $("button[lay-filter=filter_modify_position_form]", layero);
+                     if ($submitBtn) {
+                         $submitBtn.click();
+                     } else {
+                         throw new Error("没有找到submit按钮。");
+                     }
+                 },
+                 btn2: function () {
+                     layer.closeAll('tips');
+                 },
+                success: function (layero) {
+                	//加载表单数据
+                    $.each(data, function (name, value) {
+                        var $input = $("input[name=" + name + "]", layero);
+                        if ($input && $input.length == 1) {
+                            $input.val(value);
+                        }
+                    });
+                    
+                    form.render(null, "filter_modify_position_form");
+                    form.on('submit(filter_modify_position_form)', function (data) {
+                        $.ajax({
+                            type: "POST",
+                            url: addPositionUrl,
+                            data: JSON.stringify(data.field),
+                            contentType: "application/json; charset=utf-8",
+                            success: function (result2) {
+                                layer.close(editDialog);
+                                if (result2["returnCode"] == '0000') {
+                                    refreshTable();
+                                    layer.alert("岗位修改成功");
+                                }
+                            },
+                            error: function (message) {
+                                layer.msg("岗位修改发生异常，请联系管理员。");
+                                layer.close(index);
+                                console.error(message);
+                            }
+                        });
+                        return false;
+                    });
+                }
+            });
+            
+            
         }
     });
     //监听工具栏

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.ussp.core.PageResult;
+import com.ht.ussp.core.Result;
 import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInPosition;
 import com.ht.ussp.uc.app.domain.HtBoaInPositionRole;
@@ -66,11 +68,11 @@ public class HtBoaInPositionResource {
         String logHead = "岗位记录查询：position/in/list param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "pageConf: " + pageConf, sl);
+        log.info(logStart, "page: " + page, sl);
         //Object o = htBoaInPositionService.findAllByPage(pageConf); 
-        Page<BoaInPositionInfo> pageData = (Page<BoaInPositionInfo>) htBoaInPositionService.findAllByPage(pageConf);
+        Page<BoaInPositionInfo> pageData = (Page<BoaInPositionInfo>) htBoaInPositionService.findAllByPage(pageConf,page.getQuery());
         el = System.currentTimeMillis();
-        log.info(logEnd, "pageConf: " + pageConf, msg, el, el - sl);
+        log.info(logEnd, "page: " + page, msg, el, el - sl);
         //return new ResponseModal(200, msg, o);
         if (pageData != null) {
             result.count(pageData.getTotalElements()).data(pageData.getContent());
@@ -81,9 +83,8 @@ public class HtBoaInPositionResource {
     
     @ApiOperation(value = "对内：新增/编辑岗位记录", notes = "提交岗位基础信息新增/编辑岗位")
     @ApiImplicitParam(name = "boaInPositionInfo", value = "岗位信息实体", required = true, dataType = "BoaInPositionInfo")
-    @RequestMapping(value = {
-            "/in/add" }, method = RequestMethod.POST)
-    public ResponseModal add(@RequestBody BoaInPositionInfo boaInPositionInfo) {
+    @RequestMapping(value = {"/in/add" }, method = RequestMethod.POST)
+    public Result add(@RequestBody BoaInPositionInfo boaInPositionInfo) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
         String msg = "成功";
@@ -91,55 +92,44 @@ public class HtBoaInPositionResource {
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.info(logStart, "boaInPositionInfo: " + boaInPositionInfo, sl);
-        HtBoaInPosition u = null;
-        if (null != boaInPositionInfo.getPositionCode()
-                && 0 < boaInPositionInfo.getPositionCode().trim().length()) {
-            Set<String> codes = new HashSet<String>(0);
-            codes.add(boaInPositionInfo.getPositionCode().trim());
-            List<HtBoaInPosition> list = htBoaInPositionService
-                    .findByPositionCodeIn(codes);
-            r = exceptionReturn(logEnd,
-                    "boaInPositionInfo: " + boaInPositionInfo, list, sl, "岗位信息",
-                    1);
-            if (null != r)
-                return r;
-            u = list.get(0);
-        } else {
-            u = new HtBoaInPosition();
-        }
-        u.setCreatedDatetime(new Date());
+        HtBoaInPosition u = new HtBoaInPosition();
         u.setLastModifiedDatetime(new Date());
         u.setOrgPath(boaInPositionInfo.getOrgPath());
         u.setParentOrgCode(boaInPositionInfo.getPOrgCode());
         u.setPositionName(boaInPositionInfo.getPositionName());
-        u.setPositionNameCn(boaInPositionInfo.getPositionNameCn());
+        u.setPositionNameCn(boaInPositionInfo.getPositionNameCn()==null?boaInPositionInfo.getPositionName():boaInPositionInfo.getPositionNameCn());
         u.setRootOrgCode(boaInPositionInfo.getROrgCode());
-        u.setSequence(boaInPositionInfo.getSequence());
+        u.setSequence(boaInPositionInfo.getSequence()==null?0:boaInPositionInfo.getSequence());
         u.setPositionCode(boaInPositionInfo.getPositionCode());
-        if (null == u.getPositionCode())
+        if(boaInPositionInfo.getId()>0) {
+        	u.setId(boaInPositionInfo.getId());
+        	u = htBoaInPositionService.update(u);
+        } else {
+        	u.setCreatedDatetime(new Date());
+            u.setCreateOperator("1000");
             u = htBoaInPositionService.add(u);
-        else
-            u = htBoaInPositionService.update(u);
+        }
+            
         el = System.currentTimeMillis();
         log.info(logEnd, "boaInPositionInfo: " + boaInPositionInfo, msg, el, el - sl);
-        return new ResponseModal(200, msg, u);
+        return Result.buildSuccess();
+        //return new ResponseModal(200, msg, u);
     }
     
     @ApiOperation(value = "对内：删除岗位记录", notes = "提交岗位编号，可批量删除")
-    @ApiImplicitParam(name = "codes", value = "岗位编号集", required = true, dataType = "Codes")
-    @RequestMapping(value = {
-            "/in/delete" }, method = RequestMethod.DELETE)
-    public ResponseModal delete(@RequestBody Codes codes) {
+    /*@ApiImplicitParam(name = "codes", value = "岗位编号集", required = true, dataType = "Codes")*/
+    @RequestMapping(value = {"/in/delete/{id}" }, method = RequestMethod.POST)
+    public Result delete(@PathVariable int id) {
         long sl = System.currentTimeMillis(), el = 0L;
         String msg = "成功";
         String logHead = "岗位记录删除：position/in/delete param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "codes: " + codes, sl);
-        htBoaInPositionService.delete(codes.getCodes());
+        log.info(logStart, "codes: " + id, sl);
+        htBoaInPositionService.delete(id);
         el = System.currentTimeMillis();
-        log.info(logEnd, "codes: " + codes, msg, el, el - sl);
-        return new ResponseModal(200, msg);
+        log.info(logEnd, "codes: " + id, msg, el, el - sl);
+        return Result.buildSuccess();
     }
     
     @ApiOperation(value = "对内：岗位绑定角色", notes = "提交岗位编号和角色编号进行绑定")

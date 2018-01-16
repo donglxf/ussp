@@ -2,6 +2,7 @@ package com.ht.ussp.uc.app.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class HtBoaInPositionService {
         return this.htBoaInPositionRepository.findByPositionCodeIn(positionCodes);
     }
     
-    public Object findAllByPage(PageConf pageConf) {
+    public Object findAllByPage(PageConf pageConf,Map<String, String> query) {
         Sort sort = null;
         Pageable pageable = null;
         List<Order> orders = new ArrayList<Order>();
@@ -54,12 +55,18 @@ public class HtBoaInPositionService {
             pageable = new PageRequest(pageConf.getPage(), pageConf.getSize(),
                     sort);
         String search = pageConf.getSearch();
+        String orgPath = "";
+        if (query != null && query.size() > 0 && query.get("orgCode") != null) {
+        	orgPath = "%" +query.get("orgCode")+ "%";
+        }
+        
         if (null == search || 0 == search.trim().length())
-            search = "";
+            search = "%%";
         else
             search = "%" + search + "%";
+        
         if (null != pageable) {
-            Page<BoaInPositionInfo> p = this.htBoaInPositionRepository.listPositionInfo(pageable, search);
+            Page<BoaInPositionInfo> p = this.htBoaInPositionRepository.listPositionByPageWeb(pageable, search,orgPath);
             for (BoaInPositionInfo u : p.getContent()) {
                 u.setUsers(this.htBoaInPositionRepository.listHtBoaInUser(u.getPositionCode()));
                 u.setRoles(this.htBoaInPositionRepository.listHtBoaInRole(u.getPositionCode()));
@@ -83,8 +90,8 @@ public class HtBoaInPositionService {
         return this.htBoaInPositionRepository.save(u);
     }
     
-    public void delete(Set<String> positionCodes) {
-        this.htBoaInPositionRepository.delete(positionCodes);
+    public void delete(long id) {
+        this.htBoaInPositionRepository.delete(id);;
     }
 
 }

@@ -19,6 +19,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BoaInPositionInfo {
 
+	@ApiModelProperty(value = "id", dataType = "long")
+	long id;
+	
     @ApiModelProperty(value = "岗位编号", dataType = "string")
     String positionCode;
 
@@ -79,7 +82,7 @@ public class BoaInPositionInfo {
     @ApiModelProperty(value = "角色集")
     List<HtBoaInRole> roles = new ArrayList<HtBoaInRole>(0);
     
-    public BoaInPositionInfo(String positionCode, String positionName,
+    public BoaInPositionInfo(long id,String positionCode, String positionName,
             String positionNameCn, String pOrgCode, String pOrgName,
             String pOrgNameCn, String pOrgType, String rOrgCode,
             String rOrgName, String rOrgNameCn, String rOrgType, String orgPath,
@@ -103,6 +106,7 @@ public class BoaInPositionInfo {
         this.updateOperator = updateOperator;
         this.lastModifiedDatetime = lastModifiedDatetime;
         this.delFlag = delFlag;
+        this.id = id;
     }
 
 }
