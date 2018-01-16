@@ -130,7 +130,7 @@ public class UserResource {
 
         // 查找当前用户岗位编码
         List<String> positionCodes = htBoaInPositionUserService.queryRoleCodes(userId);
-        // 通过岗位编码查用关联的角色编码
+        // 通过岗位编码查询角色编码
         if (positionCodes != null && positionCodes.size() > 0) {
             List<String> userRoleCodesByPosition = htBoaInPositionRoleService.queryRoleCodesByPosition(positionCodes);
             if (!userRoleCodesByPosition.isEmpty()) {
@@ -161,10 +161,8 @@ public class UserResource {
      */
     @ApiOperation(value = "用户信息分页查询")
     @PostMapping(value = "/loadListByPage")
-    public PageResult<HtBoaInUser> loadListByPage(Page page) {
-        // PageResult<UserMessageVo> umv = new UserMessageVo();
-        PageResult<HtBoaInUser> userList = htBoaInUserService.getUserListPage(new PageRequest(page.getPage(), page.getLimit()), page.getKeyWord(), page.getQuery());
-        return userList;
+    public PageResult<List<UserMessageVo>> loadListByPage(Page page) {
+        return htBoaInUserService.getUserListPage(new PageRequest(page.getPage(), page.getLimit()), page.getOrgCode(), page.getKeyWord(), page.getQuery());
     }
 
     /**
@@ -175,25 +173,60 @@ public class UserResource {
      * @author 谭荣巧
      * @Date 2018/1/14 12:08
      */
-    @RequestMapping(value = "/add")
+    @PostMapping(value = "/add")
     public Result addAsync(@RequestBody HtBoaInUser user) {
         if (user != null) {
             String userId = UUID.randomUUID().toString().replace("-", "");
             user.setUserId(userId);
+            //TODO 需要获取登录信息，设置创建人，修改人
             user.setCreateOperator("10003");
             user.setUpdateOperator("10003");
             user.setDelFlag(0);
             HtBoaInLogin loginInfo = new HtBoaInLogin();
             loginInfo.setLoginId(UUID.randomUUID().toString().replace("-", ""));
             loginInfo.setUserId(userId);
+            //TODO 需要获取登录信息，设置创建人，修改人
             loginInfo.setCreateOperator("10003");
             loginInfo.setUpdateOperator("10003");
             loginInfo.setStatus("0");
             loginInfo.setPassword(EncryptUtil.passwordEncrypt("123456"));
             loginInfo.setFailedCount(0);
+            loginInfo.setRootOrgCode(user.getRootOrgCode());
             loginInfo.setDelFlag(0);
             boolean isAdd = htBoaInUserService.saveUserInfoAndLoginInfo(user, loginInfo);
             if (isAdd) {
+                return Result.buildSuccess();
+            }
+        }
+        return Result.buildFail();
+    }
+
+    @PostMapping("/delete/{userId}")
+    public Result delAsync(@PathVariable String userId) {
+        if (userId != null && !"".equals(userId.trim())) {
+            boolean isDel = htBoaInUserService.setDelFlagByUserId(userId);
+            if (isDel) {
+                return Result.buildSuccess();
+            }
+        }
+        return Result.buildFail();
+    }
+
+    @PostMapping("/view/{userId}")
+    public Result viewAsync(@PathVariable String userId) {
+        if (userId != null && !"".equals(userId.trim())) {
+            return Result.buildSuccess(htBoaInUserService.getUserByUserId(userId));
+        }
+        return Result.buildFail();
+    }
+
+    @PostMapping("/update")
+    public Result updateAsync(@RequestBody HtBoaInUser user) {
+        if (user != null) {
+            //TODO 需要获取登录信息，设置修改人
+            user.setUpdateOperator("测试人");
+            boolean isUpdate = htBoaInUserService.updateUserByUserId(user);
+            if (isUpdate) {
                 return Result.buildSuccess();
             }
         }
