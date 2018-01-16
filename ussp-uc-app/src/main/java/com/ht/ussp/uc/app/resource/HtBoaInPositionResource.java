@@ -8,12 +8,16 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ht.ussp.core.PageResult;
+import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInPosition;
 import com.ht.ussp.uc.app.domain.HtBoaInPositionRole;
 import com.ht.ussp.uc.app.model.BoaInPositionInfo;
@@ -26,7 +30,6 @@ import com.ht.ussp.uc.app.service.HtBoaInPositionService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-
 /**
  * 
  * @ClassName: HtBoaInPositionResource
@@ -36,6 +39,7 @@ import io.swagger.annotations.ApiOperation;
  */
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping(value = "/position")
 public class HtBoaInPositionResource {
 
@@ -47,21 +51,32 @@ public class HtBoaInPositionResource {
     @Autowired
     private HtBoaInPositionRoleService htBoaInPositionRoleService;
     
-    @ApiOperation(value = "对内：岗位记录查询", notes = "列出所有岗位记录列表信息")
-    @ApiImplicitParam(name = "pageConf", value = "分页信息实体", required = true, dataType = "PageConf")
-    @RequestMapping(value = {
-            "/in/list" }, method = RequestMethod.POST)
-    public ResponseModal list(@RequestBody PageConf pageConf) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	@ApiOperation(value = "对内：岗位记录查询", notes = "列出所有岗位记录列表信息")
+    /*@ApiImplicitParam(name = "pageConf", value = "分页信息实体", required = true, dataType = "PageConf")*/
+    @RequestMapping(value = {"/in/list" }, method = RequestMethod.POST)
+    public PageResult<BoaInPositionInfo> list(com.ht.ussp.uc.app.vo.Page page) {
+    	PageResult result = new PageResult();
+    	PageConf pageConf = new PageConf();
+    	pageConf.setPage(page.getPage());
+    	pageConf.setSize(page.getLimit());
+    	pageConf.setSearch(page.getKeyWord());
         long sl = System.currentTimeMillis(), el = 0L;
         String msg = "成功";
         String logHead = "岗位记录查询：position/in/list param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.info(logStart, "pageConf: " + pageConf, sl);
-        Object o = htBoaInPositionService.findAllByPage(pageConf);
+        //Object o = htBoaInPositionService.findAllByPage(pageConf); 
+        Page<BoaInPositionInfo> pageData = (Page<BoaInPositionInfo>) htBoaInPositionService.findAllByPage(pageConf);
         el = System.currentTimeMillis();
         log.info(logEnd, "pageConf: " + pageConf, msg, el, el - sl);
-        return new ResponseModal(200, msg, o);
+        //return new ResponseModal(200, msg, o);
+        if (pageData != null) {
+            result.count(pageData.getTotalElements()).data(pageData.getContent());
+        }
+        result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
+        return result;
     }
     
     @ApiOperation(value = "对内：新增/编辑岗位记录", notes = "提交岗位基础信息新增/编辑岗位")

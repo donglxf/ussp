@@ -67,6 +67,9 @@ public class BoaInPositionInfo {
     @ApiModelProperty(value = "更新人", dataType = "date")
     String updateOperator;
 
+    @ApiModelProperty(value = "状态", dataType = "int")
+    int delFlag;
+    
     @ApiModelProperty(value = "最后修改时间", dataType = "string")
     Date lastModifiedDatetime;
 
@@ -81,7 +84,7 @@ public class BoaInPositionInfo {
             String pOrgNameCn, String pOrgType, String rOrgCode,
             String rOrgName, String rOrgNameCn, String rOrgType, String orgPath,
             int sequence, String createOperator, Date createdDatetime,
-            String updateOperator, Date lastModifiedDatetime) {
+            String updateOperator, Date lastModifiedDatetime,int delFlag) {
         this.positionCode = positionCode;
         this.positionName = positionName;
         this.positionNameCn = positionNameCn;
@@ -99,6 +102,7 @@ public class BoaInPositionInfo {
         this.createdDatetime = createdDatetime;
         this.updateOperator = updateOperator;
         this.lastModifiedDatetime = lastModifiedDatetime;
+        this.delFlag = delFlag;
     }
 
 }
