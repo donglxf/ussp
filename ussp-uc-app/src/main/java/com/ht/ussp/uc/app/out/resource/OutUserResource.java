@@ -1,4 +1,4 @@
-package com.ht.ussp.uc.app.resource;
+package com.ht.ussp.uc.app.out.resource;
 
 import java.util.ArrayList;
 import java.util.List;
