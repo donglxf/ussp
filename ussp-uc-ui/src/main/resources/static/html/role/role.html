@@ -64,8 +64,8 @@
         </div>
     </div>
     <!--新增表单-->
-    <div id="role_add_data_div" class="hide">
-        <form method="post" class="layui-form" lay-filter="filter_add_data_form">
+    <div id="role_add_role_div" class="hide">
+        <form method="post" class="layui-form" lay-filter="filter_add_role_form">
             <div class="layui-form-item">
                 <label class="layui-form-label">工号<b>*</b></label>
                 <div class="layui-input-block">
@@ -115,7 +115,7 @@
                            lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
             </div>
-            <button class="layui-btn hide" lay-submit="" lay-filter="filter_add_data_form"></button>
+            <button class="layui-btn hide" lay-submit="" lay-filter="filter_add_role_form"></button>
         </form>
     </div>
     <!--修改表单-->
@@ -160,17 +160,13 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">所属机构<b>*</b></label>
                 <div class="layui-input-block">
-                    <input type="text" name="orgName" autocomplete="off" readonly
-                           lay-verType="tips" class="layui-input layui-input-sm">
-                    <input type="hidden" name="orgCode" autocomplete="off" readonly
-                           lay-verType="tips" class="layui-input layui-input-sm">
-                    <input type="hidden" name="orgPath" autocomplete="off" readonly
-                           lay-verType="tips" class="layui-input layui-input-sm">
-                    <input type="hidden" name="rootOrgCode" autocomplete="off" readonly
-                           lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="text" name="orgName" autocomplete="off" readonly  lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="orgCode" autocomplete="off" readonly　lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="orgPath" autocomplete="off" readonly　 lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="rootOrgCode" autocomplete="off" readonly　lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
             </div>
-            <button class="layui-btn hide" lay-submit="" lay-filter="filter_add_data_form"></button>
+            <button class="layui-btn hide" lay-submit="" lay-filter="filter_add_role_form"></button>
         </form>
     </div>
     <!--查看表单-->

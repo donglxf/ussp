@@ -1,6 +1,7 @@
-var roleListByPageUrl="http://localhost:9999/role/in/list"; //列出所有角色记录列表信息  
-var addRoleUrl="http://localhost:9999/role/in/add"; //添加角色信息
-var orgTreeUrl = "http://localhost:9999/org/tree.json"; //机构列表
+var roleListByPageUrl=basepath +"/role/in/list"; //列出所有角色记录列表信息  
+var addRoleUrl=basepath +"/role/in/add"; //添加角色信息
+var addRoleUrl=basepath +"/role/in/delete"; //添加角色信息
+var orgTreeUrl = basepath +"/org/tree.json"; //机构列表
 
 layui.use(['form', 'ztree', 'table' ], function () {
     var $ = layui.jquery
@@ -25,7 +26,7 @@ layui.use(['form', 'ztree', 'table' ], function () {
                 content: $("#role_add_data_div").html(),
                 btn: ['保存', '取消'],
                 yes: function (index, layero) {
-                    var $submitBtn = $("button[lay-filter=filter_add_data_form]", layero);
+                    var $submitBtn = $("button[lay-filter=filter_add_role_form]", layero);
                     if ($submitBtn) {
                         $submitBtn.click();
                     } else {
@@ -41,8 +42,8 @@ layui.use(['form', 'ztree', 'table' ], function () {
                     $("input[name=orgCode]", layero).val(nodes[0]["orgCode"]);
                     $("input[name=orgPath]", layero).val(nodes[0]["orgPath"]);
                     $("input[name=rootOrgCode]", layero).val(nodes[0]["rootOrgCode"]);
-                    form.render(null, "filter_add_data_form");
-                    form.on('submit(filter_add_data_form)', function (data) {
+                    form.render(null, "filter_add_role_form");
+                    form.on('submit(filter_add_role_form)', function (data) {
                         console.info(data);
                         $.ajax({
                             type: "POST",
@@ -62,11 +63,11 @@ layui.use(['form', 'ztree', 'table' ], function () {
                                             }
                                         }
                                     });
-                                    layer.alert("用户新增成功。");
+                                    layer.alert("角色新增成功。");
                                 }
                             },
                             error: function (message) {
-                                layer.msg("用户新增发生异常，请联系管理员。");
+                                layer.msg("角色新增发生异常，请联系管理员。");
                                 console.error(message);
                             }
                         });
@@ -152,11 +153,6 @@ layui.use(['form', 'ztree', 'table' ], function () {
         , elem: '#role_datatable'
         , url: roleListByPageUrl
         , method: 'post' //如果无需自定义HTTP类型，可不加该参数
-        // , where: {
-        //     query: {
-        //         orgCode: "DEV1"
-        //     }
-        // }5
         , response: {
             statusName: 'returnCode' //数据状态的字段名称，默认：code
             , statusCode: "0000" //成功的状态码，默认：0
