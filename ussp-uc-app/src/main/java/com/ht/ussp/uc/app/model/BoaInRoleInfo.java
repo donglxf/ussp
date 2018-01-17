@@ -87,5 +87,21 @@ public class BoaInRoleInfo {
         this.delFlag = delFlag;
         this.id = id;
     }
+    
+    public BoaInRoleInfo(String roleCode, String roleName, String roleNameCn,
+            String status, String createOperator,
+            Date createdDatetime, String updateOperator,
+            Date lastModifiedDatetime,int delFlag,Long id) {
+        this.roleCode = roleCode;
+        this.roleName = roleName;
+        this.roleNameCn = roleNameCn;
+        this.status = status;
+        this.createOperator = createOperator;
+        this.createdDatetime = createdDatetime;
+        this.updateOperator = updateOperator;
+        this.lastModifiedDatetime = lastModifiedDatetime;
+        this.delFlag = delFlag;
+        this.id = id;
+    }
 
 }

@@ -91,8 +91,7 @@ public class RoleResource {
         }else {
         	u = new HtBoaInRole();
         }
-         
-        u.setCreatedDatetime(new Date());
+        u.setRoleCode(boaInRoleInfo.getRoleCode());
         u.setLastModifiedDatetime(new Date());
         u.setRoleName(boaInRoleInfo.getRoleName());
         u.setRoleNameCn(boaInRoleInfo.getRoleNameCn());
@@ -114,7 +113,7 @@ public class RoleResource {
     
     @ApiOperation(value = "对内：删除角色记录", notes = "提交角色编号，可批量删除")
     @ApiImplicitParam(name = "codes", value = "角色编号集", required = true, dataType = "Codes")
-    @RequestMapping(value = {"/in/delete/{id}" }, method = RequestMethod.DELETE)
+    @RequestMapping(value = {"/in/delete/{id}" }, method = RequestMethod.POST)
     public Result delete(@PathVariable int id) {
         long sl = System.currentTimeMillis(), el = 0L;
         String msg = "成功";
@@ -129,22 +128,5 @@ public class RoleResource {
         //return new ResponseModal(200, msg);
     }
 
-    protected ResponseModal exceptionReturn(String logEnd, String param,
-            List<?> list, long sl, String exInfo, int row) {
-        if (null == exInfo)
-            exInfo = "";
-        if (null == list || list.isEmpty()) {
-            String msg = "无效参数，" + exInfo + "查无信息体";
-            long el = System.currentTimeMillis();
-            log.error(logEnd, param, msg, el, el - sl);
-            return new ResponseModal(500, msg);
-        } else if (row != list.size()) {
-            String msg = "查询异常！查出" + exInfo + "记录数不符合要求";
-            long el = System.currentTimeMillis();
-            log.error(logEnd, param, msg, el, el - sl);
-            return new ResponseModal(500, msg);
-        }
-        return null;
-    }
 
 }

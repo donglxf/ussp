@@ -1,21 +1,14 @@
-var roleListByPageUrl=basepath +"/role/in/list"; //列出所有角色记录列表信息  
-var addRoleUrl=basepath +"/role/in/add"; //添加角色信息
-var addRoleUrl=basepath +"/role/in/delete"; //添加角色信息
-var orgTreeUrl = basepath +"/org/tree.json"; //机构列表
+var roleListByPageUrl=basepath +"role/in/list"; //列出所有角色记录列表信息  
+var addRoleUrl=basepath +"role/in/add"; //添加角色信息
+var delRoleUrl=basepath +"role/in/delete"; //添加角色信息
 
-layui.use(['form', 'ztree', 'table' ], function () {
+layui.use(['form',   'table' ], function () {
     var $ = layui.jquery
         , form = layui.form
         , table = layui.table
         , addDialog = 0 //新增弹出框的ID
-        , orgTree //组织机构树控件
         , active = {
         add: function () { //弹出用户新增弹出框
-            var nodes = orgTree.getSelectedNodes();
-            if (nodes.length == 0) {
-                layer.alert("请先选择一个组织机构。");
-                return false;
-            }
             layer.close(addDialog);
             addDialog = layer.open({
                 type: 1,
@@ -23,7 +16,7 @@ layui.use(['form', 'ztree', 'table' ], function () {
                 maxmin: true,
                 shadeClose: true,
                 title: "新增角色",
-                content: $("#role_add_data_div").html(),
+                content: $("#role_add_role_div").html(),
                 btn: ['保存', '取消'],
                 yes: function (index, layero) {
                     var $submitBtn = $("button[lay-filter=filter_add_role_form]", layero);
@@ -38,13 +31,8 @@ layui.use(['form', 'ztree', 'table' ], function () {
                 },
                 success: function (layero, index) {
                     //填充选中的组织机构
-                    $("input[name=orgName]", layero).val(nodes[0]["orgNameCn"]);
-                    $("input[name=orgCode]", layero).val(nodes[0]["orgCode"]);
-                    $("input[name=orgPath]", layero).val(nodes[0]["orgPath"]);
-                    $("input[name=rootOrgCode]", layero).val(nodes[0]["rootOrgCode"]);
                     form.render(null, "filter_add_role_form");
                     form.on('submit(filter_add_role_form)', function (data) {
-                        console.info(data);
                         $.ajax({
                             type: "POST",
                             url: addRoleUrl,
@@ -57,13 +45,8 @@ layui.use(['form', 'ztree', 'table' ], function () {
                                         page: {
                                             curr: 1 //重新从第 1 页开始
                                         }
-                                        , where: {
-                                            query: {
-                                                orgCode: nodes[0]["orgCode"]
-                                            }
-                                        }
                                     });
-                                    layer.alert("角色新增成功。");
+                                    layer.alert("角色新增成功");
                                 }
                             },
                             error: function (message) {
@@ -78,75 +61,22 @@ layui.use(['form', 'ztree', 'table' ], function () {
         },
         search: function () {
             //执行重载
-            table.reload('role_datatable', {
-                page: {
-                    curr: 1 //重新从第 1 页开始
-                }
-                , where: {
-                    keyWord: $("#role_search_keyword").val()
-                    , query: {
-                        orgCode: "DEV1"
-                    }
-                }
-            });
+        	refreshTable($("#role_search_keyword").val());
         }
     };
-    //渲染组织机构树
-    orgTree = $.fn.zTree.init($('#role_org_ztree_left'), {
-            view: {
-                showIcon: false
-                , selectedMulti: false
-                , fontCss: function (treeId, treeNode) {
-                    return (!!treeNode.highlight) ? {color: "#A60000", "font-weight": "bold"} : {
-                        color: "#333",
-                        "font-weight": "normal"
-                    };
-                }
-            }
-            , async: {
-                enable: true,
-                url: orgTreeUrl,
-                dataFilter: function (treeId, parentNode, childNodes) {
-                    if (!childNodes) return null;
-                    for (var i = 0, l = childNodes.length; i < l; i++) {
-                        childNodes[i].open = true;
-                        childNodes[i].name = childNodes[i]["orgNameCn"].replace(/\.n/g, '.');
-                    }
-                    return childNodes;
-                }
-            }
-            , callback: {
-                onClick: function (event, treeId, treeNode, clickFlag) {
-                    //执行重载
-                    table.reload('role_datatable', {
-                        page: {
-                            curr: 1 //重新从第 1 页开始
-                        }
-                        , where: {
-                            //keyWord: $("#role_search_keyword").val(),
-                            query: {
-                                orgCode: treeNode["orgCode"]
-                            }
-                        }
-                    });
-                },
-                onAsyncSuccess: function (event, treeId, treeNode, msgString) {
-                    var node = orgTree.getNodeByParam("level ", "0");
-                    console.info(treeNode, node)
-                    if (node) {
-                        orgTree.selectNode(node);
-                    }
-                }
-            },
-            data: {
-                simpleData: {
-                    enable: true
-                    , idKey: "orgCode"
-                    , pIdKey: "parentOrgCode"
-                }
-            }
+    var refreshTable = function (keyword) {
+        if (!keyword) {
+            keyword = null;
         }
-    );
+        table.reload('role_datatable', {
+            page: {
+                curr: 1 //重新从第 1 页开始
+            }
+            , where: {
+                keyWord: keyword
+            }
+        });
+    };
     //渲染用户数据表格
     table.render({
         id: 'role_datatable'
@@ -165,12 +95,12 @@ layui.use(['form', 'ztree', 'table' ], function () {
         , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
         , cols: [[
             {type: 'numbers'}
-            , {field: 'roleCode', width: 100, title: '角色编号'}
-            , {field: 'roleNameCn', width: 200, title: '角色名称'}
+            , {field: 'roleCode', width: 150, title: '角色编号'}
+            , {field: 'roleNameCn', width: 300, title: '角色名称'}
             , {field: 'delFlag', width: 100, title: '状态'}
             , {field: 'createOperator', width: 150, title: '创建人'}
             , {field: 'createdDatetime', width: 200, title: '创建时间'}
-            , {fixed: 'right',   title: '操作', align: 'center', toolbar: '#role_datatable_bar'}
+            , {fixed: 'right', width: 300,  title: '操作',   toolbar: '#role_datatable_bar'}
         ]]
     });
     //监听操作栏
@@ -179,10 +109,18 @@ layui.use(['form', 'ztree', 'table' ], function () {
         if (obj.event === 'detail') {
             layer.msg('ID：' + data.id + ' 的查看操作');
         } else if (obj.event === 'del') {
-            layer.confirm('真的删除行么', function (index) {
-                obj.del();
-                layer.close(index);
-            });
+        	 layer.confirm('是否确认删除角色？', function (index) {
+             	obj.del();
+             	 $.post(delRoleUrl+"/" + data.id, null, function (result) {
+                      if (result["returnCode"] == "0000") {
+                          refreshTable();
+                          layer.close(index);
+                          layer.msg("删除角色成功");
+                      } else {
+                          layer.msg(result.codeDesc);
+                      }
+                  });
+             });
         } else if (obj.event === 'edit') {
             layer.alert('编辑行：<br>' + JSON.stringify(data))
         }
@@ -192,31 +130,6 @@ layui.use(['form', 'ztree', 'table' ], function () {
         var type = $(this).data('type');
         active[type] ? active[type].call(this) : '';
     });
-    //刷新树的数据
-    $('#role_btn_refresh_tree').on('click', function (e) {
-        if (orgTree) {
-            orgTree.reAsyncChildNodes(null, "refresh");
-        }
-    });
-    var nodeList = [];
-    //搜索树的数据
-    $('#role_search_tree_org').bind('input', function (e) {
-        if (orgTree && $(this).val() != "") {
-            nodeList = orgTree.getNodesByParamFuzzy("name", $(this).val());
-            updateNodes(true);
-        } else {
-            updateNodes(false);
-        }
-    });
+    
 
-    //刷新树节点
-    function updateNodes(highlight) {
-        for (var i = 0, l = nodeList.length; i < l; i++) {
-            nodeList[i].highlight = highlight;
-            orgTree.updateNode(nodeList[i]);
-            if (highlight) {
-                orgTree.expandNode(orgTree.getNodeByParam("orgCode", nodeList[i]["parentOrgCode"]), true, false, null, null);
-            }
-        }
-    }
 })

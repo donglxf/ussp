@@ -64,7 +64,7 @@ public class HtBoaInRoleService {
         else
             search = "%" + search + "%";
         if (null != pageable) {
-            Page<BoaInRoleInfo> p = this.htBoaInRoleRepository.listRoleInfoByPageWeb(pageable, search ,orgPath);
+            Page<BoaInRoleInfo> p = this.htBoaInRoleRepository.listRoleInfoByPageWeb(pageable, search );
             for (BoaInRoleInfo u : p.getContent()) {
                 u.setUsers(this.htBoaInRoleRepository.listHtBoaInUser(u.getRoleCode()));
                 u.setPositions(this.htBoaInRoleRepository.listHtBoaInPosition(u.getRoleCode()));
