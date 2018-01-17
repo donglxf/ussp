@@ -29,6 +29,9 @@ spring:
  
 zuul:
   routes:
+    ussp-uc:
+      path: /uc/**
+      serviceId: ussp-uc-app
     ussp-risk:
       path: /risk/**
       serviceId: ussp-risk
