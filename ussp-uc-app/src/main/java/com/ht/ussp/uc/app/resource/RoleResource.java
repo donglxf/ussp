@@ -103,11 +103,41 @@ public class RoleResource {
         	u = htBoaInRoleService.update(u);
         } else {
         	u.setCreatedDatetime(new Date());
+        	u.setStatus("0");
             u.setCreateOperator("1000");
             u = htBoaInRoleService.add(u);
         }
         el = System.currentTimeMillis();
         log.info(logEnd, "boaInRoleInfo: " + boaInRoleInfo, msg, el, el - sl);
+        return Result.buildSuccess();
+       // return new ResponseModal(200, msg, u);
+    }
+    
+    @ApiOperation(value = "对内：禁用/启用角色", notes = "禁用/启用角色")
+    @RequestMapping(value = { "/in/stop/{id}/{status}" }, method = RequestMethod.POST)
+    public Result stop(@PathVariable Long id,@PathVariable String status) {
+        long sl = System.currentTimeMillis(), el = 0L;
+        ResponseModal r = null;
+        String msg = "成功";
+        String logHead = "角色记录查询：role/in/add param-> {}";
+        String logStart = logHead + " | START:{}";
+        String logEnd = logHead + " {} | END:{}, COST:{}";
+        //log.info(logStart, "boaInRoleInfo: " + boaInRoleInfo, sl);
+        HtBoaInRole u = null;
+        if(id>0) {
+        	u = htBoaInRoleService.findById(id);
+        }else {
+        	return Result.buildFail();
+        }
+        if(u==null) {
+    		return Result.buildFail();
+    	}
+        u.setLastModifiedDatetime(new Date());
+        u.setStatus(status);
+        u = htBoaInRoleService.update(u);
+        
+        el = System.currentTimeMillis();
+        log.info(logEnd, "boaInRoleInfo: " + u, msg, el, el - sl);
         return Result.buildSuccess();
        // return new ResponseModal(200, msg, u);
     }
