@@ -1,5 +1,4 @@
 layui.use(['form', 'ztree', 'table'], function () {
-    console.info(basepath)
     var $ = layui.jquery
         , form = layui.form
         , table = layui.table
@@ -43,7 +42,7 @@ layui.use(['form', 'ztree', 'table'], function () {
                     form.on('submit(filter_add_data_form)', function (data) {
                         $.ajax({
                             type: "POST",
-                            url: basepath + "member/add",
+                            url: basepath + "user/add",
                             data: JSON.stringify(data.field),
                             contentType: "application/json; charset=utf-8",
                             success: function (result) {
@@ -116,7 +115,6 @@ layui.use(['form', 'ztree', 'table'], function () {
                 },
                 onAsyncSuccess: function (event, treeId, treeNode) {
                     var node = orgTree.getNodeByParam("level ", "0");
-                    console.info(treeNode, node)
                     if (node) {
                         orgTree.selectNode(node);
                     }
@@ -135,7 +133,7 @@ layui.use(['form', 'ztree', 'table'], function () {
     table.render({
         id: 'user_datatable'
         , elem: '#user_datatable'
-        , url: basepath + 'member/loadListByPage.json'
+        , url: basepath + 'user/loadListByPage.json'
         , method: 'post' //如果无需自定义HTTP类型，可不加该参数
         // , where: {
         //     query: {
@@ -170,7 +168,7 @@ layui.use(['form', 'ztree', 'table'], function () {
     table.on('tool(filter_user_datatable)', function (obj) {
             var data = obj.data;
             if (obj.event === 'detail') {
-                $.post(basepath + "member/view/" + data.userId, null, function (result) {
+                $.post(basepath + "user/view/" + data.userId, null, function (result) {
                     if (result["returnCode"] == "0000") {
                         viewDialog = layer.open({
                             type: 1,
@@ -199,7 +197,7 @@ layui.use(['form', 'ztree', 'table'], function () {
                 });
             } else if (obj.event === 'del') {
                 layer.confirm('是否删除用户' + data.userName + "？", function (index) {
-                    $.post(basepath + "member/delete/" + data.userId, null, function (result) {
+                    $.post(basepath + "user/delete/" + data.userId, null, function (result) {
                         if (result["returnCode"] == "0000") {
                             refreshTable();
                             layer.close(index);
@@ -211,7 +209,7 @@ layui.use(['form', 'ztree', 'table'], function () {
                 });
             } else if (obj.event === 'edit') {
                 layer.close(editDialog);
-                $.post(basepath + "member/view/" + data.userId, null, function (result) {
+                $.post(basepath + "user/view/" + data.userId, null, function (result) {
                     if (result["returnCode"] == "0000") {
                         editDialog = layer.open({
                             type: 1,
@@ -243,7 +241,7 @@ layui.use(['form', 'ztree', 'table'], function () {
                                 form.on('submit(user_filter_modify_data_form)', function (data) {
                                     $.ajax({
                                         type: "POST",
-                                        url: basepath + "member/update",
+                                        url: basepath + "user/update",
                                         data: JSON.stringify(data.field),
                                         contentType: "application/json; charset=utf-8",
                                         success: function (result2) {

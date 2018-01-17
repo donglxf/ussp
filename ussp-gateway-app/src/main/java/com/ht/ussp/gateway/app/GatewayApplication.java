@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
+import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 
 /**
  * 
@@ -14,6 +15,7 @@ import org.springframework.cloud.netflix.feign.EnableFeignClients;
 * @author wim qiuwenwu@hongte.info
 * @date 2018年1月3日 下午6:14:42
  */
+@EnableZuulProxy
 @SpringBootApplication
 @EnableFeignClients
 @EnableDiscoveryClient
