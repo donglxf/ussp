@@ -187,7 +187,8 @@ public class UserResource {
     }
 
     /**
-     * @return ResponseModal @throws
+     * @return ResponseModal 
+     * @throws
      * @Title: validateUser
      * @Description: 验证用户有效性
      */
