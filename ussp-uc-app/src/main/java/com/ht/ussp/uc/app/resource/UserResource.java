@@ -187,7 +187,8 @@ public class UserResource {
     }
 
     /**
-     * @return ResponseModal @throws
+     * @return ResponseModal 
+     * @throws
      * @Title: validateUser
      * @Description: 验证用户有效性
      */
@@ -254,7 +255,7 @@ public class UserResource {
 
         // 查找当前用户岗位编码
         List<String> positionCodes = htBoaInPositionUserService.queryRoleCodes(userId);
-        // 通过岗位编码查用关联的角色编码
+        // 通过岗位编码查询关联的角色编码
         if (positionCodes != null && positionCodes.size() > 0) {
             List<String> userRoleCodesByPosition = htBoaInPositionRoleService.queryRoleCodesByPosition(positionCodes);
             if (!userRoleCodesByPosition.isEmpty()) {
