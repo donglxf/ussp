@@ -19,6 +19,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BoaInRoleInfo {
 
+	@ApiModelProperty(value = "id", dataType = "long")
+	long id;
+	
     @ApiModelProperty(value = "角色编号", dataType = "string")
     String roleCode;
 
@@ -68,7 +71,7 @@ public class BoaInRoleInfo {
             String rOrgCode, String rOrgName, String rOrgNameCn,
             String rOrgType, String status, String createOperator,
             Date createdDatetime, String updateOperator,
-            Date lastModifiedDatetime,int delFlag) {
+            Date lastModifiedDatetime,int delFlag,Long id) {
         this.roleCode = roleCode;
         this.roleName = roleName;
         this.roleNameCn = roleNameCn;
@@ -82,6 +85,7 @@ public class BoaInRoleInfo {
         this.updateOperator = updateOperator;
         this.lastModifiedDatetime = lastModifiedDatetime;
         this.delFlag = delFlag;
+        this.id = id;
     }
 
 }

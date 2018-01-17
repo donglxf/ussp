@@ -2,6 +2,7 @@ package com.ht.ussp.uc.app.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,27 +40,31 @@ public class HtBoaInRoleService {
         return this.htBoaInRoleRepository.findByRoleCodeIn(roleCodes);
     }
     
-    public Object findAllByPage(PageConf pageConf) {
+    public Object findAllByPage(PageConf pageConf,Map<String, String> query) {
         Sort sort = null;
         Pageable pageable = null;
         List<Order> orders = new ArrayList<Order>();
         if (null != pageConf.getSortNames()) {
             for (int i = 0; i < pageConf.getSortNames().size(); i++) {
-                orders.add(new Order(pageConf.getSortOrders().get(i),
-                        pageConf.getSortNames().get(i)));
+                orders.add(new Order(pageConf.getSortOrders().get(i), pageConf.getSortNames().get(i)));
             }
             sort = new Sort(orders);
         }
         if (null != pageConf.getPage() && null != pageConf.getSize())
-            pageable = new PageRequest(pageConf.getPage(), pageConf.getSize(),
-                    sort);
+            pageable = new PageRequest(pageConf.getPage(), pageConf.getSize(), sort);
+        
+        String orgPath = "";
+        if (query != null && query.size() > 0 && query.get("orgCode") != null) {
+        	orgPath = "%" +query.get("orgCode")+ "%";
+        }
+        
         String search = pageConf.getSearch();
         if (null == search || 0 == search.trim().length())
-            search = "";
+            search = "%%";
         else
             search = "%" + search + "%";
         if (null != pageable) {
-            Page<BoaInRoleInfo> p = this.htBoaInRoleRepository.listRoleInfo(pageable, search);
+            Page<BoaInRoleInfo> p = this.htBoaInRoleRepository.listRoleInfoByPageWeb(pageable, search ,orgPath);
             for (BoaInRoleInfo u : p.getContent()) {
                 u.setUsers(this.htBoaInRoleRepository.listHtBoaInUser(u.getRoleCode()));
                 u.setPositions(this.htBoaInRoleRepository.listHtBoaInPosition(u.getRoleCode()));
@@ -83,8 +88,8 @@ public class HtBoaInRoleService {
         return this.htBoaInRoleRepository.save(u);
     }
     
-    public void delete(Set<String> roleCodes) {
-        this.htBoaInRoleRepository.delete(roleCodes);
+    public void delete(long id) {
+        this.htBoaInRoleRepository.delete(id);
     }
     
 }

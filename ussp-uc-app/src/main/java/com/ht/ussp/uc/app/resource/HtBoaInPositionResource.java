@@ -92,7 +92,15 @@ public class HtBoaInPositionResource {
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.info(logStart, "boaInPositionInfo: " + boaInPositionInfo, sl);
-        HtBoaInPosition u = new HtBoaInPosition();
+        HtBoaInPosition u = null;
+        if(boaInPositionInfo.getId()>0) {
+        	u = htBoaInPositionService.findById(boaInPositionInfo.getId());
+        	if(u==null) {
+        		u = new HtBoaInPosition();
+        	}
+        }else {
+        	u = new HtBoaInPosition();
+        }
         u.setLastModifiedDatetime(new Date());
         u.setOrgPath(boaInPositionInfo.getOrgPath());
         u.setParentOrgCode(boaInPositionInfo.getPOrgCode());

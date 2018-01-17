@@ -10,13 +10,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.ussp.core.PageResult;
+import com.ht.ussp.core.Result;
 import com.ht.ussp.core.ReturnCodeEnum;
+import com.ht.ussp.uc.app.domain.HtBoaInPosition;
 import com.ht.ussp.uc.app.domain.HtBoaInRole;
 import com.ht.ussp.uc.app.model.BoaInRoleInfo;
 import com.ht.ussp.uc.app.model.Codes;
@@ -40,8 +43,7 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(value = "/role")
 public class HtBoaInRoleResource {
 
-    private static final Logger log = LoggerFactory
-            .getLogger(HtBoaInRoleResource.class);
+    private static final Logger log = LoggerFactory.getLogger(HtBoaInRoleResource.class);
 
     @Autowired
     private HtBoaInRoleService htBoaInRoleService;
@@ -63,7 +65,7 @@ public class HtBoaInRoleResource {
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.info(logStart, "pageConf: " + pageConf, sl);
         /*Object o = htBoaInRoleService.findAllByPage(pageConf);*/
-        Page<BoaInRoleInfo> pageData = (Page<BoaInRoleInfo>) htBoaInRoleService.findAllByPage(pageConf);
+        Page<BoaInRoleInfo> pageData = (Page<BoaInRoleInfo>) htBoaInRoleService.findAllByPage(pageConf,page.getQuery());
         el = System.currentTimeMillis();
         log.info(logEnd, "pageConf: " + pageConf, msg, el, el - sl);
         if (pageData != null) {
@@ -75,9 +77,8 @@ public class HtBoaInRoleResource {
     
     @ApiOperation(value = "对内：新增/编辑角色记录", notes = "提交角色基础信息新增/编辑角色")
     @ApiImplicitParam(name = "boaInRoleInfo", value = "角色信息实体", required = true, dataType = "BoaInRoleInfo")
-    @RequestMapping(value = {
-            "/in/add" }, method = RequestMethod.POST)
-    public ResponseModal add(@RequestBody BoaInRoleInfo boaInRoleInfo) {
+    @RequestMapping(value = { "/in/add" }, method = RequestMethod.POST)
+    public Result add(@RequestBody BoaInRoleInfo boaInRoleInfo) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
         String msg = "成功";
@@ -86,51 +87,50 @@ public class HtBoaInRoleResource {
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.info(logStart, "boaInRoleInfo: " + boaInRoleInfo, sl);
         HtBoaInRole u = null;
-        if (null != boaInRoleInfo.getRoleCode()
-                && 0 < boaInRoleInfo.getRoleCode().trim().length()) {
-            Set<String> codes = new HashSet<String>(0);
-            codes.add(boaInRoleInfo.getRoleCode().trim());
-            List<HtBoaInRole> list = htBoaInRoleService
-                    .findByRoleCodeIn(codes);
-            r = exceptionReturn(logEnd,
-                    "boaInRoleInfo: " + boaInRoleInfo, list, sl, "角色信息",
-                    1);
-            if (null != r)
-                return r;
-            u = list.get(0);
-        } else {
-            u = new HtBoaInRole();
+        if(boaInRoleInfo.getId()>0) {
+        	u = htBoaInRoleService.findById(boaInRoleInfo.getId());
+        	if(u==null) {
+        		u = new HtBoaInRole();
+        	}
+        }else {
+        	u = new HtBoaInRole();
         }
+         
         u.setCreatedDatetime(new Date());
         u.setLastModifiedDatetime(new Date());
         u.setRoleName(boaInRoleInfo.getRoleName());
         u.setRoleNameCn(boaInRoleInfo.getRoleNameCn());
         u.setRootOrgCode(boaInRoleInfo.getROrgCode());
         u.setStatus(boaInRoleInfo.getStatus());
-        if (null == u.getRoleCode())
+        if(boaInRoleInfo.getId()>0) {
+        	u.setId(boaInRoleInfo.getId());
+        	u = htBoaInRoleService.update(u);
+        } else {
+        	u.setCreatedDatetime(new Date());
+            u.setCreateOperator("1000");
             u = htBoaInRoleService.add(u);
-        else
-            u = htBoaInRoleService.update(u);
+        }
         el = System.currentTimeMillis();
         log.info(logEnd, "boaInRoleInfo: " + boaInRoleInfo, msg, el, el - sl);
-        return new ResponseModal(200, msg, u);
+        return Result.buildSuccess();
+       // return new ResponseModal(200, msg, u);
     }
     
     @ApiOperation(value = "对内：删除角色记录", notes = "提交角色编号，可批量删除")
     @ApiImplicitParam(name = "codes", value = "角色编号集", required = true, dataType = "Codes")
-    @RequestMapping(value = {
-            "/in/delete" }, method = RequestMethod.DELETE)
-    public ResponseModal delete(@RequestBody Codes codes) {
+    @RequestMapping(value = {"/in/delete/{id}" }, method = RequestMethod.DELETE)
+    public Result delete(@PathVariable int id) {
         long sl = System.currentTimeMillis(), el = 0L;
         String msg = "成功";
         String logHead = "角色记录删除：role/in/delete param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "codes: " + codes, sl);
-        htBoaInRoleService.delete(codes.getCodes());
+        log.info(logStart, "codes: " + id, sl);
+        htBoaInRoleService.delete(id);
         el = System.currentTimeMillis();
-        log.info(logEnd, "codes: " + codes, msg, el, el - sl);
-        return new ResponseModal(200, msg);
+        log.info(logEnd, "codes: " + id, msg, el, el - sl);
+        return Result.buildSuccess();
+        //return new ResponseModal(200, msg);
     }
 
     protected ResponseModal exceptionReturn(String logEnd, String param,

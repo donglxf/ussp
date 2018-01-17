@@ -66,7 +66,7 @@ layui.use(['form', 'ztree', 'table'], function () {
                                             }
                                         }
                                     });
-                                    layer.alert("岗位新增成功。");
+                                    layer.alert("岗位新增成功");
                                 }
                             },
                             error: function (message) {
@@ -221,7 +221,6 @@ layui.use(['form', 'ztree', 'table'], function () {
                  });
             });
         } else if (obj.event === 'edit') {
-        	console.log(data);
             editDialog = layer.open({
             	 type: 1,
                  area: ['400px', '400px'],
