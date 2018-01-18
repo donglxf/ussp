@@ -801,6 +801,12 @@ layui.define(['laytpl', 'laypage', 'layer', 'form'], function (exports) {
             if (height < 135) height = 135;
             that.elem.css('height', height);
         }
+        //begin 增加代码 by tanrq 2018/01/17
+        // 如果当前有一个datatable，且datatable有分页条(that.layPage)，那么这时打开一个新的页面，这时datatable标题栏()的高度计算会出错，导致分页栏被挤出datatable外。
+        if (that.layHeader.height() <= 0) {
+            return false;
+        }
+        //end 增加代码 by tanrq 2018/01/17
 
         //tbody区域高度
         bodyHeight = parseFloat(height) - parseFloat(that.layHeader.height()) - 1;

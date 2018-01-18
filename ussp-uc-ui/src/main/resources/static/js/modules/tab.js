@@ -19,8 +19,8 @@ layui.define(['jquery', 'element', 'nprogress', 'utils'], function (exports) {
     var Tab = function () {
         this.config = {
             elem: undefined,
-            mainUrl: '/main.html',
-            renderType: 'iframe',
+            mainUrl: '/html/resource/resource.html',
+            renderType: 'page',
             openWait: false
         };
         this.v = '1.0.5';
@@ -71,8 +71,8 @@ layui.define(['jquery', 'element', 'nprogress', 'utils'], function (exports) {
         tabDomExists: function () {
             var that = this;
             if (_doc.find('div.kit-tab').length > 0) {
-                that._title = $('.kit-tab ul.layui-tab-title');
-                that._content = $('.kit-tab div.layui-tab-content');
+                that._title = $('.kit-tab>ul.layui-tab-title');
+                that._content = $('.kit-tab>div.layui-tab-content');
                 return true;
             }
             return false;
@@ -119,8 +119,8 @@ layui.define(['jquery', 'element', 'nprogress', 'utils'], function (exports) {
             }
             //渲染
             $(_config.elem).html(_htm);
-            that._title = $('.kit-tab ul.layui-tab-title');
-            that._content = $('.kit-tab div.layui-tab-content');
+            that._title = $('.kit-tab>ul.layui-tab-title');
+            that._content = $('.kit-tab>div.layui-tab-content');
             var _tool = $('.kit-tab-tool'),
                 _toolBody = $('.kit-tab-tool-body');
             //监听操作点击事件
@@ -197,10 +197,10 @@ layui.define(['jquery', 'element', 'nprogress', 'utils'], function (exports) {
                 var currBoxHeight = $(that._parentElem).height(); //获取当前容器的高度
                 switch (_config.renderType) {
                     case renderType.page:
-                        $('.kit-tab .layui-tab-content').height(currBoxHeight - 43);
+                        $('.kit-tab>.layui-tab-content').height(currBoxHeight - 43);
                         break;
                     case renderType.iframe:
-                        $('.kit-tab .layui-tab-content iframe').height(currBoxHeight - 47);
+                        $('.kit-tab>.layui-tab-content iframe').height(currBoxHeight - 47);
                         break;
                 }
             }).resize();

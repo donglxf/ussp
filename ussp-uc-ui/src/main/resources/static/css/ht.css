@@ -63,7 +63,7 @@ a, a:hover {
 
 /*功能页面内部tab*/
 .view_tab {
-    margin: 0 -15px
+    margin: 0 -15px;
 }
 
 .view_tab .layui-tab-title {
@@ -78,4 +78,7 @@ a, a:hover {
 
 .view_tab .layui-tab-title .layui-this:after {
     height: 30px;
+}
+.view_tab .layui-tab-content{
+    overflow-y: visible;
 }

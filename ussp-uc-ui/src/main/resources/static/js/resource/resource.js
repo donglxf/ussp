@@ -1,5 +1,6 @@
-layui.use(['form', 'ztree', 'table'], function () {
+layui.use(['element', 'form', 'ztree', 'table'], function () {
     var $ = layui.jquery
+        , element = layui.element
         , form = layui.form
         , table = layui.table
         , addDialog = 0 //新增弹出框的ID
@@ -42,7 +43,7 @@ layui.use(['form', 'ztree', 'table'], function () {
                     form.on('submit(filter_add_data_form)', function (data) {
                         $.ajax({
                             type: "POST",
-                            url: basepath + "user/add",
+                            url: "http://localhost:9999/user/add",
                             data: JSON.stringify(data.field),
                             contentType: "application/json; charset=utf-8",
                             success: function (result) {
@@ -85,15 +86,15 @@ layui.use(['form', 'ztree', 'table'], function () {
         }
     }
     //渲染组织机构树
-    orgTree = $.fn.zTree.init($('#user_org_ztree_left'), {
+    orgTree = $.fn.zTree.init($('#resource_app_auth_ztree_left'), {
             async: {
                 enable: true,
-                url: basepath + "org/tree.json",
+                url: basepath + "system/appandauth/load",
                 dataFilter: function (treeId, parentNode, childNodes) {
                     if (!childNodes) return null;
                     for (var i = 0, l = childNodes.length; i < l; i++) {
-                        childNodes[i].open = true;
-                        childNodes[i].name = childNodes[i]["orgNameCn"].replace(/\.n/g, '.');
+                        //childNodes[i].open = true;
+                        childNodes[i].name = childNodes[i]["nameCn"].replace(/\.n/g, '.');
                     }
                     return childNodes;
                 }
@@ -123,43 +124,139 @@ layui.use(['form', 'ztree', 'table'], function () {
             data: {
                 simpleData: {
                     enable: true
-                    , idKey: "orgCode"
-                    , pIdKey: "parentOrgCode"
+                    , idKey: "code"
+                    , pIdKey: "parentCode"
                 }
             }
         }
     );
     //渲染用户数据表格
-    table.render({
-        id: 'user_datatable'
-        , elem: '#user_datatable'
-        , url: basepath + 'user/loadListByPage.json'
-        // , where: {
-        //     query: {
-        //         orgCode: "DEV1"
-        //     }
-        // }5
-        , page: true
-        , height: 'full-200'
-        , cols: [[
-            {type: 'numbers'}
-            , {field: 'jobNumber', width: 100, title: '工号'}
-            , {field: 'userName', width: 100, title: '用户名'}
-            , {field: 'mobile', width: 120, title: '手机'}
-            , {field: 'email', width: 100, title: '邮箱'}
-            , {field: 'idNo', minWidth: 100, title: '身份证'}
-            , {field: 'orgName', minWidth: 100, title: '所属机构'}
-            , {field: 'status', width: 60, title: '状态', templet: "#user_status_laytpl"}
-            , {field: 'updateOperator', width: 100, title: '更新人'}
-            , {field: 'lastModifiedDatetime', width: 150, title: '更新时间'}
-            , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#user_datatable_bar'}
-        ]]
+    renderTable("menu");
+    renderTable("btn");
+    element.on('tab(resource_bottom_tab)', function (data) {
+        switch (data.index) {
+            case 1:
+                renderTable("tab");
+                break;
+            case 2:
+                renderTable("api");
+                break;
+        }
     });
+    element.on('tab(resource_top_tab)', function (data) {
+        switch (data.index) {
+            case 1:
+                renderTable("module");
+                break;
+        }
+    });
+
+    function renderTable(type) {
+        var clos = [[]], height = 'full', page = false, limit = 999, limits = [];
+        switch (type) {
+            case 'menu':
+                height = '276';
+                page = true;
+                limit = 5;
+                limits = [5, 10, 20, 30, 40, 50];
+                clos = [[
+                    {type: 'numbers'}
+                    , {field: 'jobNumber', width: 100, title: '菜单编号'}
+                    , {field: 'userName', width: 100, title: '菜单名称'}
+                    , {field: 'mobile', width: 120, title: '父菜单'}
+                    , {field: 'email', width: 100, title: '菜单链接'}
+                    , {field: 'email', width: 100, title: '菜单图标'}
+                    , {field: 'idNo', title: '顺序号'}
+                    , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl"}
+                    , {field: 'updateOperator', width: 100, title: '更新人'}
+                    , {field: 'lastModifiedDatetime', width: 150, title: '更新时间'}
+                    , {width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn'}
+                ]];
+                break;
+            case 'btn':
+                height = 'full-601';
+                clos = [[
+                    {type: 'numbers'}
+                    , {field: 'jobNumber', width: 100, title: '按钮编号'}
+                    , {field: 'userName', width: 100, title: '按钮名称'}
+                    , {field: 'userName', width: 100, title: '按钮图标'}
+                    , {field: 'mobile', width: 120, title: '所属菜单'}
+                    , {field: 'idNo', title: '顺序号'}
+                    , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl"}
+                    , {field: 'updateOperator', width: 100, title: '更新人'}
+                    , {field: 'lastModifiedDatetime', width: 150, title: '更新时间'}
+                    , {width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn'}
+                ]];
+                break;
+            case 'tab':
+                height = 'full-601';
+                clos = [[
+                    {type: 'numbers'}
+                    , {field: 'jobNumber', width: 100, title: 'TAB编号'}
+                    , {field: 'userName', width: 100, title: 'TAB名称'}
+                    , {field: 'userName', width: 100, title: 'TAB链接'}
+                    , {field: 'mobile', width: 120, title: '所属菜单'}
+                    , {field: 'idNo', title: '顺序号'}
+                    , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl"}
+                    , {field: 'updateOperator', width: 100, title: '更新人'}
+                    , {field: 'lastModifiedDatetime', width: 150, title: '更新时间'}
+                    , {width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn'}
+                ]];
+                break;
+            case 'api':
+                height = 'full-601';
+                clos = [[
+                    {type: 'numbers'}
+                    , {field: 'jobNumber', width: 100, title: 'API编号'}
+                    , {field: 'userName', width: 100, title: 'API名称'}
+                    , {field: 'userName', width: 100, title: 'API链接'}
+                    , {field: 'mobile',  title: '所属菜单'}
+                    , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl"}
+                    , {field: 'updateOperator', width: 100, title: '更新人'}
+                    , {field: 'lastModifiedDatetime', width: 150, title: '更新时间'}
+                    , {width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn'}
+                ]];
+                break;
+            case 'module':
+                height = 'full-234';
+                page = true;
+                limit = 20;
+                limits = [20, 30, 40, 50, 60, 70];
+                clos = [[
+                    {type: 'numbers'}
+                    , {field: 'jobNumber', width: 100, title: '模块编号'}
+                    , {field: 'userName', width: 100, title: '模块名称'}
+                    , {field: 'mobile', width: 120, title: '父模块'}
+                    , {field: 'email', width: 100, title: '模块链接'}
+                    , {field: 'email', width: 100, title: '模块图标'}
+                    , {field: 'idNo', title: '顺序号'}
+                    , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl"}
+                    , {field: 'updateOperator', width: 100, title: '更新人'}
+                    , {field: 'lastModifiedDatetime', width: 150, title: '更新时间'}
+                    , {width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn'}
+                ]];
+                break;
+        }
+        table.render({
+            id: 'resource_' + type + '_datatable'
+            , elem: '#resource_' + type + '_datatable'
+            , url: basepath + 'user/loadListByPage.json'
+            , where: {
+                orgCode: "DEV1"
+            }
+            , page: page
+            , limit: 9999
+            , limits: limits
+            , height: height
+            , cols: clos
+        });
+    }
+
     //监听操作栏
-    table.on('tool(filter_user_datatable)', function (obj) {
+    table.on('tool(resource_menu_datatable)', function (obj) {
             var data = obj.data;
             if (obj.event === 'detail') {
-                $.post(basepath + "user/view/" + data.userId, null, function (result) {
+                $.post("http://localhost:9999/user/view/" + data.userId, null, function (result) {
                     if (result["returnCode"] == "0000") {
                         viewDialog = layer.open({
                             type: 1,
@@ -188,7 +285,7 @@ layui.use(['form', 'ztree', 'table'], function () {
                 });
             } else if (obj.event === 'del') {
                 layer.confirm('是否删除用户' + data.userName + "？", function (index) {
-                    $.post(basepath + "user/delete/" + data.userId, null, function (result) {
+                    $.post("http://localhost:9999/user/delete/" + data.userId, null, function (result) {
                         if (result["returnCode"] == "0000") {
                             refreshTable();
                             layer.close(index);
@@ -200,7 +297,7 @@ layui.use(['form', 'ztree', 'table'], function () {
                 });
             } else if (obj.event === 'edit') {
                 layer.close(editDialog);
-                $.post(basepath + "user/view/" + data.userId, null, function (result) {
+                $.post("http://localhost:9999/user/view/" + data.userId, null, function (result) {
                     if (result["returnCode"] == "0000") {
                         editDialog = layer.open({
                             type: 1,
@@ -232,7 +329,7 @@ layui.use(['form', 'ztree', 'table'], function () {
                                 form.on('submit(user_filter_modify_data_form)', function (data) {
                                     $.ajax({
                                         type: "POST",
-                                        url: basepath + "user/update",
+                                        url: "http://localhost:9999/user/update",
                                         data: JSON.stringify(data.field),
                                         contentType: "application/json; charset=utf-8",
                                         success: function (result2) {

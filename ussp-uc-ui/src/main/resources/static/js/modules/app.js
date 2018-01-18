@@ -6,9 +6,10 @@
  * LICENSE:MIT
  */
 var tab;
-layui.define(['element', 'nprogress', 'form', 'loader', 'tab', 'navbar', 'onelevel', 'laytpl', 'spa'], function (exports) {
+layui.define(['element', 'nprogress', 'form', 'table', 'loader', 'tab', 'navbar', 'onelevel', 'laytpl', 'spa'], function (exports) {
     var $ = layui.jquery,
         element = layui.element,
+        table = layui.table,
         layer = layui.layer,
         _win = $(window),
         _doc = $(document),
@@ -18,12 +19,21 @@ layui.define(['element', 'nprogress', 'form', 'loader', 'tab', 'navbar', 'onelev
         loader = layui.loader,
         navbar = layui.navbar,
         _componentPath = 'components/',
-        spa = layui.spa;
-    tab = layui.tab
+        spa = layui.spa,
+        tab = layui.tab;
+    table.set({
+        response: {
+            statusName: 'returnCode' //数据状态的字段名称，默认：code
+            , statusCode: "0000" //成功的状态码，默认：0
+            , msgName: 'msg' //状态信息的字段名称，默认：msg
+            , countName: 'count' //数据总数的字段名称，默认：count
+            , dataName: 'data' //数据列表的字段名称，默认：data
+        }
+        , method: 'post' //如果无需自定义HTTP类型，可不加该参数
+        , cellMinWidth: 80 //所有单元格默认最小宽度
+    });
+
     var app = {
-        hello: function (str) {
-            layer.alert('Hello ' + (str || 'test'));
-        },
         config: {
             type: 'iframe'
         },
