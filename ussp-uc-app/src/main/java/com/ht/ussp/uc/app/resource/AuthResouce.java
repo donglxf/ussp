@@ -3,20 +3,22 @@ package com.ht.ussp.uc.app.resource;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import com.ht.ussp.client.dto.ApiInfoDto;
+import com.ht.ussp.client.dto.ApiResourceDto;
 import com.ht.ussp.uc.app.common.Constants;
+import com.ht.ussp.uc.app.domain.HtBoaInResource;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.model.SysStatus;
 import com.ht.ussp.uc.app.service.HtBoaInResourceService;
@@ -25,9 +27,16 @@ import com.ht.ussp.uc.app.util.FastJsonUtil;
 import com.ht.ussp.uc.app.util.LogicUtil;
 import com.ht.ussp.uc.app.vo.ResVo;
 import com.ht.ussp.uc.app.vo.UserVo;
-
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 
@@ -45,12 +54,12 @@ public class AuthResouce {
 
 	@Autowired
 	protected RedisTemplate<String, String> redis;
-
+	
 	@Autowired
 	private HtBoaInResourceService htBoaInResourceService;
 
-	@Autowired
-	private HtBoaInRoleResService htBoaInRoleResService;
+    @Autowired
+    private HtBoaInRoleResService htBoaInRoleResService;
 
 	/**
 	 * 
@@ -146,9 +155,9 @@ public class AuthResouce {
 	}
 
 	/**
-	 * 	
-	 * @Title: IsHasAuth 
-	 * @Description: 验证是否有资源权限 
+	 *
+	 * @Title: IsHasAuth
+	 * @Description: 验证是否有资源权限
 	 * @return Boolean
 	 * @throws
 	 */
@@ -182,9 +191,9 @@ public class AuthResouce {
 	};
 
 	/**
-	 * 
-	 * @Title: addToList 
-	 * @Description: 将资源分组添加到List中 
+	 *
+	 * @Title: addToList
+	 * @Description: 将资源分组添加到List中
 	 * @return void
 	 * @throws
 	 */
@@ -214,8 +223,8 @@ public class AuthResouce {
 	};
 
 	/**
-	 * 
-	 * @Title: queryApi 
+	 *
+	 * @Title: queryApi
 	 * @Description: 分组查找资源：可查找菜单、分组、按钮资源
 	 * @return ResponseModal
 	 * @throws
@@ -241,11 +250,11 @@ public class AuthResouce {
 					rm.setResult(json);
 				} else{
 					//到数据库查，用户查系统，查是否管理员，分类查角色编码，查资源，保存资源，返回资源
-					
-					
-					
+
+
+
 				}
-				
+
 			} catch (Exception e) {
 				e.printStackTrace();
 				rm.setSysStatus(SysStatus.ERROR);
@@ -330,4 +339,44 @@ public class AuthResouce {
 		return rm;
 	}
 
+    @ApiOperation(value = "同步API资源（内部接口）")
+    @PostMapping("/api/aynch")
+    @Transactional
+    public void resourceApiAynch(@RequestBody ApiResourceDto apiResourceDto) {
+        if (apiResourceDto != null && apiResourceDto.getApiInfoList() != null && apiResourceDto.getApiInfoList().size() > 0) {
+            int num = 0;
+            List<HtBoaInResource> oldResList = htBoaInResourceService.getByApp(apiResourceDto.getApp());
+            List<HtBoaInResource> tempList;
+            HtBoaInResource oldRes;
+            List<ApiInfoDto> apiDtoList = apiResourceDto.getApiInfoList();
+            List<HtBoaInResource> newResList = new ArrayList<>();
+            for (ApiInfoDto api : apiDtoList) {
+                tempList = oldResList.stream().filter(demo -> api.getMethod().equals(demo.getRemark())).distinct().collect(Collectors.toList());
+                if (tempList != null && tempList.size() > 0) {
+                    oldRes = tempList.get(0);
+                    if ((oldRes.getResNameCn() != null && !oldRes.getResNameCn().equals(api.getApiDescribe()))
+                            || (oldRes.getResContent() != null && !oldRes.getResContent().equals(api.getMapping()))) {
+                        oldRes.setResNameCn(api.getApiDescribe());
+                        oldRes.setResContent(api.getMapping());
+                        newResList.add(oldRes);
+                    }
+                } else {
+                    HtBoaInResource re = new HtBoaInResource();
+                    re.setResCode("api_" + System.currentTimeMillis() + (num++));
+                    re.setResType("api");
+                    re.setResContent(api.getMapping());
+                    re.setRemark(api.getMethod());
+                    re.setResNameCn(api.getApiDescribe());
+                    re.setApp(apiResourceDto.getApp());
+                    re.setCreateOperator("自动创建");
+                    re.setUpdateOperator("自动创建");
+                    re.setSequence(1);
+                    re.setStatus("0");
+                    re.setDelFlag(0);
+                    newResList.add(re);
+                }
+            }
+            htBoaInResourceService.save(newResList);
+        }
+    }
 }
