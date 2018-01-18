@@ -68,12 +68,6 @@ public class UserResource {
 	@Autowired
 	private HtBoaInLoginService htBoaInLoginService;
 	@Autowired
-	private HtBoaInOrgService htBoaInOrgService;
-	@Autowired
-	private HtBoaInRoleService htBoaInRoleService;
-	@Autowired
-	private HtBoaInPositionService htBoaInPositionService;
-	@Autowired
 	private HtBoaInUserRoleService htBoaInUserRoleService;
 	@Autowired
 	private HtBoaInPositionUserService htBoaInPositionUserService;
@@ -269,26 +263,7 @@ public class UserResource {
 	public ResponseModal getRoleCodes(@RequestParam(value = "userId", required = true) String userId) {
 		ResponseModal rm = new ResponseModal();
 		List<String> roleCodes = new ArrayList<>();
-		// 查找当前用户的角色编码
-		List<String> userRoleCodes = htBoaInUserRoleService.queryRoleCodes(userId);
-		if (!userRoleCodes.isEmpty()) {
-			userRoleCodes.forEach(userRoleCode -> {
-				roleCodes.add(userRoleCode);
-			});
-		}
-
-		// 查找当前用户岗位编码
-		List<String> positionCodes = htBoaInPositionUserService.queryRoleCodes(userId);
-		// 通过岗位编码查询关联的角色编码
-		if (positionCodes != null && positionCodes.size() > 0) {
-			List<String> userRoleCodesByPosition = htBoaInPositionRoleService.queryRoleCodesByPosition(positionCodes);
-			if (!userRoleCodesByPosition.isEmpty()) {
-				userRoleCodesByPosition.forEach(userRoleCode -> {
-					roleCodes.add(userRoleCode);
-				});
-			}
-		}
-
+		roleCodes=htBoaInUserRoleService.getAllRoleCodes(userId);
 		if (roleCodes.isEmpty()) {
 			rm.setSysStatus(SysStatus.NO_ROLE);
 			return rm;
@@ -310,7 +285,7 @@ public class UserResource {
 	 */
 	@ApiOperation(value = "用户信息分页查询")
 	@PostMapping(value = "/loadListByPage")
-	public PageResult<List<UserMessageVo>> loadListByPage(Page page) {
+	public PageResult<List<UserMessageVo>> loadListByPage(PageVo page) {
 		return htBoaInUserService.getUserListPage(new PageRequest(page.getPage(), page.getLimit()), page.getOrgCode(),
 				page.getKeyWord(), page.getQuery());
 	}

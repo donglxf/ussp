@@ -2,9 +2,11 @@ package com.ht.ussp.uc.app.resource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,13 +16,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import com.ht.ussp.client.dto.ApiInfoDto;
+import com.ht.ussp.client.dto.ApiResourceDto;
 import com.ht.ussp.uc.app.common.Constants;
+import com.ht.ussp.uc.app.domain.HtBoaInResource;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.model.SysStatus;
 import com.ht.ussp.uc.app.service.HtBoaInResourceService;
 import com.ht.ussp.uc.app.service.HtBoaInRoleResService;
+import com.ht.ussp.uc.app.service.HtBoaInUserAppService;
+import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
 import com.ht.ussp.uc.app.util.FastJsonUtil;
 import com.ht.ussp.uc.app.util.LogicUtil;
 import com.ht.ussp.uc.app.vo.ResVo;
@@ -52,12 +57,21 @@ public class AuthResouce {
 	@Autowired
 	private HtBoaInRoleResService htBoaInRoleResService;
 
+	@Autowired
+	private HtBoaInUserAppService htBoaInUserAppService;
+	
+	@Autowired
+	private HtBoaInUserRoleService htBoaInUserRoleService;
+
+	
 	/**
 	 * 
 	 * @Title: saveResourcesToRedis 
-	 * @Description: 保存所有资源到REDIS 
+	 * @Description: 保存所有资源到REDIS  
 	 * @return ResponseModal
 	 * @throws
+	 * @author wim qiuwenwu@hongte.info 
+	 * @date 2018年1月18日 下午10:27:37
 	 */
 	@PostMapping(value = "/saveResources")
 	@ApiOperation(value = "获取并保存用户资源")
@@ -146,11 +160,13 @@ public class AuthResouce {
 	}
 
 	/**
-	 * 	
+	 * 
 	 * @Title: IsHasAuth 
-	 * @Description: 验证是否有资源权限 
+	 * @Description: 验证是否有资源权限  
 	 * @return Boolean
 	 * @throws
+	 * @author wim qiuwenwu@hongte.info 
+	 * @date 2018年1月18日 下午10:27:21
 	 */
 	@GetMapping(value = "/IsHasAuth")
 	@ApiOperation(value = "验证资源")
@@ -184,9 +200,11 @@ public class AuthResouce {
 	/**
 	 * 
 	 * @Title: addToList 
-	 * @Description: 将资源分组添加到List中 
+	 * @Description: 将资源分组添加到List中  
 	 * @return void
 	 * @throws
+	 * @author wim qiuwenwu@hongte.info 
+	 * @date 2018年1月18日 下午10:27:07
 	 */
 	public void addToList(List<ResVo> res, List<ResVo> module_res, List<ResVo> menu_res, List<ResVo> button_res,
 			List<ResVo> api_res) {
@@ -215,10 +233,12 @@ public class AuthResouce {
 
 	/**
 	 * 
-	 * @Title: queryApi 
+	 * @Title: queryResource 
 	 * @Description: 分组查找资源：可查找菜单、分组、按钮资源
 	 * @return ResponseModal
 	 * @throws
+	 * @author wim qiuwenwu@hongte.info 
+	 * @date 2018年1月18日 下午10:25:42
 	 */
 
 	@PostMapping(value = "/queryResource")
@@ -239,13 +259,50 @@ public class AuthResouce {
 					JSONArray json = JSONArray.parseArray(resourceValues.get(0));
 					rm.setSysStatus(SysStatus.SUCCESS);
 					rm.setResult(json);
-				} else{
-					//到数据库查，用户查系统，查是否管理员，分类查角色编码，查资源，保存资源，返回资源
+				} else {
+					UserVo userVo = new UserVo();
+					List<String> res_types = new ArrayList<String>();
+					// 到数据库查，用户查系统，查是否管理员，分类查角色编码，查资源，保存资源，返回资源
+					String controller = htBoaInUserAppService.findUserAndAppInfo(userId, app);
+					if (!LogicUtil.isNullOrEmpty(controller)) {
+						userVo.setController(controller);
+					} else {
+						log.info("用户来源不正确！");
+						rm.setSysStatus(SysStatus.USER_NOT_MATCH_APP);
+						return rm;
+					}
+
 					
-					
-					
+					//查找所需资源
+					if("module".equals(resourceName) ) {
+						res_types.add(Constants.RES_TYPE_MODULE);
+					}
+					if("menu".equals(resourceName) ) {
+						res_types.add(Constants.RES_TYPE_VIEW);
+						res_types.add(Constants.RES_TYPE_GROUP);
+					}
+
+					if("button".equals(resourceName) ) {
+						res_types.add(Constants.RES_TYPE_BUTTON);
+						res_types.add(Constants.RES_TYPE_TAB);
+					}
+						List<String> allRoleCodes=htBoaInUserRoleService.getAllRoleCodes(userId);
+						
+						List<String> res_code = htBoaInRoleResService.queryResByCode(allRoleCodes);
+						
+						
+						if (res_code.size() > 0) {
+							List<ResVo> res = htBoaInResourceService.queryResForN(res_code, res_types, app);
+											
+							redis.opsForList().leftPushAll(key.toString(), FastJsonUtil.objectToJson(res));
+							
+							rm.setResult(res);
+							rm.setSysStatus(SysStatus.SUCCESS);
+							return rm;
+					}
+
 				}
-				
+
 			} catch (Exception e) {
 				e.printStackTrace();
 				rm.setSysStatus(SysStatus.ERROR);
@@ -259,75 +316,50 @@ public class AuthResouce {
 	}
 
 	/**
-	 * 
-	 * @Title: querybuttonAndTab 
-	 * @Description: 查询拥有的按钮权限 
-	 * @return ResponseModal
-	 * @throws
+	 * 接收API资源，并存入数据库<br>
+	 *
+	 * @param apiResourceDto API资源信息
+	 * @author 谭荣巧
+	 * @Date 2018/1/18 21:41
 	 */
-	@GetMapping(value = "/querybuttonAndTab")
-	@ApiOperation(value = "查询按钮")
-	public ResponseModal querybuttonAndTab(UserVo userVo) {
-		ResponseModal rm = new ResponseModal();
-		if (null == userVo || LogicUtil.isNullOrEmpty(userVo.getUserId()) || LogicUtil.isNullOrEmpty(userVo.getApp())) {
-			rm.setSysStatus(SysStatus.MAILPARAM_ERROR);
-			return rm;
-		}
-		String userId = userVo.getUserId();
-		String app = userVo.getApp();
-		String controller = userVo.getController();
-		if ("Y".equals(controller)) {
-
-		}
-		return rm;
-	}
-
-	/**
-	 * 
-	 * @Title: queryModule 
-	 * @Description: 查询拥有的模块权限 
-	 * @return ResponseModal
-	 * @throws
-	 */
-	@GetMapping(value = "/queryModule")
-	@ApiOperation(value = "查询模块")
-	public ResponseModal queryModule(UserVo userVo) {
-		ResponseModal rm = new ResponseModal();
-		if (null == userVo || LogicUtil.isNullOrEmpty(userVo.getUserId()) || LogicUtil.isNullOrEmpty(userVo.getApp())) {
-			rm.setSysStatus(SysStatus.MAILPARAM_ERROR);
-			return rm;
-		}
-		String userId = userVo.getUserId();
-		String app = userVo.getApp();
-		String controller = userVo.getController();
-		if ("Y".equals(controller)) {
-
-		}
-		return rm;
-	}
-
-	/**
-	 * 
-	 * @Title: queryViewAndGroup 
-	 * @Description: 查询拥有的菜单权限 
-	 * @return ResponseModal
-	 * @throws
-	 */
-	@GetMapping(value = "/queryViewAndGroup")
-	@ApiOperation(value = "查询菜单")
-	public ResponseModal queryViewAndGroup(UserVo userVo) {
-		ResponseModal rm = new ResponseModal();
-		if (null == userVo || LogicUtil.isNullOrEmpty(userVo.getUserId()) || LogicUtil.isNullOrEmpty(userVo.getApp())) {
-			rm.setSysStatus(SysStatus.MAILPARAM_ERROR);
-			return rm;
-		}
-		String userId = userVo.getUserId();
-		String app = userVo.getApp();
-		String controller = userVo.getController();
-		if ("Y".equals(controller)) {
-
-		}
-		return rm;
-	}
-
+    @ApiOperation(value = "同步API资源（内部接口）")
+    @PostMapping("/api/aynch")
+    @Transactional
+    public void resourceApiAynch(@RequestBody ApiResourceDto apiResourceDto) {
+        if (apiResourceDto != null && apiResourceDto.getApiInfoList() != null && apiResourceDto.getApiInfoList().size() > 0) {
+            int num = 0;
+            List<HtBoaInResource> oldResList = htBoaInResourceService.getByApp(apiResourceDto.getApp());
+            List<HtBoaInResource> tempList;
+            HtBoaInResource oldRes;
+            List<ApiInfoDto> apiDtoList = apiResourceDto.getApiInfoList();
+            List<HtBoaInResource> newResList = new ArrayList<>();
+            for (ApiInfoDto api : apiDtoList) {
+                tempList = oldResList.stream().filter(demo -> api.getMethod().equals(demo.getRemark())).distinct().collect(Collectors.toList());
+                if (tempList != null && tempList.size() > 0) {
+                    oldRes = tempList.get(0);
+                    if ((oldRes.getResNameCn() != null && !oldRes.getResNameCn().equals(api.getApiDescribe()))
+                            || (oldRes.getResContent() != null && !oldRes.getResContent().equals(api.getMapping()))) {
+                        oldRes.setResNameCn(api.getApiDescribe());
+                        oldRes.setResContent(api.getMapping());
+                        newResList.add(oldRes);
+                    }
+                } else {
+                    HtBoaInResource re = new HtBoaInResource();
+                    re.setResCode("api_" + System.currentTimeMillis() + (num++));
+                    re.setResType("api");
+                    re.setResContent(api.getMapping());
+                    re.setRemark(api.getMethod());
+                    re.setResNameCn(api.getApiDescribe());
+                    re.setApp(apiResourceDto.getApp());
+                    re.setCreateOperator("自动创建");
+                    re.setUpdateOperator("自动创建");
+                    re.setSequence(1);
+                    re.setStatus("0");
+                    re.setDelFlag(0);
+                    newResList.add(re);
+                }
+            }
+            htBoaInResourceService.save(newResList);
+        }
+    }
 }
