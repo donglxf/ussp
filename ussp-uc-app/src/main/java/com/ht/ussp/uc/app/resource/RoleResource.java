@@ -3,7 +3,6 @@ package com.ht.ussp.uc.app.resource;
 import java.util.Date;
 import java.util.List;
 
-import com.ht.ussp.uc.app.vo.PageVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +48,7 @@ public class RoleResource {
     @ApiOperation(value = "对内：角色记录查询", notes = "列出所有角色记录列表信息")
    /* @ApiImplicitParam(name = "pageConf", value = "分页信息实体", required = true, dataType = "PageConf")*/
     @RequestMapping(value = {"/in/list" }, method = RequestMethod.POST)
-    public PageResult<BoaInRoleInfo> list(PageVo page) {
+    public PageResult<BoaInRoleInfo> list(com.ht.ussp.uc.app.vo.Page page) {
     	PageResult result = new PageResult();
     	PageConf pageConf = new PageConf();
     	pageConf.setPage(page.getPage());

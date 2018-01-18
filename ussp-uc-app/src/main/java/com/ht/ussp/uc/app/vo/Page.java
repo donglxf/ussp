@@ -25,7 +25,7 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PageVo {
+public class Page {
     int page;
     int limit;
     String keyWord;

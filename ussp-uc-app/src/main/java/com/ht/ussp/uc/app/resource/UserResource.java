@@ -9,13 +9,15 @@ import com.ht.ussp.uc.app.model.SysStatus;
 import com.ht.ussp.uc.app.service.*;
 import com.ht.ussp.uc.app.util.BeanUtils;
 import com.ht.ussp.uc.app.util.LogicUtil;
-import com.ht.ussp.uc.app.vo.PageVo;
+import com.ht.ussp.uc.app.vo.Page;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
 import com.ht.ussp.uc.app.vo.UserVo;
 import com.ht.ussp.util.EncryptUtil;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
@@ -185,7 +187,7 @@ public class UserResource {
     }
 
     /**
-     * @return ResponseModal 
+     * @return ResponseModal
      * @throws
      * @Title: validateUser
      * @Description: 验证用户有效性
@@ -284,7 +286,7 @@ public class UserResource {
      */
     @ApiOperation(value = "用户信息分页查询")
     @PostMapping(value = "/loadListByPage")
-    public PageResult<List<UserMessageVo>> loadListByPage(PageVo page) {
+    public PageResult<List<UserMessageVo>> loadListByPage(Page page) {
         return htBoaInUserService.getUserListPage(new PageRequest(page.getPage(), page.getLimit()), page.getOrgCode(), page.getKeyWord(), page.getQuery());
     }
 
