@@ -1,0 +1,31 @@
+<div class="layui-fluid">
+    <div id="changePwd_div"   >
+        <form method="post" class="layui-form"   lay-filter="changePwd_filter_modify_form">
+            <input type="hidden" name="userId" id="userId" readonly class="layui-input layui-input-sm">
+            <div class="layui-form-item" >
+                <label class="layui-form-label">原密码<b>*</b></label>
+                <div class="layui-input-block ">
+                    <input type="password" name="oldPwd" id="oldPwd" lay-verify="required"  maxlength="63"  placeholder="请输入密码"  autocomplete="off" lay-verType="tips" class="layui-input-sm " style="width: 30%">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">新密码<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="password" name="newPwd" id="newPwd"lay-verify="required|newPwd" maxlength="63" placeholder="请输入新密码" autocomplete="off" lay-verType="tips" class=" layui-input-sm" style="width: 30%">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">确认新密码<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="password" id="newPwdConfirm" lay-verify="required|confirmPwd" maxlength="63" placeholder="请再次输入新密码" autocomplete="off" lay-verType="tips" class=" layui-input-sm" style="width: 30%">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                 <div class="layui-input-block" >
+                     <button class="layui-btn pull-center"  lay-submit lay-filter="changePwd_filter_modify_form">修改</button>
+                 </div>
+            </div>
+        </form>
+    </div>
+    <script src="/js/user/changePwd.js"></script>
+</div>
