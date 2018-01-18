@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.ht.ussp.uc.app.common.Constants;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.model.SysStatus;
@@ -92,6 +95,7 @@ public class AuthResouce {
 		res_types.add(Constants.RES_TYPE_VIEW);
 		res_types.add(Constants.RES_TYPE_MODULE);
 		res_types.add(Constants.RES_TYPE_TAB);
+		res_types.add(Constants.RES_TYPE_API);
 		// 管理员资源权限操作
 		if ("Y".equals(controller)) {
 			List<ResVo> res = htBoaInResourceService.queryResForY(res_types, app);
@@ -178,6 +182,38 @@ public class AuthResouce {
 
 	}
 
+	
+	@GetMapping(value = "/IsHasAuth")
+	@ApiOperation(value = "验证资源")
+	public Boolean IsHasAuth(@RequestParam("key") String key, @RequestParam("url") String url) {
+		Boolean flag=false;
+		if(LogicUtil.isNullOrEmpty(key)||LogicUtil.isNullOrEmpty(url)) {
+			return flag;
+		}
+		try {
+		List<String> apiValues=redis.opsForList().range(key, 0, -1);
+		JSONArray json=JSONArray.parseArray(apiValues.get(0));
+		
+		if(json.size()>0) {
+			for(int i=0;i<json.size();i++) {
+				JSONObject job = json.getJSONObject(i);
+				if(url.equals(job.get("resContent"))) {
+				log.info("isHasAuth:"+url.equals(job.get("resContent")));
+				flag=true;
+				return flag;
+				}
+			}
+			
+		}
+		}catch(Exception e) {
+			e.printStackTrace();
+			return flag;
+		}
+		return flag;
+	};
+	
+	
+	
 	/**
 	 * 
 	 * @Title: queryApi 
