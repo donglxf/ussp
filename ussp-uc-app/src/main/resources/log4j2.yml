@@ -5,7 +5,7 @@ Configuration:
       #测试：-Dlog.level.console=warn
       #生产：-Dlog.level.console=warn
       - name: log.level.console
-        value: DEBUG
+        value: INFO
       - name: log.level.file
         value: INFO
       - name: LOG_HOME
@@ -34,11 +34,11 @@ Configuration:
           modulate: true
   Loggers:
     Root:  
-      level: INFO
+      level: info
       AppenderRef:  
         - ref: CONSOLE
-        ##- ref: ROLLING_FILE #开发环境无需产生日志文件
-    Logger: # 为com.xjj包配置特殊的Log级别，方便调试
+        - ref: ROLLING_FILE #开发环境无需产生日志文件
+    Logger: # 为com.ht包配置特殊的Log级别，方便调试
       - name: com.ht
         additivity: false
         level: DEBUG

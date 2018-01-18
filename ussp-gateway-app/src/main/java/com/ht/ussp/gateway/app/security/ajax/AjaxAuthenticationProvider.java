@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -35,7 +33,6 @@ import com.ht.ussp.gateway.app.vo.UserVo;
  */
 @Component
 public class AjaxAuthenticationProvider implements AuthenticationProvider {
-	 private static final Logger logger = LoggerFactory.getLogger(AjaxAuthenticationProvider.class);
 	
 	@Autowired
 	private UserClient userClient;
@@ -58,7 +55,7 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
         }
         ResponseModal loginJson = userClient.validateUser(app,userName);
         if(loginJson.getStatus_code()!=1) {
-        	throw new UsernameNotFoundException(loginJson.getResult_msg());
+        	throw new AuthenticationCredentialsNotFoundException(loginJson.getResult_msg());
         }
         UserVo userVo=new UserVo();
         userVo=FastJsonUtil.objectToPojo(loginJson.getResult(), UserVo.class);

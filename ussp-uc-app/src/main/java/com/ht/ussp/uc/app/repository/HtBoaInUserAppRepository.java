@@ -1,5 +1,7 @@
 package com.ht.ussp.uc.app.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
@@ -20,6 +22,6 @@ public interface HtBoaInUserAppRepository extends JpaRepository<HtBoaInUserApp,L
 	 * @return HtBoaInUserApp
 	 * @throws
 	 */
-	public HtBoaInUserApp findByuserId(String userId);
+	public List<HtBoaInUserApp> findByuserId(String userId);
 
 }

@@ -23,7 +23,7 @@ public interface UserClient {
 	 * @return ResponseModal
 	 * @throws
 	 */
-	@RequestMapping(value = "/member/validateUser")
+	@RequestMapping(value = "/user/validateUser")
 	public ResponseModal validateUser(@RequestParam("app")String app,@RequestParam("userName")String userName);
 	
 	/**
@@ -33,7 +33,7 @@ public interface UserClient {
 	 * @return ResponseModal
 	 * @throws
 	 */
-	@RequestMapping(value = "/member/getRoleCodes")
+	@RequestMapping(value = "/user/getRoleCodes")
 	public ResponseModal getRoleCodes(@RequestParam("userId") String userId);
 	
 	
