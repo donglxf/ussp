@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ht.ussp.uc.app.common.Constants;
@@ -99,60 +98,23 @@ public class AuthResouce {
 		// 管理员资源权限操作
 		if ("Y".equals(controller)) {
 			List<ResVo> res = htBoaInResourceService.queryResForY(res_types, app);
-			if (res.size() > 0) {
-				for(int i=0;i<res.size();i++){
-					if(Constants.RES_TYPE_MODULE.equals(res.get(i).getResType())) {
-						//保存模块资源
-						module_res.add(res.get(i));
-						log.info(module_res);
-					}else if(Constants.RES_TYPE_VIEW.equals(res.get(i).getResType())|| Constants.RES_TYPE_GROUP.equals(res.get(i).getResType())){
-						//保存菜单资源
-						menu_res.add(res.get(i));
-					}else if(Constants.RES_TYPE_BUTTON.equals(res.get(i).getResType())
-							|| Constants.RES_TYPE_TAB.equals(res.get(i).getResType())) {
-						//保存按钮资源
-						button_res.add(res.get(i));
-						
-					}else if(Constants.RES_TYPE_API.equals(res.get(i).getResType())) {
-						//保存API
-						api_res.add(res.get(i));
-					}else {
-						log.info("REDIS连接异常");
-						rm.setSysStatus(SysStatus.ERROR);
-					}
-				}
-		}
+			addToList(res, module_res, menu_res, button_res, api_res);
 		}
 
 		// 非管理员权限操作
 		if ("N".equals(controller)) {
 			List<String> res_code = htBoaInRoleResService.queryResByCode(roleCodes);
+			
 			if (res_code.size() > 0) {
 				List<ResVo> res = htBoaInResourceService.queryResForN(res_code, res_types, app);
-				if (res.size() > 0) {
-						for(int i=0;i<res.size();i++){
-							if(Constants.RES_TYPE_MODULE.equals(res.get(i).getResType())) {
-								//保存模块资源
-								module_res.add(res.get(i));
-								log.info(module_res);
-							}else if(Constants.RES_TYPE_VIEW.equals(res.get(i).getResType())|| Constants.RES_TYPE_GROUP.equals(res.get(i).getResType())){
-								//保存菜单资源
-								menu_res.add(res.get(i));
-							}else if(Constants.RES_TYPE_BUTTON.equals(res.get(i).getResType())
-									|| Constants.RES_TYPE_TAB.equals(res.get(i).getResType())) {
-								//保存按钮资源
-								button_res.add(res.get(i));
-								
-							}else if(Constants.RES_TYPE_API.equals(res.get(i).getResType())) {
-								//保存API
-								api_res.add(res.get(i));
-							}else {
-								log.info("REDIS连接异常");
-								rm.setSysStatus(SysStatus.ERROR);
-							}
-						}
-				}
-
+				
+				addToList(res, module_res, menu_res, button_res, api_res);
+			}
+		}
+			//api权限不能为空
+			if(api_res.isEmpty()) {
+				rm.setSysStatus(SysStatus.API_NOT_NULL);
+				return rm;
 			}
 			//登录需要重新获取资源，保存到REDIS
 			if(module_res!=null&&module_res.size()>0) {
@@ -175,14 +137,20 @@ public class AuthResouce {
 				redis.opsForList().leftPushAll(api_key.toString(), FastJsonUtil.objectToJson(api_res));
 			}
 			
-		}
+	
 		rm.setSysStatus(SysStatus.SUCCESS);
 
 		return rm;
 
 	}
 
-	
+	/**
+	 * 	
+	 * @Title: IsHasAuth 
+	 * @Description: 验证是否有资源权限 
+	 * @return Boolean
+	 * @throws
+	 */
 	@GetMapping(value = "/IsHasAuth")
 	@ApiOperation(value = "验证资源")
 	public Boolean IsHasAuth(@RequestParam("key") String key, @RequestParam("url") String url) {
@@ -212,17 +180,45 @@ public class AuthResouce {
 		return flag;
 	};
 	
+	/**
+	 * 
+	 * @Title: addToList 
+	 * @Description: 将资源分组添加到List中 
+	 * @return void
+	 * @throws
+	 */
+	public void addToList(List<ResVo> res,List<ResVo> module_res,List<ResVo> menu_res,List<ResVo> button_res,List<ResVo> api_res) {
+		if (res.size() > 0) {
+		for(int i=0;i<res.size();i++){
+			if(Constants.RES_TYPE_MODULE.equals(res.get(i).getResType())) {
+				//保存模块资源
+				module_res.add(res.get(i));
+				log.info(module_res);
+			}else if(Constants.RES_TYPE_VIEW.equals(res.get(i).getResType())|| Constants.RES_TYPE_GROUP.equals(res.get(i).getResType())){
+				//保存菜单资源
+				menu_res.add(res.get(i));
+			}else if(Constants.RES_TYPE_BUTTON.equals(res.get(i).getResType())
+					|| Constants.RES_TYPE_TAB.equals(res.get(i).getResType())) {
+				//保存按钮资源
+				button_res.add(res.get(i));
+				
+			}else if(Constants.RES_TYPE_API.equals(res.get(i).getResType())) {
+				//保存API
+				api_res.add(res.get(i));
+			}
+		}
+}};
 	
 	
 	/**
 	 * 
 	 * @Title: queryApi 
-	 * @Description: 查询拥有的API权限 
+	 * @Description: 分组查找资源：可查找菜单、分组、按钮资源
 	 * @return ResponseModal
 	 * @throws
 	 */
-	@GetMapping(value = "/queryApi")
-	@ApiOperation(value = "查询API")
+	@GetMapping(value = "/queryResource")
+	@ApiOperation(value = "查找资源")
 	public ResponseModal queryApi(UserVo userVo) {
 		ResponseModal rm = new ResponseModal();
 		if (null == userVo || LogicUtil.isNullOrEmpty(userVo.getUserId()) || LogicUtil.isNullOrEmpty(userVo.getApp())) {
