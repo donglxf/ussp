@@ -1,30 +1,53 @@
 package com.ht.ussp.uc.app.resource;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
-import com.ht.ussp.uc.app.domain.*;
+import com.ht.ussp.uc.app.domain.HtBoaInLogin;
+import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
+import com.ht.ussp.uc.app.domain.HtBoaInUser;
+import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
+import com.ht.ussp.uc.app.model.ChangePwd;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
 import com.ht.ussp.uc.app.model.SysStatus;
-import com.ht.ussp.uc.app.service.*;
+import com.ht.ussp.uc.app.service.HtBoaInLoginService;
+import com.ht.ussp.uc.app.service.HtBoaInOrgService;
+import com.ht.ussp.uc.app.service.HtBoaInPositionRoleService;
+import com.ht.ussp.uc.app.service.HtBoaInPositionService;
+import com.ht.ussp.uc.app.service.HtBoaInPositionUserService;
+import com.ht.ussp.uc.app.service.HtBoaInPwdHistService;
+import com.ht.ussp.uc.app.service.HtBoaInRoleService;
+import com.ht.ussp.uc.app.service.HtBoaInUserAppService;
+import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
+import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.util.BeanUtils;
 import com.ht.ussp.uc.app.util.LogicUtil;
 import com.ht.ussp.uc.app.vo.Page;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
 import com.ht.ussp.uc.app.vo.UserVo;
 import com.ht.ussp.util.EncryptUtil;
+
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * @author adol yaojiehong@hongte.info
@@ -58,6 +81,8 @@ public class UserResource {
     @Autowired
     private HtBoaInPositionRoleService htBoaInPositionRoleService;
 
+    @Autowired
+    private HtBoaInPwdHistService htBoaInPwdHistService;
 
     @ApiOperation(value = "对内：用户个人信息查询", notes = "已登录用户查看自己的个人信息")
     @ApiImplicitParam(name = "userId", value = "用户ID", required = true, paramType = "path", dataType = "int")
@@ -97,70 +122,28 @@ public class UserResource {
         BeanUtils.setObjectFieldsEmpty(u);
         u.setUserId(selfBoaInUserInfo.getUserId());
         List<HtBoaInUser> htBoaInUserList = htBoaInUserService.findAll(u);
-        r = exceptionReturn(logEnd, "selfBoaInUserInfo: " + selfBoaInUserInfo,
-                htBoaInUserList, sl, "个人用户信息", 1);
+        r = exceptionReturn(logEnd, "selfBoaInUserInfo: " + selfBoaInUserInfo, htBoaInUserList, sl, "个人用户信息", 1);
         if (null != r)
             return r;
         u = htBoaInUserList.get(0);
-        HtBoaInOrg htBoaInOrg = new HtBoaInOrg();
-        BeanUtils.setObjectFieldsEmpty(htBoaInOrg);
-        htBoaInOrg.setOrgCode(selfBoaInUserInfo.getOrgCode());
-        htBoaInOrg.setRootOrgCode(selfBoaInUserInfo.getRootOrgCode());
-        List<HtBoaInOrg> htBoaInOrgList = htBoaInOrgService.findAll(htBoaInOrg);
-        r = exceptionReturn(logEnd, "selfBoaInUserInfo: " + selfBoaInUserInfo,
-                htBoaInOrgList, sl, "组织机构信息", 1);
-        if (null != r)
-            return r;
-        List<HtBoaInRole> htBoaInRoleList = htBoaInRoleService
-                .findByRoleCodeIn(selfBoaInUserInfo.getRoleCodes());
-        r = exceptionReturn(logEnd, "selfUserInfo: " + selfBoaInUserInfo,
-                htBoaInRoleList, sl, "角色信息", selfBoaInUserInfo.getRoleCodes().size());
-        if (null != r)
-            return r;
-        List<HtBoaInPosition> htBoaInPositionList = htBoaInPositionService
-                .findByPositionCodeIn(selfBoaInUserInfo.getPositionCodes());
-        r = exceptionReturn(logEnd, "selfUserInfo: " + selfBoaInUserInfo,
-                htBoaInPositionList, sl, "岗位信息", selfBoaInUserInfo.getPositionCodes().size());
-        if (null != r)
-            return r;
-        u.setOrgCode(selfBoaInUserInfo.getOrgCode());
-        u.setRootOrgCode(selfBoaInUserInfo.getRootOrgCode());
+        if(selfBoaInUserInfo.getOrgCode()!=null && ""!=selfBoaInUserInfo.getOrgCode()) {
+        	 u.setOrgCode(selfBoaInUserInfo.getOrgCode());
+        }
+        if(selfBoaInUserInfo.getRootOrgCode()!=null && ""!=selfBoaInUserInfo.getRootOrgCode()) {
+        	u.setRootOrgCode(selfBoaInUserInfo.getRootOrgCode());
+        }
+        if(selfBoaInUserInfo.getIdNo()!=null && ""!=selfBoaInUserInfo.getIdNo()) {
+        	u.setIdNo(selfBoaInUserInfo.getIdNo());
+        }
         u.setEmail(selfBoaInUserInfo.getEmail());
-        u.setIdNo(selfBoaInUserInfo.getIdNo());
         u.setMobile(selfBoaInUserInfo.getMobile());
         u.setUserName(selfBoaInUserInfo.getUserName());
-        u.setOrgPath(htBoaInOrgList.get(0).getOrgPath());
-        HtBoaInUserRole htBoaInUserRole = new HtBoaInUserRole();
-        htBoaInUserRole.setUserId(u.getUserId());
-        htBoaInUserRoleService.delete(htBoaInUserRole);
-        List<HtBoaInUserRole> htBoaInUserRoleList = new ArrayList<HtBoaInUserRole>();
-        for (String roleCode : selfBoaInUserInfo.getRoleCodes()) {
-            HtBoaInUserRole t = new HtBoaInUserRole();
-            t.setUserId(u.getUserId());
-            t.setRoleCode(roleCode);
-            t.setRootOrgCode(u.getRootOrgCode());
-            htBoaInUserRoleList.add(t);
-        }
-        if (!htBoaInUserRoleList.isEmpty())
-            htBoaInUserRoleService.add(htBoaInUserRoleList);
-        HtBoaInPositionUser htBoaInPositionUser = new HtBoaInPositionUser();
-        htBoaInPositionUser.setUserId(u.getUserId());
-        htBoaInPositionUserService.delete(htBoaInPositionUser);
-        List<HtBoaInPositionUser> htBoaInPositionUserList = new ArrayList<HtBoaInPositionUser>();
-        for (String positionCode : selfBoaInUserInfo.getPositionCodes()) {
-            HtBoaInPositionUser t = new HtBoaInPositionUser();
-            t.setUserId(u.getUserId());
-            t.setPositionCode(positionCode);
-            t.setRootOrgCode(u.getRootOrgCode());
-            htBoaInPositionUserList.add(t);
-        }
-        if (!htBoaInPositionUserList.isEmpty())
-            htBoaInPositionUserService.add(htBoaInPositionUserList);
+        htBoaInUserService.update(u);
+
         SelfBoaInUserInfo s = new SelfBoaInUserInfo();
-        u.setUserId(u.getUserId());
+        s.setUserId(u.getUserId());
         List<SelfBoaInUserInfo> selfUserInfoList = htBoaInUserService.findAll(s);
-        r = exceptionReturn(logEnd, "selfBoaInUserInfo: " + selfBoaInUserInfo,
-                selfUserInfoList, sl, "个人用户信息", 1);
+        r = exceptionReturn(logEnd, "selfBoaInUserInfo: " + selfBoaInUserInfo, selfUserInfoList, sl, "个人用户信息", 1);
         if (null != r)
             return r;
         el = System.currentTimeMillis();
@@ -168,8 +151,44 @@ public class UserResource {
         return new ResponseModal(200, msg, selfUserInfoList.get(0));
     }
 
-    protected ResponseModal exceptionReturn(String logEnd, String param,
-                                            List<?> list, long sl, String exInfo, int row) {
+    @ApiOperation(value = "对内：修改密码", notes = "修改密码")
+    @RequestMapping(value = { "/in/changePwd" }, method = RequestMethod.POST)
+    public ResponseModal changePwd(@RequestBody ChangePwd changePwd) {
+        long sl = System.currentTimeMillis(), el = 0L;
+        ResponseModal r = null;
+        String msg = "成功";
+        String logHead = "修改密码：login/in/changePwd param-> {}";
+        String logStart = logHead + " | START:{}";
+        String logEnd = logHead + " {} | END:{}, COST:{}";
+        log.info(logStart, changePwd.toString(), sl);
+        HtBoaInUser htBoaInUser = new HtBoaInUser();
+        htBoaInUser.setUserId(changePwd.getUserId());
+        List<HtBoaInUser> htBoaInUserList = htBoaInUserService .findAll(htBoaInUser);
+        r = exceptionReturn(logEnd, "changePwd: " + changePwd, htBoaInUserList, sl, "个人用户信息", 1);
+        if (null != r)
+            return r;
+        htBoaInUser = htBoaInUserList.get(0);
+
+        HtBoaInLogin u = htBoaInLoginService.findByUserId(htBoaInUser.getUserId());
+        //验证原密码是否正确
+        if(!u.getPassword().equals(changePwd.getOldPwd())) {
+        	return new ResponseModal(500, "原密码输入不正确");
+        }
+        u.setPassword(changePwd.getNewPwd());
+
+        //记录历史密码
+        HtBoaInPwdHist htBoaInPwdHist = new HtBoaInPwdHist();
+        htBoaInPwdHist.setUserId(u.getUserId());
+        htBoaInPwdHist.setPassword(changePwd.getNewPwd());
+        htBoaInPwdHist.setPwdCreTime(new Timestamp(System.currentTimeMillis()));
+        htBoaInPwdHist.setLastModifiedDatetime(new Date());
+        htBoaInLoginService.update(u);
+        htBoaInPwdHistService.add(htBoaInPwdHist);
+        el = System.currentTimeMillis();
+        log.info(logEnd, "resetPwd: " + changePwd, msg, el, el - sl);
+        return new ResponseModal(200, "成功");
+    }
+    protected ResponseModal exceptionReturn(String logEnd, String param, List<?> list, long sl, String exInfo, int row) {
         if (null == exInfo)
             exInfo = "";
         if (null == list || list.isEmpty()) {
@@ -187,7 +206,7 @@ public class UserResource {
     }
 
     /**
-     * @return ResponseModal
+     * @return ResponseModal 
      * @throws
      * @Title: validateUser
      * @Description: 验证用户有效性

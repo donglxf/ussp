@@ -12,7 +12,7 @@ layui.use(['form', 'ztree', 'table'], function () {
         , editDialog = 0 //修改弹出框的ID
         , orgTree //组织机构树控件
         , active = {
-        add: function () { //弹出用户新增弹出框
+        add: function () { //弹出岗位新增弹出框
             var nodes = orgTree.getSelectedNodes();
             if (nodes.length == 0) {
                 layer.alert("请先选择一个组织机构。");
@@ -39,7 +39,6 @@ layui.use(['form', 'ztree', 'table'], function () {
                     layer.closeAll('tips');
                 },
                 success: function (layero, index) {
-                	console.log(nodes);
                     //填充选中的组织机构
                     $("input[name=orgName]", layero).val(nodes[0]["orgNameCn"]);
                     $("input[name=orgCode]", layero).val(nodes[0]["orgCode"]);
@@ -100,7 +99,7 @@ layui.use(['form', 'ztree', 'table'], function () {
                 }
             });
         }
-    }
+    };
     //渲染组织机构树
     orgTree = $.fn.zTree.init($('#position_org_ztree_left'), {
             view: {
@@ -141,7 +140,6 @@ layui.use(['form', 'ztree', 'table'], function () {
                 },
                 onAsyncSuccess: function (event, treeId, treeNode, msgString) {
                     var node = orgTree.getNodeByParam("level ", "0");
-                    console.info(treeNode, node)
                     if (node) {
                         orgTree.selectNode(node);
                     }
@@ -156,7 +154,7 @@ layui.use(['form', 'ztree', 'table'], function () {
             }
         }
     );
-    //渲染用户数据表格
+    //渲染岗位数据表格
     table.render({
         id: 'position_datatable'
         , elem: '#position_datatable'
@@ -187,7 +185,6 @@ layui.use(['form', 'ztree', 'table'], function () {
     table.on('tool(filter_position_datatable)', function (obj) {
         var data = obj.data;
         if (obj.event === 'detail') {
-        	console.log(data);
         	 viewDialog = layer.open({
                  type: 1,
                  area: ['400px', '400px'],
@@ -208,13 +205,13 @@ layui.use(['form', 'ztree', 'table'], function () {
                  }
              });
         } else if (obj.event === 'del') {
-            layer.confirm('真的删除行么', function (index) {
+            layer.confirm('是否确认删除岗位？', function (index) {
             	obj.del();
             	 $.post(delPositionUrl+"/" + data.id, null, function (result) {
                      if (result["returnCode"] == "0000") {
                          refreshTable();
                          layer.close(index);
-                         layer.msg("删除用户成功");
+                         layer.msg("删除岗位成功");
                      } else {
                          layer.msg(result.codeDesc);
                      }

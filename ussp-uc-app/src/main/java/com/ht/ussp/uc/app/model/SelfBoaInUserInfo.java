@@ -71,10 +71,13 @@ public class SelfBoaInUserInfo {
     @ApiModelProperty(value = "角色中文名", dataType = "string")
     Set<String> roleNameChs = new HashSet<String>(0);
 
+    @ApiModelProperty(value = "工号", dataType = "string")
+    String jobNumber;
+    
     public SelfBoaInUserInfo(String userId, String userName, String email,
             String idNo, String mobile, String orgCode, String orgName, String orgNameCh,
             String rootOrgCode, String rootOrgName, String rootOrgNameCh, String orgPath,
-            String orgType) {
+            String orgType,String jobNumber) {
         this.userId = userId;
         this.userName = userName;
         this.email = email;
@@ -88,6 +91,8 @@ public class SelfBoaInUserInfo {
         this.rootOrgNameCh = rootOrgNameCh;
         this.orgPath = orgPath;
         this.orgType = orgType;
+        this.jobNumber = jobNumber;
+        
     }
 
 }

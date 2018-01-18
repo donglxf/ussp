@@ -3,7 +3,7 @@
         <div>
             <div class="tree_search">
                 <div class="input-group input-group-sm">
-                    <input type="text" id="position_search_tree_org" class="form-control" placeholder="请输入机构名"/>
+                    <input type="text" id="position_search_tree_org" maxlength="60" class="form-control" placeholder="请输入机构名"/>
                     <div id="position_btn_refresh_tree" class="input-group-addon btn" title="刷新">
                         <i class="fa fa-refresh"></i>
                     </div>
@@ -21,7 +21,7 @@
             </div>
             <div class="pull-right col-xs-4 row">
                 <div class="input-group input-group-sm">
-                    <input type="text" class="form-control" id="position_search_keyword"  placeholder="请输入岗位编号/岗位名称"/>
+                    <input type="text" class="form-control" maxlength="60" id="position_search_keyword"  placeholder="请输入岗位编号/岗位名称"/>
                     <div class="input-group-btn">
                         <button type="button" class="layui-btn layui-btn-sm" data-type="search">
                             <i class="fa fa-search"></i>
@@ -128,19 +128,19 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">岗位编号</label>
                 <div class="layui-input-block">
-                    <input type="text" name="positionCode" lay-verify="required"   disabled  autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="text" name="positionCode" lay-verify="required"   readonly  autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">岗位名称</label>
                 <div class="layui-input-block">
-                    <input type="text" name="positionNameCn" lay-verify="required"   disabled maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="text" name="positionNameCn" lay-verify="required"   readonly maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">所属机构</label>
                 <div class="layui-input-block">
-                    <input type="text" id="position_org_tree_select" name="porgNameCn"   disabled autocomplete="off"  lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="text" id="position_org_tree_select" name="porgNameCn"   readonly autocomplete="off"  lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
             </div>
            </form>
