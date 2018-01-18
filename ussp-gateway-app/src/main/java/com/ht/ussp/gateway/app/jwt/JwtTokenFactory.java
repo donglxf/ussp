@@ -52,11 +52,7 @@ public class JwtTokenFactory {
 		}
 		Claims claims = Jwts.claims().setSubject("User Authorize");
 		claims.put("userId", userVo.getUserId());
-		claims.put("controller", userVo.getController());
-//		if(("N").equals(userVo.getController())&&list.size()>0) {
-//			claims.put("roles", list);
-//		}
-		
+		claims.put("orgCode", userVo.getOrgCode());
 		LocalDateTime currentTime = LocalDateTime.now();
 
 		String token = Jwts.builder().setClaims(claims).setIssuer(settings.getTokenIssuer())
@@ -85,7 +81,7 @@ public class JwtTokenFactory {
 
 		Claims claims = Jwts.claims().setSubject("User refresh token");
 		claims.put("userId", userVo.getUserId());
-		claims.put("controller", userVo.getController());
+		claims.put("orgCode", userVo.getOrgCode());
 		String token = Jwts.builder().setClaims(claims).setIssuer(settings.getTokenIssuer())
 				.setId(UUID.randomUUID().toString())
 				.setIssuedAt(Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant()))

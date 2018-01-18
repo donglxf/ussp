@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,7 +45,7 @@ public class AuthResouce {
 
 	@Autowired
 	protected RedisTemplate<String, String> redis;
-	
+
 	@Autowired
 	private HtBoaInResourceService htBoaInResourceService;
 
@@ -60,7 +61,8 @@ public class AuthResouce {
 	 */
 	@PostMapping(value = "/saveResources")
 	@ApiOperation(value = "获取并保存用户资源")
-	public ResponseModal saveResourcesToRedis(@RequestBody UserVo userVo, @RequestParam(value = "roleCodes", required = true) List<String> roleCodes) {
+	public ResponseModal saveResourcesToRedis(@RequestBody UserVo userVo,
+			@RequestParam(value = "roleCodes", required = true) List<String> roleCodes) {
 		ResponseModal rm = new ResponseModal();
 		if (null == userVo || LogicUtil.isNullOrEmpty(userVo.getUserId()) || LogicUtil.isNullOrEmpty(userVo.getApp())) {
 			rm.setSysStatus(SysStatus.MAILPARAM_ERROR);
@@ -70,24 +72,24 @@ public class AuthResouce {
 		String app = userVo.getApp();
 		String controller = userVo.getController();
 
-	    List<String> res_types = new ArrayList<String>();
-	    
-	    //定义权限分组名称LIST 
-		List<ResVo> module_res=new ArrayList<ResVo>();
-		List<ResVo> menu_res=new ArrayList<ResVo>();
-		List<ResVo> button_res=new ArrayList<ResVo>();
-		List<ResVo> api_res=new ArrayList<ResVo>();
-		
-		//定义存储到LIST中的资源KEY值
-		StringBuffer module_key=new StringBuffer();
-		StringBuffer menu_key=new StringBuffer();
-		StringBuffer button_key=new StringBuffer();
-		StringBuffer api_key=new StringBuffer();
+		List<String> res_types = new ArrayList<String>();
+
+		// 定义权限分组名称LIST
+		List<ResVo> module_res = new ArrayList<ResVo>();
+		List<ResVo> menu_res = new ArrayList<ResVo>();
+		List<ResVo> button_res = new ArrayList<ResVo>();
+		List<ResVo> api_res = new ArrayList<ResVo>();
+
+		// 定义存储到LIST中的资源KEY值
+		StringBuffer module_key = new StringBuffer();
+		StringBuffer menu_key = new StringBuffer();
+		StringBuffer button_key = new StringBuffer();
+		StringBuffer api_key = new StringBuffer();
 		module_key.append(userId).append(":").append("app").append(":").append("module");
 		menu_key.append(userId).append(":").append("app").append(":").append("menu");
 		button_key.append(userId).append(":").append("app").append(":").append("button");
 		api_key.append(userId).append(":").append("app").append(":").append("api");
-		
+
 		// 所有资源类型
 		res_types.add(Constants.RES_TYPE_BUTTON);
 		res_types.add(Constants.RES_TYPE_GROUP);
@@ -104,40 +106,39 @@ public class AuthResouce {
 		// 非管理员权限操作
 		if ("N".equals(controller)) {
 			List<String> res_code = htBoaInRoleResService.queryResByCode(roleCodes);
-			
+
 			if (res_code.size() > 0) {
 				List<ResVo> res = htBoaInResourceService.queryResForN(res_code, res_types, app);
-				
+
 				addToList(res, module_res, menu_res, button_res, api_res);
 			}
 		}
-			//api权限不能为空
-			if(api_res.isEmpty()) {
-				rm.setSysStatus(SysStatus.API_NOT_NULL);
-				return rm;
-			}
-			//登录需要重新获取资源，保存到REDIS
-			if(module_res!=null&&module_res.size()>0) {
-				redis.delete(module_key.toString());
-				redis.opsForList().leftPushAll(module_key.toString(), FastJsonUtil.objectToJson(module_res));
-			}
-			
-			if(menu_res!=null&&menu_res.size()>0) {
-				redis.delete(menu_key.toString());
-				redis.opsForList().leftPushAll(menu_key.toString(), FastJsonUtil.objectToJson(menu_res));
-			}
-			
-			if(button_res!=null&&button_res.size()>0) {
-				redis.delete(button_key.toString());
-				redis.opsForList().leftPushAll(button_key.toString(), FastJsonUtil.objectToJson(button_res));
-			}
-			
-			if(api_res!=null&&api_res.size()>0) {
-				redis.delete(api_key.toString());
-				redis.opsForList().leftPushAll(api_key.toString(), FastJsonUtil.objectToJson(api_res));
-			}
-			
-	
+		// api权限不能为空
+		if (api_res.isEmpty()) {
+			rm.setSysStatus(SysStatus.API_NOT_NULL);
+			return rm;
+		}
+		// 登录需要重新获取资源，保存到REDIS
+		if (module_res != null && module_res.size() > 0) {
+			redis.delete(module_key.toString());
+			redis.opsForList().leftPushAll(module_key.toString(), FastJsonUtil.objectToJson(module_res));
+		}
+
+		if (menu_res != null && menu_res.size() > 0) {
+			redis.delete(menu_key.toString());
+			redis.opsForList().leftPushAll(menu_key.toString(), FastJsonUtil.objectToJson(menu_res));
+		}
+
+		if (button_res != null && button_res.size() > 0) {
+			redis.delete(button_key.toString());
+			redis.opsForList().leftPushAll(button_key.toString(), FastJsonUtil.objectToJson(button_res));
+		}
+
+		if (api_res != null && api_res.size() > 0) {
+			redis.delete(api_key.toString());
+			redis.opsForList().leftPushAll(api_key.toString(), FastJsonUtil.objectToJson(api_res));
+		}
+
 		rm.setSysStatus(SysStatus.SUCCESS);
 
 		return rm;
@@ -154,32 +155,32 @@ public class AuthResouce {
 	@GetMapping(value = "/IsHasAuth")
 	@ApiOperation(value = "验证资源")
 	public Boolean IsHasAuth(@RequestParam("key") String key, @RequestParam("url") String url) {
-		Boolean flag=false;
-		if(LogicUtil.isNullOrEmpty(key)||LogicUtil.isNullOrEmpty(url)) {
+		Boolean flag = false;
+		if (LogicUtil.isNullOrEmpty(key) || LogicUtil.isNullOrEmpty(url)) {
 			return flag;
 		}
 		try {
-		List<String> apiValues=redis.opsForList().range(key, 0, -1);
-		JSONArray json=JSONArray.parseArray(apiValues.get(0));
-		
-		if(json.size()>0) {
-			for(int i=0;i<json.size();i++) {
-				JSONObject job = json.getJSONObject(i);
-				if(url.equals(job.get("resContent"))) {
-				log.info("isHasAuth:"+url.equals(job.get("resContent")));
-				flag=true;
-				return flag;
+			List<String> apiValues = redis.opsForList().range(key, 0, -1);
+			JSONArray json = JSONArray.parseArray(apiValues.get(0));
+
+			if (json.size() > 0) {
+				for (int i = 0; i < json.size(); i++) {
+					JSONObject job = json.getJSONObject(i);
+					if (url.equals(job.get("resContent"))) {
+						log.info("isHasAuth:" + url.equals(job.get("resContent")));
+						flag = true;
+						return flag;
+					}
 				}
+
 			}
-			
-		}
-		}catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return flag;
 		}
 		return flag;
 	};
-	
+
 	/**
 	 * 
 	 * @Title: addToList 
@@ -187,29 +188,31 @@ public class AuthResouce {
 	 * @return void
 	 * @throws
 	 */
-	public void addToList(List<ResVo> res,List<ResVo> module_res,List<ResVo> menu_res,List<ResVo> button_res,List<ResVo> api_res) {
+	public void addToList(List<ResVo> res, List<ResVo> module_res, List<ResVo> menu_res, List<ResVo> button_res,
+			List<ResVo> api_res) {
 		if (res.size() > 0) {
-		for(int i=0;i<res.size();i++){
-			if(Constants.RES_TYPE_MODULE.equals(res.get(i).getResType())) {
-				//保存模块资源
-				module_res.add(res.get(i));
-				log.info(module_res);
-			}else if(Constants.RES_TYPE_VIEW.equals(res.get(i).getResType())|| Constants.RES_TYPE_GROUP.equals(res.get(i).getResType())){
-				//保存菜单资源
-				menu_res.add(res.get(i));
-			}else if(Constants.RES_TYPE_BUTTON.equals(res.get(i).getResType())
-					|| Constants.RES_TYPE_TAB.equals(res.get(i).getResType())) {
-				//保存按钮资源
-				button_res.add(res.get(i));
-				
-			}else if(Constants.RES_TYPE_API.equals(res.get(i).getResType())) {
-				//保存API
-				api_res.add(res.get(i));
+			for (int i = 0; i < res.size(); i++) {
+				if (Constants.RES_TYPE_MODULE.equals(res.get(i).getResType())) {
+					// 保存模块资源
+					module_res.add(res.get(i));
+					log.info(module_res);
+				} else if (Constants.RES_TYPE_VIEW.equals(res.get(i).getResType())
+						|| Constants.RES_TYPE_GROUP.equals(res.get(i).getResType())) {
+					// 保存菜单资源
+					menu_res.add(res.get(i));
+				} else if (Constants.RES_TYPE_BUTTON.equals(res.get(i).getResType())
+						|| Constants.RES_TYPE_TAB.equals(res.get(i).getResType())) {
+					// 保存按钮资源
+					button_res.add(res.get(i));
+
+				} else if (Constants.RES_TYPE_API.equals(res.get(i).getResType())) {
+					// 保存API
+					api_res.add(res.get(i));
+				}
 			}
 		}
-}};
-	
-	
+	};
+
 	/**
 	 * 
 	 * @Title: queryApi 
@@ -217,21 +220,42 @@ public class AuthResouce {
 	 * @return ResponseModal
 	 * @throws
 	 */
-	@GetMapping(value = "/queryResource")
+
+	@PostMapping(value = "/queryResource")
 	@ApiOperation(value = "查找资源")
-	public ResponseModal queryApi(UserVo userVo) {
+	public ResponseModal queryResource(@RequestHeader("app") String app, @RequestHeader("userId") String userId,
+			@RequestParam("resourceName") String resourceName) {
 		ResponseModal rm = new ResponseModal();
-		if (null == userVo || LogicUtil.isNullOrEmpty(userVo.getUserId()) || LogicUtil.isNullOrEmpty(userVo.getApp())) {
+		StringBuffer key = new StringBuffer();
+		if (LogicUtil.isNullOrEmpty(resourceName) || LogicUtil.isNullOrEmpty(app) || LogicUtil.isNullOrEmpty(userId)) {
 			rm.setSysStatus(SysStatus.PARAM_ERROR);
 			return rm;
 		}
-		String userId = userVo.getUserId();
-		String app = userVo.getApp();
-		String controller = userVo.getController();
-		if ("Y".equals(controller)) {
-
+		if ("module".equals(resourceName) || "menu".equals(resourceName) || "button".equals(resourceName)) {
+			key.append(userId).append(":").append("app").append(":").append(resourceName);
+			try {
+				List<String> resourceValues = redis.opsForList().range(key.toString(), 0, -1);
+				if (!resourceValues.isEmpty()) {
+					JSONArray json = JSONArray.parseArray(resourceValues.get(0));
+					rm.setSysStatus(SysStatus.SUCCESS);
+					rm.setResult(json);
+				} else{
+					//到数据库查，用户查系统，查是否管理员，分类查角色编码，查资源，保存资源，返回资源
+					
+					
+					
+				}
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				rm.setSysStatus(SysStatus.ERROR);
+				return rm;
+			}
+			return rm;
+		} else {
+			rm.setSysStatus(SysStatus.PARAM_ERROR);
+			return rm;
 		}
-		return rm;
 	}
 
 	/**
