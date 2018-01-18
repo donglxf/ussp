@@ -52,12 +52,12 @@ public class AuthResouce {
 
 	@Autowired
 	protected RedisTemplate<String, String> redis;
-
+	
 	@Autowired
 	private HtBoaInResourceService htBoaInResourceService;
 
-	@Autowired
-	private HtBoaInRoleResService htBoaInRoleResService;
+    @Autowired
+    private HtBoaInRoleResService htBoaInRoleResService;
 
 	@Autowired
 	private HtBoaInUserAppService htBoaInUserAppService;
@@ -164,11 +164,11 @@ public class AuthResouce {
 	/**
 	 * 
 	 * @Title: IsHasAuth 
-	 * @Description: 验证是否有资源权限  
+	 * @Description: 验证是否有资源权限
 	 * @return Boolean
 	 * @throws
 	 * @author wim qiuwenwu@hongte.info 
-	 * @date 2018年1月18日 下午10:27:21
+	 * @date 2018年1月18日 下午10:54:08
 	 */
 	@GetMapping(value = "/IsHasAuth")
 	@ApiOperation(value = "验证资源")
@@ -202,7 +202,7 @@ public class AuthResouce {
 	/**
 	 * 
 	 * @Title: addToList 
-	 * @Description: 将资源分组添加到List中  
+	 * @Description: 将资源分组添加到List中
 	 * @return void
 	 * @throws
 	 * @author wim qiuwenwu@hongte.info 
@@ -233,14 +233,15 @@ public class AuthResouce {
 		}
 	};
 
+	
 	/**
 	 * 
 	 * @Title: queryResource 
-	 * @Description: 分组查找资源：可查找菜单、分组、按钮资源
+	 * @Description: 分组查找资源：可查找菜单、分组、按钮资源 
 	 * @return ResponseModal
 	 * @throws
 	 * @author wim qiuwenwu@hongte.info 
-	 * @date 2018年1月18日 下午10:25:42
+	 * @date 2018年1月18日 下午10:54:43
 	 */
 
 	@PostMapping(value = "/queryResource")
@@ -273,7 +274,6 @@ public class AuthResouce {
 						rm.setSysStatus(SysStatus.USER_NOT_MATCH_APP);
 						return rm;
 					}
-
 					
 					//查找所需资源
 					if("module".equals(resourceName) ) {
@@ -302,9 +302,7 @@ public class AuthResouce {
 							rm.setSysStatus(SysStatus.SUCCESS);
 							return rm;
 					}
-
-				}
-
+				} 
 			} catch (Exception e) {
 				e.printStackTrace();
 				rm.setSysStatus(SysStatus.ERROR);
@@ -315,6 +313,78 @@ public class AuthResouce {
 			rm.setSysStatus(SysStatus.PARAM_ERROR);
 			return rm;
 		}
+	}
+
+	/**
+	 * 接收API资源，并存入数据库<br>
+	 *
+	 * @param apiResourceDto API资源信息
+	 * @author 谭荣巧
+	 * @Date 2018/1/18 21:41
+	 */
+	@GetMapping(value = "/querybuttonAndTab")
+	@ApiOperation(value = "查询按钮")
+	public ResponseModal querybuttonAndTab(UserVo userVo) {
+		ResponseModal rm = new ResponseModal();
+		if (null == userVo || LogicUtil.isNullOrEmpty(userVo.getUserId()) || LogicUtil.isNullOrEmpty(userVo.getApp())) {
+			rm.setSysStatus(SysStatus.MAILPARAM_ERROR);
+			return rm;
+		}
+		String userId = userVo.getUserId();
+		String app = userVo.getApp();
+		String controller = userVo.getController();
+		if ("Y".equals(controller)) {
+
+		}
+		return rm;
+	}
+
+	/**
+	 * 
+	 * @Title: queryModule 
+	 * @Description: 查询拥有的模块权限 
+	 * @return ResponseModal
+	 * @throws
+	 */
+	@GetMapping(value = "/queryModule")
+	@ApiOperation(value = "查询模块")
+	public ResponseModal queryModule(UserVo userVo) {
+		ResponseModal rm = new ResponseModal();
+		if (null == userVo || LogicUtil.isNullOrEmpty(userVo.getUserId()) || LogicUtil.isNullOrEmpty(userVo.getApp())) {
+			rm.setSysStatus(SysStatus.MAILPARAM_ERROR);
+			return rm;
+		}
+		String userId = userVo.getUserId();
+		String app = userVo.getApp();
+		String controller = userVo.getController();
+		if ("Y".equals(controller)) {
+
+		}
+		return rm;
+	}
+
+	/**
+	 * 
+	 * @Title: queryViewAndGroup 
+	 * @Description: 查询拥有的菜单权限 
+	 * @return ResponseModal
+	 * @throws
+	 */
+	@GetMapping(value = "/queryViewAndGroup")
+	@ApiOperation(value = "查询菜单")
+	public ResponseModal queryViewAndGroup(UserVo userVo) {
+		ResponseModal rm = new ResponseModal();
+		if (null == userVo || LogicUtil.isNullOrEmpty(userVo.getUserId()) || LogicUtil.isNullOrEmpty(userVo.getApp())) {
+			rm.setSysStatus(SysStatus.MAILPARAM_ERROR);
+			return rm;
+		}
+		String userId = userVo.getUserId();
+		String app = userVo.getApp();
+		String controller = userVo.getController();
+		if ("Y".equals(controller)) {
+
+		}
+		return rm;
 	}
 
 	/**

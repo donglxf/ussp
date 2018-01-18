@@ -1,6 +1,5 @@
 package com.ht.ussp.uc.app.repository;
 
-import com.ht.ussp.uc.app.vo.AppAndAuthVo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.ht.ussp.uc.app.domain.HtBoaInApp;

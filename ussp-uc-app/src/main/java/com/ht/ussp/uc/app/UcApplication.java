@@ -9,21 +9,21 @@ import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 
 /**
- * 
+ * @author wim qiuwenwu@hongte.info
  * @ClassName: RegistryApplication
  * @Description: 用户中心
- * @author wim qiuwenwu@hongte.info
  * @date 2018年1月4日 下午9:07:10
  */
-@EnableFeignClients
+@EnableFeignClients(basePackages = {"com.ht.ussp.client"})
 @EnableDiscoveryClient
 @SpringBootApplication
-@ComponentScan(basePackages= {"com.ht.ussp.uc.app","com.ht.ussp.init"})
+@ComponentScan(basePackages = {"com.ht.ussp.init", "com.ht.ussp.uc.app"})
 public class UcApplication {
     private static final Logger log = LoggerFactory.getLogger(UcApplication.class);
-	public static void  main(String[] args) {
-		SpringApplication.run(UcApplication.class, args);
+
+    public static void main(String[] args) {
+        SpringApplication.run(UcApplication.class, args);
         log.info("用户中心启动成功！");
 
-	}
+    }
 }
