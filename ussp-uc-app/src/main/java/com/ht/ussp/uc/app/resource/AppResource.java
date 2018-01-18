@@ -1,20 +1,13 @@
 package com.ht.ussp.uc.app.resource;
 
-import com.ht.ussp.core.Result;
-import com.ht.ussp.uc.app.vo.AppAndAuthVo;
-import lombok.extern.log4j.Log4j2;
+import com.ht.ussp.uc.app.domain.HtBoaInApp;
+import com.ht.ussp.uc.app.model.ResponseModal;
+import com.ht.ussp.uc.app.service.HtBoaInAppService;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import com.ht.ussp.uc.app.domain.HtBoaInApp;
-import com.ht.ussp.uc.app.model.ResponseModal;
-import com.ht.ussp.uc.app.service.HtBoaInAppService;
-
-import io.swagger.annotations.ApiOperation;
-
-import java.util.List;
 
 /**
  * @author wim qiuwenwu@hongte.info
@@ -42,10 +35,5 @@ public class AppResource {
         rm.setResult(htBoaInApp);
         log.info("====htBoaInApp====" + htBoaInApp);
         return rm;
-    }
-
-    @PostMapping("/appandauth/load")
-    public List<AppAndAuthVo> loadAppAndAuthTreeData() {
-        return htBoaInAppService.loadAppAndAuthVo();
     }
 }

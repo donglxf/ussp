@@ -2,7 +2,9 @@ package com.ht.ussp.uc.app.repository;
 
 import java.util.List;
 
+import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -15,7 +17,7 @@ import com.ht.ussp.uc.app.vo.ResVo;
  * @Description: 资源操作接口
  * @date 2018年1月15日 下午2:27:45
  */
-public interface HtBoaInResourceRepository extends JpaRepository<HtBoaInResource, Long> {
+public interface HtBoaInResourceRepository extends JpaSpecificationExecutor<HtBoaInResource>, JpaRepository<HtBoaInResource, Long> {
     //查询资源--管理员  (模块、菜单、按钮、api)
     @Query(value = "select new com.ht.ussp.uc.app.vo.ResVo(resCode,resNameCn,sequence,resType,resParent,resContent,fontIcon) from HtBoaInResource where status=0 and app= :app and resType in(:res_type)")
     public List<ResVo> queryResForY(@Param("res_type") List<String> res_type, @Param("app") String app);

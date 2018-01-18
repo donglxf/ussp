@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AppAndAuthVo {
+public class AppAndResourceVo {
     private String code;
     private String name;
     private String nameCn;
@@ -32,7 +32,7 @@ public class AppAndAuthVo {
     private String parentCode;
     private String icon;
 
-    public AppAndAuthVo(Object code, Object name, Object nameCn, Object sequence, Object type, Object parentCode, Object icon) {
+    public AppAndResourceVo(Object code, Object name, Object nameCn, Object sequence, Object type, Object parentCode, Object icon) {
         this.code = code == null ? null : code.toString();
         this.name = name == null ? null : name.toString();
         this.nameCn = nameCn == null ? null : nameCn.toString();

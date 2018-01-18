@@ -1,8 +1,8 @@
 package com.ht.ussp.uc.app.resource;
 
 import java.util.Date;
-import java.util.List;
 
+import com.ht.ussp.uc.app.vo.PageVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +54,7 @@ public class PositionResource {
 	@ApiOperation(value = "对内：岗位记录查询", notes = "列出所有岗位记录列表信息")
     /*@ApiImplicitParam(name = "pageConf", value = "分页信息实体", required = true, dataType = "PageConf")*/
     @RequestMapping(value = {"/in/list" }, method = RequestMethod.POST)
-    public PageResult<BoaInPositionInfo> list(com.ht.ussp.uc.app.vo.Page page) {
+    public PageResult<BoaInPositionInfo> list(PageVo page) {
     	PageResult result = new PageResult();
     	PageConf pageConf = new PageConf();
     	pageConf.setPage(page.getPage());
