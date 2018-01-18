@@ -339,6 +339,13 @@ public class AuthResouce {
 		return rm;
 	}
 
+	/**
+	 * 接收API资源，并存入数据库<br>
+	 *
+	 * @param apiResourceDto API资源信息
+	 * @author 谭荣巧
+	 * @Date 2018/1/18 21:41
+	 */
     @ApiOperation(value = "同步API资源（内部接口）")
     @PostMapping("/api/aynch")
     @Transactional
