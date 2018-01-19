@@ -58,25 +58,25 @@
         "url": "http://www.qq.com/"
       },
       {
-        "id": "18",
+        "id": "19",
         "title": "用户角色管理",
         "icon": "fa-qq",
-        "url": "http://www.qq.com/"
+        "url": "/html/userrole/userrole.html"
       },
       {
-        "id": "19",
+        "id": "20",
         "title": "用户岗位管理",
         "icon": "&#xe609;",
-        "url": "http://fly.layui.com/"
+        "url": "/html/userposion/userposion.html"
       },
       {
-        "id": "20",
+        "id": "21",
         "title": "岗位角色管理",
         "icon": "fa-weibo",
-        "url": "http://weibo.com/"
+        "url": "/html/posionrole/posionrole.html"
       },
       {
-        "id": "20",
+        "id": "22",
         "title": "角色资源管理",
         "icon": "fa-weibo",
         "url": "http://weibo.com/"
