@@ -20,6 +20,7 @@ public class HtBoaInUserRole implements Serializable {
 
 	@Id
 	@Column(name = "ID", unique = true, nullable = false)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 
 	@Column(name="CREATE_OPERATOR")

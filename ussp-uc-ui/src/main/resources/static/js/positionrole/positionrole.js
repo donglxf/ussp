@@ -1,9 +1,9 @@
-var loadUserListUrl=basepath + 'user/loadListByPage.json'; //列出所有用户信息
-var loadUserRoleListUrl=basepath + 'userrole/listUserRoleByPage.json'; //列出用户所有角色列表
-var delUserRoleListUrl=basepath + 'userrole/delete'; //删除用户角色 /delete/{id}
-var stopUserRoleListUrl=basepath + 'userrole/stop'; //禁用/启用用户角色 /stop/{id}/{status}
+var positionListByPageUrl=basepath +"position/in/list.json"; //列出所有岗位记录列表信息  
+var loadPositionRoleListUrl=basepath + 'positionrole/listPositionRoleByPage.json'; //列出用户所有岗位列表
+var delPositionRoleListUrl=basepath + 'positionrole/delete'; //删除用户岗位 /delete/{id}
+var stopPositionRoleListUrl=basepath + 'positionrole/stop'; //禁用/启用用户岗位 /stop/{id}/{status}
 var orgTreeUrl = basepath +"/org/tree.json"; //机构列表 
-var userId = "";
+var positionCode = "";
 layui.use(['form', 'ztree', 'table'], function () {
     var $ = layui.jquery
         , form = layui.form
@@ -15,11 +15,11 @@ layui.use(['form', 'ztree', 'table'], function () {
         , active = {
     		search: function () { 
             	//执行重载
-            	refreshUserTable($("#userrole_user_search_keyword").val());
+            	refreshUserTable($("#positionrole_user_search_keyword").val());
             },
-            searchUserRole: function () { 
+            searchpositionrole: function () { 
             	//执行重载
-            	refreshUserRoleTable($("#userrole_role_search_keyword").val());
+            	refreshpositionroleTable($("#positionrole_role_search_keyword").val());
             },
     };
     var refreshUserTable = function (keyword) {
@@ -28,24 +28,26 @@ layui.use(['form', 'ztree', 'table'], function () {
         }
         var selectNodes = orgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
-        	 table.reload('userrole_user_datatable', {
+        	 table.reload('positionrole_user_datatable', {
                  page: {
                      curr: 1 //重新从第 1 页开始
                  }
                  , where: {
-                     keyWord: keyword,
-                     orgCode: selectNodes[0]["orgCode"]
+                     query: {
+               		     keyWord: keyword,
+                         orgCode: selectNodes[0]["orgCode"]
+                    }
                  }
              });
         }
     };
-    var refreshUserRoleTable = function (keyword) {
+    var refreshpositionroleTable = function (keyword) {
         if (!keyword) {
             keyword = null;
         }
         var selectNodes = orgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
-        	 table.reload('userrole_role_datatable', {
+        	 table.reload('positionrole_role_datatable', {
         	        page: {
         	            curr: 1 //重新从第 1 页开始
         	        }
@@ -53,7 +55,7 @@ layui.use(['form', 'ztree', 'table'], function () {
         	        	query: {
                   		     keyWord: keyword,
                             orgCode: selectNodes[0]["orgCode"],
-                            userId:userId
+                            positionCode:positionCode
                        }
         	        }
         	   });
@@ -61,7 +63,7 @@ layui.use(['form', 'ztree', 'table'], function () {
     };
    
     //渲染组织机构树
-    orgTree = $.fn.zTree.init($('#userrole_org_ztree_left'), {
+    orgTree = $.fn.zTree.init($('#positionrole_org_ztree_left'), {
             view: {
                 showIcon: false
                 , selectedMulti: false
@@ -88,7 +90,7 @@ layui.use(['form', 'ztree', 'table'], function () {
                 onClick: function (event, treeId, treeNode, clickFlag) {
                     //执行重载
                 	refreshUserTable();
-                	refreshUserRoleTable();
+                	refreshpositionroleTable();
                 },
                 onAsyncSuccess: function (event, treeId, treeNode, msgString) {
                     var node = orgTree.getNodeByParam("level ", "0");
@@ -108,9 +110,9 @@ layui.use(['form', 'ztree', 'table'], function () {
     );
     //渲染岗位数据表格
     table.render({
-        id: 'userrole_user_datatable'
-        , elem: '#userrole_user_datatable'
-        , url: loadUserListUrl
+        id: 'positionrole_user_datatable'
+        , elem: '#positionrole_user_datatable'
+        , url: positionListByPageUrl
         , method: 'post' //如果无需自定义HTTP类型，可不加该参数
         , response: {
             statusName: 'returnCode' //数据状态的字段名称，默认：code
@@ -124,21 +126,18 @@ layui.use(['form', 'ztree', 'table'], function () {
         , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
         , cols: [[
             {type: 'numbers'}
-            , {field: 'jobNumber', width: 100, title: '工号',event:'getRole'}
-            , {field: 'userName', width: 150, title: '用户名',event:'getRole'}
-            , {field: 'mobile', width: 120, title: '手机',event:'getRole'}
-            , {field: 'email', width: 200, title: '邮箱',event:'getRole'}
-            , {field: 'idNo', width: 180, title: '身份证',event:'getRole'}
-            , {field: 'orgName', width: 100, title: '所属机构',event:'getRole'}
-            , {field: 'status', width: 60, title: '状态', templet: "#userrole_user_status_laytpl",event:'getRole'}
-            , {field: 'updateOperator', width: 100, title: '更新人',event:'getRole'}
-            , {field: 'lastModifiedDatetime', width: 150, title: '更新时间',event:'getRole'}
+            , {field: 'positionCode', width: 120, title: '岗位编号',event:'getRole'}
+            , {field: 'positionNameCn', width: 200, title: '岗位名称',event:'getRole'}
+            , {field: 'porgNameCn', width: 220, title: '所属机构',event:'getRole'}
+            , {field: 'delFlag', width: 100, title: '状态',event:'getRole'}
+            , {field: 'createOperator', width: 100, title: '创建人',event:'getRole'}
+            , {field: 'createdDatetime', width: 250, title: '创建时间',templet: '#createTimeTpl',event:'getRole'}
         ]]
     });
     table.render({
-        id: 'userrole_role_datatable'
-        , elem: '#userrole_role_datatable'
-        , url: loadUserRoleListUrl
+        id: 'positionrole_role_datatable'
+        , elem: '#positionrole_role_datatable'
+        , url: loadPositionRoleListUrl
         , method: 'post' //如果无需自定义HTTP类型，可不加该参数
         , response: {
             statusName: 'returnCode' //数据状态的字段名称，默认：code
@@ -154,44 +153,43 @@ layui.use(['form', 'ztree', 'table'], function () {
             {type: 'numbers'}
             , {field: 'roleCode', width: 150, title: '角色编号'}
             , {field: 'roleNameCn', width: 300, title: '角色名称'}
-            , {field: 'status', width: 100,templet: '#userrole_statusTpl', title: '状态'}
+            , {field: 'status', width: 100,templet: '#statusTpl', title: '状态'}
             , {field: 'createOperator', width: 150, title: '创建人'}
             , {field: 'createdDatetime', width: 200,templet: '#createTimeTpl', title: '创建时间'}
-            , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#userrole_role_datatable_bar'}
         ]]
     });
     //监听操作栏
-    table.on('tool(filter_userrole_user_datatable)', function (obj) {
+    table.on('tool(filter_positionrole_user_datatable)', function (obj) {
         var data = obj.data;
         console.log(data);
-        userId = data.userId;
+        positionCode = data.positionCode;
         if (obj.event === 'getRole') {
-        	refreshUserRoleTable();
+        	refreshpositionroleTable();
         }  
     });
-    table.on('tool(filter_userrole_role_datatable)', function (obj) {
+    table.on('tool(filter_positionrole_role_datatable)', function (obj) {
         var data = obj.data;
         console.log(data);
         if (obj.event === 'startOrStop') {
         	if(data.delFlag==0){//启用状态，是否需要禁用
-        		layer.confirm('是否禁用角色？', function (index) {
-                  	 $.post(stopUserRoleListUrl+"/" + data.id+"/1", null, function (result) {
+        		layer.confirm('是否禁用岗位？', function (index) {
+                  	 $.post(stopPositionRoleListUrl+"/" + data.id+"/1", null, function (result) {
                            if (result["returnCode"] == "0000") {
-                        	   refreshUserRoleTable();
+                        	   refreshpositionroleTable();
                                layer.close(index);
-                               layer.msg("禁用角色成功");
+                               layer.msg("禁用岗位成功");
                            } else {
                                layer.msg(result.codeDesc);
                            }
                        });
                   });
         	}else{
-        		layer.confirm('是否启用角色？', function (index) {
-                  	 $.post(stopUserRoleListUrl+"/" + data.id+"/0", null, function (result) {
+        		layer.confirm('是否启用岗位？', function (index) {
+                  	 $.post(stopPositionRoleListUrl+"/" + data.id+"/0", null, function (result) {
                            if (result["returnCode"] == "0000") {
-                        	   refreshUserRoleTable();
+                        	   refreshpositionroleTable();
                                layer.close(index);
-                               layer.msg("启用角色成功");
+                               layer.msg("启用岗位成功");
                            } else {
                                layer.msg(result.codeDesc);
                            }
@@ -199,13 +197,13 @@ layui.use(['form', 'ztree', 'table'], function () {
                   });
         	}
         } else if (obj.event === 'del') {
-        	 layer.confirm('是否确认删除用户角色？', function (index) {
+        	 layer.confirm('是否确认删除用户岗位？', function (index) {
              	obj.del();
-             	 $.post(delUserRoleListUrl+"/" + data.id, null, function (result) {
+             	 $.post(delPositionRoleListUrl+"/" + data.id, null, function (result) {
                       if (result["returnCode"] == "0000") {
-                    	  refreshUserRoleTable();
+                    	  refreshpositionroleTable();
                           layer.close(index);
-                          layer.msg("删除用户角色成功");
+                          layer.msg("删除用户岗位成功");
                       } else {
                           layer.msg(result.codeDesc);
                       }
@@ -214,24 +212,24 @@ layui.use(['form', 'ztree', 'table'], function () {
         } 
     });
     //监听工具栏
-    $('#userrole_user_table_tools .layui-btn').on('click', function () {
+    $('#positionrole_user_table_tools .layui-btn').on('click', function () {
         var type = $(this).data('type');
         active[type] ? active[type].call(this) : '';
     });
     
-    $('#userrole_role_table_tools .layui-btn').on('click', function () {
+    $('#positionrole_role_table_tools .layui-btn').on('click', function () {
         var type = $(this).data('type');
         active[type] ? active[type].call(this) : '';
     });
     //刷新树的数据
-    $('#userrole_btn_refresh_tree').on('click', function (e) {
+    $('#positionrole_btn_refresh_tree').on('click', function (e) {
         if (orgTree) {
             orgTree.reAsyncChildNodes(null, "refresh");
         }
     });
     var nodeList = [];
     //搜索树的数据
-    $('#userrole_search_tree_org').bind('input', function (e) {
+    $('#positionrole_search_tree_org').bind('input', function (e) {
         if (orgTree && $(this).val() != "") {
             nodeList = orgTree.getNodesByParamFuzzy("name", $(this).val());
             updateNodes(true);

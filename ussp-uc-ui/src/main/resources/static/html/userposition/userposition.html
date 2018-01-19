@@ -3,20 +3,20 @@
         <div>
             <div class="tree_search">
                 <div class="input-group input-group-sm">
-                    <input type="text" id="userrole_search_tree_org" maxlength="60" class="form-control" placeholder="请输入机构名"/>
-                    <div id="userrole_btn_refresh_tree" class="input-group-addon btn" title="刷新">
+                    <input type="text" id="userposition_search_tree_org" maxlength="60" class="form-control" placeholder="请输入机构名"/>
+                    <div id="userposition_btn_refresh_tree" class="input-group-addon btn" title="刷新">
                         <i class="fa fa-refresh"></i>
                     </div>
                 </div>
             </div>
-            <div id="userrole_org_ztree_left" class="ztree"></div>
+            <div id="userposition_org_ztree_left" class="ztree"></div>
         </div>
     </div>
     <div class="col-xs-9">
-        <div class="row row-lg" id="userrole_user_table_tools">
+        <div class="row row-lg" id="userposition_user_table_tools">
             <div class="pull-right col-xs-4 row">
                 <div class="input-group input-group-sm">
-                    <input type="text" class="form-control" maxlength="60" id="userrole_user_search_keyword"  placeholder="请输入岗位编号/岗位名称"/>
+                    <input type="text" class="form-control" maxlength="60" id="userposition_user_search_keyword"  placeholder="请输入用户编号/用户名称"/>
                     <div class="input-group-btn">
                         <button type="button" class="layui-btn layui-btn-sm" data-type="search">
                             <i class="fa fa-search"></i>
@@ -26,8 +26,8 @@
             </div>
         </div>
         <div class="row row-lg">
-            <table id="userrole_user_datatable" lay-filter="filter_userrole_user_datatable"> </table>
-            <script type="text/html" id="userrole_user_status_laytpl">
+            <table id="userposition_user_datatable" lay-filter="filter_userposition_user_datatable"> </table>
+            <script type="text/html" id="userposition_user_status_laytpl">
                 {{#  if(d.status === '0'){ }}
                 正常
                 {{#  } else if(d.status === '1') { }}
@@ -43,27 +43,27 @@
         </div>
 		<div class="row row-lg">
 			<fieldset class="layui-elem-field ">
-				<legend>角色</legend>
+				<legend>岗位</legend>
 				<div class="layui-field-box">
-					<div class="row row-lg" id="userrole_role_table_tools">
+					<div class="row row-lg" id="userposition_role_table_tools">
 						<div class="pull-right col-xs-4 row">
 							<div class="input-group input-group-sm">
-								<input type="text" class="form-control" maxlength="60" id="userrole_role_search_keyword" placeholder="请输入角色编号/角色名称" />
+								<input type="text" class="form-control" maxlength="60" id="userposition_role_search_keyword" placeholder="请输入岗位编号/岗位名称" />
 								<div class="input-group-btn">
-									<button type="button" class="layui-btn layui-btn-sm" data-type="searchUserRole"> <i class="fa fa-search"></i> </button>
+									<button type="button" class="layui-btn layui-btn-sm" data-type="searchuserposition"> <i class="fa fa-search"></i> </button>
 								</div>
 							</div>
 						</div>
 					</div>
-					<table id="userrole_role_datatable" lay-filter="filter_userrole_role_datatable"> </table>
-					  <script type="text/html" id="userrole_statusTpl">
+					<table id="userposition_role_datatable" lay-filter="filter_userposition_role_datatable"> </table>
+					  <script type="text/html" id="userposition_statusTpl">
                       {{#  if(d.delFlag == '0'){ }}
                                                                     启用
                       {{#  } else { }}
                                                                    禁用
                       {{#  } }}
 					</script>
-					<script type="text/html" id="userrole_role_datatable_bar">
+					<script type="text/html" id="userposition_role_datatable_bar">
                       {{#  if(d.delFlag == '0'){ }}
                            <a class="layui-btn layui-btn-xs" lay-event="startOrStop">禁用</a>
                       {{#  } else { }}
@@ -107,5 +107,5 @@
             <button class="layui-btn hide" lay-submit="" lay-filter="filter_add_user_form"></button>
         </form>
     </div>
-    <script src="/js/userrole/userrole.js"></script>
+    <script src="/js/userposition/userposition.js"></script>
 </div>

@@ -1,7 +1,7 @@
-var positionListByPageUrl=basepath +"/position/in/list.json"; //列出所有岗位记录列表信息  
-var addPositionUrl=basepath +"/position/in/add"; //添加岗位信息
-var delPositionUrl=basepath +"/position/in/delete"; //添加岗位信息
-var orgTreeUrl = basepath +"/org/tree.json"; //机构列表
+var positionListByPageUrl=basepath +"position/in/list.json"; //列出所有岗位记录列表信息  
+var addPositionUrl=basepath +"position/in/add"; //添加岗位信息
+var delPositionUrl=basepath +"position/in/delete"; //添加岗位信息
+var orgTreeUrl = basepath +"org/tree.json"; //机构列表
 
 layui.use(['form', 'ztree', 'table'], function () {
     var $ = layui.jquery

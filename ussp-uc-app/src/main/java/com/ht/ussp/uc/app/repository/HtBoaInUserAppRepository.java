@@ -2,9 +2,13 @@ package com.ht.ussp.uc.app.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
+import com.ht.ussp.uc.app.model.BoaInRoleInfo;
 
 /**
  *
@@ -24,4 +28,10 @@ public interface HtBoaInUserAppRepository extends JpaRepository<HtBoaInUserApp,L
 	 */
 	public List<HtBoaInUserApp> findByuserId(String userId);
 
+	public HtBoaInUserApp findById(Long id);
+	
+	@Query("SELECT new com.ht.ussp.uc.app.model.BoaInRoleInfo(u.roleCode, u.roleName, u.roleNameCn,  u.status, u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,ur.delFlag,ur.id) "
+			+ "FROM HtBoaInUserRole ur ,HtBoaInRole u    WHERE  ur.roleCode = u.roleCode AND  (u.roleCode LIKE ?1 OR u.roleName LIKE ?1 OR u.roleNameCn LIKE ?1 ) and ur.userId=?2 GROUP BY u")
+	public Page<BoaInRoleInfo> listUserAppByPageWeb(Pageable arg0, String search,String userId);
+	
 }
