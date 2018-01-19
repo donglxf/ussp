@@ -70,11 +70,6 @@ public class UserResource {
 	@Autowired
 	private HtBoaInUserRoleService htBoaInUserRoleService;
 	@Autowired
-	private HtBoaInPositionUserService htBoaInPositionUserService;
-	@Autowired
-	private HtBoaInPositionRoleService htBoaInPositionRoleService;
-
-	@Autowired
 	private HtBoaInPwdHistService htBoaInPwdHistService;
 
 	@ApiOperation(value = "对内：用户个人信息查询", notes = "已登录用户查看自己的个人信息")
