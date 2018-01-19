@@ -20,11 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
+import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
+import com.ht.ussp.uc.app.domain.HtBoaInUserRole;
 import com.ht.ussp.uc.app.model.ChangePwd;
+import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
 import com.ht.ussp.uc.app.model.SysStatus;
@@ -86,8 +89,7 @@ public class UserResource {
 
     @ApiOperation(value = "对内：用户个人信息查询", notes = "已登录用户查看自己的个人信息")
     @ApiImplicitParam(name = "userId", value = "用户ID", required = true, paramType = "path", dataType = "int")
-    @RequestMapping(value = {
-            "/in/selfinfo/{userId}"}, method = RequestMethod.GET)
+    @RequestMapping(value = { "/in/selfinfo/{userId}"}, method = RequestMethod.GET)
     public ResponseModal getSelfInfo(@PathVariable String userId) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
@@ -188,6 +190,29 @@ public class UserResource {
         log.info(logEnd, "resetPwd: " + changePwd, msg, el, el - sl);
         return new ResponseModal(200, "成功");
     }
+    
+    @ApiOperation(value = "对内：根据UserId查询用户角色", notes = "根据UserId查询用户角色")
+    @RequestMapping(value = { "/listUserRoleByPage"}, method = RequestMethod.GET)
+    public PageResult<HtBoaInUserRole> listUserRoleByPage(Page page) {
+    	PageResult result = new PageResult();
+    	PageConf pageConf = new PageConf();
+    	pageConf.setPage(page.getPage());
+    	pageConf.setSize(page.getLimit());
+    	pageConf.setSearch(page.getKeyWord());
+        long sl = System.currentTimeMillis(), el = 0L;
+        ResponseModal r = null;
+        String msg = "成功";
+        String logHead = "根据UserId查询用户角色：user/listUserRoleByPage param-> {}";
+        String logStart = logHead + " | START:{}";
+        String logEnd = logHead + " {} | END:{}, COST:{}";
+        log.info(logStart, "page: " + page, sl);
+        result =  htBoaInUserRoleService.listUserRoleByPage(pageConf,page.getQuery()); 
+        el = System.currentTimeMillis();
+        log.info(logEnd, "page: " + page, msg, el, el - sl);
+        return result;
+    }
+    
+    
     protected ResponseModal exceptionReturn(String logEnd, String param, List<?> list, long sl, String exInfo, int row) {
         if (null == exInfo)
             exInfo = "";

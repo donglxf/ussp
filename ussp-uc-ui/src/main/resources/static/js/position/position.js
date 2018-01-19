@@ -94,8 +94,10 @@ layui.use(['form', 'ztree', 'table'], function () {
                     curr: 1 //重新从第 1 页开始
                 }
                 , where: {
-                    keyWord: keyword,
-                    orgCode: selectNodes[0]["orgCode"]
+                	 query: {
+                		  keyWord: keyword,
+                          orgCode: selectNodes[0]["orgCode"]
+                     }
                 }
             });
         }

@@ -1,13 +1,16 @@
 package com.ht.ussp.uc.app.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
+import com.ht.ussp.core.PageResult;
 import com.ht.ussp.uc.app.domain.HtBoaInUserRole;
+import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.repository.HtBoaInUserRoleRepository;
 /**
  * 
@@ -50,5 +53,10 @@ public class HtBoaInUserRoleService {
 
 	public void delete(HtBoaInUserRole u) {
 		this.htBoaInUserRoleRepository.delete(u);
+	}
+
+	public PageResult listUserRoleByPage(PageConf pageConf, Map<String, String> query) {
+		PageResult result = new PageResult();
+		return null;
 	}
 }
