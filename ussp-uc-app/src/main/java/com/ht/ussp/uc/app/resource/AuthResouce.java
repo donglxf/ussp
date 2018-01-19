@@ -258,7 +258,7 @@ public class AuthResouce {
 			key.append(userId).append(":").append("app").append(":").append(resourceName);
 			try {
 				List<String> resourceValues = redis.opsForList().range(key.toString(), 0, -1);
-				if (!resourceValues.isEmpty()) {
+				if (!resourceValues.isEmpty()&&!resourceValues.get(0).isEmpty()) {
 					JSONArray json = JSONArray.parseArray(resourceValues.get(0));
 					rm.setSysStatus(SysStatus.SUCCESS);
 					rm.setResult(json);
@@ -295,13 +295,17 @@ public class AuthResouce {
 						
 						if (res_code.size() > 0) {
 							List<ResVo> res = htBoaInResourceService.queryResForN(res_code, res_types, app);
-											
+								if(res.isEmpty()) {
+									rm.setSysStatus(SysStatus.NO_RESULT);
+									return rm;
+								}			
 							redis.opsForList().leftPushAll(key.toString(), FastJsonUtil.objectToJson(res));
-							
 							rm.setResult(res);
 							rm.setSysStatus(SysStatus.SUCCESS);
 							return rm;
 					}
+						
+						
 				} 
 			} catch (Exception e) {
 				e.printStackTrace();
