@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.WebAttributes;
@@ -69,6 +70,10 @@ public class AjaxAwareAuthenticationSuccessHandler implements AuthenticationSucc
 		}
 		// 查找并保存资源
 		ResponseModal saveResources = roleClient.saveResources(userVo,list);
+		 if(saveResources.getStatus_code()!=1) {
+          	throw new AuthenticationCredentialsNotFoundException(saveResources.getResult_msg());
+          }
+		
 		System.out.println(saveResources.getResult());
 		response.setStatus(HttpStatus.OK.value());
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);

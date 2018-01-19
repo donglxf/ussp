@@ -32,6 +32,15 @@ public class HtBoaInUserService {
     @Autowired
     private HtBoaInLoginRepository htBoaInLoginRepository;
 
+    /**
+     * 
+     * @Title: findByUserName 
+     * @Description: 通过用户名查询用户信息 
+     * @return HtBoaInUser
+     * @throws
+     * @author wim qiuwenwu@hongte.info 
+     * @date 2018年1月18日 下午8:18:08
+     */
     public HtBoaInUser findByUserName(String userName) {
 
         return htBoaInUserRepository.findByUserName(userName);
