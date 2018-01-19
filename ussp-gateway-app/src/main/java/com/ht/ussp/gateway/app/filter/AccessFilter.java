@@ -34,7 +34,7 @@ public class AccessFilter extends ZuulFilter {
 
 	@Autowired
 	private JwtSettings jwtSettings;
-	
+
 	@Autowired
 	private RoleClient roleClient;
 
@@ -70,29 +70,29 @@ public class AccessFilter extends ZuulFilter {
 			return null;
 
 		}
-		//判断请求是否有权限通过
+		// 判断请求是否有权限通过
 		String uri = request.getRequestURI().toString();
-		String validateUrl=uri.substring(uri.indexOf("/",uri.indexOf("/")+1));
+		String validateUrl = uri.substring(uri.indexOf("/", uri.indexOf("/") + 1));
 		log.info("------------validateUrl------" + validateUrl);
-		String userId=jwsClaims.getBody().get("userId").toString();
-		StringBuffer api_key=new StringBuffer();
-		api_key.append(userId).append(":").append("app").append(":").append("api");	
-		
-		if(!roleClient.IsHasAuth(api_key.toString(), validateUrl)) {
+		String userId = jwsClaims.getBody().get("userId").toString();
+		String orgCode = jwsClaims.getBody().get("orgCode").toString();
+		StringBuffer api_key = new StringBuffer();
+		api_key.append(userId).append(":").append("app").append(":").append("api");
+
+		if (!roleClient.IsHasAuth(api_key.toString(), validateUrl)) {
 			ctx.setSendZuulResponse(false);
 			ctx.setResponseStatusCode(418);
 			ctx.setResponseBody("{\"result\":\"HAS NO AUTH!\"}");
 			return null;
 		}
 		ctx.addZuulRequestHeader("userId", userId);
-		
-		
-		
+		ctx.addZuulRequestHeader("orgCode", orgCode);
+
 		ctx.getResponse().setHeader("Content-type", "text/html;charset=UTF-8");
 		ctx.setSendZuulResponse(true);
 		ctx.setResponseStatusCode(200);
 		return null;
-		
+
 	}
 
 	/**

@@ -3,245 +3,238 @@ package com.ht.ussp.uc.app.domain;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import com.ht.ussp.uc.app.vo.ResVo;
 
 
 /**
- * 
-* @ClassName: HtBoaInResource
-* @Description: 资源信息表
-* @author wim qiuwenwu@hongte.info
-* @date 2018年1月5日 下午2:52:34
+ * @author wim qiuwenwu@hongte.info
+ * @ClassName: HtBoaInResource
+ * @Description: 资源信息表
+ * @date 2018年1月5日 下午2:52:34
  */
 @Entity
-@Table(name="HT_BOA_IN_RESOURCE")
-@NamedQuery(name="HtBoaInResource.findAll", query="SELECT h FROM HtBoaInResource h")
+@Table(name = "HT_BOA_IN_RESOURCE")
+@NamedQuery(name = "HtBoaInResource.findAll", query = "SELECT h FROM HtBoaInResource h")
 public class HtBoaInResource implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@Column(name = "ID", unique = true, nullable = false)
-	private Long id;
+    @Id
+    @Column(name = "ID", unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
-	@Column(name="APP")
-	private String app;
+    @Column(name = "APP")
+    private String app;
 
-	@Column(name="CREATE_OPERATOR")
-	private String createOperator;
+    @Column(name = "CREATE_OPERATOR")
+    private String createOperator;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="CREATED_DATETIME")
-	private Date createdDatetime;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "CREATED_DATETIME", updatable = false, insertable = false)
+    private Date createdDatetime;
 
-	@Column(name="DEL_FLAG")
-	private int delFlag;
+    @Column(name = "DEL_FLAG")
+    private int delFlag;
 
-	@Column(name="JPA_VERSION")
-	private int jpaVersion;
+    @Column(name = "JPA_VERSION")
+    private int jpaVersion;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="LAST_MODIFIED_DATETIME")
-	private Date lastModifiedDatetime;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "LAST_MODIFIED_DATETIME", updatable = false, insertable = false)
+    private Date lastModifiedDatetime;
 
-	@Column(name="REMARK")
-	private String remark;
+    @Column(name = "REMARK")
+    private String remark;
 
-	@Column(name="RES_CODE")
-	private String resCode;
+    @Column(name = "RES_CODE")
+    private String resCode;
 
-	@Column(name="RES_CONTENT")
-	private String resContent;
-	
-	@Column(name="FONT_ICON")
-	private String fontIcon;
+    @Column(name = "RES_CONTENT")
+    private String resContent;
 
-	@Lob
-	@Column(name="RES_ICON")
-	private byte[] resIcon;
+    @Column(name = "FONT_ICON")
+    private String fontIcon;
 
-	@Column(name="RES_NAME")
-	private String resName;
+    @Lob
+    @Column(name = "RES_ICON")
+    private byte[] resIcon;
 
-	@Column(name="RES_NAME_CN")
-	private String resNameCn;
+    @Column(name = "RES_NAME")
+    private String resName;
 
-	@Column(name="RES_PARENT")
-	private String resParent;
+    @Column(name = "RES_NAME_CN")
+    private String resNameCn;
 
-	@Column(name="RES_TYPE")
-	private String resType;
+    @Column(name = "RES_PARENT")
+    private String resParent;
 
-	@Column(name="SEQUENCE")
-	private int sequence;
+    @Column(name = "RES_TYPE")
+    private String resType;
 
-	@Column(name="STATUS")
-	private String status;
+    @Column(name = "SEQUENCE")
+    private int sequence;
 
-	@Column(name="UPDATE_OPERATOR")
-	private String updateOperator;
+    @Column(name = "STATUS")
+    private String status;
 
-	public HtBoaInResource() {
-	}
+    @Column(name = "UPDATE_OPERATOR")
+    private String updateOperator;
 
-	public Long getId() {
-		return this.id;
-	}
+    public HtBoaInResource() {
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public Long getId() {
+        return this.id;
+    }
 
-	public String getApp() {
-		return this.app;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setApp(String app) {
-		this.app = app;
-	}
+    public String getApp() {
+        return this.app;
+    }
 
-	public String getCreateOperator() {
-		return this.createOperator;
-	}
+    public void setApp(String app) {
+        this.app = app;
+    }
 
-	public void setCreateOperator(String createOperator) {
-		this.createOperator = createOperator;
-	}
+    public String getCreateOperator() {
+        return this.createOperator;
+    }
 
-	public Date getCreatedDatetime() {
-		return this.createdDatetime;
-	}
+    public void setCreateOperator(String createOperator) {
+        this.createOperator = createOperator;
+    }
 
-	public void setCreatedDatetime(Date createdDatetime) {
-		this.createdDatetime = createdDatetime;
-	}
+    public Date getCreatedDatetime() {
+        return this.createdDatetime;
+    }
 
-	public int getDelFlag() {
-		return this.delFlag;
-	}
+    public void setCreatedDatetime(Date createdDatetime) {
+        this.createdDatetime = createdDatetime;
+    }
 
-	public void setDelFlag(int delFlag) {
-		this.delFlag = delFlag;
-	}
+    public int getDelFlag() {
+        return this.delFlag;
+    }
 
-	public int getJpaVersion() {
-		return this.jpaVersion;
-	}
+    public void setDelFlag(int delFlag) {
+        this.delFlag = delFlag;
+    }
 
-	public void setJpaVersion(int jpaVersion) {
-		this.jpaVersion = jpaVersion;
-	}
+    public int getJpaVersion() {
+        return this.jpaVersion;
+    }
 
-	public Date getLastModifiedDatetime() {
-		return this.lastModifiedDatetime;
-	}
+    public void setJpaVersion(int jpaVersion) {
+        this.jpaVersion = jpaVersion;
+    }
 
-	public void setLastModifiedDatetime(Date lastModifiedDatetime) {
-		this.lastModifiedDatetime = lastModifiedDatetime;
-	}
+    public Date getLastModifiedDatetime() {
+        return this.lastModifiedDatetime;
+    }
 
-	public String getRemark() {
-		return this.remark;
-	}
+    public void setLastModifiedDatetime(Date lastModifiedDatetime) {
+        this.lastModifiedDatetime = lastModifiedDatetime;
+    }
 
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
+    public String getRemark() {
+        return this.remark;
+    }
 
-	public String getResCode() {
-		return this.resCode;
-	}
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 
-	public void setResCode(String resCode) {
-		this.resCode = resCode;
-	}
+    public String getResCode() {
+        return this.resCode;
+    }
 
-	public String getResContent() {
-		return this.resContent;
-	}
+    public void setResCode(String resCode) {
+        this.resCode = resCode;
+    }
 
-	public void setResContent(String resContent) {
-		this.resContent = resContent;
-	}
+    public String getResContent() {
+        return this.resContent;
+    }
 
-	public byte[] getResIcon() {
-		return this.resIcon;
-	}
+    public void setResContent(String resContent) {
+        this.resContent = resContent;
+    }
 
-	public void setResIcon(byte[] resIcon) {
-		this.resIcon = resIcon;
-	}
+    public byte[] getResIcon() {
+        return this.resIcon;
+    }
 
-	public String getResName() {
-		return this.resName;
-	}
+    public void setResIcon(byte[] resIcon) {
+        this.resIcon = resIcon;
+    }
 
-	public void setResName(String resName) {
-		this.resName = resName;
-	}
+    public String getResName() {
+        return this.resName;
+    }
 
-	public String getResNameCn() {
-		return this.resNameCn;
-	}
+    public void setResName(String resName) {
+        this.resName = resName;
+    }
 
-	public void setResNameCn(String resNameCn) {
-		this.resNameCn = resNameCn;
-	}
+    public String getResNameCn() {
+        return this.resNameCn;
+    }
 
-	public String getResParent() {
-		return this.resParent;
-	}
+    public void setResNameCn(String resNameCn) {
+        this.resNameCn = resNameCn;
+    }
 
-	public void setResParent(String resParent) {
-		this.resParent = resParent;
-	}
+    public String getResParent() {
+        return this.resParent;
+    }
 
-	public String getResType() {
-		return this.resType;
-	}
+    public void setResParent(String resParent) {
+        this.resParent = resParent;
+    }
 
-	public void setResType(String resType) {
-		this.resType = resType;
-	}
+    public String getResType() {
+        return this.resType;
+    }
 
-	public int getSequence() {
-		return this.sequence;
-	}
+    public void setResType(String resType) {
+        this.resType = resType;
+    }
 
-	public void setSequence(int sequence) {
-		this.sequence = sequence;
-	}
+    public int getSequence() {
+        return this.sequence;
+    }
 
-	public String getStatus() {
-		return this.status;
-	}
+    public void setSequence(int sequence) {
+        this.sequence = sequence;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public String getStatus() {
+        return this.status;
+    }
 
-	public String getUpdateOperator() {
-		return this.updateOperator;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public void setUpdateOperator(String updateOperator) {
-		this.updateOperator = updateOperator;
-	}
+    public String getUpdateOperator() {
+        return this.updateOperator;
+    }
 
-	public String getFontIcon() {
-		return fontIcon;
-	}
+    public void setUpdateOperator(String updateOperator) {
+        this.updateOperator = updateOperator;
+    }
 
-	public void setFontIcon(String fontIcon) {
-		this.fontIcon = fontIcon;
-	}
-	
+    public String getFontIcon() {
+        return fontIcon;
+    }
+
+    public void setFontIcon(String fontIcon) {
+        this.fontIcon = fontIcon;
+    }
+
 }

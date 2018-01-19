@@ -1,5 +1,7 @@
 package com.ht.ussp.uc.app.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,16 +19,32 @@ import com.ht.ussp.uc.app.repository.HtBoaInUserAppRepository;
 public class HtBoaInUserAppService {
 	@Autowired
 	private HtBoaInUserAppRepository htBoaInUserAppRepository;
-	
+
 	/**
 	 * 
 	 * @Title: findUserAndAppInfo 
-	 * @Description: 通过用户ID查找用户与系统关联信息 
+	 * @Description: 验证用户 
 	 * @return HtBoaInUserApp
 	 * @throws
 	 */
-	public HtBoaInUserApp findUserAndAppInfo(String userId) {
-		HtBoaInUserApp htBoaInUserApp= htBoaInUserAppRepository.findByuserId(userId);
-		return htBoaInUserApp;
+	public String findUserAndAppInfo(String userId,String app) {
+		try {
+		List<HtBoaInUserApp> htBoaInUserApp = htBoaInUserAppRepository.findByuserId(userId);
+		if (htBoaInUserApp.isEmpty()) {
+			return null;
+		}
+		if (htBoaInUserApp.size() > 0) {
+			for(int i=0;i<htBoaInUserApp.size();i++) {
+				if(app.equals(htBoaInUserApp.get(i).getApp())) {
+					return htBoaInUserApp.get(i).getController();
+				}
+			}
+		}
+
+		}catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		return null;
 	}
 }

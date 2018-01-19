@@ -55,7 +55,7 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
         }
         ResponseModal loginJson = userClient.validateUser(app,userName);
         if(loginJson.getStatus_code()!=1) {
-        	throw new BadCredentialsException(loginJson.getResult_msg());
+        	throw new AuthenticationCredentialsNotFoundException(loginJson.getResult_msg());
         }
         UserVo userVo=new UserVo();
         userVo=FastJsonUtil.objectToPojo(loginJson.getResult(), UserVo.class);
