@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.uc.app.domain.HtBoaInUserRole;
 import com.ht.ussp.uc.app.model.PageConf;
-import com.ht.ussp.uc.app.repository.HtBoaInUserRoleRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInPositionRoleRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInPositionUserRepository;
+import com.ht.ussp.uc.app.repository.HtBoaInUserRoleRepository;
 /**
  * 
  * @ClassName: HtBoaInUserRoleService
@@ -26,6 +26,13 @@ import com.ht.ussp.uc.app.repository.HtBoaInPositionUserRepository;
 public class HtBoaInUserRoleService {
 	@Autowired
 	private HtBoaInUserRoleRepository htBoaInUserRoleRepository;
+	
+	@Autowired
+	private HtBoaInPositionUserRepository htBoaInPositionUserRepository;
+	
+	@Autowired
+	private HtBoaInPositionRoleRepository htBoaInPositionRoleRepository;
+	
 	
 	
 	/**
