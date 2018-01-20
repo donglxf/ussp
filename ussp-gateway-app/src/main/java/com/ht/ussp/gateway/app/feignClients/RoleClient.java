@@ -27,7 +27,7 @@ public interface RoleClient {
 	 * @return ResponseModal
 	 * @throws
 	 */
-	@RequestMapping(value = "/res/saveResources")
+	@RequestMapping(value = "/auth/saveResources")
 	public ResponseModal saveResources(UserVo userVo, @RequestParam("roleCodes") List<String> roleCodes);
 
 	/**
@@ -37,6 +37,6 @@ public interface RoleClient {
 	 * @return Boolean
 	 * @throws
 	 */
-	@RequestMapping(value = "/res/IsHasAuth")
+	@RequestMapping(value = "/auth/IsHasAuth")
 	public Boolean IsHasAuth(@RequestParam("key") String key, @RequestParam("url") String url);
 }
