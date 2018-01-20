@@ -47,6 +47,18 @@ public class HtBoaInResourceService {
         return htBoaInResourceRepository.save(htBoaInResource);
     }
 
+    public HtBoaInResource getOne(long id) {
+        return htBoaInResourceRepository.findOne(id);
+    }
+
+    public void delete(long id) {
+        htBoaInResourceRepository.delete(id);
+    }
+
+    public List<HtBoaInResource> getByResParent(String resParent) {
+        return htBoaInResourceRepository.findByResParent(resParent);
+    }
+
     public List<HtBoaInResource> getByApp(String app) {
         return htBoaInResourceRepository.findByApp(app);
     }

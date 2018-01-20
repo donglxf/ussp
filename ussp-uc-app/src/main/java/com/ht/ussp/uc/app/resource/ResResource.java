@@ -93,35 +93,43 @@ public class ResResource {
         return Result.buildFail();
     }
 
-    @PostMapping("/delete/{userId}")
-    public Result delAsync(@PathVariable String userId) {
-//        if (userId != null && !"".equals(userId.trim())) {
-//            boolean isDel = htBoaInUserService.setDelFlagByUserId(userId);
-//            if (isDel) {
-//                return Result.buildSuccess();
-//            }
-//        }
-        return Result.buildFail();
+    @PostMapping("/delete")
+    public Result delAsync(Long id) {
+        HtBoaInResource resource = htBoaInResourceService.getOne(id);
+        if (resource != null) {
+            List<HtBoaInResource> resourceList = htBoaInResourceService.getByResParent(resource.getResCode());
+            if (resourceList != null && resourceList.size() > 0) {
+                return new Result().returnCode("10000").codeDesc("该资源存在下级资源，请先删除下级资源 。");
+            }
+            htBoaInResourceService.delete(id);
+        }
+        return Result.buildSuccess();
     }
 
-    @PostMapping("/view/{userId}")
-    public Result viewAsync(@PathVariable String userId) {
-//        if (userId != null && !"".equals(userId.trim())) {
-//            return Result.buildSuccess(htBoaInUserService.getUserByUserId(userId));
-//        }
+    @PostMapping("/view")
+    public Result viewAsync(Long id) {
+        HtBoaInResource resource = htBoaInResourceService.getOne(id);
+        if (resource != null) {
+            return Result.buildSuccess(resource);
+        }
         return Result.buildFail();
     }
 
     @PostMapping("/update")
-    public Result updateAsync(@RequestBody HtBoaInUser user) {
-//        if (user != null) {
-//            // TODO 需要获取登录信息，设置修改人
-//            user.setUpdateOperator("测试人");
-//            boolean isUpdate = htBoaInUserService.updateUserByUserId(user);
-//            if (isUpdate) {
-//                return Result.buildSuccess();
-//            }
-//        }
+    public Result updateAsync(@RequestBody HtBoaInResource resource) {
+        if (resource != null) {
+            if ("menu".equals(resource.getResType()) && StringUtils.isEmpty(resource.getResContent())) {
+                resource.setResType("group");
+            } else if ("menu".equals(resource.getResType())) {
+                resource.setResType("view");
+            }
+            // TODO 需要获取登录信息，设置修改人
+            resource.setUpdateOperator("测试人");
+            resource = htBoaInResourceService.save(resource);
+            if (resource != null) {
+                return Result.buildSuccess();
+            }
+        }
         return Result.buildFail();
     }
 

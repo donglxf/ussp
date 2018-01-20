@@ -403,110 +403,154 @@ layui.use(['element', 'form', 'ztree', 'table'], function () {
         });
     }
 
+    var tableToolEvent = function (obj, type) {
+        var data = obj.data;
+        if (obj.event === 'detail') {
+            $.post(basepath + 'resource/view?id=' + data.id, null, function (result) {
+                if (result["returnCode"] == "0000") {
+                    viewDialog = layer.open({
+                        type: 1,
+                        area: ['400px', '450px'],
+                        shadeClose: true,
+                        title: "查看资源",
+                        content: $("#resource_" + type + "_add_data_div").html(),
+                        btn: ['取消'],
+                        btn2: function () {
+                            layer.closeAll('tips');
+                        },
+                        success: function (layero) {
+                            var status = result.data.status;
+                            var appName = appAndResourceTree.getNodesByParam("code", result.data.app)[0]["name"];
+                            var resParentNames = result.data.resParent == null ? "" : appAndResourceTree.getNodesByParam("code", result.data.resParent);
+                            var resParentName = resParentNames != null && resParentNames.length > 0 ? resParentNames[0]["name"] : "";
+                            result.data.status = (status === "0" ? "正常" : (status === "1" ? "禁用" : result.data.status));
+                            result.data.appName = appName;
+                            result.data.resParentName = resParentName;
+                            $.each(result.data, function (name, value) {
+                                var $input = $("input[name=" + name + "]", layero);
+                                if ($input && $input.length == 1) {
+                                    $input.attr("readonly", "readonly");
+                                    $input.val(value);
+                                }
+                            });
+                        }
+                    })
+                } else {
+                    layer.msg(result.codeDesc);
+                }
+            });
+        } else if (obj.event === 'del') {
+            layer.confirm('是否删除资源' + data.resNameCn + "？", function (index) {
+                $.post(basepath + 'resource/delete?id=' + data.id, null, function (result) {
+                    if (result["returnCode"] == "0000") {
+                        if (type == 'module') {
+                            moduleTableLoad = false;
+                        } else {
+                            menuTableLoad = false;
+                            btnTableLoad = false;
+                            tabTableLoad = false;
+                            apiTableLoad = false;
+                        }
+                        renderTable(type);
+                        layer.close(index);
+                        layer.alert("删除成功。");
+                    } else {
+                        layer.alert(result.codeDesc);
+                    }
+                });
+            });
+        } else if (obj.event === 'edit') {
+            layer.close(editDialog);
+            $.post(basepath + 'resource/view?id=' + data.id, null, function (result) {
+                if (result["returnCode"] == "0000") {
+                    editDialog = layer.open({
+                        type: 1,
+                        area: ['400px', '450px'],
+                        shadeClose: true,
+                        title: "修改资源信息",
+                        content: $("#resource_" + type + "_add_data_div").html(),
+                        btn: ['保存', '取消'],
+                        yes: function (index, layero) {
+                            var $submitBtn = $("button[lay-filter=resource_" + type + "_add_data_form]", layero);
+                            if ($submitBtn) {
+                                $submitBtn.click();
+                            } else {
+                                throw new Error("没有找到submit按钮。");
+                            }
+                        },
+                        btn2: function () {
+                            layer.closeAll('tips');
+                        },
+                        success: function (layero, index) {
+                            var appName = appAndResourceTree.getNodesByParam("code", result.data.app)[0]["name"];
+                            var resParentNames = result.data.resParent == null ? "" : appAndResourceTree.getNodesByParam("code", result.data.resParent);
+                            var resParentName = resParentNames != null && resParentNames.length > 0 ? resParentNames[0]["name"] : "";
+                            result.data.appName = appName;
+                            result.data.resParentName = resParentName;
+                            //表单数据填充
+                            $.each(result.data, function (name, value) {
+                                var $input = $("input[name=" + name + "]", layero);
+                                if (name == "resCode") {
+                                    $input.attr("readonly", "readonly");
+                                }
+                                if ($input && $input.length == 1) {
+                                    $input.val(value);
+                                }
+                            });
+                            form.render(null, "resource_" + type + "_add_data_form");
+                            form.on("submit(resource_" + type + "_add_data_form)", function (data) {
+                                data.field.resType = type;
+                                $.ajax({
+                                    type: "POST",
+                                    url: basepath + 'resource/update',
+                                    data: JSON.stringify($.extend({}, result.data, data.field)),
+                                    contentType: "application/json; charset=utf-8",
+                                    success: function (result) {
+                                        layer.close(index);
+                                        if (result["returnCode"] == '0000') {
+                                            if (type == 'module') {
+                                                moduleTableLoad = false;
+                                            } else {
+                                                menuTableLoad = false;
+                                                btnTableLoad = false;
+                                                tabTableLoad = false;
+                                                apiTableLoad = false;
+                                            }
+                                            renderTable(type);
+                                            layer.alert("资源修改成功。");
+                                        }
+                                    },
+                                    error: function (result) {
+                                        layer.msg(title + "发生异常，请联系管理员。");
+                                        console.error(result);
+                                    }
+                                });
+                                return false;
+                            });
+                        }
+                    })
+                } else {
+                    layer.msg(result.codeDesc);
+                }
+            });
+        }
+    };
     //监听操作栏
     table.on('tool(resource_menu_datatable)', function (obj) {
-            var data = obj.data;
-            if (obj.event === 'detail') {
-                $.post("http://localhost:9999/user/view/" + data.userId, null, function (result) {
-                    if (result["returnCode"] == "0000") {
-                        viewDialog = layer.open({
-                            type: 1,
-                            area: ['680px', '360px'],
-                            shadeClose: true,
-                            title: "修改用户",
-                            content: $("#user_view_data_div").html(),
-                            btn: ['取消'],
-                            btn2: function () {
-                                layer.closeAll('tips');
-                            },
-                            success: function (layero) {
-                                var status = result.data.status;
-                                result.data.status = status === "0" ? "正常" : (status === "1" ? "禁用" : (status === "4" ? "冻结" : (status === "1" ? "锁定" : result.data.status)));
-                                $.each(result.data, function (name, value) {
-                                    var $input = $("input[name=" + name + "]", layero);
-                                    if ($input && $input.length == 1) {
-                                        $input.val(value);
-                                    }
-                                });
-                            }
-                        })
-                    } else {
-                        layer.msg(result.codeDesc);
-                    }
-                });
-            } else if (obj.event === 'del') {
-                layer.confirm('是否删除用户' + data.userName + "？", function (index) {
-                    $.post("http://localhost:9999/user/delete/" + data.userId, null, function (result) {
-                        if (result["returnCode"] == "0000") {
-                            refreshTable();
-                            layer.close(index);
-                            layer.msg("删除用户成功。");
-                        } else {
-                            layer.msg(result.codeDesc);
-                        }
-                    });
-                });
-            } else if (obj.event === 'edit') {
-                layer.close(editDialog);
-                $.post("http://localhost:9999/user/view/" + data.userId, null, function (result) {
-                    if (result["returnCode"] == "0000") {
-                        editDialog = layer.open({
-                            type: 1,
-                            area: ['400px', '380px'],
-                            shadeClose: true,
-                            title: "修改用户",
-                            content: $("#user_modify_data_div").html(),
-                            btn: ['保存', '取消'],
-                            yes: function (index, layero) {
-                                var $submitBtn = $("button[lay-filter=user_filter_modify_data_form]", layero);
-                                if ($submitBtn) {
-                                    $submitBtn.click();
-                                } else {
-                                    throw new Error("没有找到submit按钮。");
-                                }
-                            },
-                            btn2: function () {
-                                layer.closeAll('tips');
-                            },
-                            success: function (layero, index) {
-                                //表单数据填充
-                                $.each(result.data, function (name, value) {
-                                    var $input = $("input[name=" + name + "]", layero);
-                                    if ($input && $input.length == 1) {
-                                        $input.val(value);
-                                    }
-                                });
-                                form.render(null, "user_filter_modify_data_form");
-                                form.on('submit(user_filter_modify_data_form)', function (data) {
-                                    $.ajax({
-                                        type: "POST",
-                                        url: "http://localhost:9999/user/update",
-                                        data: JSON.stringify(data.field),
-                                        contentType: "application/json; charset=utf-8",
-                                        success: function (result2) {
-                                            layer.close(index);
-                                            if (result2["returnCode"] == '0000') {
-                                                refreshTable();
-                                                layer.alert("用户修改成功。");
-                                            }
-                                        },
-                                        error: function (message) {
-                                            layer.msg("用户新增发生异常，请联系管理员。");
-                                            layer.close(index);
-                                            console.error(message);
-                                        }
-                                    });
-                                    return false;
-                                });
-                            }
-                        })
-                    } else {
-                        layer.msg(result.codeDesc);
-                    }
-                });
-            }
-        }
-    );
+        tableToolEvent(obj, "menu");
+    });
+    table.on('tool(resource_btn_datatable)', function (obj) {
+        tableToolEvent(obj, "btn")
+    });
+    table.on('tool(resource_tab_datatable)', function (obj) {
+        tableToolEvent(obj, "tab")
+    });
+    table.on('tool(resource_api_datatable)', function (obj) {
+        tableToolEvent(obj, "api")
+    });
+    table.on('tool(resource_module_datatable)', function (obj) {
+        tableToolEvent(obj, "module")
+    });
     //菜单和模块tab页切换事件
     element.on('tab(resource_top_tab)', function (data) {
         switch (data.index) {

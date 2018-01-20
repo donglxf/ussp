@@ -26,7 +26,7 @@ public interface HtBoaInResourceRepository extends JpaSpecificationExecutor<HtBo
     @Query(value = "select new com.ht.ussp.uc.app.vo.ResVo(resCode,resNameCn,sequence,resType,resParent,resContent,fontIcon) from  HtBoaInResource  where status=0 and app= :app and resType in(:res_type) and resCode in(:res_code)")
     public List<ResVo> queryResForN(@Param("res_code") List<String> res_code, @Param("res_type") List<String> res_type, @Param("app") String app);
 
-    HtBoaInResource findByRemark(String remark);
-
     List<HtBoaInResource> findByApp(String app);
+
+    List<HtBoaInResource> findByResParent(String resPanrent);
 }
