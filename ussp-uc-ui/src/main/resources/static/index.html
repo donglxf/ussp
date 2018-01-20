@@ -66,7 +66,7 @@
                     <dd><a href="javascript:;" kit-target
                            data-options="{url:'/html/user/changePwd.html',icon:'&#xe658;',title:'修改密码',id:'967'}">修改密码</a></dd>
                 </dl>
-            </li> 
+            </li>
             <li class="layui-nav-item"><a href="login.html"><i class="fa fa-sign-out" aria-hidden="true"></i> 注销</a>
             </li>
         </ul>
@@ -142,7 +142,7 @@
 <script>
     var basepath = "http://localhost:9999/";
     Date.prototype.Format = function (fmt) { //author: meizz   
-        var o = {  
+        var o = {
             "M+": this.getMonth() + 1, //月份   
             "d+": this.getDate(), //日   
             "H+": this.getHours(), //小时   
@@ -150,12 +150,12 @@
             "s+": this.getSeconds(), //秒   
             "q+": Math.floor((this.getMonth() + 3) / 3), //季度   
             "S": this.getMilliseconds() //毫秒   
-        };  
-        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));  
-        for (var k in o)  
-        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));  
-        return fmt;  
-    } 
+        };
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
 
     var message;
     layui.config({

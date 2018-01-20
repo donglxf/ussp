@@ -11,18 +11,17 @@ package com.ht.ussp.uc.app.resource;
 
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
-import com.ht.ussp.uc.app.domain.HtBoaInLogin;
+import com.ht.ussp.uc.app.domain.HtBoaInResource;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.service.HtBoaInAppService;
 import com.ht.ussp.uc.app.service.HtBoaInResourceService;
 import com.ht.ussp.uc.app.vo.AppAndResourceVo;
-import com.ht.ussp.uc.app.vo.PageVo;
+import com.ht.ussp.uc.app.vo.ResourcePageVo;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
-import com.ht.ussp.util.EncryptUtil;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -60,44 +59,36 @@ public class ResResource {
      * @Date 2018/1/12 9:01
      */
     @ApiOperation(value = "用户信息分页查询")
-    @PostMapping(value = "/loadListByPage")
-    public PageResult<List<UserMessageVo>> loadListByPage(PageVo page) {
-        return htBoaInResourceService.getPage(new PageRequest(page.getPage(), page.getLimit()), page.getOrgCode(),
-                page.getKeyWord(), "");
+    @PostMapping(value = "/page/load")
+    public PageResult<List<UserMessageVo>> loadListByPage(ResourcePageVo page) {
+        return htBoaInResourceService.getPage(page.getPageRequest(), page.getApp(), page.getParentCode(), page.getResType(), page.getKeyWord());
     }
 
     /**
-     * 新增用户信息<br>
+     * 新增资源信息<br>
      *
-     * @param user 用户信息数据对象
+     * @param resource 资源信息
      * @return com.ht.ussp.core.Result
      * @author 谭荣巧
      * @Date 2018/1/14 12:08
      */
     @PostMapping(value = "/add")
-    public Result addAsync(@RequestBody HtBoaInUser user) {
-        if (user != null) {
-            String userId = UUID.randomUUID().toString().replace("-", "");
-            user.setUserId(userId);
+    public Result addAsync(@RequestBody HtBoaInResource resource) {
+        if (resource != null) {
+            if ("menu".equals(resource.getResType()) && StringUtils.isEmpty(resource.getResContent())) {
+                resource.setResType("group");
+            } else if ("menu".equals(resource.getResType())) {
+                resource.setResType("view");
+            }
+            resource.setStatus("0");
             // TODO 需要获取登录信息，设置创建人，修改人
-            user.setCreateOperator("10003");
-            user.setUpdateOperator("10003");
-            user.setDelFlag(0);
-            HtBoaInLogin loginInfo = new HtBoaInLogin();
-            loginInfo.setLoginId(UUID.randomUUID().toString().replace("-", ""));
-            loginInfo.setUserId(userId);
-            // TODO 需要获取登录信息，设置创建人，修改人
-            loginInfo.setCreateOperator("10003");
-            loginInfo.setUpdateOperator("10003");
-            loginInfo.setStatus("0");
-            loginInfo.setPassword(EncryptUtil.passwordEncrypt("123456"));
-            loginInfo.setFailedCount(0);
-            loginInfo.setRootOrgCode(user.getRootOrgCode());
-            loginInfo.setDelFlag(0);
-          //  boolean isAdd = htBoaInUserService.saveUserInfoAndLoginInfo(user, loginInfo);
-           // if (isAdd) {
+            resource.setCreateOperator("10003");
+            resource.setUpdateOperator("10003");
+            resource.setDelFlag(0);
+            resource = htBoaInResourceService.save(resource);
+            if (resource != null && !StringUtils.isEmpty(resource.getId())) {
                 return Result.buildSuccess();
-           // }
+            }
         }
         return Result.buildFail();
     }

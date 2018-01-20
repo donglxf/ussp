@@ -29,7 +29,7 @@ public class HtBoaInAppService {
         List<AppAndResourceVo> aaaList = new ArrayList<>();
         AppAndResourceVo aaa;
         for (Object[] objects : list) {
-            aaa = new AppAndResourceVo(objects[0], objects[1], objects[2], objects[3], objects[4], objects[5], objects[6]);
+            aaa = new AppAndResourceVo(objects[0], objects[1], objects[2], objects[3], objects[4], objects[5], objects[6], objects[7]);
             aaaList.add(aaa);
         }
         return aaaList;

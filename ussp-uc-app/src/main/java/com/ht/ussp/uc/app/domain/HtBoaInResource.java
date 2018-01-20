@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ht.ussp.uc.app.vo.ResVo;
 
 
@@ -31,6 +32,7 @@ public class HtBoaInResource implements Serializable {
     @Column(name = "CREATE_OPERATOR")
     private String createOperator;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "CREATED_DATETIME", updatable = false, insertable = false)
     private Date createdDatetime;
@@ -41,6 +43,7 @@ public class HtBoaInResource implements Serializable {
     @Column(name = "JPA_VERSION")
     private int jpaVersion;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "LAST_MODIFIED_DATETIME", updatable = false, insertable = false)
     private Date lastModifiedDatetime;
@@ -162,7 +165,7 @@ public class HtBoaInResource implements Serializable {
     }
 
     public void setResContent(String resContent) {
-        this.resContent = resContent;
+        this.resContent = "".equals(resContent) ? null : resContent;
     }
 
     public byte[] getResIcon() {
@@ -194,7 +197,7 @@ public class HtBoaInResource implements Serializable {
     }
 
     public void setResParent(String resParent) {
-        this.resParent = resParent;
+        this.resParent = "".equals(resParent) ? null : resParent;
     }
 
     public String getResType() {

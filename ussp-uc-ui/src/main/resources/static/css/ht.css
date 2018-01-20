@@ -79,6 +79,11 @@ a, a:hover {
 .view_tab .layui-tab-title .layui-this:after {
     height: 30px;
 }
-.view_tab .layui-tab-content{
+
+.view_tab .layui-tab-content {
     overflow-y: visible;
+}
+/*隐藏datatable 标题栏的全选按钮*/
+.disableCheckAll + div input[lay-filter=layTableAllChoose] + div {
+    display: none;
 }

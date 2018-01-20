@@ -15,6 +15,7 @@ import com.ht.ussp.uc.app.repository.HtBoaInResourceRepository;
 import com.ht.ussp.uc.app.vo.ResVo;
 import org.springframework.util.StringUtils;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 
 /**
@@ -50,16 +51,37 @@ public class HtBoaInResourceService {
         return htBoaInResourceRepository.findByApp(app);
     }
 
-    public PageResult getPage(Pageable pageable, String app, String parentCode, String keyWord) {
+    public PageResult getPage(Pageable pageable, String app, String parentCode, String resType, String keyWord) {
         PageResult result = new PageResult();
         Page<HtBoaInResource> pageData = null;
-        if (!StringUtils.isEmpty(keyWord)) {
+        if (!StringUtils.isEmpty(app) && !StringUtils.isEmpty(resType)) {
             Specification<HtBoaInResource> specification = (root, query1, cb) -> {
-                Predicate p1 = cb.like(root.get("jobNumber").as(String.class), "%" + keyWord + "%");
-                Predicate p2 = cb.like(root.get("userName").as(String.class), "%" + keyWord + "%");
-                Predicate p3 = cb.like(root.get("mobile").as(String.class), "%" + keyWord + "%");
-                Predicate p4 = cb.equal(root.get("app").as(String.class), app);
-                query1.where(cb.and(cb.or(p1, p2, p3), p4));
+                Predicate where;
+                Predicate p5 = cb.equal(root.get("app").as(String.class), app);
+                Predicate p6;
+                if (StringUtils.isEmpty(parentCode)) {
+                    p6 = cb.isNull(root.get("resParent").as(String.class));
+                } else {
+                    Predicate p61 = cb.equal(root.get("resParent").as(String.class), parentCode);
+                    Predicate p62 = cb.equal(root.get("resCode").as(String.class), parentCode);
+                    p6 = cb.or(p61, p62);
+                }
+                String[] resTypes = resType.split(",");
+                CriteriaBuilder.In p7 = cb.in(root.get("resType").as(String.class));
+                for (int i = 0; i < resTypes.length; i++) {
+                    p7.value(resTypes[i]);
+                }
+                if (!StringUtils.isEmpty(keyWord)) {
+                    Predicate p1 = cb.like(root.get("resNameCn").as(String.class), "%" + keyWord + "%");
+                    Predicate p2 = cb.like(root.get("resContent").as(String.class), "%" + keyWord + "%");
+                    Predicate p3 = cb.like(root.get("resCode").as(String.class), "%" + keyWord + "%");
+                    Predicate p4 = cb.like(root.get("remark").as(String.class), "%" + keyWord + "%");
+                    Predicate kewPredicate = cb.or(p1, p2, p3, p4);
+                    where = cb.and(p5, p6, p7, kewPredicate);
+                } else {
+                    where = cb.and(p5, p6, p7);
+                }
+                query1.where(where);
                 return query1.getRestriction();
             };
             pageData = htBoaInResourceRepository.findAll(specification, pageable);

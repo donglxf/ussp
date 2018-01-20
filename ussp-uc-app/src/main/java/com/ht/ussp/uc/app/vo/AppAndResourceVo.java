@@ -31,8 +31,9 @@ public class AppAndResourceVo {
     private String type;
     private String parentCode;
     private String icon;
+    private String app;
 
-    public AppAndResourceVo(Object code, Object name, Object nameCn, Object sequence, Object type, Object parentCode, Object icon) {
+    public AppAndResourceVo(Object code, Object name, Object nameCn, Object sequence, Object type, Object parentCode, Object icon, Object app) {
         this.code = code == null ? null : code.toString();
         this.name = name == null ? null : name.toString();
         this.nameCn = nameCn == null ? null : nameCn.toString();
@@ -40,5 +41,7 @@ public class AppAndResourceVo {
         this.type = type == null ? null : type.toString();
         this.parentCode = parentCode == null ? null : parentCode.toString();
         this.icon = icon == null ? null : icon.toString();
+        this.app = app == null ? null : app.toString();
+
     }
 }

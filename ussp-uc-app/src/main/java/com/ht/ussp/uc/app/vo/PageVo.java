@@ -12,6 +12,7 @@ package com.ht.ussp.uc.app.vo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.Map;
 
@@ -34,5 +35,9 @@ public class PageVo {
 
     public int getPage() {
         return page - 1;
+    }
+
+    public PageRequest getPageRequest() {
+        return new PageRequest(page - 1, limit);
     }
 }

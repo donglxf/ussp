@@ -21,22 +21,23 @@ public interface HtBoaInAppRepository extends JpaRepository<HtBoaInApp, Long> {
             "SELECT " +
             "RES_CODE,RES_NAME,RES_NAME_CN,SEQUENCE,RES_TYPE, " +
             "IF(RES_PARENT IS NULL, (IF(RES_TYPE='group', CONCAT(APP,'_menu'), CONCAT(APP,'_',RES_TYPE))),RES_PARENT) AS RES_PARENT, " +
-            "FONT_ICON " +
+            "FONT_ICON, " +
+            "APP " +
             "FROM HT_BOA_IN_RESOURCE " +
             "WHERE RES_TYPE IN('view','group','module') AND STATUS='0' " +
             "UNION ALL " +
             "SELECT " +
-            "CONCAT(APP,'_menu'),'menu','菜单',1,'menu',APP,NULL  " +
+            "CONCAT(APP,'_menu'),'menu','菜单',1,'menuType',APP,NULL,APP  " +
             "FROM HT_BOA_IN_APP " +
             "WHERE STATUS='0' " +
             "UNION ALL " +
             "SELECT " +
-            "CONCAT(APP,'_module'),'module','模块',2,'module',APP,NULL " +
+            "CONCAT(APP,'_module'),'module','模块',2,'moduleType',APP,NULL,APP " +
             "FROM HT_BOA_IN_APP " +
             "WHERE STATUS='0' " +
             "UNION ALL " +
             "SELECT " +
-            "APP,NAME,NAME_CN,1,'app', '0',NULL " +
+            "APP,NAME,NAME_CN,1,'app', '0',NULL,APP " +
             "FROM HT_BOA_IN_APP " +
             "WHERE STATUS='0' " +
             ") A ORDER BY SEQUENCE,RES_NAME ", nativeQuery = true)

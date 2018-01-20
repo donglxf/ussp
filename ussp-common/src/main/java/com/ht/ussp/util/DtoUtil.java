@@ -1,13 +1,15 @@
 /*
  * Copyright (C), 2017-2018 广东鸿特信息咨询有限公司
- * FileName: 谭荣巧
- * Author:   tanrq
+ * FileName: DtoUtil.java
+ * Author:   谭荣巧
  * Date:     2018/1/11 17:13
  * History:
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间         版本号             描述
  */
 package com.ht.ussp.util;
+
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -91,7 +93,7 @@ public class DtoUtil {
 //            if (d_field.isAnnotationPresent(DtoField.class)) {
 //                DtoField dtoField = (DtoField) d_field.getAnnotation(DtoField.class);
 //                m_name = dtoField.mapping();
-//                if (StringUtil.isEmpty(m_name)) {
+//                if (StringUtils.isEmpty(m_name)) {
 //                    m_name = d_name;
 //                }
 //                format = dtoField.format();
@@ -107,7 +109,7 @@ public class DtoUtil {
                 throw new RuntimeException(MessageFormat.format("通过反射获取字段值失败，字段名：\"{0}\"，非法参数：\"{1}\"", d_field.getName(), dto), e1);
             }
             // 分隔符(separator)和分割映射字段屬性(separatorMapping)如果不为空，则进行字段属性分割操作
-            if (!StringUtil.isEmpty(separator) && separatorMapping != null && separatorMapping.length > 0) {
+            if (!StringUtils.isEmpty(separator) && separatorMapping != null && separatorMapping.length > 0) {
                 // dto的字段属性必须是String类型，且属性值不允许为空
                 if (obj != null && d_typeClass == String.class) {
                     // 待分割的属性值
@@ -189,7 +191,7 @@ public class DtoUtil {
 //            if (d_field.isAnnotationPresent(DtoField.class)) {
 //                DtoField dtoField = (DtoField) d_field.getAnnotation(DtoField.class);
 //                m_name = dtoField.mapping();
-//                if (StringUtil.isEmpty(m_name)) {
+//                if (StringUtils.isEmpty(m_name)) {
 //                    m_name = d_name;
 //                }
 //                format = dtoField.format();
@@ -197,7 +199,7 @@ public class DtoUtil {
 //                separatorMapping = dtoField.separatorMapping();
 //            }
             // 分隔符(separator)和分割映射字段屬性(separatorMapping)如果不为空，则进行字段属性合并操作
-            if (!StringUtil.isEmpty(separator) && separatorMapping != null && separatorMapping.length > 0) {
+            if (!StringUtils.isEmpty(separator) && separatorMapping != null && separatorMapping.length > 0) {
                 // dto的字段属性必须是String类型
                 if (d_typeClass == String.class) {
                     int count = separatorMapping.length;
@@ -250,26 +252,26 @@ public class DtoUtil {
                         try {
                             Class<?> e_typeClass = e_field.getType();
 
-                            if (obj != null && d_typeClass == String.class && !StringUtil.isEmpty(obj.toString())) {
+                            if (obj != null && d_typeClass == String.class && !StringUtils.isEmpty(obj.toString())) {
                                 if (e_typeClass == BigDecimal.class) {
-                                    if (!StringUtil.isEmpty(format)) {
+                                    if (!StringUtils.isEmpty(format)) {
                                         obj = new DecimalFormat(format).format(obj);
                                     } else {
                                         obj = obj.toString();
                                     }
                                 } else if (e_typeClass == Date.class) {
-                                    if (StringUtil.isEmpty(format)) {
+                                    if (StringUtils.isEmpty(format)) {
                                         format = "yyyy-MM-dd HH:mm:ss";
                                     }
                                     obj = DateUtil.formatDate(format, (Date) obj);
                                 } else if (e_typeClass == int.class || e_typeClass == Integer.class) {
-                                    if (!StringUtil.isEmpty(format)) {
+                                    if (!StringUtils.isEmpty(format)) {
                                         obj = new DecimalFormat(format).format(obj);
                                     } else {
                                         obj = obj.toString();
                                     }
                                 } else if (e_typeClass == double.class || e_typeClass == Double.class) {
-                                    if (!StringUtil.isEmpty(format)) {
+                                    if (!StringUtils.isEmpty(format)) {
                                         obj = new DecimalFormat(format).format(obj);
                                     } else {
                                         obj = obj.toString();
@@ -331,7 +333,7 @@ public class DtoUtil {
     private static Object dataConversion(Class<?> e_typeClass, Object obj) {
 
         // 当传入的值为空值或者空字符串时
-        if (obj == null || StringUtil.isEmpty(obj.toString())) {
+        if (obj == null || StringUtils.isEmpty(obj.toString())) {
             if (e_typeClass == int.class || e_typeClass == Integer.class) {
                 obj = 0;
             } else if (e_typeClass == BigDecimal.class) {
