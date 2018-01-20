@@ -28,14 +28,16 @@ function login() {
 					location.href = '/';
 				},
 				error : function(xhr, exception, errorThrown) {
-					if (xhr.status == '401' || xhr.status == '403'
-							|| xhr.status == '0') {
+					if (xhr.status == '401' || xhr.status == '403') {
 						
 						alert("用户名或密码错误，请重新登录");
 						
 					}
 					if(xhr.status=='500'){
 						alert("服务器错误，请联系管理员");
+					}
+					if(xhr.status=='0'){
+						alert("网络错误，请检查网络")
 					}
 					$(':input','#loginForm').not(':button,:submit,:reset,:hidden').val('').removeAttr('checked').removeAttr('checked');
 				}
