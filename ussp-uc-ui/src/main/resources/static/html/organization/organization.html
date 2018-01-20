@@ -3,17 +3,17 @@
         <div>
             <div class="tree_search">
                 <div class="input-group input-group-sm">
-                    <input type="text" id="user_search_tree_org" class="form-control" placeholder="请输入机构名"/>
-                    <div id="user_btn_refresh_tree" class="input-group-addon btn" title="刷新">
+                    <input type="text" id="organization_search_tree_org" class="form-control" placeholder="请输入机构名"/>
+                    <div id="organization_btn_refresh_tree" class="input-group-addon btn" title="刷新">
                         <i class="fa fa-refresh"></i>
                     </div>
                 </div>
             </div>
-            <div id="user_org_ztree_left" class="ztree"></div>
+            <div id="organization_org_ztree_left" class="ztree"></div>
         </div>
     </div>
     <div class="col-xs-9">
-        <div class="row row-lg" id="user_table_tools">
+        <div class="row row-lg" id="organization_table_tools">
             <div class="toolbarBtn btn-group">
                 <button class="layui-btn layui-btn-sm" title="新增" data-type="add">
                     新增
@@ -21,7 +21,7 @@
             </div>
             <div class="pull-right col-xs-4 row">
                 <div class="input-group input-group-sm">
-                    <input type="text" class="form-control" id="user_search_keyword"
+                    <input type="text" class="form-control" id="organization_search_keyword"
                            placeholder="请输入用户名/工号/手机号"/>
                     <div class="input-group-btn">
                         <button type="button" class="layui-btn layui-btn-sm" data-type="search">
@@ -54,9 +54,9 @@
             </form>
         </div>
         <div class="row row-lg">
-            <table id="user_datatable" lay-filter="filter_user_datatable">
+            <table id="organization_datatable" lay-filter="filter_organization_datatable">
             </table>
-            <script type="text/html" id="user_datatable_bar">
+            <script type="text/html" id="organization_datatable_bar">
                 <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
                 <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
                 <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
@@ -77,8 +77,8 @@
         </div>
     </div>
     <!--新增表单-->
-    <div id="user_add_data_div" class="hide">
-        <form method="post" class="layui-form" lay-filter="filter_add_data_form">
+    <div id="organization_add_data_div" class="hide">
+        <form method="post" class="layui-form" lay-filter="filter_add_organization_form">
             <div class="layui-form-item">
                 <label class="layui-form-label">工号<b>*</b></label>
                 <div class="layui-input-block">
@@ -118,7 +118,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">所属机构<b>*</b></label>
                 <div class="layui-input-block">
-                    <input type="text" id="user_org_tree_select" name="orgName" autocomplete="off"
+                    <input type="text" id="organization_org_tree_select" name="orgName" autocomplete="off"
                            lay-verType="tips" class="layui-input layui-input-sm">
                     <input type="hidden" name="orgCode" autocomplete="off" readonly
                            lay-verType="tips" class="layui-input layui-input-sm">
@@ -132,8 +132,8 @@
         </form>
     </div>
     <!--修改表单-->
-    <div id="user_modify_data_div" class=" hide" class="hide">
-        <form method="post" class="layui-form" lay-filter="user_filter_modify_data_form">
+    <div id="organization_modify_data_div" class=" hide" class="hide">
+        <form method="post" class="layui-form" lay-filter="organization_filter_modify_data_form">
             <input type="hidden" name="id" readonly class="layui-input layui-input-sm">
             <input type="hidden" name="userId" readonly class="layui-input layui-input-sm">
             <div class="layui-form-item">
@@ -186,7 +186,7 @@
         </form>
     </div>
     <!--查看表单-->
-    <div id="user_view_data_div" class="ibox-content hide" class="hide">
+    <div id="organization_view_data_div" class="ibox-content hide" class="hide">
         <form method="post" class="layui-form" lay-filter="user_filter_view_data_form">
             <div class="layui-form-item">
                 <div class="layui-inline">

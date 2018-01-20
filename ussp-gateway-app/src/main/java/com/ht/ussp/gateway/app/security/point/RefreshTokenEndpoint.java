@@ -54,7 +54,7 @@ public class RefreshTokenEndpoint {
 
         UserVo userVo=new UserVo();
         userVo.setUserId(refreshToken.getUserId());
-        userVo.setController(refreshToken.getController());
+        userVo.setOrgCode(refreshToken.getOrgCode());
         return tokenFactory.createAccessJwtToken(userVo);
     }
 }

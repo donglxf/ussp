@@ -43,7 +43,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 //        String subject = jwsClaims.getBody().getSubject();
         List<String> roles = jwsClaims.getBody().get("roles", List.class);
         String userId=jwsClaims.getBody().get("userId").toString();
-        String controller=jwsClaims.getBody().get("controller").toString();
+        String orgCode=jwsClaims.getBody().get("orgCode").toString();
         
         Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(); 
      	for(String roleCode:roles) {
@@ -58,7 +58,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 //        UserContext context = UserContext.create(subject, authorities);
         UserVo userVo=new UserVo();
         userVo.setUserId(userId);
-        userVo.setController(controller);
+        userVo.setOrgCode(orgCode);
         return new JwtAuthenticationToken(userVo, authorities);
     }
 

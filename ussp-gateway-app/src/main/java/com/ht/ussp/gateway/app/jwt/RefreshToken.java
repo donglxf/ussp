@@ -60,7 +60,7 @@ public class RefreshToken implements JwtToken {
     	return claims.getBody().get("userId").toString();
     }
     
-    public String getController() {
-    	return claims.getBody().get("controller").toString();
+    public String getOrgCode() {
+    	return claims.getBody().get("orgCode").toString();
     }
 }
