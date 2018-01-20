@@ -37,7 +37,7 @@ function login() {
 						
 					}
 					if(xhr.status=='500'){
-						alert("您无权登录，请联系管理员");
+						alert("尚未分配权限，请联系管理员");
 					}
 					$(':input','#loginForm').not(':button,:submit,:reset,:hidden').val('').removeAttr('checked').removeAttr('checked');
 				}
