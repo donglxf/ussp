@@ -168,7 +168,7 @@ layui.use(['form', 'ztree', 'table'], function () {
         , cols: [[
             {type: 'numbers'}
             , {field: 'jobNumber', width: 100, title: '工号',event:'getRole'}
-            , {field: 'userName', width: 150, title: '用户名',event:'getRole'}
+            , {field: 'userName',  title: '用户名',event:'getRole'}
             , {field: 'mobile', width: 120, title: '手机',event:'getRole'}
             , {field: 'email', width: 200, title: '邮箱',event:'getRole'}
             , {field: 'idNo', width: 180, title: '身份证',event:'getRole'}

@@ -168,7 +168,7 @@ layui.use(['form', 'ztree', 'table'], function () {
         , cols: [[
             {type: 'numbers'}
             , {field: 'positionCode', width: 120, title: '岗位编号',event:'getRole'}
-            , {field: 'positionNameCn', width: 200, title: '岗位名称',event:'getRole'}
+            , {field: 'positionNameCn',   title: '岗位名称',event:'getRole'}
             , {field: 'porgNameCn', width: 220, title: '所属机构',event:'getRole'}
             , {field: 'delFlag', width: 100, title: '状态',event:'getRole'}
             , {field: 'createOperator', width: 100, title: '创建人',event:'getRole'}
