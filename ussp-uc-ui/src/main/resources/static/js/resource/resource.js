@@ -11,6 +11,7 @@ layui.use(['element', 'form', 'ztree', 'table'], function () {
         , tabTableLoad = false//tab数据表格是否已加载
         , apiTableLoad = false//api数据表格是否已加载
         , moduleTableLoad = false//module数据表格是否已加载
+        , selectBottomTabIndex = 0//当前选中的tab标签页
         , appAndResourceTree //组织机构树控件
         , active = {
         add: function (type) { //弹出用户新增弹出框
@@ -32,7 +33,7 @@ layui.use(['element', 'form', 'ztree', 'table'], function () {
                     title = "新增API权限";
                     break;
                 case "module":
-                    title = "新增模块权限";
+                    title = "新增模块";
                     break;
             }
             switch (type) {
@@ -74,24 +75,26 @@ layui.use(['element', 'form', 'ztree', 'table'], function () {
                     layer.closeAll('tips');
                 },
                 success: function (layero, index) {
+                    var app = nodes[0]["app"];
+                    var appName = appAndResourceTree.getNodesByParam("code", app)[0]["name"];
                     //初始弹出框表单数据
                     switch (type) {
-                        case "module":
                         case "menu":
-                            var app = nodes[0]["app"];
-                            var appName = appAndResourceTree.getNodesByParam("code", app)[0]["name"];
-                            $("input[name=app]", layero).val(app);
-                            $("input[name=appName]", layero).val(appName);
-                            if (nodes[0]["type"] == "group" || nodes[0]["type"] == "module") {
+                            if (nodes[0]["type"] == "group") {
                                 $("input[name=resParent]", layero).val(nodes[0]["code"]);
                                 $("input[name=resParentName]", layero).val(nodes[0]["name"]);
                             }
+                        case "module":
+                            if (nodes[0]["type"] == "module") {
+                                $("input[name=resParent]", layero).val(nodes[0]["code"]);
+                                $("input[name=resParentName]", layero).val(nodes[0]["name"]);
+                            }
+                            $("input[name=app]", layero).val(app);
+                            $("input[name=appName]", layero).val(appName);
                             break;
                         case "api":
                         case "tab":
                         case "btn":
-                            var app = nodes[0]["app"];
-                            var appName = appAndResourceTree.getNodesByParam("code", app)[0]["name"];
                             $("input[name=app]", layero).val(app);
                             $("input[name=appName]", layero).val(appName);
                             var selectData = checkStatus.data[0];
@@ -110,10 +113,14 @@ layui.use(['element', 'form', 'ztree', 'table'], function () {
                             success: function (result) {
                                 layer.close(index);
                                 if (result["returnCode"] == '0000') {
-                                    menuTableLoad = false;
-                                    btnTableLoad = false;
-                                    tabTableLoad = false;
-                                    apiTableLoad = false;
+                                    if (type == 'module') {
+                                        moduleTableLoad = false;
+                                    } else {
+                                        menuTableLoad = false;
+                                        btnTableLoad = false;
+                                        tabTableLoad = false;
+                                        apiTableLoad = false;
+                                    }
                                     renderTable(type);
                                     layer.alert(title + "成功。");
                                 }
@@ -133,13 +140,15 @@ layui.use(['element', 'form', 'ztree', 'table'], function () {
             if (selectNodes && selectNodes.length == 1) {
                 var keyword = $("#resource_" + type + "_search_keyword").val();
                 var resType = selectNodes[0]["type"];
-                menuTableLoad = false;
-                btnTableLoad = false;
-                tabTableLoad = false;
-                apiTableLoad = false;
-                moduleTableLoad = false;
-
-                if (resType != "view" && resType != "group") {
+                if (type == 'module') {
+                    moduleTableLoad = false;
+                } else {
+                    menuTableLoad = false;
+                    btnTableLoad = false;
+                    tabTableLoad = false;
+                    apiTableLoad = false;
+                }
+                if (resType != "view" && resType != "group" && resType != "module") {
                     renderTable(type, null, keyword);
                 } else {
                     renderTable(type, undefined, keyword);
@@ -183,7 +192,6 @@ layui.use(['element', 'form', 'ztree', 'table'], function () {
                             btnTableLoad = false;
                             tabTableLoad = false;
                             apiTableLoad = false;
-                            moduleTableLoad = false;
                             if (resType != "view" && resType != "group") {
                                 renderTable('menu', null);
                             } else {
@@ -196,7 +204,11 @@ layui.use(['element', 'form', 'ztree', 'table'], function () {
                         case "moduleType":
                         case "module":
                             moduleTableLoad = false;
-                            renderTable('module', null);
+                            if (resType != "module") {
+                                renderTable('module', null);
+                            } else {
+                                renderTable('module');
+                            }
                             element.tabChange("resource_top_tab", "resModuleType");
                             break;
                     }
@@ -232,14 +244,31 @@ layui.use(['element', 'form', 'ztree', 'table'], function () {
         if (!keyword) {
             keyword = null;
         }
-        var selectNodes = appAndResourceTree.getSelectedNodes();
-        if (selectNodes && selectNodes.length == 1) {
-            app = selectNodes[0]["app"];
-            if (typeof(parentCode) == 'undefined' && parentCode == null) {
-                parentCode = selectNodes[0]["code"];
-            }
+        switch (type) {
+            case "module":
+            case "menu":
+                var selectNodes = appAndResourceTree.getSelectedNodes();
+                if (selectNodes && selectNodes.length == 1) {
+                    app = selectNodes[0]["app"];
+                    if (typeof(parentCode) == 'undefined' && parentCode == null) {
+                        parentCode = selectNodes[0]["code"];
+                    }
+                }
+                break;
+            case "api":
+            case "tab":
+            case "btn":
+                var checkStatus = table.checkStatus('resource_menu_datatable');
+                if (checkStatus && checkStatus.data.length == 1) {
+                    if (!parentCode) {
+                        parentCode = checkStatus.data[0]["resCode"];
+                    }
+                    app = checkStatus.data[0]["app"];
+                }
+                break;
         }
-        var clos = [[]], height = 'full', page = false, limit = 999, limits = [];
+        var clos = [[]], height = 'full', page = false, limit = 999, limits = [],
+            initSort = {field: 'lastModifiedDatetime', type: 'desc'};
         switch (type) {
             case 'menu':
                 if (menuTableLoad) {
@@ -251,6 +280,7 @@ layui.use(['element', 'form', 'ztree', 'table'], function () {
                 page = true;
                 limit = 5;
                 limits = [5, 10, 20, 30, 40, 50];
+                initSort = {field: 'sequence', type: 'asc'};
                 clos = [[
                     {type: 'numbers'}
                     , {type: 'checkbox'}
@@ -273,6 +303,7 @@ layui.use(['element', 'form', 'ztree', 'table'], function () {
                 btnTableLoad = true;
                 resType = 'btn';
                 height = 'full-601';
+                initSort = {field: 'sequence', type: 'asc'};
                 clos = [[
                     {type: 'numbers'}
                     , {field: 'resCode', width: 120, title: '按钮编号'}
@@ -293,6 +324,7 @@ layui.use(['element', 'form', 'ztree', 'table'], function () {
                 tabTableLoad = true;
                 resType = 'tab';
                 height = 'full-601';
+                initSort = {field: 'sequence', type: 'asc'};
                 clos = [[
                     {type: 'numbers'}
                     , {field: 'resCode', width: 120, title: 'TAB编号'}
@@ -336,6 +368,7 @@ layui.use(['element', 'form', 'ztree', 'table'], function () {
                 page = true;
                 limit = 20;
                 limits = [20, 30, 40, 50, 60, 70];
+                initSort = {field: 'sequence', type: 'asc'};
                 clos = [[
                     {type: 'numbers'}
                     , {field: 'resCode', width: 120, title: '模块编号'}
@@ -361,6 +394,7 @@ layui.use(['element', 'form', 'ztree', 'table'], function () {
                 parentCode: parentCode,
                 keyWord: keyword
             }
+            , initSort: initSort
             , page: page
             , limit: 9999
             , limits: limits
@@ -486,6 +520,7 @@ layui.use(['element', 'form', 'ztree', 'table'], function () {
     });
     //按钮权限/TAB权限/API权限tab页切换事件
     element.on('tab(resource_bottom_tab)', function (data) {
+        selectBottomTabIndex = data.index;
         switch (data.index) {
             case 1:
                 renderTable("tab");
@@ -516,7 +551,19 @@ layui.use(['element', 'form', 'ztree', 'table'], function () {
             that.renderForm('checkbox');
         }
         btnTableLoad = false;
-        renderTable("btn", data.data.resCode);
+        tabTableLoad = false;
+        apiTableLoad = false;
+        switch (selectBottomTabIndex) {
+            case 0:
+                renderTable("btn", data.data.resCode);
+                break;
+            case 1:
+                renderTable("tab", data.data.resCode);
+                break;
+            case 2:
+                renderTable("api", data.data.resCode);
+                break;
+        }
     });
     //监听工具栏
     $('#resource_content .layui-btn').on('click', function () {
