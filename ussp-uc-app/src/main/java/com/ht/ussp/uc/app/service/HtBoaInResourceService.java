@@ -63,6 +63,10 @@ public class HtBoaInResourceService {
         return htBoaInResourceRepository.findByApp(app);
     }
 
+    public List<HtBoaInResource> getByAppAndResTypeAndStatus(String app, String resType, String status) {
+        return htBoaInResourceRepository.findByAppAndResTypeAndStatus(app, resType, status);
+    }
+
     public PageResult getPage(Pageable pageable, String app, String parentCode, String resType, String keyWord) {
         PageResult result = new PageResult();
         Page<HtBoaInResource> pageData = null;

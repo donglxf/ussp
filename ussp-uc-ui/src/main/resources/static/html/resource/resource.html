@@ -115,6 +115,9 @@
                                                     data-res-type="api">
                                                 新增
                                             </button>
+                                            <button class="layui-btn layui-btn-sm" title="关联APP" data-type="relevance">
+                                                关联APP
+                                            </button>
                                         </div>
                                         <div class="pull-right col-xs-4">
                                             <div class="input-group input-group-sm row">
@@ -456,5 +459,52 @@
             <button class="layui-btn hide" lay-submit="" lay-filter="resource_module_add_data_form"></button>
         </form>
     </div>
+
+    <div id="resource_api_data_div" class="hide">
+        <div class="row-lg" style="height:35px;">
+            <div class="btn-group layui-form">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label" style="width: 65px;">菜单编号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="menuCode" readonly class="layui-input layui-input-sm"
+                                   style="background: lightgray">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label" style="width: 65px;">菜单名称</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="menuName" readonly class="layui-input layui-input-sm"
+                                   style="background: lightgray">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pull-right col-xs-4">
+                <div class="input-group input-group-sm row">
+                    <input type="text" class="form-control"
+                           id="resource_api_dialog_search_keyword"
+                           placeholder="请输入API编号/API名称/API方法名"/>
+                    <div class="input-group-btn">
+                        <button type="button" class="layui-btn layui-btn-sm" id="resource_dalog_api_search"
+                                data-type="search">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row-lg">
+            <table id="resource_api_dalog_datatable" lay-filter="resource_api_dalog_datatable">
+            </table>
+        </div>
+    </div>
+    <script type="text/html" id="resource_api_data_laytpl">
+        {{#  if(d.resParent === ''||d.resParent===null){ }}
+        未关联
+        {{#  } else { }}
+        已关联
+        {{#  } }}
+    </script>
     <script src="/js/resource/resource.js"></script>
 </div>

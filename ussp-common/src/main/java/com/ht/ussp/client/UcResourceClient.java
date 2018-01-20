@@ -31,6 +31,6 @@ public interface UcResourceClient {
      * @author 谭荣巧
      * @Date 2018/1/18 14:28
      */
-    @PostMapping("/res/api/aynch")
+    @PostMapping("/auth/api/aynch")
     void resourceApiAynch(@RequestBody ApiResourceDto apiResourceDto);
 }

@@ -16,6 +16,7 @@ import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.service.HtBoaInAppService;
 import com.ht.ussp.uc.app.service.HtBoaInResourceService;
 import com.ht.ussp.uc.app.vo.AppAndResourceVo;
+import com.ht.ussp.uc.app.vo.RelevanceApiVo;
 import com.ht.ussp.uc.app.vo.ResourcePageVo;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
 import io.swagger.annotations.ApiOperation;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -129,6 +131,32 @@ public class ResResource {
             if (resource != null) {
                 return Result.buildSuccess();
             }
+        }
+        return Result.buildFail();
+    }
+
+    /**
+     * 菜单关联API资源<br>
+     *
+     * @param relevanceApiVo 关联的api资源对象
+     * @return 请求结果
+     * @author 谭荣巧
+     * @Date 2018/1/20 15:22
+     */
+    @PostMapping("/relevance")
+    public Result relevance(@RequestBody RelevanceApiVo relevanceApiVo) {
+        List<HtBoaInResource> newList = new ArrayList<>();
+        List<HtBoaInResource> resourceList = relevanceApiVo.getResourceList();
+        for (HtBoaInResource resource : resourceList) {
+            if (!StringUtils.isEmpty(resource.getResParent())) {
+                resource.setId(null);
+            }
+            resource.setResParent(relevanceApiVo.getParentCode());
+            newList.add(resource);
+        }
+        List<HtBoaInResource> resultList = htBoaInResourceService.save(newList);
+        if (resultList != null && resultList.size() > 0) {
+            return Result.buildSuccess();
         }
         return Result.buildFail();
     }

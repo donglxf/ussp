@@ -135,6 +135,94 @@ layui.use(['element', 'form', 'ztree', 'table'], function () {
                 }
             })
         },
+        relevance: function () {
+            layer.close(addDialog);
+            var parentMenuCheckStatus = table.checkStatus('resource_menu_datatable');
+            if (!parentMenuCheckStatus || !parentMenuCheckStatus.data || parentMenuCheckStatus.data.length == 0) {
+                layer.alert("请先在上面的表格中选择一个父菜单。");
+                return false;
+            } else if (parentMenuCheckStatus.data[0]["resType"] != "view") {
+                layer.alert("请选择一个带链接的页面菜单。");
+                return false;
+            }
+            var app = parentMenuCheckStatus.data[0]["app"];
+            var parentCode = parentMenuCheckStatus.data[0]["resCode"];
+            var parentName = parentMenuCheckStatus.data[0]["resNameCn"];
+            addDialog = layer.open({
+                type: 1,
+                area: ['1000px', '600px'],
+                shadeClose: true,
+                title: "选择关联的API",
+                content: $("#resource_api_data_div").html(),
+                btn: ['确认', '取消'],
+                yes: function (index, layero) {
+                    var apiCheckStatus = table.checkStatus('resource_api_dalog_datatable');
+                    $.ajax({
+                        type: "POST",
+                        url: basepath + 'resource/relevance',
+                        data: JSON.stringify({
+                            parentCode: parentCode,
+                            resourceList: apiCheckStatus.data
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        success: function (result) {
+                            layer.close(index);
+                            if (result["returnCode"] == '0000') {
+                                apiTableLoad = false;
+                                renderTable("api", parentCode);
+                                layer.alert("关联API成功。");
+                            }
+                        }
+
+                        ,
+                        error: function (result) {
+                            layer.msg("关联API发生异常，请联系管理员。");
+                            console.error(result);
+                        }
+                    })
+                    ;
+                },
+                btn2: function () {
+                    layer.closeAll('tips');
+                },
+                success: function (layero, index) {
+                    $("input[name=menuCode]", layero).val(parentCode);
+                    $("input[name=menuName]", layero).val(parentName);
+                    table.render({
+                        id: 'resource_api_dalog_datatable'
+                        , elem: $('#resource_api_dalog_datatable', layero)
+                        , url: basepath + 'resource/page/load.json'
+                        , where: {
+                            app: app,
+                            resType: "api"
+                        }
+                        , initSort: {field: 'resNameCn', type: 'desc'}
+                        , page: true
+                        , height: "425"
+                        , cols: [[
+                            {type: 'numbers'}
+                            , {type: 'checkbox'}
+                            , {field: 'resCode', width: 120, title: 'API编号'}
+                            , {field: 'resNameCn', width: 150, title: 'API名称'}
+                            , {field: 'resContent', title: 'API链接'}
+                            , {field: 'remark', width: 200, title: '方法名'}
+                            , {align: 'center', width: 100, title: '是否关联', templet: "#resource_api_data_laytpl"}
+                        ]]
+                    });
+                    var $keywordInput = $("#resource_api_dialog_search_keyword", layero);
+                    $('#resource_dalog_api_search', layero).on('click', function () {
+                        var keyWord = $keywordInput.val();
+                        refreshDalogAPIDataTable(app, keyWord);
+                    });
+                    $keywordInput.keydown(function (e) {
+                        if (e.keyCode == 13) {
+                            var keyWord = $keywordInput.val();
+                            refreshDalogAPIDataTable(app, keyWord);
+                        }
+                    });
+                }
+            });
+        },
         search: function (type) {
             var selectNodes = appAndResourceTree.getSelectedNodes();
             if (selectNodes && selectNodes.length == 1) {
@@ -156,11 +244,26 @@ layui.use(['element', 'form', 'ztree', 'table'], function () {
             }
         }
     };
+    var refreshDalogAPIDataTable = function (app, keyword) {
+        if (!keyword) {
+            keyword = null;
+        }
+        table.reload('resource_api_dalog_datatable', {
+            page: {
+                curr: 1 //重新从第 1 页开始
+            }
+            , where: {
+                keyWord: keyword,
+                app: app,
+                resType: "api"
+            }
+        });
+    }
     //渲染组织机构树
     appAndResourceTree = $.fn.zTree.init($('#resource_app_auth_ztree_left'), {
             async: {
                 enable: true,
-                url: basepath + "/resource/app/load",
+                url: basepath + "resource/app/load",
                 dataFilter: function (treeId, parentNode, childNodes) {
                     if (!childNodes) return null;
                     for (var i = 0, l = childNodes.length; i < l; i++) {
