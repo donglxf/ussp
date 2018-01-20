@@ -23,10 +23,8 @@ function login() {
 				success : function(data) {
 					var token = data.token;
 					var refreshToken = data.refreshToken;
-					setCookie("token",token,12,"/");
+					setCookie("token",token,1,"/");
 					setCookie("refreshToken",refreshToken,700,"/");
-//					document.cookie = "token=" + token;
-//					document.cookie = "refreshToken=" + refreshToken;
 					location.href = '/';
 				},
 				error : function(xhr, exception, errorThrown) {
@@ -37,7 +35,7 @@ function login() {
 						
 					}
 					if(xhr.status=='500'){
-						alert("尚未分配权限，请联系管理员");
+						alert("服务器错误，请联系管理员");
 					}
 					$(':input','#loginForm').not(':button,:submit,:reset,:hidden').val('').removeAttr('checked').removeAttr('checked');
 				}
@@ -69,6 +67,7 @@ function setCookie(name,value,times,path){
  _expires = (typeof times) == "string" ? "" : ";expires=" + expires.toUTCString();
  document.cookie = name + "=" + value + _expires + path;
 } 
+
 //获取cookie值 
 function getCookieValue(name){
  var name = escape(name); 
@@ -93,6 +92,7 @@ function getCookieValue(name){
      }   
  else return "";                                             
 } 
+
 //删除cookie 
 function deleteCookie(name,path){
  var name = escape(name);

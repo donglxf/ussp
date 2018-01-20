@@ -103,7 +103,7 @@ public class AuthResouce {
 		StringBuffer api_key = new StringBuffer();
 		module_key.append(userId).append(":").append("app").append(":").append("module");
 		menu_key.append(userId).append(":").append("app").append(":").append("menu");
-		button_key.append(userId).append(":").append("app").append(":").append("button");
+		button_key.append(userId).append(":").append("app").append(":").append("btn");
 		api_key.append(userId).append(":").append("app").append(":").append("api");
 
 		// 所有资源类型
@@ -129,11 +129,11 @@ public class AuthResouce {
 				addToList(res, module_res, menu_res, button_res, api_res);
 			}
 		}
-		// api权限不能为空
-		if (api_res.isEmpty()) {
-			rm.setSysStatus(SysStatus.API_NOT_NULL);
-			return rm;
-		}
+    	// api权限不能为空
+//		if (api_res.isEmpty()) {
+//			rm.setSysStatus(SysStatus.API_NOT_NULL);
+//			return rm;
+//		}
 		// 登录需要重新获取资源，保存到REDIS
 		if (module_res != null && module_res.size() > 0) {
 			redis.delete(module_key.toString());

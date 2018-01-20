@@ -1,0 +1,278 @@
+<div class="layui-fluid">
+    <div class="tree col-xs-3" style="">
+        <div>
+            <div class="tree_search">
+                <div class="input-group input-group-sm">
+                    <input type="text" id="user_search_tree_org" class="form-control" placeholder="请输入机构名"/>
+                    <div id="user_btn_refresh_tree" class="input-group-addon btn" title="刷新">
+                        <i class="fa fa-refresh"></i>
+                    </div>
+                </div>
+            </div>
+            <div id="user_org_ztree_left" class="ztree"></div>
+        </div>
+    </div>
+    <div class="col-xs-9">
+        <div class="row row-lg" id="user_table_tools">
+            <div class="toolbarBtn btn-group">
+                <button class="layui-btn layui-btn-sm" title="新增" data-type="add">
+                    新增
+                </button>
+            </div>
+            <div class="pull-right col-xs-4 row">
+                <div class="input-group input-group-sm">
+                    <input type="text" class="form-control" id="user_search_keyword"
+                           placeholder="请输入用户名/工号/手机号"/>
+                    <div class="input-group-btn">
+                        <button type="button" class="layui-btn layui-btn-sm" data-type="search">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <!--<button type="button" class="btn btn-primary" title="高级查询" id="toggle-advanced-search">-->
+                        <!--<i class="fa fa-angle-double-down"></i>-->
+                        <!--</button>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="div-advanced-search" style="display: none;">
+            <form class="form-horizontal well clearfix">
+                <div class="form-group">
+                    <label class="control-label col-xs-1">用户名：</label>
+                    <div class="col-xs-2">
+                        <input id="search_empCode" name="empCode" type="text" class="form-control  input-sm"
+                               aria-required="true">
+                    </div>
+                    <div class="btn-group pull-right" style="margin-right: 15px;">
+                        <button type="button" class="btn btn-primary btn-sm" id="btn-advanced-rest">
+                            <i class="fa fa-reset"></i> 重置
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm" id="btn-advanced-search">
+                            <i class="fa fa-search"></i> 查询
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="row row-lg">
+            <table id="user_datatable" lay-filter="filter_user_datatable">
+            </table>
+            <script type="text/html" id="user_datatable_bar">
+                <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+                <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+            </script>
+            <script type="text/html" id="user_status_laytpl">
+                {{#  if(d.status === '0'){ }}
+                正常
+                {{#  } else if(d.status === '1') { }}
+                禁用
+                {{#  } else if(d.status === '4') { }}
+                冻结
+                {{#  } else if(d.status === '5') { }}
+                锁定
+                {{#  } else { }}
+                {{ d.status }}
+                {{#  } }}
+            </script>
+        </div>
+    </div>
+    <!--新增表单-->
+    <div id="user_add_data_div" class="hide">
+        <form method="post" class="layui-form" lay-filter="filter_add_data_form">
+            <div class="layui-form-item">
+                <label class="layui-form-label">工号<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="jobNumber" lay-verify="required" autocomplete="off" lay-verType="tips"
+                           class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户名<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="userName" lay-verify="required" autocomplete="off" lay-verType="tips"
+                           class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">手机号</label>
+                <div class="layui-input-block">
+                    <input type="tel" name="mobile" lay-verify="phone" autocomplete="off" lay-verType="tips"
+                           class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">邮箱</label>
+                <div class="layui-input-block">
+                    <input type="text" name="email" lay-verify="email" autocomplete="off" lay-verType="tips"
+                           class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">身份证</label>
+                <div class="layui-input-block">
+                    <input type="text" name="idNo" lay-verify="identity" autocomplete="off"
+                           lay-verType="tips"
+                           class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属机构<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" id="user_org_tree_select" name="orgName" autocomplete="off"
+                           lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="orgCode" autocomplete="off" readonly
+                           lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="orgPath" autocomplete="off" readonly
+                           lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="rootOrgCode" autocomplete="off" readonly
+                           lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <button class="layui-btn hide" lay-submit="" lay-filter="filter_add_data_form"></button>
+        </form>
+    </div>
+    <!--修改表单-->
+    <div id="user_modify_data_div" class=" hide" class="hide">
+        <form method="post" class="layui-form" lay-filter="user_filter_modify_data_form">
+            <input type="hidden" name="id" readonly class="layui-input layui-input-sm">
+            <input type="hidden" name="userId" readonly class="layui-input layui-input-sm">
+            <div class="layui-form-item">
+                <label class="layui-form-label">工号<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="jobNumber" lay-verify="required" autocomplete="off" lay-verType="tips"
+                           class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户名<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="userName" lay-verify="required" autocomplete="off" lay-verType="tips"
+                           class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">手机号</label>
+                <div class="layui-input-block">
+                    <input type="tel" name="mobile" lay-verify="phone" autocomplete="off" lay-verType="tips"
+                           class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">邮箱</label>
+                <div class="layui-input-block">
+                    <input type="text" name="email" lay-verify="email" autocomplete="off" lay-verType="tips"
+                           class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">身份证</label>
+                <div class="layui-input-block">
+                    <input type="text" name="idNo" lay-verify="identity" autocomplete="off"
+                           lay-verType="tips"
+                           class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属机构<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="orgName" autocomplete="off" readonly
+                           lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="orgCode" readonly class="layui-input layui-input-sm">
+                    <input type="hidden" name="orgPath" readonly class="layui-input layui-input-sm">
+                    <input type="hidden" name="rootOrgCode" readonly class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <button class="layui-btn hide" lay-submit="" lay-filter="user_filter_modify_data_form"></button>
+        </form>
+    </div>
+    <!--查看表单-->
+    <div id="user_view_data_div" class="ibox-content hide" class="hide">
+        <form method="post" class="layui-form" lay-filter="user_filter_view_data_form">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">工号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="jobNumber" readonly class="layui-input layui-input-sm">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">用户名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="userName" readonly class="layui-input layui-input-sm">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">手机号</label>
+                    <div class="layui-input-inline">
+                        <input type="tel" name="mobile" readonly class="layui-input layui-input-sm">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">邮箱</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="email" readonly class="layui-input layui-input-sm">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">身份证</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="idNo" readonly class="layui-input layui-input-sm">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">所属机构</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="orgName" readonly class="layui-input layui-input-sm">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">状态</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="status" readonly class="layui-input layui-input-sm">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">密码错误次数</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="failedCount" readonly class="layui-input layui-input-sm">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">创建人</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="createOperator" readonly class="layui-input layui-input-sm">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">创建时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="createdDatetime" readonly class="layui-input layui-input-sm">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">修改人</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="updateOperator" readonly class="layui-input layui-input-sm">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">修改时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="lastModifiedDatetime" readonly class="layui-input layui-input-sm">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script src="/js/user/user.js"></script>
+</div>
