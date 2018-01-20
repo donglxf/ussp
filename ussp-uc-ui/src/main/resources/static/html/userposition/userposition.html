@@ -1,0 +1,111 @@
+<div class="layui-fluid">
+    <div class="tree col-xs-3" style="">
+        <div>
+            <div class="tree_search">
+                <div class="input-group input-group-sm">
+                    <input type="text" id="userposition_search_tree_org" maxlength="60" class="form-control" placeholder="请输入机构名"/>
+                    <div id="userposition_btn_refresh_tree" class="input-group-addon btn" title="刷新">
+                        <i class="fa fa-refresh"></i>
+                    </div>
+                </div>
+            </div>
+            <div id="userposition_org_ztree_left" class="ztree"></div>
+        </div>
+    </div>
+    <div class="col-xs-9">
+        <div class="row row-lg" id="userposition_user_table_tools">
+            <div class="pull-right col-xs-4 row">
+                <div class="input-group input-group-sm">
+                    <input type="text" class="form-control" maxlength="60" id="userposition_user_search_keyword"  placeholder="请输入用户编号/用户名称"/>
+                    <div class="input-group-btn">
+                        <button type="button" class="layui-btn layui-btn-sm" data-type="search">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row row-lg">
+            <table id="userposition_user_datatable" lay-filter="filter_userposition_user_datatable"> </table>
+            <script type="text/html" id="userposition_user_status_laytpl">
+                {{#  if(d.status === '0'){ }}
+                正常
+                {{#  } else if(d.status === '1') { }}
+                禁用
+                {{#  } else if(d.status === '4') { }}
+                冻结
+                {{#  } else if(d.status === '5') { }}
+                锁定
+                {{#  } else { }}
+                {{ d.status }}
+                {{#  } }}
+            </script>
+        </div>
+		<div class="row row-lg">
+			<fieldset class="layui-elem-field ">
+				<legend>岗位</legend>
+				<div class="layui-field-box">
+					<div class="row row-lg" id="userposition_role_table_tools">
+						<div class="pull-right col-xs-4 row">
+							<div class="input-group input-group-sm">
+								<input type="text" class="form-control" maxlength="60" id="userposition_role_search_keyword" placeholder="请输入岗位编号/岗位名称" />
+								<div class="input-group-btn">
+									<button type="button" class="layui-btn layui-btn-sm" data-type="searchuserposition"> <i class="fa fa-search"></i> </button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<table id="userposition_role_datatable" lay-filter="filter_userposition_role_datatable"> </table>
+					  <script type="text/html" id="userposition_statusTpl">
+                      {{#  if(d.delFlag == '0'){ }}
+                                                                    启用
+                      {{#  } else { }}
+                                                                   禁用
+                      {{#  } }}
+					</script>
+					<script type="text/html" id="userposition_role_datatable_bar">
+                      {{#  if(d.delFlag == '0'){ }}
+                           <a class="layui-btn layui-btn-xs" lay-event="startOrStop">禁用</a>
+                      {{#  } else { }}
+                           <a class="layui-btn layui-btn-xs" lay-event="startOrStop">启用</a>
+                      {{#  } }}
+                        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                   </script>
+                   <script type="text/html" id="createTimeTpl">
+                       {{new Date( d.createdDatetime ).Format('yyyy-MM-dd HH:mm:ss')}} 
+	               </script>
+				</div>
+			</fieldset>
+		</div>
+	</div>
+    <!--新增表单-->
+    <div id="user_add_data_div" class="hide">
+        <form method="post" class="layui-form" lay-filter="filter_add_user_form">
+            <div class="layui-form-item">
+                <label class="layui-form-label">岗位编号<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="positionCode" lay-verify="required" maxlength="20" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">岗位名称<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="positionName" lay-verify="required" maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属机构<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" id="user_org_tree_select" name="orgName" autocomplete="off"  lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="orgCode" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="orgPath" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="rootOrgCode" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="pOrgCode" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="rOrgCode" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <button class="layui-btn hide" lay-submit="" lay-filter="filter_add_user_form"></button>
+        </form>
+    </div>
+    <script src="/js/userposition/userposition.js"></script>
+</div>

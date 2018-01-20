@@ -52,8 +52,8 @@ eureka:
 gateway:
   security: 
     jwt: 
-      tokenExpirationTime: 5  #分钟
-      refreshTokenExpTime: 30 
+      tokenExpirationTime: 15  #分钟
+      refreshTokenExpTime: 720
       tokenIssuer: qiuwenwu@hongte.info
       tokenSigningKey: xm8EV6Hy5RMFK4EEACIDAwQus
       

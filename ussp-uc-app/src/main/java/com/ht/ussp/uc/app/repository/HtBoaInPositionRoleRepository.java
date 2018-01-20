@@ -2,12 +2,15 @@ package com.ht.ussp.uc.app.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.ht.ussp.uc.app.domain.HtBoaInPositionRole;
+import com.ht.ussp.uc.app.model.BoaInRoleInfo;
 
 /**
  * 
@@ -26,4 +29,10 @@ public interface HtBoaInPositionRoleRepository extends JpaRepository <HtBoaInPos
     @Modifying
     @Query("UPDATE FROM HtBoaInPositionRole u SET u.delFlag = 1 WHERE u.positionCode = ?1 AND u.roleCode = ?2")
     void delete(String positionCode, String roleCode);
+    
+    
+    @Query("SELECT new com.ht.ussp.uc.app.model.BoaInRoleInfo(u.roleCode, u.roleName, u.roleNameCn,  u.status, u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,ur.delFlag,ur.id) "
+			+ "FROM HtBoaInPositionRole ur ,HtBoaInRole u    WHERE  ur.roleCode = u.roleCode AND  (u.roleCode LIKE ?1 OR u.roleName LIKE ?1 OR u.roleNameCn LIKE ?1 ) and ur.positionCode=?2 GROUP BY u")
+	public Page<HtBoaInPositionRole> listPositionRoleByPageWeb(Pageable arg0, String search,String positionCode);
+    
 }

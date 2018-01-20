@@ -74,7 +74,6 @@ public class AjaxAwareAuthenticationSuccessHandler implements AuthenticationSucc
           	throw new AuthenticationCredentialsNotFoundException(saveResources.getResult_msg());
           }
 		
-		System.out.println(saveResources.getResult());
 		response.setStatus(HttpStatus.OK.value());
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		mapper.writeValue(response.getWriter(), tokenMap);

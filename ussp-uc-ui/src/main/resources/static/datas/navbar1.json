@@ -55,28 +55,28 @@
         "id": "18",
         "title": "用户系统管理",
         "icon": "fa-qq",
-        "url": "http://www.qq.com/"
-      },
-      {
-        "id": "18",
-        "title": "用户角色管理",
-        "icon": "fa-qq",
-        "url": "http://www.qq.com/"
+        "url": "/html/userapp/userapp.html"
       },
       {
         "id": "19",
+        "title": "用户角色管理",
+        "icon": "fa-qq",
+        "url": "/html/userrole/userrole.html"
+      },
+      {
+        "id": "20",
         "title": "用户岗位管理",
         "icon": "&#xe609;",
-        "url": "http://fly.layui.com/"
+        "url": "/html/userposition/userposition.html"
       },
       {
-        "id": "20",
+        "id": "21",
         "title": "岗位角色管理",
         "icon": "fa-weibo",
-        "url": "http://weibo.com/"
+        "url": "/html/positionrole/positionrole.html"
       },
       {
-        "id": "20",
+        "id": "22",
         "title": "角色资源管理",
         "icon": "fa-weibo",
         "url": "http://weibo.com/"
@@ -91,7 +91,7 @@
     "spread": false,
     "children": [
       {
-        "id": "21",
+        "id": "23",
         "title": "系统信息管理",
         "icon": "fa-github",
         "url": "cop.html"
