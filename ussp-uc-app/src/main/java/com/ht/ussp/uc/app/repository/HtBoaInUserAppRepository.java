@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
-import com.ht.ussp.uc.app.model.BoaInRoleInfo;
+import com.ht.ussp.uc.app.model.BoaInAppInfo;
 
 /**
  *
@@ -30,8 +30,8 @@ public interface HtBoaInUserAppRepository extends JpaRepository<HtBoaInUserApp,L
 
 	public HtBoaInUserApp findById(Long id);
 	
-	@Query("SELECT new com.ht.ussp.uc.app.model.BoaInRoleInfo(u.roleCode, u.roleName, u.roleNameCn,  u.status, u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,ur.delFlag,ur.id) "
-			+ "FROM HtBoaInUserRole ur ,HtBoaInRole u    WHERE  ur.roleCode = u.roleCode AND  (u.roleCode LIKE ?1 OR u.roleName LIKE ?1 OR u.roleNameCn LIKE ?1 ) and ur.userId=?2 GROUP BY u")
-	public Page<BoaInRoleInfo> listUserAppByPageWeb(Pageable arg0, String search,String userId);
+	@Query("SELECT new com.ht.ussp.uc.app.model.BoaInAppInfo(u.app, u.name, u.nameCn,  u.status, u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,ur.delFlag,ur.id) "
+			+ "FROM HtBoaInUserApp ur ,HtBoaInApp u    WHERE  ur.app = u.app AND  (u.app LIKE ?1 OR u.name LIKE ?1 OR u.nameCn LIKE ?1 ) and ur.userId=?2 GROUP BY u")
+	public Page<BoaInAppInfo> listUserAppByPageWeb(Pageable arg0, String search,String userId);
 	
 }

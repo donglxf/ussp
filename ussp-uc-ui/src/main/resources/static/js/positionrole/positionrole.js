@@ -1,7 +1,7 @@
 var positionListByPageUrl=basepath +"position/in/list.json"; //列出所有岗位记录列表信息  
 var loadPositionRoleListUrl=basepath + 'positionrole/listPositionRoleByPage.json'; //列出用户所有岗位列表
-var delPositionRoleListUrl=basepath + 'positionrole/delete'; //删除用户岗位 /delete/{id}
-var stopPositionRoleListUrl=basepath + 'positionrole/stop'; //禁用/启用用户岗位 /stop/{id}/{status}
+var delPositionRoleListUrl=basepath + 'positionrole/delete'; //删除岗位角色 /delete/{id}
+var stopPositionRoleListUrl=basepath + 'positionrole/stop'; //禁用/启用岗位角色 /stop/{id}/{status}
 var orgTreeUrl = basepath +"/org/tree.json"; //机构列表 
 var positionCode = "";
 layui.use(['form', 'ztree', 'table'], function () {
@@ -153,9 +153,10 @@ layui.use(['form', 'ztree', 'table'], function () {
             {type: 'numbers'}
             , {field: 'roleCode', width: 150, title: '角色编号'}
             , {field: 'roleNameCn', width: 300, title: '角色名称'}
-            , {field: 'status', width: 100,templet: '#statusTpl', title: '状态'}
+            , {field: 'status', width: 100,templet: '#positionrole_statusTpl', title: '状态'}
             , {field: 'createOperator', width: 150, title: '创建人'}
             , {field: 'createdDatetime', width: 200,templet: '#createTimeTpl', title: '创建时间'}
+            , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#positionrole_role_datatable_bar'}
         ]]
     });
     //监听操作栏
@@ -172,24 +173,24 @@ layui.use(['form', 'ztree', 'table'], function () {
         console.log(data);
         if (obj.event === 'startOrStop') {
         	if(data.delFlag==0){//启用状态，是否需要禁用
-        		layer.confirm('是否禁用岗位？', function (index) {
+        		layer.confirm('是否禁用岗位角色？', function (index) {
                   	 $.post(stopPositionRoleListUrl+"/" + data.id+"/1", null, function (result) {
                            if (result["returnCode"] == "0000") {
                         	   refreshpositionroleTable();
                                layer.close(index);
-                               layer.msg("禁用岗位成功");
+                               layer.msg("禁用岗位角色成功");
                            } else {
                                layer.msg(result.codeDesc);
                            }
                        });
                   });
         	}else{
-        		layer.confirm('是否启用岗位？', function (index) {
+        		layer.confirm('是否启用岗位角色？', function (index) {
                   	 $.post(stopPositionRoleListUrl+"/" + data.id+"/0", null, function (result) {
                            if (result["returnCode"] == "0000") {
                         	   refreshpositionroleTable();
                                layer.close(index);
-                               layer.msg("启用岗位成功");
+                               layer.msg("启用岗位角色成功");
                            } else {
                                layer.msg(result.codeDesc);
                            }
@@ -197,13 +198,13 @@ layui.use(['form', 'ztree', 'table'], function () {
                   });
         	}
         } else if (obj.event === 'del') {
-        	 layer.confirm('是否确认删除用户岗位？', function (index) {
+        	 layer.confirm('是否确认删除岗位角色？', function (index) {
              	obj.del();
              	 $.post(delPositionRoleListUrl+"/" + data.id, null, function (result) {
                       if (result["returnCode"] == "0000") {
                     	  refreshpositionroleTable();
                           layer.close(index);
-                          layer.msg("删除用户岗位成功");
+                          layer.msg("删除岗位角色成功");
                       } else {
                           layer.msg(result.codeDesc);
                       }

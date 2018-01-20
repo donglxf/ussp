@@ -59,6 +59,10 @@ public class HtBoaInPositionRoleService {
 		this.htBoaInPositionRoleRepository.delete(positionCode, roleCode);
 	}
 	
+	public void delete(HtBoaInPositionRole u) {
+		this.htBoaInPositionRoleRepository.delete(u);
+	}
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public PageResult listPositionRoleByPage(PageConf pageConf, Map<String, String> query) {
 		PageResult result = new PageResult();

@@ -15,8 +15,7 @@ import org.springframework.stereotype.Service;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
-import com.ht.ussp.uc.app.domain.HtBoaInUserRole;
-import com.ht.ussp.uc.app.model.BoaInRoleInfo;
+import com.ht.ussp.uc.app.model.BoaInAppInfo;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.repository.HtBoaInUserAppRepository;
 
@@ -91,7 +90,7 @@ public class HtBoaInUserAppService {
         else
             search = "%" + search + "%";
          
-        Page<BoaInRoleInfo> pageData = this.htBoaInUserAppRepository.listUserAppByPageWeb(pageable, search,userId);
+        Page<BoaInAppInfo> pageData = this.htBoaInUserAppRepository.listUserAppByPageWeb(pageable, search,userId);
 		
         if (pageData != null) {
             result.count(pageData.getTotalElements()).data(pageData.getContent());

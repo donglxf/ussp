@@ -16,7 +16,7 @@
         <div class="row row-lg" id="userapp_user_table_tools">
             <div class="pull-right col-xs-4 row">
                 <div class="input-group input-group-sm">
-                    <input type="text" class="form-control" maxlength="60" id="userapp_user_search_keyword"  placeholder="请输入用户编号/用户名"/>
+                    <input type="text" class="form-control" maxlength="60" id="userapp_user_search_keyword"  placeholder="请输入用户编号/用户名称"/>
                     <div class="input-group-btn">
                         <button type="button" class="layui-btn layui-btn-sm" data-type="search">
                             <i class="fa fa-search"></i>
@@ -45,17 +45,17 @@
 			<fieldset class="layui-elem-field ">
 				<legend>系统</legend>
 				<div class="layui-field-box">
-					<div class="row row-lg" id="userapp_role_table_tools">
+					<div class="row row-lg" id="userapp_app_table_tools">
 						<div class="pull-right col-xs-4 row">
 							<div class="input-group input-group-sm">
-								<input type="text" class="form-control" maxlength="60" id="userapp_role_search_keyword" placeholder="请输入系统编号/系统名" />
+								<input type="text" class="form-control" maxlength="60" id="userapp_app_search_keyword" placeholder="请输入系统编号/系统名称" />
 								<div class="input-group-btn">
 									<button type="button" class="layui-btn layui-btn-sm" data-type="searchuserapp"> <i class="fa fa-search"></i> </button>
 								</div>
 							</div>
 						</div>
 					</div>
-					<table id="userapp_role_datatable" lay-filter="filter_userapp_role_datatable"> </table>
+					<table id="userapp_app_datatable" lay-filter="filter_userapp_app_datatable"> </table>
 					  <script type="text/html" id="userapp_statusTpl">
                       {{#  if(d.delFlag == '0'){ }}
                                                                     启用
@@ -63,7 +63,7 @@
                                                                    禁用
                       {{#  } }}
 					</script>
-					<script type="text/html" id="userapp_role_datatable_bar">
+					<script type="text/html" id="userapp_app_datatable_bar">
                       {{#  if(d.delFlag == '0'){ }}
                            <a class="layui-btn layui-btn-xs" lay-event="startOrStop">禁用</a>
                       {{#  } else { }}

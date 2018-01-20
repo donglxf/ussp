@@ -10,7 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.ht.ussp.uc.app.domain.HtBoaInPositionRole;
-import com.ht.ussp.uc.app.model.BoaInRoleInfo;
 
 /**
  * 
