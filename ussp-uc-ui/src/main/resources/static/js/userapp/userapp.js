@@ -1,5 +1,5 @@
 var loadUserListUrl=basepath + 'user/loadListByPage.json'; //列出所有用户信息
-var loadUserAppListUrl=basepath + 'userapp/listUserAppByPage.json'; //列出用户所有角色列表
+var loadUserAppListUrl=basepath + 'userapp/listUserAppByPage.json'; //列出用户所有系统
 var delUserAppListUrl=basepath + 'userapp/delete'; //删除用户角色 /delete/{id}
 var stopUserAppListUrl=basepath + 'userapp/stop'; //禁用/启用用户角色 /stop/{id}/{status}
 var orgTreeUrl = basepath +"/org/tree.json"; //机构列表 
@@ -19,7 +19,7 @@ layui.use(['form', 'ztree', 'table'], function () {
             },
             searchuserapp: function () { 
             	//执行重载
-            	refreshuserappTable($("#userapp_role_search_keyword").val());
+            	refreshUserAppTable($("#userapp_app_search_keyword").val());
             },
     };
     var refreshUserTable = function (keyword) {
@@ -39,13 +39,13 @@ layui.use(['form', 'ztree', 'table'], function () {
              });
         }
     };
-    var refreshuserappTable = function (keyword) {
+    var refreshUserAppTable = function (keyword) {
         if (!keyword) {
             keyword = null;
         }
         var selectNodes = orgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
-        	 table.reload('userapp_role_datatable', {
+        	 table.reload('userapp_app_datatable', {
         	        page: {
         	            curr: 1 //重新从第 1 页开始
         	        }
@@ -88,7 +88,7 @@ layui.use(['form', 'ztree', 'table'], function () {
                 onClick: function (event, treeId, treeNode, clickFlag) {
                     //执行重载
                 	refreshUserTable();
-                	refreshuserappTable();
+                	refreshUserAppTable();
                 },
                 onAsyncSuccess: function (event, treeId, treeNode, msgString) {
                     var node = orgTree.getNodeByParam("level ", "0");
@@ -106,7 +106,7 @@ layui.use(['form', 'ztree', 'table'], function () {
             }
         }
     );
-    //渲染岗位数据表格
+    //渲染用户系统数据表格
     table.render({
         id: 'userapp_user_datatable'
         , elem: '#userapp_user_datatable'
@@ -136,8 +136,8 @@ layui.use(['form', 'ztree', 'table'], function () {
         ]]
     });
     table.render({
-        id: 'userapp_role_datatable'
-        , elem: '#userapp_role_datatable'
+        id: 'userapp_app_datatable'
+        , elem: '#userapp_app_datatable'
         , url: loadUserAppListUrl
         , method: 'post' //如果无需自定义HTTP类型，可不加该参数
         , response: {
@@ -152,12 +152,12 @@ layui.use(['form', 'ztree', 'table'], function () {
         , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
         , cols: [[
             {type: 'numbers'}
-            , {field: 'roleCode', width: 150, title: '角色编号'}
-            , {field: 'roleNameCn', width: 300, title: '角色名称'}
-            , {field: 'status', width: 100,templet: '#userapp_statusTpl', title: '状态'}
-            , {field: 'createOperator', width: 150, title: '创建人'}
+            , {field: 'app', width: 120, title: '系统编号'}
+            , {field: 'nameCn', width: 200, title: '系统名称'}
+            , {field: 'delFlag', width: 100, title: '状态' ,templet: '#userapp_statusTpl'}
+            , {field: 'createOperator', width: 100, title: '创建人'}
             , {field: 'createdDatetime', width: 200,templet: '#createTimeTpl', title: '创建时间'}
-            , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#userapp_role_datatable_bar'}
+            , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#userapp_app_datatable_bar'}
         ]]
     });
     //监听操作栏
@@ -166,32 +166,32 @@ layui.use(['form', 'ztree', 'table'], function () {
         console.log(data);
         userId = data.userId;
         if (obj.event === 'getRole') {
-        	refreshuserappTable();
+        	refreshUserAppTable();
         }  
     });
-    table.on('tool(filter_userapp_role_datatable)', function (obj) {
+    table.on('tool(filter_userapp_app_datatable)', function (obj) {
         var data = obj.data;
         console.log(data);
         if (obj.event === 'startOrStop') {
         	if(data.delFlag==0){//启用状态，是否需要禁用
-        		layer.confirm('是否禁用系统？', function (index) {
+        		layer.confirm('是否禁用用户系统？', function (index) {
                   	 $.post(stopUserAppListUrl+"/" + data.id+"/1", null, function (result) {
                            if (result["returnCode"] == "0000") {
-                        	   refreshuserappTable();
+                        	   refreshUserAppTable();
                                layer.close(index);
-                               layer.msg("禁用角色成功");
+                               layer.msg("禁用用户系统成功");
                            } else {
                                layer.msg(result.codeDesc);
                            }
                        });
                   });
         	}else{
-        		layer.confirm('是否启用系统？', function (index) {
+        		layer.confirm('是否启用用户系统？', function (index) {
                   	 $.post(stopUserAppListUrl+"/" + data.id+"/0", null, function (result) {
                            if (result["returnCode"] == "0000") {
-                        	   refreshuserappTable();
+                        	   refreshUserAppTable();
                                layer.close(index);
-                               layer.msg("启用角色成功");
+                               layer.msg("启用用户系统成功");
                            } else {
                                layer.msg(result.codeDesc);
                            }
@@ -199,13 +199,13 @@ layui.use(['form', 'ztree', 'table'], function () {
                   });
         	}
         } else if (obj.event === 'del') {
-        	 layer.confirm('是否确认删除用户角色？', function (index) {
+        	 layer.confirm('是否确认删除用户系统？', function (index) {
              	obj.del();
              	 $.post(delUserAppListUrl+"/" + data.id, null, function (result) {
                       if (result["returnCode"] == "0000") {
-                    	  refreshuserappTable();
+                    	  refreshUserAppTable();
                           layer.close(index);
-                          layer.msg("删除用户角色成功");
+                          layer.msg("删除用户系统成功");
                       } else {
                           layer.msg(result.codeDesc);
                       }
@@ -219,7 +219,7 @@ layui.use(['form', 'ztree', 'table'], function () {
         active[type] ? active[type].call(this) : '';
     });
     
-    $('#userapp_role_table_tools .layui-btn').on('click', function () {
+    $('#userapp_app_table_tools .layui-btn').on('click', function () {
         var type = $(this).data('type');
         active[type] ? active[type].call(this) : '';
     });

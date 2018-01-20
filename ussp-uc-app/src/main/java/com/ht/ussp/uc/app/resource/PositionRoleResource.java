@@ -19,7 +19,6 @@ import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.service.HtBoaInPositionRoleService;
 import com.ht.ussp.uc.app.vo.PageVo;
 
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 
@@ -127,19 +126,12 @@ public class PositionRoleResource {
         return Result.buildSuccess();
     }
     
-    @ApiOperation(value = "对内：删除岗位角色记录", notes = "提交角色编号，可批量删除")
-    @ApiImplicitParam(name = "codes", value = "角色编号集", required = true, dataType = "Codes")
+    @ApiOperation(value = "对内：删除岗位角色记录")
     @RequestMapping(value = {"/delete/{id}" }, method = RequestMethod.POST)
-    public Result delete(@PathVariable String positionCode, @PathVariable String roleCode) {
-        long sl = System.currentTimeMillis(), el = 0L;
-        String msg = "成功";
-        String logHead = "角色记录删除：role/in/delete param-> {}";
-        String logStart = logHead + " | START:{}";
-        String logEnd = logHead + " {} | END:{}, COST:{}";
-        HtBoaInUserRole u = new HtBoaInUserRole();
-        htBoaInPositionRoleService.delete(positionCode,roleCode);
-        el = System.currentTimeMillis();
+    public Result delete(@PathVariable Long id) {
+        HtBoaInPositionRole u = new HtBoaInPositionRole();
+        u.setId(id);
+        htBoaInPositionRoleService.delete(u);
         return Result.buildSuccess();
-        //return new ResponseModal(200, msg);
     }
 }

@@ -142,6 +142,5 @@ public class UserAppResource {
         el = System.currentTimeMillis();
         log.info(logEnd, "codes: " + id, msg, el, el - sl);
         return Result.buildSuccess();
-        //return new ResponseModal(200, msg);
     }
 }
