@@ -74,9 +74,11 @@ public class HtBoaInResourceService {
             Specification<HtBoaInResource> specification = (root, query1, cb) -> {
                 Predicate where;
                 Predicate p5 = cb.equal(root.get("app").as(String.class), app);
-                Predicate p6;
+                Predicate p6 = null;
                 if (StringUtils.isEmpty(parentCode)) {
-                    p6 = cb.isNull(root.get("resParent").as(String.class));
+                    if (!"api".equals(resType)) {
+                        p6 = cb.isNull(root.get("resParent").as(String.class));
+                    }
                 } else {
                     Predicate p61 = cb.equal(root.get("resParent").as(String.class), parentCode);
                     Predicate p62 = cb.equal(root.get("resCode").as(String.class), parentCode);
@@ -93,9 +95,17 @@ public class HtBoaInResourceService {
                     Predicate p3 = cb.like(root.get("resCode").as(String.class), "%" + keyWord + "%");
                     Predicate p4 = cb.like(root.get("remark").as(String.class), "%" + keyWord + "%");
                     Predicate kewPredicate = cb.or(p1, p2, p3, p4);
-                    where = cb.and(p5, p6, p7, kewPredicate);
+                    if (p6 != null) {
+                        where = cb.and(p5, p6, p7, kewPredicate);
+                    } else {
+                        where = cb.and(p5, p7, kewPredicate);
+                    }
                 } else {
-                    where = cb.and(p5, p6, p7);
+                    if (p6 != null) {
+                        where = cb.and(p5, p6, p7);
+                    } else {
+                        where = cb.and(p5, p7);
+                    }
                 }
                 query1.where(where);
                 return query1.getRestriction();
