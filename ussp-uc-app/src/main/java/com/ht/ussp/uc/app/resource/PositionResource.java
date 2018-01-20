@@ -123,8 +123,8 @@ public class PositionResource {
     
     @ApiOperation(value = "对内：删除岗位记录", notes = "提交岗位编号，可批量删除")
     /*@ApiImplicitParam(name = "codes", value = "岗位编号集", required = true, dataType = "Codes")*/
-    @RequestMapping(value = {"/in/delete/{id}" }, method = RequestMethod.POST)
-    public Result delete(@PathVariable int id) {
+    @RequestMapping(value = {"/in/delete" }, method = RequestMethod.POST)
+    public Result delete(int id) {
         long sl = System.currentTimeMillis(), el = 0L;
         String msg = "成功";
         String logHead = "岗位记录删除：position/in/delete param-> {}";

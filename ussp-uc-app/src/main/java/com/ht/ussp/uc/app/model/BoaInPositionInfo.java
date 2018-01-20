@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Query;
+
 import com.ht.ussp.uc.app.domain.HtBoaInRole;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 
@@ -99,6 +101,24 @@ public class BoaInPositionInfo {
         this.rOrgName = rOrgName;
         this.rOrgNameCn = rOrgNameCn;
         this.rOrgType = rOrgType;
+        this.orgPath = orgPath;
+        this.sequence = sequence;
+        this.createOperator = createOperator;
+        this.createdDatetime = createdDatetime;
+        this.updateOperator = updateOperator;
+        this.lastModifiedDatetime = lastModifiedDatetime;
+        this.delFlag = delFlag;
+        this.id = id;
+    }
+    
+
+    public BoaInPositionInfo(long id,String positionCode, String positionName,
+            String positionNameCn,   String orgPath,
+            int sequence, String createOperator, Date createdDatetime,
+            String updateOperator, Date lastModifiedDatetime,int delFlag) {
+        this.positionCode = positionCode;
+        this.positionName = positionName;
+        this.positionNameCn = positionNameCn;
         this.orgPath = orgPath;
         this.sequence = sequence;
         this.createOperator = createOperator;

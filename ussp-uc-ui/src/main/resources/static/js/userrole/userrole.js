@@ -2,8 +2,11 @@ var loadUserListUrl=basepath + 'user/loadListByPage.json'; //列出所有用户�
 var loadUserRoleListUrl=basepath + 'userrole/listUserRoleByPage.json'; //列出用户所有角色列表
 var delUserRoleListUrl=basepath + 'userrole/delete'; //删除用户角色 /delete/{id}
 var stopUserRoleListUrl=basepath + 'userrole/stop'; //禁用/启用用户角色 /stop/{id}/{status}
+var roleListByPageUrl=basepath +"role/in/list"; //列出所有角色记录列表信息  
+
 var orgTreeUrl = basepath +"/org/tree.json"; //机构列表 
 var userId = "";
+var refreshRoleTable;
 layui.use(['form', 'ztree', 'table'], function () {
     var $ = layui.jquery
         , form = layui.form
@@ -20,6 +23,25 @@ layui.use(['form', 'ztree', 'table'], function () {
             searchUserRole: function () { 
             	//执行重载
             	refreshUserRoleTable($("#userrole_role_search_keyword").val());
+            },
+            loadRoleList:function(){
+            	if(userId==""){
+            		layer.msg("请先选择用户！");
+            		return;
+            	}
+            	 layer.close(addDialog);
+            	 roleDialog = layer.open({
+                     type: 2,
+                     area: ['70%', '80%'],
+                     maxmin: true,
+                     shadeClose: true,
+                     title: "分配角色",
+                     content: "/html/userrole/roleDialog.html",
+                     success: function (layero, index) {
+                    	 /* 渲染表单 */
+                         form.render();
+                     }
+                 })
             },
     };
     var refreshUserTable = function (keyword) {
@@ -52,6 +74,27 @@ layui.use(['form', 'ztree', 'table'], function () {
         	        , where: {
         	        	query: {
                   		     keyWord: keyword,
+                            orgCode: selectNodes[0]["orgCode"],
+                            userId:userId
+                       }
+        	        }
+        	   });
+        }
+    };
+    refreshRoleTable = function (sucess) {
+        if(sucess==1){
+        	layer.msg("分配角色成功");
+        }else{
+        	return;
+        }
+        var selectNodes = orgTree.getSelectedNodes();
+        if (selectNodes && selectNodes.length == 1) {
+        	 table.reload('userrole_role_datatable', {
+        	        page: {
+        	            curr: 1 //重新从第 1 页开始
+        	        }
+        	        , where: {
+        	        	query: {
                             orgCode: selectNodes[0]["orgCode"],
                             userId:userId
                        }
@@ -149,6 +192,11 @@ layui.use(['form', 'ztree', 'table'], function () {
         } //如果无需自定义数据响应名称，可不加该参数
         , page: true
         , height: '300'
+        	 , where: {
+ 	        	query: {
+                     userId:userId
+                }
+ 	        }
         , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
         , cols: [[
             {type: 'numbers'}
@@ -163,7 +211,6 @@ layui.use(['form', 'ztree', 'table'], function () {
     //监听操作栏
     table.on('tool(filter_userrole_user_datatable)', function (obj) {
         var data = obj.data;
-        console.log(data);
         userId = data.userId;
         if (obj.event === 'getRole') {
         	refreshUserRoleTable();
@@ -171,11 +218,10 @@ layui.use(['form', 'ztree', 'table'], function () {
     });
     table.on('tool(filter_userrole_role_datatable)', function (obj) {
         var data = obj.data;
-        console.log(data);
         if (obj.event === 'startOrStop') {
         	if(data.delFlag==0){//启用状态，是否需要禁用
         		layer.confirm('是否禁用角色？', function (index) {
-                  	 $.post(stopUserRoleListUrl+"/" + data.id+"/1", null, function (result) {
+                  	 $.post(stopUserRoleListUrl+"?id=" + data.id+"&status=0", null, function (result) {
                            if (result["returnCode"] == "0000") {
                         	   refreshUserRoleTable();
                                layer.close(index);
@@ -187,7 +233,7 @@ layui.use(['form', 'ztree', 'table'], function () {
                   });
         	}else{
         		layer.confirm('是否启用角色？', function (index) {
-                  	 $.post(stopUserRoleListUrl+"/" + data.id+"/0", null, function (result) {
+                  	 $.post(stopUserRoleListUrl+"?id=" + data.id+"&status=0", null, function (result) {
                            if (result["returnCode"] == "0000") {
                         	   refreshUserRoleTable();
                                layer.close(index);
@@ -201,7 +247,7 @@ layui.use(['form', 'ztree', 'table'], function () {
         } else if (obj.event === 'del') {
         	 layer.confirm('是否确认删除用户角色？', function (index) {
              	obj.del();
-             	 $.post(delUserRoleListUrl+"/" + data.id, null, function (result) {
+             	 $.post(delUserRoleListUrl+"?id=" + data.id, null, function (result) {
                       if (result["returnCode"] == "0000") {
                     	  refreshUserRoleTable();
                           layer.close(index);

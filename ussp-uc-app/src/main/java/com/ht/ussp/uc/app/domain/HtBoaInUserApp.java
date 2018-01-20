@@ -20,6 +20,7 @@ public class HtBoaInUserApp implements Serializable {
 
 	@Id
 	@Column(name = "ID", unique = true, nullable = false)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
 	@Column(name="APP")

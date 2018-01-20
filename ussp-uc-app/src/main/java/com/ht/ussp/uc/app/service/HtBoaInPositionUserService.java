@@ -94,7 +94,7 @@ public class HtBoaInPositionUserService {
         else
             search = "%" + search + "%";
          
-        Page<BoaInPositionInfo> pageData = this.htBoaInPositionUserRepository.listPositionUserByPageWeb(pageable, search,userId);
+        Page<BoaInPositionInfo> pageData = this.htBoaInPositionUserRepository.listPositionUserByPage(pageable, search,userId);
 		
         if (pageData != null) {
             result.count(pageData.getTotalElements()).data(pageData.getContent());

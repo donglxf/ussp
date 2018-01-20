@@ -4,7 +4,6 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -58,6 +57,31 @@ public class UserAppResource {
            return result;
        }
 
+    /**
+     * 查询所有系统
+     * @param page
+     * @return
+     */
+    @RequestMapping(value = { "/listAppByPage"}, method = RequestMethod.POST)
+    public PageResult<HtBoaInUserApp> listAppByPage(PageVo page) {
+    	PageResult result = new PageResult();
+    	PageConf pageConf = new PageConf();
+    	pageConf.setPage(page.getPage());
+    	pageConf.setSize(page.getLimit());
+    	pageConf.setSearch(page.getKeyWord());
+        long sl = System.currentTimeMillis(), el = 0L;
+        String msg = "成功";
+        String logHead = "查询用户系统：user/listAppByPage param-> {}";
+        String logStart = logHead + " | START:{}";
+        String logEnd = logHead + " {} | END:{}, COST:{}";
+        log.info(logStart, "page: " + page, sl);
+        
+        result =  htBoaInUserAppService.listAllUserAppByPage(pageConf,page.getQuery()); 
+        el = System.currentTimeMillis();
+        log.info(logEnd, "page: " + page, msg, el, el - sl);
+        return result;
+    }
+    
     @ApiOperation(value = "对内：新增/编辑用户系统记录", notes = "提交用户系统信息新增/编辑角色")
     @RequestMapping(value = { "/add" }, method = RequestMethod.POST)
     public Result add(@RequestBody HtBoaInUserApp htBoaInUserApp) {
@@ -69,7 +93,7 @@ public class UserAppResource {
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.info(logStart, "boaInRoleInfo: " + htBoaInUserApp, sl);
         HtBoaInUserApp u = null;
-        if(htBoaInUserApp.getId()>0) {
+        if(htBoaInUserApp.getId()!=null && htBoaInUserApp.getId()>0) {
         	u = htBoaInUserAppService.findById(htBoaInUserApp.getId());
         	if(u==null) {
         		u = new HtBoaInUserApp();
@@ -82,8 +106,8 @@ public class UserAppResource {
         u.setLastModifiedDatetime(new Date());
         u.setDelFlag(0);
         u.setUserId(htBoaInUserApp.getUserId());
-        
-        if(htBoaInUserApp.getId()>0) {
+        u.setApp(htBoaInUserApp.getApp());
+        if(htBoaInUserApp.getId()!=null && htBoaInUserApp.getId()>0) {
         	u.setId(htBoaInUserApp.getId());
         	u = htBoaInUserAppService.update(u);
         } else {
@@ -99,8 +123,8 @@ public class UserAppResource {
     
     @SuppressWarnings({ "rawtypes", "unused" })
 	@ApiOperation(value = "对内：禁用/启用用户系统", notes = "禁用/启用用户系统")
-    @RequestMapping(value = { "/stop/{id}/{status}" }, method = RequestMethod.POST)
-    public Result stop(@PathVariable Long id,@PathVariable String status) {
+    @RequestMapping(value = { "/stop" }, method = RequestMethod.POST)
+    public Result stop(Long id, String status) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
         String msg = "成功";
@@ -128,8 +152,8 @@ public class UserAppResource {
     
     @ApiOperation(value = "对内：删除用户系统记录", notes = "提交角色编号，可批量删除")
     @ApiImplicitParam(name = "codes", value = "角色编号集", required = true, dataType = "Codes")
-    @RequestMapping(value = {"/delete/{id}" }, method = RequestMethod.POST)
-    public Result delete(@PathVariable int id) {
+    @RequestMapping(value = {"/delete" }, method = RequestMethod.POST)
+    public Result delete( int id) {
         long sl = System.currentTimeMillis(), el = 0L;
         String msg = "成功";
         String logHead = "角色记录删除：role/in/delete param-> {}";

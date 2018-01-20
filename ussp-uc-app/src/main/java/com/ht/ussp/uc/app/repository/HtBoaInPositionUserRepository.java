@@ -29,4 +29,8 @@ public interface HtBoaInPositionUserRepository extends JpaRepository<HtBoaInPosi
 	
 	 @Query("SELECT new com.ht.ussp.uc.app.model.BoaInPositionInfo (pu.id,u.positionCode, u.positionName, u.positionNameCn, o0.orgCode, o0.orgName, o0.orgNameCn, o0.orgType, o1.orgCode, o1.orgName, o1.orgNameCn, o1.orgType, u.orgPath, u.sequence, u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,pu.delFlag) FROM HtBoaInPosition u, HtBoaInOrg o0, HtBoaInOrg o1, HtBoaInPositionUser pu, HtBoaInUser r, HtBoaInPositionRole pr, HtBoaInRole l WHERE (( u.positionCode = pu.positionCode AND pu.userId = r.userId OR u.positionCode = pr.positionCode AND pr.roleCode = l.roleCode )) AND ( u.positionCode LIKE ?1 OR u.positionName LIKE ?1 OR u.positionNameCn LIKE ?1 ) AND pu.userId = ?2  GROUP BY u")
 	 public Page<BoaInPositionInfo> listPositionUserByPageWeb(Pageable arg0, String search,String userId);
+	 
+	 @Query("SELECT new com.ht.ussp.uc.app.model.BoaInPositionInfo (pu.id,u.positionCode, u.positionName, u.positionNameCn,  u.orgPath, u.sequence, u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,pu.delFlag) FROM HtBoaInPosition u,   HtBoaInPositionUser pu WHERE u.positionCode = pu.positionCode   AND ( u.positionCode LIKE ?1 OR u.positionName LIKE ?1 OR u.positionNameCn LIKE ?1 ) AND pu.userId = ?2  GROUP BY u")
+	 public Page<BoaInPositionInfo> listPositionUserByPage(Pageable arg0, String search,String userId);
+
 }

@@ -4,7 +4,6 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,7 +22,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 
 /**
- * @Description: 用户系统
+ * @Description: 用户岗位
  * @date 2018年1月10日 下午14:44:16
  */
 
@@ -37,7 +36,7 @@ public class UserPositionResource {
     private HtBoaInPositionUserService htBoaInPositionUserService;
 
     @SuppressWarnings("rawtypes")
-   	@ApiOperation(value = "对内：根据UserId查询用户系统", notes = "根据UserId查询用户系统")
+   	@ApiOperation(value = "对内：根据UserId查询用户岗位", notes = "根据UserId查询用户岗位")
        @RequestMapping(value = { "/listUserPositionByPage"}, method = RequestMethod.POST)
        public PageResult<HtBoaInPositionUser> listUserPositionByPage(PageVo page) {
        	PageResult result = new PageResult();
@@ -47,7 +46,7 @@ public class UserPositionResource {
        	pageConf.setSearch(page.getKeyWord());
            long sl = System.currentTimeMillis(), el = 0L;
            String msg = "成功";
-           String logHead = "根据UserId查询用户系统：user/listUserPositionByPage param-> {}";
+           String logHead = "根据UserId查询用户岗位：user/listUserPositionByPage param-> {}";
            String logStart = logHead + " | START:{}";
            String logEnd = logHead + " {} | END:{}, COST:{}";
            log.info(logStart, "page: " + page, sl);
@@ -58,7 +57,7 @@ public class UserPositionResource {
            return result;
        }
 
-    @ApiOperation(value = "对内：新增/编辑用户系统记录", notes = "提交用户系统信息新增/编辑角色")
+    @ApiOperation(value = "对内：新增/编辑用户岗位记录", notes = "提交用户岗位信息新增/编辑角色")
     @RequestMapping(value = { "/add" }, method = RequestMethod.POST)
     public Result add(@RequestBody HtBoaInPositionUser htBoaInPositionUser) {
         long sl = System.currentTimeMillis(), el = 0L;
@@ -69,7 +68,7 @@ public class UserPositionResource {
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.info(logStart, "boaInRoleInfo: " + htBoaInPositionUser, sl);
         HtBoaInPositionUser u = null;
-        if(htBoaInPositionUser.getId()>0) {
+        if(htBoaInPositionUser.getId()!=null && htBoaInPositionUser.getId()>0) {
         	u = htBoaInPositionUserService.findById(htBoaInPositionUser.getId());
         	if(u==null) {
         		u = new HtBoaInPositionUser();
@@ -82,8 +81,8 @@ public class UserPositionResource {
         u.setLastModifiedDatetime(new Date());
         u.setDelFlag(0);
         u.setUserId(htBoaInPositionUser.getUserId());
-        
-        if(htBoaInPositionUser.getId()>0) {
+        u.setPositionCode(htBoaInPositionUser.getPositionCode());
+        if(htBoaInPositionUser.getId()!=null && htBoaInPositionUser.getId()>0) {
         	u.setId(htBoaInPositionUser.getId());
         	u = htBoaInPositionUserService.update(u);
         } else {
@@ -98,9 +97,9 @@ public class UserPositionResource {
     }
     
     @SuppressWarnings({ "rawtypes", "unused" })
-	@ApiOperation(value = "对内：禁用/启用用户系统", notes = "禁用/启用用户系统")
-    @RequestMapping(value = { "/stop/{id}/{status}" }, method = RequestMethod.POST)
-    public Result stop(@PathVariable Long id,@PathVariable String status) {
+	@ApiOperation(value = "对内：禁用/启用用户岗位", notes = "禁用/启用用户岗位")
+    @RequestMapping(value = { "/stop" }, method = RequestMethod.POST)
+    public Result stop(Long id,String status) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
         String msg = "成功";
@@ -126,10 +125,10 @@ public class UserPositionResource {
         return Result.buildSuccess();
     }
     
-    @ApiOperation(value = "对内：删除用户系统记录", notes = "提交角色编号，可批量删除")
+    @ApiOperation(value = "对内：删除用户岗位记录", notes = "提交角色编号，可批量删除")
     @ApiImplicitParam(name = "codes", value = "角色编号集", required = true, dataType = "Codes")
-    @RequestMapping(value = {"/delete/{id}" }, method = RequestMethod.POST)
-    public Result delete(@PathVariable int id) {
+    @RequestMapping(value = {"/delete" }, method = RequestMethod.POST)
+    public Result delete(  int id) {
         long sl = System.currentTimeMillis(), el = 0L;
         String msg = "成功";
         String logHead = "角色记录删除：role/in/delete param-> {}";

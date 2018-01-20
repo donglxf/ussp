@@ -4,6 +4,8 @@ var delUserPositionListUrl=basepath + 'userposition/delete'; //删除用户岗�
 var stopUserPositionListUrl=basepath + 'userposition/stop'; //禁用/启用用户岗位 /stop/{id}/{status}
 var orgTreeUrl = basepath +"/org/tree.json"; //机构列表 
 var userId = "";
+var refreshPositionTable;
+
 layui.use(['form', 'ztree', 'table'], function () {
     var $ = layui.jquery
         , form = layui.form
@@ -20,6 +22,27 @@ layui.use(['form', 'ztree', 'table'], function () {
             searchuserposition: function () { 
             	//执行重载
             	refreshuserpositionTable($("#userposition_role_search_keyword").val());
+            },
+            loadPositionList:function(){
+            	if(userId==""){
+            		layer.msg("请先选择用户！");
+            		return;
+            	}
+            	 layer.close(addDialog);
+            	 roleDialog = layer.open({
+                     type: 2,
+                     area: ['70%', '80%'],
+                     maxmin: true,
+                     shadeClose: true,
+                     title: "分配角色",
+                     content: "/html/userposition/positionDialog.html",
+                     success: function (layero, index) {
+                    	 /* 渲染表单 */
+                         form.render();
+                     }
+                 })
+                 
+
             },
     };
     var refreshUserTable = function (keyword) {
@@ -53,6 +76,27 @@ layui.use(['form', 'ztree', 'table'], function () {
         	        	query: {
                   		     keyWord: keyword,
                             orgCode: selectNodes[0]["orgCode"],
+                            userId:userId
+                       }
+        	        }
+        	   });
+        }
+    };
+    
+    refreshPositionTable = function (sucess) {
+    	if(sucess==1){
+        	layer.msg("分配角色成功");
+        }else{
+        	return;
+        }
+        var selectNodes = orgTree.getSelectedNodes();
+        if (selectNodes && selectNodes.length == 1) {
+        	 table.reload('userposition_role_datatable', {
+        	        page: {
+        	            curr: 1 //重新从第 1 页开始
+        	        }
+        	        , where: {
+        	        	query: {
                             userId:userId
                        }
         	        }
@@ -164,7 +208,6 @@ layui.use(['form', 'ztree', 'table'], function () {
     //监听操作栏
     table.on('tool(filter_userposition_user_datatable)', function (obj) {
         var data = obj.data;
-        console.log(data);
         userId = data.userId;
         if (obj.event === 'getRole') {
         	refreshuserpositionTable();
@@ -172,11 +215,10 @@ layui.use(['form', 'ztree', 'table'], function () {
     });
     table.on('tool(filter_userposition_role_datatable)', function (obj) {
         var data = obj.data;
-        console.log(data);
         if (obj.event === 'startOrStop') {
         	if(data.delFlag==0){//启用状态，是否需要禁用
         		layer.confirm('是否禁用岗位？', function (index) {
-                  	 $.post(stopUserPositionListUrl+"/" + data.id+"/1", null, function (result) {
+                  	 $.post(stopUserPositionListUrl+"?id=" + data.id+"&status=1", null, function (result) {
                            if (result["returnCode"] == "0000") {
                         	   refreshuserpositionTable();
                                layer.close(index);
@@ -188,7 +230,7 @@ layui.use(['form', 'ztree', 'table'], function () {
                   });
         	}else{
         		layer.confirm('是否启用岗位？', function (index) {
-                  	 $.post(stopUserPositionListUrl+"/" + data.id+"/0", null, function (result) {
+                  	 $.post(stopUserPositionListUrl+"?id=" + data.id+"&status=0", null, function (result) {
                            if (result["returnCode"] == "0000") {
                         	   refreshuserpositionTable();
                                layer.close(index);
@@ -202,7 +244,7 @@ layui.use(['form', 'ztree', 'table'], function () {
         } else if (obj.event === 'del') {
         	 layer.confirm('是否确认删除用户岗位？', function (index) {
              	obj.del();
-             	 $.post(delUserPositionListUrl+"/" + data.id, null, function (result) {
+             	 $.post(delUserPositionListUrl+"?id=" + data.id, null, function (result) {
                       if (result["returnCode"] == "0000") {
                     	  refreshuserpositionTable();
                           layer.close(index);

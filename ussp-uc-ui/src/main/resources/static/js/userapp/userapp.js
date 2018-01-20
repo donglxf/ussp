@@ -4,6 +4,7 @@ var delUserAppListUrl=basepath + 'userapp/delete'; //删除用户角色 /delete/
 var stopUserAppListUrl=basepath + 'userapp/stop'; //禁用/启用用户角色 /stop/{id}/{status}
 var orgTreeUrl = basepath +"/org/tree.json"; //机构列表 
 var userId = "";
+var refreshAppTable = "";
 layui.use(['form', 'ztree', 'table'], function () {
     var $ = layui.jquery
         , form = layui.form
@@ -20,6 +21,25 @@ layui.use(['form', 'ztree', 'table'], function () {
             searchuserapp: function () { 
             	//执行重载
             	refreshUserAppTable($("#userapp_app_search_keyword").val());
+            },
+            loadAppList:function(){
+            	if(userId==""){
+            		layer.msg("请先选择用户！");
+            		return;
+            	}
+            	 layer.close(addDialog);
+            	 roleDialog = layer.open({
+                     type: 2,
+                     area: ['70%', '80%'],
+                     maxmin: true,
+                     shadeClose: true,
+                     title: "分配角色",
+                     content: "/html/userapp/appDialog.html",
+                     success: function (layero, index) {
+                    	 /* 渲染表单 */
+                         form.render();
+                     }
+                 })
             },
     };
     var refreshUserTable = function (keyword) {
@@ -52,6 +72,27 @@ layui.use(['form', 'ztree', 'table'], function () {
         	        , where: {
         	        	query: {
                   		     keyWord: keyword,
+                            orgCode: selectNodes[0]["orgCode"],
+                            userId:userId
+                       }
+        	        }
+        	   });
+        }
+    };
+     refreshAppTable = function (sucess) {
+    	if(sucess==1){
+        	layer.msg("关联系统成功");
+        }else{
+        	return;
+        }
+        var selectNodes = orgTree.getSelectedNodes();
+        if (selectNodes && selectNodes.length == 1) {
+        	 table.reload('userapp_app_datatable', {
+        	        page: {
+        	            curr: 1 //重新从第 1 页开始
+        	        }
+        	        , where: {
+        	        	query: {
                             orgCode: selectNodes[0]["orgCode"],
                             userId:userId
                        }
@@ -163,7 +204,6 @@ layui.use(['form', 'ztree', 'table'], function () {
     //监听操作栏
     table.on('tool(filter_userapp_user_datatable)', function (obj) {
         var data = obj.data;
-        console.log(data);
         userId = data.userId;
         if (obj.event === 'getRole') {
         	refreshUserAppTable();
@@ -171,11 +211,10 @@ layui.use(['form', 'ztree', 'table'], function () {
     });
     table.on('tool(filter_userapp_app_datatable)', function (obj) {
         var data = obj.data;
-        console.log(data);
         if (obj.event === 'startOrStop') {
         	if(data.delFlag==0){//启用状态，是否需要禁用
         		layer.confirm('是否禁用用户系统？', function (index) {
-                  	 $.post(stopUserAppListUrl+"/" + data.id+"/1", null, function (result) {
+                  	 $.post(stopUserAppListUrl+"?id=" + data.id+"&status=1", null, function (result) {
                            if (result["returnCode"] == "0000") {
                         	   refreshUserAppTable();
                                layer.close(index);
@@ -187,7 +226,7 @@ layui.use(['form', 'ztree', 'table'], function () {
                   });
         	}else{
         		layer.confirm('是否启用用户系统？', function (index) {
-                  	 $.post(stopUserAppListUrl+"/" + data.id+"/0", null, function (result) {
+                  	 $.post(stopUserAppListUrl+"?id=" + data.id+"&status=0", null, function (result) {
                            if (result["returnCode"] == "0000") {
                         	   refreshUserAppTable();
                                layer.close(index);
@@ -201,7 +240,7 @@ layui.use(['form', 'ztree', 'table'], function () {
         } else if (obj.event === 'del') {
         	 layer.confirm('是否确认删除用户系统？', function (index) {
              	obj.del();
-             	 $.post(delUserAppListUrl+"/" + data.id, null, function (result) {
+             	 $.post(delUserAppListUrl+"?id=" + data.id, null, function (result) {
                       if (result["returnCode"] == "0000") {
                     	  refreshUserAppTable();
                           layer.close(index);

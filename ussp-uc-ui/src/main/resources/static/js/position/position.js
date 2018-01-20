@@ -209,7 +209,7 @@ layui.use(['form', 'ztree', 'table'], function () {
         } else if (obj.event === 'del') {
             layer.confirm('是否确认删除岗位？', function (index) {
             	obj.del();
-            	 $.post(delPositionUrl+"/" + data.id, null, function (result) {
+            	 $.post(delPositionUrl+"?id=" + data.id, null, function (result) {
                      if (result["returnCode"] == "0000") {
                          refreshTable();
                          layer.close(index);

@@ -112,7 +112,7 @@ layui.use(['form',   'table' ], function () {
         if (obj.event === 'stopOrStart') {
         	if(data.status==0){//启用状态，是否需要禁用
         		layer.confirm('是否禁用角色？', function (index) {
-                  	 $.post(statusRoleUrl+"/" + data.id+"/1", null, function (result) {
+                  	 $.post(statusRoleUrl+"?id" + data.id+"&status=1", null, function (result) {
                            if (result["returnCode"] == "0000") {
                                refreshTable();
                                layer.close(index);
@@ -124,7 +124,7 @@ layui.use(['form',   'table' ], function () {
                   });
         	}else{
         		layer.confirm('是否启用角色？', function (index) {
-                  	 $.post(statusRoleUrl+"/" + data.id+"/0", null, function (result) {
+                  	 $.post(statusRoleUrl+"?id" + data.id+"&status=0", null, function (result) {
                            if (result["returnCode"] == "0000") {
                                refreshTable();
                                layer.close(index);
@@ -138,7 +138,7 @@ layui.use(['form',   'table' ], function () {
         } else if (obj.event === 'del') {
         	 layer.confirm('是否确认删除角色？', function (index) {
              	obj.del();
-             	 $.post(delRoleUrl+"/" + data.id, null, function (result) {
+             	 $.post(delRoleUrl+"?id=" + data.id, null, function (result) {
                       if (result["returnCode"] == "0000") {
                           refreshTable();
                           layer.close(index);

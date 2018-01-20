@@ -113,8 +113,8 @@ public class RoleResource {
     }
     
     @ApiOperation(value = "对内：禁用/启用角色", notes = "禁用/启用角色")
-    @RequestMapping(value = { "/in/stop/{id}/{status}" }, method = RequestMethod.POST)
-    public Result stop(@PathVariable Long id,@PathVariable String status) {
+    @RequestMapping(value = { "/in/stop" }, method = RequestMethod.POST)
+    public Result stop( Long id, String status) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
         String msg = "成功";
@@ -143,8 +143,8 @@ public class RoleResource {
     
     @ApiOperation(value = "对内：删除角色记录", notes = "提交角色编号，可批量删除")
     @ApiImplicitParam(name = "codes", value = "角色编号集", required = true, dataType = "Codes")
-    @RequestMapping(value = {"/in/delete/{id}" }, method = RequestMethod.POST)
-    public Result delete(@PathVariable int id) {
+    @RequestMapping(value = {"/in/delete" }, method = RequestMethod.POST)
+    public Result delete(int id) {
         long sl = System.currentTimeMillis(), el = 0L;
         String msg = "成功";
         String logHead = "角色记录删除：role/in/delete param-> {}";

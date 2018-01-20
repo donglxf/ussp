@@ -60,17 +60,17 @@ public class PositionRoleResource {
 
     @ApiOperation(value = "对内：新增/编辑岗位角色记录", notes = "提交岗位角色信息新增/编辑角色")
     @RequestMapping(value = { "/add" }, method = RequestMethod.POST)
-    public Result add(@RequestBody HtBoaInPositionRole htBoaInUserRole) {
+    public Result add(@RequestBody HtBoaInPositionRole htBoaInPositionRole) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
         String msg = "成功";
         String logHead = "角色记录查询：role/in/add param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "boaInRoleInfo: " + htBoaInUserRole, sl);
+        log.info(logStart, "boaInRoleInfo: " + htBoaInPositionRole, sl);
         HtBoaInPositionRole u = null;
-        if(htBoaInUserRole.getId()>0) {
-        	u = htBoaInPositionRoleService.findById(htBoaInUserRole.getId());
+        if(htBoaInPositionRole.getId()!=null && htBoaInPositionRole.getId()>0) {
+        	u = htBoaInPositionRoleService.findById(htBoaInPositionRole.getId());
         	if(u==null) {
         		u = new HtBoaInPositionRole();
         	}
@@ -81,10 +81,11 @@ public class PositionRoleResource {
         u.setCreatedDatetime(new Date());
         u.setLastModifiedDatetime(new Date());
         u.setDelFlag(0);
-        u.setRoleCode(htBoaInUserRole.getRoleCode());
-        
-        if(htBoaInUserRole.getId()>0) {
-        	u.setId(htBoaInUserRole.getId());
+        u.setRoleCode(htBoaInPositionRole.getRoleCode());
+        u.setPositionCode(htBoaInPositionRole.getPositionCode());
+        u.setRootOrgCode("HT");
+        if(htBoaInPositionRole.getId()!=null && htBoaInPositionRole.getId()>0) {
+        	u.setId(htBoaInPositionRole.getId());
         	u = htBoaInPositionRoleService.update(u);
         } else {
         	u.setCreatedDatetime(new Date());
@@ -92,15 +93,15 @@ public class PositionRoleResource {
             u = htBoaInPositionRoleService.add(u);
         }
         el = System.currentTimeMillis();
-        log.info(logEnd, "boaInRoleInfo: " + htBoaInUserRole, msg, el, el - sl);
+        log.info(logEnd, "boaInRoleInfo: " + htBoaInPositionRole, msg, el, el - sl);
         return Result.buildSuccess();
        // return new ResponseModal(200, msg, u);
     }
     
     @SuppressWarnings({ "rawtypes", "unused" })
 	@ApiOperation(value = "对内：禁用/启用岗位角色", notes = "禁用/启用岗位角色")
-    @RequestMapping(value = { "/stop/{id}/{status}" }, method = RequestMethod.POST)
-    public Result stop(@PathVariable Long id,@PathVariable String status) {
+    @RequestMapping(value = { "/stop" }, method = RequestMethod.POST)
+    public Result stop(  Long id,  String status) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
         String msg = "成功";
@@ -127,8 +128,8 @@ public class PositionRoleResource {
     }
     
     @ApiOperation(value = "对内：删除岗位角色记录")
-    @RequestMapping(value = {"/delete/{id}" }, method = RequestMethod.POST)
-    public Result delete(@PathVariable Long id) {
+    @RequestMapping(value = {"/delete" }, method = RequestMethod.POST)
+    public Result delete(  Long id) {
         HtBoaInPositionRole u = new HtBoaInPositionRole();
         u.setId(id);
         htBoaInPositionRoleService.delete(u);

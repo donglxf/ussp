@@ -75,7 +75,7 @@ public class UserRoleResource {
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.info(logStart, "boaInRoleInfo: " + htBoaInUserRole, sl);
         HtBoaInUserRole u = null;
-        if(htBoaInUserRole.getId()>0) {
+        if(htBoaInUserRole.getId() !=null && htBoaInUserRole.getId()>0) {
         	u = htBoaInUserRoleService.findById(htBoaInUserRole.getId());
         	if(u==null) {
         		u = new HtBoaInUserRole();
@@ -90,7 +90,7 @@ public class UserRoleResource {
         u.setRoleCode(htBoaInUserRole.getRoleCode());
         u.setUserId(htBoaInUserRole.getUserId());
         
-        if(htBoaInUserRole.getId()>0) {
+        if(htBoaInUserRole.getId() !=null && htBoaInUserRole.getId()>0) {
         	u.setId(htBoaInUserRole.getId());
         	u = htBoaInUserRoleService.update(u);
         } else {
@@ -106,8 +106,8 @@ public class UserRoleResource {
     
     @SuppressWarnings({ "rawtypes", "unused" })
 	@ApiOperation(value = "对内：禁用/启用用户角色", notes = "禁用/启用用户角色")
-    @RequestMapping(value = { "/stop/{id}/{status}" }, method = RequestMethod.POST)
-    public Result stop(@PathVariable Long id,@PathVariable String status) {
+    @RequestMapping(value = { "/stop" }, method = RequestMethod.POST)
+    public Result stop( Long id, String status) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
         String msg = "成功";
@@ -135,8 +135,8 @@ public class UserRoleResource {
     
     @ApiOperation(value = "对内：删除用户角色记录", notes = "提交角色编号，可批量删除")
     @ApiImplicitParam(name = "codes", value = "角色编号集", required = true, dataType = "Codes")
-    @RequestMapping(value = {"/delete/{id}" }, method = RequestMethod.POST)
-    public Result delete(@PathVariable int id) {
+    @RequestMapping(value = {"/delete" }, method = RequestMethod.POST)
+    public Result delete(int id) {
         long sl = System.currentTimeMillis(), el = 0L;
         String msg = "成功";
         String logHead = "角色记录删除：role/in/delete param-> {}";
