@@ -13,7 +13,7 @@ public class ResponseModal extends Modal implements Serializable{
 		super();
 	}
 	
-	public ResponseModal(int code,String message){
+	public ResponseModal(String code,String message){
 		super(code,message);
 	}
 	
@@ -21,7 +21,7 @@ public class ResponseModal extends Modal implements Serializable{
 		super(sysStatus.getStatus(),sysStatus.getMsg());
 	}
 	
-	public ResponseModal(int code,String message,Object obj){
+	public ResponseModal(String code,String message,Object obj){
 		super(code,message);
 		this.result = obj;
 	}
