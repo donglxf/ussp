@@ -32,7 +32,6 @@ import com.ht.ussp.util.FastJsonUtil;
  */
 @Component
 public class AjaxAuthenticationProvider implements AuthenticationProvider {
-	
 	@Autowired
 	private UserClient userClient;
 	

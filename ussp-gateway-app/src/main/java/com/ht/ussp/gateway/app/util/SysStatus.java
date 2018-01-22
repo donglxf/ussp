@@ -9,19 +9,28 @@ package com.ht.ussp.gateway.app.util;
  */
 public enum SysStatus {
 	SUCCESS("0000", "执行成功"),
-	USER_NOT_FOUND("9983","用户不存在"),
-	USER_HAS_DELETED("9984","您的用户已被删除"),
-	USER_NOT_RELATE_APP("9985","该用户未与任何系统关联"),
-	USER_NOT_MATCH_APP("9986","用户来源不正确"),
-	NO_ROLE("9987","该用户没关联角色"),
-	TOKEN_IS_EXPIRED("9989","TOKEN过期"),
-	TOKEN_IS_VALID("9990","验签失败"),
-	API_NOT_NULL("9991","API权限不能为空"),
-	PWD("9992", "密码错误"),
-	PWD_ISNULL("9993", "密码为空"),
-	PWD_INVALID("9994", "密码不正确"),
-	PWD_EQUAL("9996", "和原密码相同"),
-	PWD_LOCKING("9995","错误登录次数过多，账户24小时之内已被锁定"),
+	
+	
+	METHOD_NOT_SUPPORTED("9900","不支持该请求方式"),
+	INVALID_USER("9901","用户名或密码无效"),
+	USER_NOT_FOUND("9902","用户不存在"),
+	USER_HAS_DELETED("9903","您的用户已被删除"),
+	USER_NOT_RELATE_APP("9904","该用户未与任何系统关联"),
+	USER_NOT_MATCH_APP("9905","用户来源不正确"),
+	
+	
+	PWD("9910", "密码错误"),
+	PWD_ISNULL("9911", "密码为空"),
+	PWD_INVALID("9912", "密码不正确"),
+	PWD_EQUAL("9913", "和原密码相同"),
+	PWD_LOCKING("9914","错误登录次数过多，账户24小时之内已被锁定"),
+	
+	NO_ROLE("9920","该用户没关联角色"),
+	TOKEN_IS_EXPIRED("9921","TOKEN过期"),
+	TOKEN_IS_VALID("9922","验签失败"),
+	API_NOT_NULL("9923","API权限不能为空"),
+	AUTH_FAILED("9924","授权失败"),
+
 	NO_RESULT("9996","查无数据"),
 	ERROR_PARAM("9997", "参数错误"),
 	EXCEPTION("9998", "执行异常"),
