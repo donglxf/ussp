@@ -45,7 +45,7 @@ layui.use(['form', 'table' ], function () {
         	 {type:'checkbox'}
         	 , {field: 'app', width: 120, title: '系统编号'}
              , {field: 'nameCn', title: '系统名称'}
-             , {field: 'delFlag', width: 100, title: '状态' ,templet: '#userapp_statusTpl'}
+             , {field: 'status', width: 100, title: '状态' ,templet: '#statusTpl'}
              , {field: 'createOperator', width: 100, title: '创建人'}
              , {field: 'createdDatetime', width: 200,templet: '#createTimeTpl', title: '创建时间'}
         ]]

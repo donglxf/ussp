@@ -21,6 +21,16 @@
 		<div id="userrole_add_data_div">
 			<table id="userrole_add_data" lay-filter="filter_userrole_add_data">
 			</table>
+			<script type="text/html" id="createTimeTpl">
+                       {{new Date( d.createdDatetime ).Format('yyyy-MM-dd HH:mm:ss')}} 
+	         </script>
+	         <script type="text/html" id="statusTpl">
+                      {{#  if(d.status == '0'){ }}
+                                                                    启用
+                      {{#  } else { }}
+                                                                   禁用
+                      {{#  } }}
+					</script>
 		</div>
 	</div>
 	<div class="layui-form-item" align="center">

@@ -168,11 +168,11 @@ layui.use(['form', 'ztree', 'table'], function () {
         , cols: [[
             {type: 'numbers'}
             , {field: 'jobNumber', width: 100, title: '工号',event:'getRole'}
-            , {field: 'userName',  title: '用户名',event:'getRole'}
+            , {field: 'userName', width: 180,   title: '用户名',event:'getRole'}
             , {field: 'mobile', width: 120, title: '手机',event:'getRole'}
-            , {field: 'email', width: 200, title: '邮箱',event:'getRole'}
+            , {field: 'email', width: 180, title: '邮箱',event:'getRole'}
             , {field: 'idNo', width: 180, title: '身份证',event:'getRole'}
-            , {field: 'orgName', width: 100, title: '所属机构',event:'getRole'}
+            , {field: 'orgName', width: 130, title: '所属机构',event:'getRole'}
             , {field: 'status', width: 60, title: '状态', templet: "#userrole_user_status_laytpl",event:'getRole'}
             , {field: 'updateOperator', width: 100, title: '更新人',event:'getRole'}
             , {field: 'lastModifiedDatetime', width: 150, title: '更新时间',event:'getRole'}
@@ -200,8 +200,8 @@ layui.use(['form', 'ztree', 'table'], function () {
         , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
         , cols: [[
             {type: 'numbers'}
-            , {field: 'roleCode', width: 150, title: '角色编号'}
-            , {field: 'roleNameCn', width: 300, title: '角色名称'}
+            , {field: 'roleCode',   title: '角色编号'}
+            , {field: 'roleNameCn',   title: '角色名称'}
             , {field: 'status', width: 100,templet: '#userrole_statusTpl', title: '状态'}
             , {field: 'createOperator', width: 150, title: '创建人'}
             , {field: 'createdDatetime', width: 200,templet: '#createTimeTpl', title: '创建时间'}
