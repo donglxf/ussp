@@ -2,198 +2,250 @@
 <html lang="zh-cn">
 
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport"
-	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>登录 - 用户权限管理中心</title>
-<script>
-	if (window != window.top)
-		top.location.href = self.location.href;
-</script>
-<link href="./plugins/layui/css/layui.css" rel="stylesheet" />
-<link href="./plugins/font-awesome/css/font-awesome.css"
-	rel="stylesheet" />
-<link href="./plugins/sideshow/css/login.css" rel="stylesheet" />
-<link href="./plugins/sideshow/css/normalize.css" rel="stylesheet" />
-<link href="./plugins/sideshow/css/demo.css" rel="stylesheet" />
-<link href="./plugins/sideshow/css/component.css" rel="stylesheet" />
-<!--[if IE]>
-        <script src="./plugins/sideshow/js/html5.js"></script>
-    <![endif]-->
-<style>
-canvas {
-	position: absolute;
-	z-index: -1;
-}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>登录 - 用户权限管理中心</title>
+    <script>
+        if (window != window.top)
+            top.location.href = self.location.href;
+    </script>
+    <link href="./plugins/layui/css/layui.css" rel="stylesheet"/>
+    <style>
+        .kit-login-bg {
+            /*background: url(../Images/login-bg-1.jpg) no-repeat center center fixed;*/
+            background-color: #393D49;
+        }
 
-.kit-login-box header h1 {
-	line-height: normal;
-}
+        .kit-login-box {
+            width: 390px;
+            margin: 10% auto;
+            background-color: #666;
+            background-color: rgba(46, 46, 46, 0.61);
+            border-radius: 10px;
+            color: aliceblue;
+            box-shadow: 0px 0px 20px 0px #009688;
+        }
 
-.kit-login-box header {
-	height: auto;
-}
+        .kit-login-box header {
+            height: 39px;
+            padding: 10px;
+            border-bottom: 1px solid rgba(0, 150, 136, 0.5);
+        }
 
-.content {
-	position: relative;
-}
+        .kit-login-box header h1 {
+            text-align: center;
+            font-size: 25px;
+            line-height: 40px;
+        }
 
-.codrops-demos {
-	position: absolute;
-	bottom: 0;
-	left: 40%;
-	z-index: 10;
-}
+        .kit-login-box .kit-login-main {
+            padding: 30px 50px 0;
+        }
 
-.codrops-demos a {
-	border: 2px solid rgba(242, 242, 242, 0.41);
-	color: rgba(255, 255, 255, 0.51);
-}
+        .kit-login-box .kit-login-main .layui-input:focus {
+            border-color: #009688 !important;
+        }
 
-.kit-pull-right button, .kit-login-main .layui-form-item input {
-	background-color: transparent;
-	color: white;
-}
+        .kit-login-main .layui-form-item {
+            position: relative;
+        }
 
-.kit-login-main .layui-form-item input::-webkit-input-placeholder {
-	color: white;
-}
+        .kit-login-main .layui-form-item .kit-login-icon {
+            position: absolute;
+            color: #cccccc;
+            top: 10px;
+            left: 10px;
+        }
 
-.kit-login-main .layui-form-item input:-moz-placeholder {
-	color: white;
-}
+        .kit-login-main .layui-form-item input {
+            padding-left: 34px;
+        }
 
-.kit-login-main .layui-form-item input::-moz-placeholder {
-	color: white;
-}
+        .kit-login-box footer {
+            height: 85px;
+        }
 
-.kit-login-main .layui-form-item input:-ms-input-placeholder {
-	color: white;
-}
+        .kit-login-box footer p {
+            line-height: 35px;
+            text-align: center;
+        }
 
-.kit-pull-right button:hover {
-	border-color: #009688;
-	color: #009688
-}
-</style>
+        .kit-pull-left {
+            float: left !important;
+        }
+
+        .kit-pull-right {
+            float: right !important;
+        }
+
+        .kit-clear {
+            clear: both;
+        }
+
+        .kit-login-remember {
+            line-height: 38px;
+        }
+
+        .kit-login-remember .layui-form-checkbox[lay-skin=primary] span {
+            color: white;
+        }
+
+        .kit-login-remember .layui-form-checked[lay-skin=primary] i {
+            border-color: #009688;
+            background-color: #009688;
+        }
+
+        .kit-login-code-box input {
+            position: absolute;
+            width: 100px;
+        }
+
+        .kit-login-code-box img {
+            cursor: pointer;
+            position: absolute;
+            left: 115px;
+            height: 38px;
+        }
+    </style>
 </head>
 
 
 <body class="kit-login-bg">
-	<div class="container demo-1">
-		<div class="content">
-			<div id="large-header" class="large-header">
-				<canvas id="demo-canvas"></canvas>
-				<div class="kit-login-box">
-					<header>
-						<h1>用户权限系统</h1>
-					</header>
-					<div class="kit-login-main">
-						<form action="/" class="layui-form" method="post" id="loginForm">
-							<div class="layui-form-item">
-								<label class="kit-login-icon"> <i class="layui-icon">&#xe612;</i>
-								</label> <input type="text" name="userName" id="userName" lay-verify="required"
-									autocomplete="off" placeholder="请输入用户名" class="layui-input">
-							</div>
-							<div class="layui-form-item">
-								<label class="kit-login-icon"> <i class="layui-icon">&#xe642;</i>
-								</label> <input type="password" name="password" id="password" lay-verify="required"
-									autocomplete="off" placeholder="请输入密码" class="layui-input">
-							</div>
-							<!--                             <div class="layui-form-item"> -->
-							<!--                                 <label class="kit-login-icon"> -->
-							<!--                                     <i class="layui-icon">&#xe642;</i> -->
-							<!--                                 </label> -->
-							<!--                                 <input type="number" name="validCode" lay-verify="required|number" autocomplete="off" placeholder="输入右侧计算结果." class="layui-input"> -->
-							<!--                                 <span class="form-code" id="changeCode" style="position:absolute;right:2px; top:2px;"> -->
-							<!--                                     <img src="./build/images/GetVerfiyCode.png" id="refImg" style="cursor:pointer;" title="点击刷新"/> -->
-							<!--                                 </span> -->
-							<!--                             </div> -->
+<div class="container demo-1">
+    <div class="content">
+        <div id="large-header" class="large-header">
+            <div class="kit-login-box">
+                <header>
+                    <h1>用户权限系统</h1>
+                </header>
+                <div class="kit-login-main">
+                    <form action="/" class="layui-form" method="post" id="loginForm">
+                        <div class="layui-form-item">
+                            <label class="kit-login-icon">
+                                <i class="layui-icon">&#xe612;</i>
+                            </label>
+                            <input type="text" name="userName" lay-verify="required" autocomplete="off"
+                                   placeholder="请输入用户名" class="layui-input">
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="kit-login-icon">
+                                <i class="layui-icon">&#xe642;</i>
+                            </label>
+                            <input type="password" name="password" lay-verify="required"
+                                   autocomplete="off" placeholder="请输入密码" class="layui-input">
+                        </div>
+                        <!--<div class="layui-form-item">-->
+                        <!--<label class="kit-login-icon">-->
+                        <!--<i class="layui-icon">&#xe642;</i>-->
+                        <!--</label>-->
+                        <!--<input type="number" name="validCode" lay-verify="required|number" autocomplete="off"-->
+                        <!--placeholder="输入右侧计算结果." class="layui-input">-->
+                        <!--<span class="form-code" id="changeCode" style="position:absolute;right:2px; top:2px;">-->
+                        <!--<img src="./build/images/GetVerfiyCode.png" id="refImg" style="cursor:pointer;"-->
+                        <!--title="点击刷新"/>-->
+                        <!--</span>-->
+                        <!--</div>-->
+                        <div class="layui-form-item">
+                            <div class="kit-pull-left kit-login-remember">
+                                <input type="checkbox" name="rememberMe" value="true" lay-skin="primary" checked
+                                       title="记住帐号?">
+                            </div>
+                            <div class="kit-pull-right">
+                                <button class="layui-btn layui-btn-primary" lay-submit lay-filter="login">
+                                    <i class="fa fa-sign-in" aria-hidden="true"></i> 登录
+                                </button>
+                            </div>
+                            <div class="kit-clear"></div>
+                        </div>
+                    </form>
+                </div>
+                <footer>
+                    <p>
+                        2018 © <a href="#" style="color: white; font-size: 18px;" target="_blank">鸿特信息</a>
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /container -->
+<script src="./plugins/layui/layui.js"></script>
 
-							<input type="hidden" id="app" name="app" value="UC" />
-							<div class="layui-form-item">
-								<div class="kit-pull-left kit-login-remember">
-									<input type="checkbox" name="rememberMe" value="true"
-										lay-skin="primary" checked title="记住帐号?">
-								</div>
-								<div class="kit-pull-right">
-									<button class="layui-btn layui-btn-primary" lay-submit
-										lay-filter="login">
-										<i class="fa fa-sign-in" aria-hidden="true"></i> 登录
-									</button>
-								</div>
-								<div class="kit-clear"></div>
-							</div>
-						</form>
-					</div>
-					<footer>
-						<p>
-							2018 © <a href="#"
-								style="color: white; font-size: 18px;" target="_blank">鸿特信息</a>
-						</p>
-					</footer>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- /container -->
-	<script src="./plugins/sideshow/js/jquery-1.8.3.js"></script>
-	<script src="./plugins/sideshow/js/login.js"></script>
-	<script src="./plugins/layui/layui.js"></script>
-	<script src="./plugins/sideshow/js/TweenLite.min.js"></script>
-	<script src="./plugins/sideshow/js/EasePack.min.js"></script>
-	<script src="./plugins/sideshow/js/rAF.js"></script>
-	<script src="./plugins/sideshow/js/demo-1.js"></script>
+<script>
+    layui.config({
+        base: '/js/modules/',
+        version: false
+    }).use(['layer', 'form', 'cookie', 'config', 'ht_ajax'], function () {
+        var layer = layui.layer, $ = layui.jquery, form = layui.form, cookie = layui.cookie, config = layui.config;
 
-	<script>
-		layui
-				.use(
-						[ 'layer', 'form' ],
-						function() {
-							var layer = layui.layer, $ = layui.jquery, form = layui.form;
+        //判断是否已登录，如果已登录，则直接进入主页
+        if (cookie.getToken() != null && cookie.getToken() != "") {
+            top.location.href = '/';
+        }
 
-							$('#changeCode')
-									.on(
-											'click',
-											function() {
-												$('#changeCode > img')[0].src = './build/images/GetVerfiyCode.png';
-											});
+        $('#changeCode').on('click', function () {
+            $('#changeCode > img')[0].src = './build/images/GetVerfiyCode.png';
+        });
 
-							//清理左侧菜单缓存
-							var index = layer.load(2, {
-								shade : [ 0.3, '#333' ]
-							});
-							$(window).on('load', function() {
-								layer.close(index);
-								form.on('submit(login)', function(data) {
-// 									var loadIndex = layer.load(2, {
-// 										shade : [ 0.3, '#333' ]
-									
-// 									});
-									login();
-									
-									
+        //系统编码统一通过头信息传入后台
+        //清理左侧菜单缓存
+        var index = layer.load(2, {shade: [0.3, '#333']});
+        $(window).on('load', function () {
+            layer.close(index);
+            form.on('submit(login)', function (data) {
+                $.ajax({
+                    type: "POST",
+                    url: config.basePath + "api/auth/login",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(data.field),
+                    async: false,
+                    dataType: "json",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+                    },
+                    success: function (data) {
+                        if (data && data["token"] != null & data["token"] != "") {
+                            cookie.setToken(data["token"]);
+                            cookie.setRefreshToken(data["refreshToken"]);
+                            top.location.href = '/';
+                        } else {
+                            layer.alert("登录失败，请联系管理员");
+                        }
+                    },
+                    error: function (xhr, exception, errorThrown) {
+                        if (xhr.status == '401' || xhr.status == '403') {
+                            layer.alert("用户名或密码错误，请重新登录");
+                        }
+                        if (xhr.status == '500') {
+                            layer.alert("服务器错误，请联系管理员");
+                        }
+                        if (xhr.status == '0') {
+                            layer.alert("网络错误，请检查网络")
+                        }
+                        $(':input', '#loginForm').not(':button,:submit,:reset,:hidden').val('').removeAttr('checked').removeAttr('checked');
+                    }
+                });
 
-									// $.post(data.form.action, data.field, function(res) {
-									//     if (!res.rel) {
-									//         layer.msg(res.msg, {
-									//             icon: 2
-									//         });
-									//         loadIndex && layer.close(loadIndex);
-									//         $('#changeCode').click(); //刷新验证码
-									//     } else {
-									//         setTimeout(function() {
-									//             location.href = '/'
-									//         }, 1500);
-									//     }
-									// }, 'json');
-									return false;
-								});
-							}());
+                // $.post(data.form.action, data.field, function(res) {
+                //     if (!res.rel) {
+                //         layer.msg(res.msg, {
+                //             icon: 2
+                //         });
+                //         loadIndex && layer.close(loadIndex);
+                //         $('#changeCode').click(); //刷新验证码
+                //     } else {
+                //         setTimeout(function() {
+                //             location.href = '/'
+                //         }, 1500);
+                //     }
+                // }, 'json');
+                return false;
+            });
+        }());
 
-						});
-	</script>
+    });
+</script>
 </body>
 
 </html>
