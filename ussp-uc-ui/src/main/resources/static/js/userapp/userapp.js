@@ -1,4 +1,4 @@
-var loadUserListUrl=basepath + 'user/loadListByPage.json'; //列出所有用户信息
+var loadUserListUrl=basepath + 'user/loadListByPage.json'; //列出所有用户系统信息
 var loadUserAppListUrl=basepath + 'userapp/listUserAppByPage.json'; //列出用户所有系统
 var delUserAppListUrl=basepath + 'userapp/delete'; //删除用户角色 /delete/{id}
 var stopUserAppListUrl=basepath + 'userapp/stop'; //禁用/启用用户角色 /stop/{id}/{status}

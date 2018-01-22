@@ -1,11 +1,6 @@
 package com.ht.ussp.uc.app.model;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-
-import com.ht.ussp.uc.app.domain.HtBoaInPosition;
-import com.ht.ussp.uc.app.domain.HtBoaInUser;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
