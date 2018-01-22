@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.data.jpa.repository.Query;
-
 import com.ht.ussp.uc.app.domain.HtBoaInRole;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 
@@ -77,6 +75,9 @@ public class BoaInPositionInfo {
     
     @ApiModelProperty(value = "最后修改时间", dataType = "string")
     Date lastModifiedDatetime;
+    
+    @ApiModelProperty(value = "状态", dataType = "string")
+    String status;
 
     @ApiModelProperty(value = "用户集")
     List<HtBoaInUser> users = new ArrayList<HtBoaInUser>(0);
@@ -89,7 +90,7 @@ public class BoaInPositionInfo {
             String pOrgNameCn, String pOrgType, String rOrgCode,
             String rOrgName, String rOrgNameCn, String rOrgType, String orgPath,
             int sequence, String createOperator, Date createdDatetime,
-            String updateOperator, Date lastModifiedDatetime,int delFlag) {
+            String updateOperator, Date lastModifiedDatetime,int delFlag,String status) {
         this.positionCode = positionCode;
         this.positionName = positionName;
         this.positionNameCn = positionNameCn;
@@ -109,13 +110,14 @@ public class BoaInPositionInfo {
         this.lastModifiedDatetime = lastModifiedDatetime;
         this.delFlag = delFlag;
         this.id = id;
+        this.status = status;
     }
     
 
     public BoaInPositionInfo(long id,String positionCode, String positionName,
             String positionNameCn,   String orgPath,
             int sequence, String createOperator, Date createdDatetime,
-            String updateOperator, Date lastModifiedDatetime,int delFlag) {
+            String updateOperator, Date lastModifiedDatetime,int delFlag,String status) {
         this.positionCode = positionCode;
         this.positionName = positionName;
         this.positionNameCn = positionNameCn;
@@ -127,6 +129,7 @@ public class BoaInPositionInfo {
         this.lastModifiedDatetime = lastModifiedDatetime;
         this.delFlag = delFlag;
         this.id = id;
+        this.status = status;
     }
 
 }

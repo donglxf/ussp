@@ -4,7 +4,6 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,7 +35,7 @@ public class PositionRoleResource {
     @Autowired
     private HtBoaInPositionRoleService htBoaInPositionRoleService;
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
    	@ApiOperation(value = "对内：根据UserId查询岗位角色", notes = "根据UserId查询岗位角色")
     @RequestMapping(value = { "/listPositionRoleByPage"}, method = RequestMethod.POST)
     public PageResult<HtBoaInUserRole> listPositionRoleByPage(PageVo page) {
@@ -58,7 +57,8 @@ public class PositionRoleResource {
            return result;
      }
 
-    @ApiOperation(value = "对内：新增/编辑岗位角色记录", notes = "提交岗位角色信息新增/编辑角色")
+    @SuppressWarnings({ "unused", "rawtypes" })
+    @ApiOperation(value = "对内：岗位绑定角色", notes = "提交岗位编号和角色编号进行绑定")
     @RequestMapping(value = { "/add" }, method = RequestMethod.POST)
     public Result add(@RequestBody HtBoaInPositionRole htBoaInPositionRole) {
         long sl = System.currentTimeMillis(), el = 0L;
@@ -127,7 +127,8 @@ public class PositionRoleResource {
         return Result.buildSuccess();
     }
     
-    @ApiOperation(value = "对内：删除岗位角色记录")
+    @SuppressWarnings("rawtypes")
+    @ApiOperation(value = "对内：岗位解绑角色", notes = "提交岗位编号和角色编号进行解绑")
     @RequestMapping(value = {"/delete" }, method = RequestMethod.POST)
     public Result delete(  Long id) {
         HtBoaInPositionRole u = new HtBoaInPositionRole();

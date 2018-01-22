@@ -2,6 +2,7 @@ var positionListByPageUrl=basepath +"position/in/list.json"; //列出所有岗�
 var addPositionUrl=basepath +"position/in/add"; //添加岗位信息
 var delPositionUrl=basepath +"position/in/delete"; //添加岗位信息
 var orgTreeUrl = basepath +"org/tree.json"; //机构列表
+var statusPositionUrl=basepath +"position/in/stop"; //禁用
 
 layui.use(['form', 'ztree', 'table'], function () {
     var $ = layui.jquery
@@ -44,7 +45,7 @@ layui.use(['form', 'ztree', 'table'], function () {
                     $("input[name=orgCode]", layero).val(nodes[0]["orgCode"]);
                     $("input[name=orgPath]", layero).val(nodes[0]["orgPath"]);
                     $("input[name=rOrgCode]", layero).val(nodes[0]["rootOrgCode"]);
-                    $("input[name=pOrgCode]", layero).val(nodes[0]["parentOrgCode"]);
+                    $("input[name=pOrgCode]", layero).val(nodes[0]["orgCode"]);
                     form.render(null, "filter_add_position_form");
                     form.on('submit(filter_add_position_form)', function (data) {
                         $.ajax({
@@ -55,6 +56,7 @@ layui.use(['form', 'ztree', 'table'], function () {
                             success: function (message) {
                                 layer.close(addDialog);
                                 if (message.returnCode == '0000') {
+                                	 layer.msg("岗位新增成功");
                                     table.reload('position_datatable', {
                                         page: {
                                             curr: 1 //重新从第 1 页开始
@@ -65,7 +67,6 @@ layui.use(['form', 'ztree', 'table'], function () {
                                             }
                                         }
                                     });
-                                    layer.alert("岗位新增成功");
                                 }
                             },
                             error: function (message) {
@@ -175,18 +176,44 @@ layui.use(['form', 'ztree', 'table'], function () {
         , cols: [[
             {type: 'numbers'}
             , {field: 'positionCode', width: 120, title: '岗位编号'}
-            , {field: 'positionNameCn', width: 200, title: '岗位名称'}
+            , {field: 'positionNameCn',   title: '岗位名称'}
             , {field: 'porgNameCn', width: 220, title: '所属机构'}
-            , {field: 'delFlag', width: 100, title: '状态'}
+            , {field: 'status', templet: '#statusTpl', width: 100, title: '状态'}
             , {field: 'createOperator', width: 100, title: '创建人'}
-            , {field: 'createdDatetime', width: 150, title: '创建时间'}
+            , {field: 'createdDatetime',   templet:'#createTimeTpl', title: '创建时间'}
             , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#position_datatable_bar'}
         ]]
     });
     //监听操作栏
     table.on('tool(filter_position_datatable)', function (obj) {
         var data = obj.data;
-        if (obj.event === 'detail') {
+        if (obj.event === 'stopOrStart') {
+        	if(data.status==0){//启用状态，是否需要禁用
+        		layer.confirm('是否禁用岗位？', function (index) {
+                  	 $.post(statusPositionUrl+"?id=" + data.id+"&status=1", null, function (result) {
+                           if (result["returnCode"] == "0000") {
+                               refreshTable();
+                               layer.close(index);
+                               layer.msg("禁用岗位成功");
+                           } else {
+                               layer.msg(result.codeDesc);
+                           }
+                       });
+                  });
+        	}else{
+        		layer.confirm('是否启用岗位？', function (index) {
+                  	 $.post(statusPositionUrl+"?id=" + data.id+"&status=0", null, function (result) {
+                           if (result["returnCode"] == "0000") {
+                               refreshTable();
+                               layer.close(index);
+                               layer.msg("启用岗位成功");
+                           } else {
+                               layer.msg(result.codeDesc);
+                           }
+                       });
+                  });
+        	}
+        }  else if (obj.event === 'detail') {
         	 viewDialog = layer.open({
                  type: 1,
                  area: ['400px', '400px'],
@@ -225,7 +252,7 @@ layui.use(['form', 'ztree', 'table'], function () {
                  area: ['400px', '400px'],
                  maxmin: true,
                  shadeClose: true,
-                 title: "新增岗位",
+                 title: "修改岗位",
                  content: $("#position_modify_data_div").html(),
                  btn: ['保存', '取消'],
                  yes: function (index, layero) {
@@ -258,8 +285,8 @@ layui.use(['form', 'ztree', 'table'], function () {
                             success: function (result2) {
                                 layer.close(editDialog);
                                 if (result2["returnCode"] == '0000') {
+                                	layer.msg("岗位修改成功");
                                     refreshTable();
-                                    layer.alert("岗位修改成功");
                                 }
                             },
                             error: function (message) {

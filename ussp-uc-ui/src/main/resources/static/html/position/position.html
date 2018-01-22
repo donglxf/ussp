@@ -56,10 +56,25 @@
             <table id="position_datatable" lay-filter="filter_position_datatable">
             </table>
             <script type="text/html" id="position_datatable_bar">
-                <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+               
+ {{#  if(d.status == '0'){ }}
+                <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="stopOrStart">禁用</a>
+{{#  } else { }}
+ <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="stopOrStart">启用</a>
+{{#  } }}
                 <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
                 <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
             </script>
+            <script type="text/html" id="createTimeTpl">
+              {{new Date( d.createdDatetime ).Format('yyyy-MM-dd HH:mm:ss')}} 
+		    </script>
+		     <script type="text/html" id="statusTpl">
+      {{#  if(d.status == '0'){ }}
+                      启用
+      {{#  } else { }}
+                     禁用
+      {{#  } }}
+	        </script>
         </div>
     </div>
     <!--新增表单-->
