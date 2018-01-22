@@ -94,7 +94,7 @@
         "id": "23",
         "title": "系统信息管理",
         "icon": "fa-github",
-        "url": "cop.html"
+        "url": "/html/app/app.html"
       }
     ]
   }

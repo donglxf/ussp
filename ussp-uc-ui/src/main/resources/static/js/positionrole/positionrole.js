@@ -193,7 +193,7 @@ layui.use(['form', 'ztree', 'table'], function () {
         , cols: [[
             {type: 'numbers'}
             , {field: 'roleCode', width: 150, title: '角色编号'}
-            , {field: 'roleNameCn', width: 300, title: '角色名称'}
+            , {field: 'roleNameCn',   title: '角色名称'}
             , {field: 'status', width: 100,templet: '#positionrole_statusTpl', title: '状态'}
             , {field: 'createOperator', width: 150, title: '创建人'}
             , {field: 'createdDatetime', width: 200,templet: '#createTimeTpl', title: '创建时间'}
