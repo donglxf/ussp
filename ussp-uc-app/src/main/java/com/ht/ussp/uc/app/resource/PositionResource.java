@@ -16,7 +16,6 @@ import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInPosition;
-import com.ht.ussp.uc.app.domain.HtBoaInRole;
 import com.ht.ussp.uc.app.model.BoaInPositionInfo;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
@@ -129,6 +128,7 @@ public class PositionResource {
         log.info(logEnd, "codes: " + id, msg, el, el - sl);
         return Result.buildSuccess();
     }
+ 
    
     @SuppressWarnings("rawtypes")
    	@ApiOperation(value = "对内：删除标记岗位记录", notes = "提交岗位编号，可批量删除")
@@ -149,6 +149,8 @@ public class PositionResource {
        log.info(logEnd, "codes: " + id, msg, el, el - sl);
        return Result.buildSuccess();
     }
+    
+ 
     
     @SuppressWarnings("rawtypes")
    	@ApiOperation(value = "对内：禁用/启用岗位")

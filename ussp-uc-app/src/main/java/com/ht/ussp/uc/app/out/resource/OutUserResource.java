@@ -67,7 +67,7 @@ public class OutUserResource {
             return r;
         el = System.currentTimeMillis();
         log.info(logEnd, "userId: " + userId, msg, el, el - sl);
-        return new ResponseModal(200, msg, selfUserInfoList.get(0));
+        return new ResponseModal("200", msg, selfUserInfoList.get(0));
     }
 
     @ApiOperation(value = "对外：用户个人信息修改", notes = "已登录用户修改自己的个人信息")
@@ -121,7 +121,7 @@ public class OutUserResource {
             return r;
         el = System.currentTimeMillis();
         log.info(logEnd, "selfUserInfo: " + selfBoaOutUserInfo, msg, el, el - sl);
-        return new ResponseModal(200, msg, selfUserInfoList.get(0));
+        return new ResponseModal("200", msg, selfUserInfoList.get(0));
     }
 
     protected ResponseModal exceptionReturn(String logEnd, String param,
@@ -132,12 +132,12 @@ public class OutUserResource {
             String msg = "无效参数，" + exInfo + "查无信息体";
             long el = System.currentTimeMillis();
             log.error(logEnd, param, msg, el, el - sl);
-            return new ResponseModal(500, msg);
+            return new ResponseModal("500", msg);
         } else if (row != list.size()) {
             String msg = "查询异常！查出" + exInfo + "记录数不符合要求";
             long el = System.currentTimeMillis();
             log.error(logEnd, param, msg, el, el - sl);
-            return new ResponseModal(500, msg);
+            return new ResponseModal("500", msg);
         }
         return null;
     }
