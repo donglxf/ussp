@@ -55,7 +55,7 @@ public class OutRoleResource {
         Object o = htBoaOutRoleService.findAllByPage(pageConf);
         el = System.currentTimeMillis();
         log.info(logEnd, "pageConf: " + pageConf, msg, el, el - sl);
-        return new ResponseModal(200, msg, o);
+        return new ResponseModal("200", msg, o);
     }
     
     @ApiOperation(value = "对外：新增/编辑角色记录", notes = "提交角色基础信息新增/编辑角色")
@@ -97,7 +97,7 @@ public class OutRoleResource {
             u = htBoaOutRoleService.update(u);
         el = System.currentTimeMillis();
         log.info(logEnd, "BoaOutRoleInfo: " + BoaOutRoleInfo, msg, el, el - sl);
-        return new ResponseModal(200, msg, u);
+        return new ResponseModal("200", msg, u);
     }
     
     @ApiOperation(value = "对外：删除角色记录", notes = "提交角色编号，可批量删除")
@@ -114,7 +114,7 @@ public class OutRoleResource {
         htBoaOutRoleService.delete(codes.getCodes());
         el = System.currentTimeMillis();
         log.info(logEnd, "codes: " + codes, msg, el, el - sl);
-        return new ResponseModal(200, msg);
+        return new ResponseModal("200", msg);
     }
 
     protected ResponseModal exceptionReturn(String logEnd, String param,
@@ -125,12 +125,12 @@ public class OutRoleResource {
             String msg = "无效参数，" + exInfo + "查无信息体";
             long el = System.currentTimeMillis();
             log.error(logEnd, param, msg, el, el - sl);
-            return new ResponseModal(500, msg);
+            return new ResponseModal("500", msg);
         } else if (row != list.size()) {
             String msg = "查询异常！查出" + exInfo + "记录数不符合要求";
             long el = System.currentTimeMillis();
             log.error(logEnd, param, msg, el, el - sl);
-            return new ResponseModal(500, msg);
+            return new ResponseModal("500", msg);
         }
         return null;
     }

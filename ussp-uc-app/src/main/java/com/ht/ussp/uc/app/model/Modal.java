@@ -7,23 +7,23 @@ public class Modal {
 		super();
 	}
 
-	public Modal(int status_code, String result_msg) {
+	public Modal(String status_code, String result_msg) {
 		super();
 		this.status_code = status_code;	
 		this.result_msg = result_msg;
 	}
 
-	private int status_code;
+	private String status_code;
 	
 	private String result_msg;
 
  
 	
-	public int getStatus_code() {
+	public String getStatus_code() {
 		return status_code;
 	}
 
-	public void setStatus_code(int status_code) {
+	public void setStatus_code(String status_code) {
 		this.status_code = status_code;
 	}
 

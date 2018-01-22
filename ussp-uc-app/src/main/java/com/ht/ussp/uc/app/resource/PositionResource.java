@@ -156,7 +156,7 @@ public class PositionResource {
         u = htBoaInPositionRoleService.add(u);
         el = System.currentTimeMillis();
         log.info(logEnd, "positionCode: " + positionCode + " roleCode: " + roleCode, msg, el, el - sl);
-        return new ResponseModal(200, msg, u);
+        return new ResponseModal("200", msg, u);
     }
     
     @ApiOperation(value = "对内：岗位解绑角色", notes = "提交岗位编号和角色编号进行解绑")
@@ -175,7 +175,7 @@ public class PositionResource {
         htBoaInPositionRoleService.delete(positionCode, roleCode);
         el = System.currentTimeMillis();
         log.info(logEnd, "positionCode: " + positionCode + " roleCode: " + roleCode, msg, el, el - sl);
-        return new ResponseModal(200, msg);
+        return new ResponseModal("200", msg);
     }
 
 }
