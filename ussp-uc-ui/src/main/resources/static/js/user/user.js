@@ -1,4 +1,4 @@
-layui.use(['form', 'ztree', 'table'], function () {
+layui.use(['ht', 'form', 'ztree', 'table'], function () {
     var $ = layui.jquery
         , form = layui.form
         , table = layui.table

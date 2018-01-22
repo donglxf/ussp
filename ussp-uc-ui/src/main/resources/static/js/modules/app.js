@@ -6,17 +6,14 @@
  * LICENSE:MIT
  */
 var tab;
-layui.define(['element', 'nprogress', 'form', 'table', 'loader', 'tab', 'navbar', 'onelevel', 'laytpl', 'spa'], function (exports) {
+layui.define(['element', 'table', 'nprogress', 'tab', 'navbar', 'onelevel', 'laytpl', 'spa'], function (exports) {
     var $ = layui.jquery,
         element = layui.element,
         table = layui.table,
-        layer = layui.layer,
         _win = $(window),
         _doc = $(document),
         _body = $('.kit-body'),
-        form = layui.form,
         //table = layui.table,
-        loader = layui.loader,
         navbar = layui.navbar,
         _componentPath = 'components/',
         spa = layui.spa,
