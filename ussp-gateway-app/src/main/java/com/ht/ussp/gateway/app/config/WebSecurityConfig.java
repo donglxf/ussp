@@ -37,9 +37,9 @@ import com.ht.ussp.gateway.app.security.point.RestAuthenticationEntryPoint;
 @EnableWebSecurity  
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public static final String AUTHENTICATION_HEADER_NAME = "Authorization";
-    public static final String AUTHENTICATION_URL = "/api/auth/login";
-    public static final String REFRESH_TOKEN_URL = "/api/auth/token";
-    public static final String API_ROOT_URL = "/api/**";
+    public static final String AUTHENTICATION_URL = "/uaa/auth/login";
+    public static final String REFRESH_TOKEN_URL = "/uaa/auth/token";
+    public static final String API_ROOT_URL = "/uaa/**";
 
     @Autowired private RestAuthenticationEntryPoint authenticationEntryPoint;
     @Autowired private AuthenticationSuccessHandler successHandler;
