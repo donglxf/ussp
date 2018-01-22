@@ -1,4 +1,4 @@
-package com.ht.ussp.uc.app.util;
+package com.ht.ussp.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

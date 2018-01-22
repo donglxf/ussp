@@ -53,6 +53,7 @@ public class AccessFilter extends ZuulFilter {
 		HttpServletRequest request = ctx.getRequest();
 		// 必须带Authorization
 		String tokenPayload = request.getHeader(WebSecurityConfig.AUTHENTICATION_HEADER_NAME);
+		String app=request.getHeader("app");
 		if (StringUtils.isEmpty(tokenPayload)) {
 			ctx.setSendZuulResponse(false);
 			ctx.setResponseStatusCode(417);
@@ -77,7 +78,7 @@ public class AccessFilter extends ZuulFilter {
 		String userId = jwsClaims.getBody().get("userId").toString();
 		String orgCode = jwsClaims.getBody().get("orgCode").toString();
 		StringBuffer api_key = new StringBuffer();
-		api_key.append(userId).append(":").append("app").append(":").append("api");
+		api_key.append(userId).append(":").append(app).append(":").append("api");
 
 		if (!roleClient.IsHasAuth(api_key.toString(), validateUrl)) {
 			ctx.setSendZuulResponse(false);

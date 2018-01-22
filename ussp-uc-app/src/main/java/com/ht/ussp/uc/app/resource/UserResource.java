@@ -20,11 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
-import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
-import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
 import com.ht.ussp.uc.app.domain.HtBoaInUserRole;
 import com.ht.ussp.uc.app.model.ChangePwd;
 import com.ht.ussp.uc.app.model.PageConf;
@@ -41,12 +39,12 @@ import com.ht.ussp.uc.app.service.HtBoaInRoleService;
 import com.ht.ussp.uc.app.service.HtBoaInUserAppService;
 import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
-import com.ht.ussp.uc.app.util.BeanUtils;
-import com.ht.ussp.uc.app.util.LogicUtil;
 import com.ht.ussp.uc.app.vo.PageVo;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
 import com.ht.ussp.uc.app.vo.UserVo;
+import com.ht.ussp.util.BeanUtils;
 import com.ht.ussp.util.EncryptUtil;
+import com.ht.ussp.util.LogicUtil;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -72,18 +70,7 @@ public class UserResource {
 	@Autowired
 	private HtBoaInLoginService htBoaInLoginService;
 	@Autowired
-	private HtBoaInOrgService htBoaInOrgService;
-	@Autowired
-	private HtBoaInRoleService htBoaInRoleService;
-	@Autowired
-	private HtBoaInPositionService htBoaInPositionService;
-	@Autowired
 	private HtBoaInUserRoleService htBoaInUserRoleService;
-	@Autowired
-	private HtBoaInPositionUserService htBoaInPositionUserService;
-	@Autowired
-	private HtBoaInPositionRoleService htBoaInPositionRoleService;
-
 	@Autowired
 	private HtBoaInPwdHistService htBoaInPwdHistService;
 

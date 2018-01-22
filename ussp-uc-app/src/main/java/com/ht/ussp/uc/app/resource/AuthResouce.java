@@ -20,7 +20,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ht.ussp.client.dto.ApiInfoDto;
 import com.ht.ussp.client.dto.ApiResourceDto;
-import com.ht.ussp.uc.app.common.Constants;
+import com.ht.ussp.common.Constants;
 import com.ht.ussp.uc.app.domain.HtBoaInResource;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.model.SysStatus;
@@ -28,10 +28,10 @@ import com.ht.ussp.uc.app.service.HtBoaInResourceService;
 import com.ht.ussp.uc.app.service.HtBoaInRoleResService;
 import com.ht.ussp.uc.app.service.HtBoaInUserAppService;
 import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
-import com.ht.ussp.uc.app.util.FastJsonUtil;
-import com.ht.ussp.uc.app.util.LogicUtil;
 import com.ht.ussp.uc.app.vo.ResVo;
 import com.ht.ussp.uc.app.vo.UserVo;
+import com.ht.ussp.util.FastJsonUtil;
+import com.ht.ussp.util.LogicUtil;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
@@ -101,10 +101,10 @@ public class AuthResouce {
 		StringBuffer menu_key = new StringBuffer();
 		StringBuffer button_key = new StringBuffer();
 		StringBuffer api_key = new StringBuffer();
-		module_key.append(userId).append(":").append("app").append(":").append("module");
-		menu_key.append(userId).append(":").append("app").append(":").append("menu");
-		button_key.append(userId).append(":").append("app").append(":").append("btn");
-		api_key.append(userId).append(":").append("app").append(":").append("api");
+		module_key.append(userId).append(":").append(app).append(":").append("module");
+		menu_key.append(userId).append(":").append(app).append(":").append("menu");
+		button_key.append(userId).append(":").append(app).append(":").append("btn");
+		api_key.append(userId).append(":").append(app).append(":").append("api");
 
 		// 所有资源类型
 		res_types.add(Constants.RES_TYPE_BUTTON);
@@ -255,7 +255,7 @@ public class AuthResouce {
 			return rm;
 		}
 		if ("module".equals(resourceName) || "menu".equals(resourceName) || "button".equals(resourceName)) {
-			key.append(userId).append(":").append("app").append(":").append(resourceName);
+			key.append(userId).append(":").append(app).append(":").append(resourceName);
 			try {
 				List<String> resourceValues = redis.opsForList().range(key.toString(), 0, -1);
 				if (!resourceValues.isEmpty()&&!resourceValues.get(0).isEmpty()) {

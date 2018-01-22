@@ -2,6 +2,7 @@ package com.ht.ussp.uc.app.out.resource;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ import com.ht.ussp.uc.app.model.SelfBoaOutUserInfo;
 import com.ht.ussp.uc.app.service.HtBoaOutRoleService;
 import com.ht.ussp.uc.app.service.HtBoaOutUserRoleService;
 import com.ht.ussp.uc.app.service.HtBoaOutUserService;
-import com.ht.ussp.uc.app.util.BeanUtils;
+import com.ht.ussp.util.BeanUtils;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
