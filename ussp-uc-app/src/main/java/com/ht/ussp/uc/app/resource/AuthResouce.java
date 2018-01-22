@@ -254,7 +254,7 @@ public class AuthResouce {
 			rm.setSysStatus(SysStatus.ERROR_PARAM);
 			return rm;
 		}
-		if ("module".equals(resourceName) || "menu".equals(resourceName) || "button".equals(resourceName)) {
+		if ("module".equals(resourceName) || "menu".equals(resourceName) || "btn".equals(resourceName)) {
 			key.append(userId).append(":").append(app).append(":").append(resourceName);
 			try {
 				List<String> resourceValues = redis.opsForList().range(key.toString(), 0, -1);
@@ -284,7 +284,7 @@ public class AuthResouce {
 						res_types.add(Constants.RES_TYPE_GROUP);
 					}
 
-					if("button".equals(resourceName) ) {
+					if("btn".equals(resourceName) ) {
 						res_types.add(Constants.RES_TYPE_BUTTON);
 						res_types.add(Constants.RES_TYPE_TAB);
 					}
@@ -309,7 +309,7 @@ public class AuthResouce {
 				} 
 			} catch (Exception e) {
 				e.printStackTrace();
-				rm.setSysStatus(SysStatus.ERROR);
+				rm.setSysStatus(SysStatus.FAIL);
 				return rm;
 			}
 			return rm;
