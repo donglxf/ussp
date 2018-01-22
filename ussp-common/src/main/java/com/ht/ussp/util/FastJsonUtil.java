@@ -1,4 +1,4 @@
-package com.ht.ussp.gateway.app.util;
+package com.ht.ussp.util;
 
 import java.io.IOException;
 import java.util.List;  

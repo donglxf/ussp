@@ -13,15 +13,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import com.ht.ussp.gateway.app.feignClients.UserClient;
 import com.ht.ussp.gateway.app.model.ResponseModal;
-import com.ht.ussp.gateway.app.util.FastJsonUtil;
 import com.ht.ussp.gateway.app.vo.UserVo;
+import com.ht.ussp.util.FastJsonUtil;
 
 
 /**

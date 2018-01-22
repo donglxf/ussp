@@ -1,9 +1,9 @@
-package com.ht.ussp.uc.app.util;
+package com.ht.ussp.util;
 
 import java.util.Collection;
 import java.util.Map;
 
-import com.ht.ussp.uc.app.common.Constants;
+import com.ht.ussp.common.Constants;
 
 
 /**

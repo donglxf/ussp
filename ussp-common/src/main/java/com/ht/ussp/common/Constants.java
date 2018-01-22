@@ -1,4 +1,5 @@
-package com.ht.ussp.uc.app.common;
+package com.ht.ussp.common;
+
 
 /**
  * 

@@ -2,6 +2,7 @@ package com.ht.ussp.uc.app.service;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Service;
 import com.ht.ussp.uc.app.domain.HtBoaInOperatorLog;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.repository.HtBoaInOperatorLogRepository;
-import com.ht.ussp.uc.app.util.BeanUtils;
+import com.ht.ussp.util.BeanUtils;
 
 @Service
 public class HtBoaInOperatorLogService {
