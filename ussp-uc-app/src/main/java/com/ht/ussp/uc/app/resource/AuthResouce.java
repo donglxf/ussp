@@ -101,10 +101,10 @@ public class AuthResouce {
 		StringBuffer menu_key = new StringBuffer();
 		StringBuffer button_key = new StringBuffer();
 		StringBuffer api_key = new StringBuffer();
-		module_key.append(userId).append(":").append("app").append(":").append("module");
-		menu_key.append(userId).append(":").append("app").append(":").append("menu");
-		button_key.append(userId).append(":").append("app").append(":").append("btn");
-		api_key.append(userId).append(":").append("app").append(":").append("api");
+		module_key.append(userId).append(":").append(app).append(":").append("module");
+		menu_key.append(userId).append(":").append(app).append(":").append("menu");
+		button_key.append(userId).append(":").append(app).append(":").append("btn");
+		api_key.append(userId).append(":").append(app).append(":").append("api");
 
 		// 所有资源类型
 		res_types.add(Constants.RES_TYPE_BUTTON);
@@ -255,7 +255,7 @@ public class AuthResouce {
 			return rm;
 		}
 		if ("module".equals(resourceName) || "menu".equals(resourceName) || "button".equals(resourceName)) {
-			key.append(userId).append(":").append("app").append(":").append(resourceName);
+			key.append(userId).append(":").append(app).append(":").append(resourceName);
 			try {
 				List<String> resourceValues = redis.opsForList().range(key.toString(), 0, -1);
 				if (!resourceValues.isEmpty()&&!resourceValues.get(0).isEmpty()) {
