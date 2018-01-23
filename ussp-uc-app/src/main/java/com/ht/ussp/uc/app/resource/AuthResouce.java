@@ -122,7 +122,6 @@ public class AuthResouce {
 
 		// 非管理员权限操作
 		if ("N".equals(controller)) {
-			
 			List<String> roleCodes=htBoaInUserRoleService.getAllRoleCodes(userId);
 			if(roleCodes.isEmpty()) {
 				rm.setSysStatus(SysStatus.NO_ROLE);
