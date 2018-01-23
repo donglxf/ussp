@@ -30,6 +30,17 @@ public interface HtBoaInUserRepository extends JpaSpecificationExecutor<HtBoaInU
      * @Description: 通过用户名查询用户信息
      */
     HtBoaInUser findByUserName(String userName);
+    
+    /**
+     * 
+     * @Title: findByUserId 
+     * @Description: 通过用户名查询用户信息 
+     * @return HtBoaInUser
+     * @throws
+     * @author wim qiuwenwu@hongte.info 
+     * @date 2018年1月22日 下午9:55:52
+     */
+    HtBoaInUser findByUserId(String userId);
 
     @Query(value = "SELECT " +
             "new com.ht.ussp.uc.app.vo.UserMessageVo(" +

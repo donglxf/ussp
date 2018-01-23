@@ -7,7 +7,11 @@ import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
 import com.ht.ussp.uc.app.repository.HtBoaInLoginRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInUserRepository;
+import com.ht.ussp.uc.app.vo.LoginInfoVo;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
+import com.ht.ussp.util.BeanUtils;
+import com.ht.ussp.util.LogicUtil;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -46,6 +50,17 @@ public class HtBoaInUserService {
         return htBoaInUserRepository.findByUserName(userName);
     }
 
+    
+    public LoginInfoVo queryUserInfo(String userId) {
+		LoginInfoVo loginInfoVo=new LoginInfoVo();
+		UserMessageVo userMessageVo=htBoaInUserRepository.queryUserByUserId(userId);
+		if(LogicUtil.isNull(userMessageVo)) {
+			return null;
+		}
+		BeanUtils.deepCopy(userMessageVo, loginInfoVo);
+		return loginInfoVo;
+	}  
+    
     /**
      * 用户信息分页查询<br>
      *

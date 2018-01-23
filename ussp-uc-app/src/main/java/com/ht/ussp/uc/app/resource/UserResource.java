@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,7 +23,6 @@ import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
-import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
 import com.ht.ussp.uc.app.domain.HtBoaInUserRole;
 import com.ht.ussp.uc.app.model.ChangePwd;
 import com.ht.ussp.uc.app.model.PageConf;
@@ -36,6 +34,7 @@ import com.ht.ussp.uc.app.service.HtBoaInPwdHistService;
 import com.ht.ussp.uc.app.service.HtBoaInUserAppService;
 import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
+import com.ht.ussp.uc.app.vo.LoginInfoVo;
 import com.ht.ussp.uc.app.vo.PageVo;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
 import com.ht.ussp.uc.app.vo.UserVo;
@@ -373,17 +372,11 @@ public class UserResource {
         return Result.buildFail();
     }
     
-	@PostMapping(value = "/queryResource")
-	@ApiOperation(value = "查找资源")
-	public ResponseModal queryResource(@RequestHeader("app") String app, @RequestHeader("userId") String userId) {
-		
-		ResponseModal rm = new ResponseModal();
-		List<HtBoaInUserApp> htBoaInUserApp = htBoaInUserAppRepository.findByuserId(userId);
-		
-		
-		return rm;
-		
+	@GetMapping(value = "/queryUserInfo")
+	@ApiOperation(value = "查找用户信息")
+	public LoginInfoVo queryUserInfo(String userId) {
+		LoginInfoVo loginInfoVo=htBoaInUserService.queryUserInfo(userId);
+		return loginInfoVo;
 	}  
-    
 
 }
