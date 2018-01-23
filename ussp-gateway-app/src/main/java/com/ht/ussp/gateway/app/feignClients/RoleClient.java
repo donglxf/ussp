@@ -1,7 +1,5 @@
 package com.ht.ussp.gateway.app.feignClients;
 
-import java.util.List;
-
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,7 +26,7 @@ public interface RoleClient {
 	 * @throws
 	 */
 	@RequestMapping(value = "/auth/saveResources")
-	public ResponseModal saveResources(UserVo userVo, @RequestParam("roleCodes") List<String> roleCodes);
+	public ResponseModal saveResources(UserVo userVo);
 
 	/**
 	 * 

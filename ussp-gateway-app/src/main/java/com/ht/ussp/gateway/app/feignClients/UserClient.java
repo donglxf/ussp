@@ -26,16 +26,16 @@ public interface UserClient {
 	@RequestMapping(value = "/user/validateUser")
 	public ResponseModal validateUser(@RequestParam("app")String app,@RequestParam("userName")String userName);
 	
-	/**
-	 * 
-	 * @Title: getRoleCodes 
-	 * @Description: 获取用户角色编码 
-	 * @return ResponseModal
-	 * @throws
-	 */
-	@RequestMapping(value = "/user/getRoleCodes")
-	public ResponseModal getRoleCodes(@RequestParam("userId") String userId);
-	
-	
+//	/**
+//	 * 
+//	 * @Title: getRoleCodes 
+//	 * @Description: 获取用户角色编码 
+//	 * @return ResponseModal
+//	 * @throws
+//	 */
+//	@RequestMapping(value = "/user/getRoleCodes")
+//	public ResponseModal getRoleCodes(@RequestParam("userId") String userId);
+//	
+//	
 }
 

@@ -79,8 +79,7 @@ public class AuthResouce {
 	 */
 	@PostMapping(value = "/saveResources")
 	@ApiOperation(value = "获取并保存用户资源")
-	public ResponseModal saveResourcesToRedis(@RequestBody UserVo userVo,
-			@RequestParam(value = "roleCodes", required = true) List<String> roleCodes) {
+	public ResponseModal saveResourcesToRedis(@RequestBody UserVo userVo) {
 		ResponseModal rm = new ResponseModal();
 		if (null == userVo || LogicUtil.isNullOrEmpty(userVo.getUserId()) || LogicUtil.isNullOrEmpty(userVo.getApp())) {
 			rm.setSysStatus(SysStatus.ERROR_PARAM);
@@ -123,6 +122,12 @@ public class AuthResouce {
 
 		// 非管理员权限操作
 		if ("N".equals(controller)) {
+			
+			List<String> roleCodes=htBoaInUserRoleService.getAllRoleCodes(userId);
+			if(roleCodes.isEmpty()) {
+				rm.setSysStatus(SysStatus.NO_ROLE);
+				return rm;
+			}
 			List<String> res_code = htBoaInRoleResService.queryResByCode(roleCodes);
 
 			if (res_code.size() > 0) {
