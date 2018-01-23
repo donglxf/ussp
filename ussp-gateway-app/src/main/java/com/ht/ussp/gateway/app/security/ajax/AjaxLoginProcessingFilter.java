@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.ussp.gateway.app.exception.AuthMethodNotSupportedException;
 import com.ht.ussp.gateway.app.model.LoginRequest;
 import com.ht.ussp.gateway.app.util.WebUtil;
+import com.ht.ussp.util.LogicUtil;
 
 /**
  * 
@@ -60,14 +61,20 @@ public class AjaxLoginProcessingFilter extends AbstractAuthenticationProcessingF
         }
 
         LoginRequest loginRequest = objectMapper.readValue(request.getReader(), LoginRequest.class);
-        
+        String app=request.getHeader("app");
         if (StringUtils.isBlank(loginRequest.getUserName()) || StringUtils.isBlank(loginRequest.getPassword())) {
             throw new AuthenticationServiceException("UserName or Password not provided");
-        }else if(((String)loginRequest.getUserName()).indexOf(";")<=0){
+        }else if(LogicUtil.isNullOrEmpty(app)) {
+        	//app改为header获取
         	throw new AuthenticationServiceException("app not provided");
         }
+        
+//        else if(((String)loginRequest.getUserName()).indexOf(";")<=0){
+//        	throw new AuthenticationServiceException("app not provided");
+//        }
+        
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(loginRequest.getUserName(), loginRequest.getPassword());
-
+        authentication.setDetails(app);
         return this.getAuthenticationManager().authenticate(authentication);
     }
 

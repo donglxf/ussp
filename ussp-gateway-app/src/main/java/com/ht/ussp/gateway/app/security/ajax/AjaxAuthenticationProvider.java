@@ -44,13 +44,13 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         Assert.notNull(authentication, "No authentication data provided");
-        String userName=null;
-        String app=null;
-        String params = (String) authentication.getPrincipal();
-        if(params.indexOf(";")>0) {
-        	 app=params.split(";")[0];
-        	userName=params.split(";")[1];
-        }
+        String userName=authentication.getPrincipal().toString();
+        String app=authentication.getDetails().toString();
+//        String params = (String) authentication.getPrincipal();
+//        if(params.indexOf(";")>0) {
+//        	 app=params.split(";")[0];
+//        	userName=params.split(";")[1];
+//        }
         ResponseModal loginJson = userClient.validateUser(app,userName);
         if(!"0000".equals(loginJson.getStatus_code())) {
         	throw new AuthenticationCredentialsNotFoundException(loginJson.getResult_msg());

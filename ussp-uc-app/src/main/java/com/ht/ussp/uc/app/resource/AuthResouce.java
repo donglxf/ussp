@@ -83,7 +83,7 @@ public class AuthResouce {
 			@RequestParam(value = "roleCodes", required = true) List<String> roleCodes) {
 		ResponseModal rm = new ResponseModal();
 		if (null == userVo || LogicUtil.isNullOrEmpty(userVo.getUserId()) || LogicUtil.isNullOrEmpty(userVo.getApp())) {
-			rm.setSysStatus(SysStatus.MAILPARAM_ERROR);
+			rm.setSysStatus(SysStatus.ERROR_PARAM);
 			return rm;
 		}
 		String userId = userVo.getUserId();
@@ -301,7 +301,7 @@ public class AuthResouce {
         ResponseModal rm = new ResponseModal();
         StringBuffer key = new StringBuffer();
         if (LogicUtil.isNullOrEmpty(resourceName) || LogicUtil.isNullOrEmpty(app) || LogicUtil.isNullOrEmpty(userId)) {
-            rm.setSysStatus(SysStatus.PARAM_ERROR);
+            rm.setSysStatus(SysStatus.ERROR_PARAM);
             return rm;
         }
         if ("module".equals(resourceName) || "menu".equals(resourceName) || "button".equals(resourceName)) {
@@ -359,12 +359,12 @@ public class AuthResouce {
 				} 
 			} catch (Exception e) {
 				e.printStackTrace();
-				rm.setSysStatus(SysStatus.ERROR);
+				rm.setSysStatus(SysStatus.FAIL);
 				return rm;
 			}
 			return rm;
 		} else {
-			rm.setSysStatus(SysStatus.PARAM_ERROR);
+			rm.setSysStatus(SysStatus.ERROR_PARAM);
 			return rm;
 		}
 	}
