@@ -638,6 +638,9 @@ layui.define(['laytpl', 'laypage', 'layer', 'form'], function (exports) {
             options.page.count = count; //更新总条数
             laypage.render(options.page);
         }
+
+        //add by 谭荣巧 2018/1/22 新增渲染完成事件
+        layui.event.call(this, MOD_NAME, 'renderComplete(' + options.elem.attr('lay-filter') + ')', {});
     };
 
     //找到对应的列元素

@@ -176,8 +176,8 @@
     layui.config({
         base: '/js/modules/',
         version: false
-    }).use(['layer', 'form', 'cookie', 'config', 'ht_ajax'], function () {
-        var layer = layui.layer, $ = layui.jquery, form = layui.form, cookie = layui.cookie, config = layui.config;
+    }).use(['layer', 'form', 'cookie', 'ht_config', 'ht_ajax'], function () {
+        var $ = layui.jquery, form = layui.form, cookie = layui.cookie, ht_config = layui.ht_config;
 
         //判断是否已登录，如果已登录，则直接进入主页
         if (cookie.getToken() != null && cookie.getToken() != "") {
@@ -196,7 +196,7 @@
             form.on('submit(login)', function (data) {
                 $.ajax({
                     type: "POST",
-                    url: config.basePath + "api/auth/login",
+                    url: ht_config.basePath + "api/auth/login",
                     contentType: "application/json; charset=utf-8",
                     data: JSON.stringify(data.field),
                     async: false,
