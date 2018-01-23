@@ -167,4 +167,8 @@ public class HtBoaInResourceService {
         }
         return resVoList;
     }
+
+    public List<HtBoaInResource> getByResParentAndResTypeIn(String resParent, String[] resType) {
+        return htBoaInResourceRepository.findByResParentAndResTypeIn(resParent, resType);
+    }
 }

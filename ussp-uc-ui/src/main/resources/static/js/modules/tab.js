@@ -19,7 +19,7 @@ layui.define(['jquery', 'element', 'nprogress', 'utils'], function (exports) {
     var Tab = function () {
         this.config = {
             elem: undefined,
-            mainUrl: '/html/resource/resource.html',
+            mainUrl: '/main.html',
             renderType: 'page',
             openWait: false
         };

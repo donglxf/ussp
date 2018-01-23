@@ -1,5 +1,6 @@
-layui.use(['form', 'ztree', 'table', 'ht_auth_button'], function () {
+layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth_button'], function () {
     var $ = layui.jquery
+        , config = layui.ht_config
         , form = layui.form
         , table = layui.table
         , ht_auth_button = layui.ht_auth_button
@@ -43,7 +44,7 @@ layui.use(['form', 'ztree', 'table', 'ht_auth_button'], function () {
                     form.on('submit(filter_add_data_form)', function (data) {
                         $.ajax({
                             type: "POST",
-                            url: basepath + "user/add",
+                            url: config.basePath + "user/add",
                             data: JSON.stringify(data.field),
                             contentType: "application/json; charset=utf-8",
                             success: function (result) {
@@ -90,7 +91,7 @@ layui.use(['form', 'ztree', 'table', 'ht_auth_button'], function () {
     orgTree = $.fn.zTree.init($('#user_org_ztree_left'), {
             async: {
                 enable: true,
-                url: basepath + "org/tree.json",
+                url: config.basePath + "org/tree",
                 dataFilter: function (treeId, parentNode, childNodes) {
                     if (!childNodes) return null;
                     for (var i = 0, l = childNodes.length; i < l; i++) {
@@ -135,7 +136,7 @@ layui.use(['form', 'ztree', 'table', 'ht_auth_button'], function () {
     table.render({
         id: 'user_datatable'
         , elem: '#user_datatable'
-        , url: basepath + 'user/loadListByPage.json'
+        , url: config.basePath + 'user/loadListByPage'
         // , where: {
         //     query: {
         //         orgCode: "DEV1"
@@ -161,7 +162,7 @@ layui.use(['form', 'ztree', 'table', 'ht_auth_button'], function () {
     table.on('tool(filter_user_datatable)', function (obj) {
             var data = obj.data;
             if (obj.event === 'detail') {
-                $.post(basepath + "user/view/" + data.userId, null, function (result) {
+                $.post(config.basePath + "user/view/" + data.userId, null, function (result) {
                     if (result["returnCode"] == "0000") {
                         viewDialog = layer.open({
                             type: 1,
@@ -190,7 +191,7 @@ layui.use(['form', 'ztree', 'table', 'ht_auth_button'], function () {
                 });
             } else if (obj.event === 'del') {
                 layer.confirm('是否删除用户' + data.userName + "？", function (index) {
-                    $.post(basepath + "user/delete/" + data.userId, null, function (result) {
+                    $.post(config.basePath + "user/delete/" + data.userId, null, function (result) {
                         if (result["returnCode"] == "0000") {
                             refreshTable();
                             layer.close(index);
@@ -202,7 +203,7 @@ layui.use(['form', 'ztree', 'table', 'ht_auth_button'], function () {
                 });
             } else if (obj.event === 'edit') {
                 layer.close(editDialog);
-                $.post(basepath + "user/view/" + data.userId, null, function (result) {
+                $.post(config.basePath + "user/view/" + data.userId, null, function (result) {
                     if (result["returnCode"] == "0000") {
                         editDialog = layer.open({
                             type: 1,
@@ -234,7 +235,7 @@ layui.use(['form', 'ztree', 'table', 'ht_auth_button'], function () {
                                 form.on('submit(user_filter_modify_data_form)', function (data) {
                                     $.ajax({
                                         type: "POST",
-                                        url: basepath + "user/update",
+                                        url: config.basePath + "user/update",
                                         data: JSON.stringify(data.field),
                                         contentType: "application/json; charset=utf-8",
                                         success: function (result2) {
@@ -296,5 +297,6 @@ layui.use(['form', 'ztree', 'table', 'ht_auth_button'], function () {
             }
         }
     }
+
     ht_auth_button.render();
 })

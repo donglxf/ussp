@@ -50,14 +50,14 @@ public interface HtBoaInRoleRepository
     @Query(value = "SELECT roleAll.ROLE_CODE " +
             "FROM ( " +
             "SELECT ur.ROLE_CODE\n" +
-            "FROM boa.ht_boa_in_user_role ur " +
+            "FROM HT_BOA_IN_USER_ROLE ur " +
             "WHERE ur.USER_ID=?1  " +
             "UNION " +
             "SELECT pr.ROLE_CODE " +
-            "FROM ht_boa_in_position_role pr " +
-            "LEFT JOIN ht_boa_in_position_user pu ON pr.POSITION_CODE=pu.POSITION_CODE " +
+            "FROM HT_BOA_IN_POSITION_ROLE pr " +
+            "LEFT JOIN HT_BOA_IN_POSITION_USER pu ON pr.POSITION_CODE=pu.POSITION_CODE " +
             "WHERE pu.USER_ID=?1) roleAll " +
-            "LEFT JOIN ht_boa_in_role role ON roleAll.ROLE_CODE=role.ROLE_CODE " +
+            "LEFT JOIN HT_BOA_IN_ROLE role ON roleAll.ROLE_CODE=role.ROLE_CODE " +
             "WHERE role.STATUS='0'", nativeQuery = true)
     List<String> findRoleCodeByUserId(String userId);
 

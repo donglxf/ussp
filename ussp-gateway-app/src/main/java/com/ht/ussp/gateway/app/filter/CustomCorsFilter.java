@@ -37,7 +37,7 @@ public class CustomCorsFilter extends CorsFilter {
         config.setAllowedMethods(Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"));
         //注册cors过滤器
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/uaa/**", config);
+        source.registerCorsConfiguration("/**", config);
         return source;
     }
 }
