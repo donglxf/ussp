@@ -24,7 +24,7 @@ public class Constants {
 	public static final String RES_TYPE_GROUP="group";//分组
 	public static final String RES_TYPE_VIEW="view";//页面
 	public static final String RES_TYPE_BUTTON="btn";//按钮
-	public static final String RES_TYPE_TAB="dataAuth";//标签页
+	public static final String RES_TYPE_TAB="tab";//标签页
 	public static final String RES_TYPE_API="api";// API
 	
 }

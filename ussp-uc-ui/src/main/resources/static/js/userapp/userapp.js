@@ -1,4 +1,4 @@
-var loadUserListUrl=basepath + 'user/loadListByPage.json'; //列出所有用户信息
+var loadUserListUrl=basepath + 'user/loadListByPage.json'; //列出所有用户系统信息
 var loadUserAppListUrl=basepath + 'userapp/listUserAppByPage.json'; //列出用户所有系统
 var delUserAppListUrl=basepath + 'userapp/delete'; //删除用户角色 /delete/{id}
 var stopUserAppListUrl=basepath + 'userapp/stop'; //禁用/启用用户角色 /stop/{id}/{status}
@@ -166,11 +166,11 @@ layui.use(['form', 'ztree', 'table'], function () {
         , cols: [[
             {type: 'numbers'}
             , {field: 'jobNumber', width: 100, title: '工号',event:'getRole'}
-            , {field: 'userName',   title: '用户名',event:'getRole'}
+            , {field: 'userName', width: 180,   title: '用户名',event:'getRole'}
             , {field: 'mobile', width: 120, title: '手机',event:'getRole'}
-            , {field: 'email', width: 200, title: '邮箱',event:'getRole'}
+            , {field: 'email', width: 180, title: '邮箱',event:'getRole'}
             , {field: 'idNo', width: 180, title: '身份证',event:'getRole'}
-            , {field: 'orgName', width: 100, title: '所属机构',event:'getRole'}
+            , {field: 'orgName', width: 130, title: '所属机构',event:'getRole'}
             , {field: 'status', width: 60, title: '状态', templet: "#userapp_user_status_laytpl",event:'getRole'}
             , {field: 'updateOperator', width: 100, title: '更新人',event:'getRole'}
             , {field: 'lastModifiedDatetime', width: 150, title: '更新时间',event:'getRole'}
@@ -193,8 +193,8 @@ layui.use(['form', 'ztree', 'table'], function () {
         , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
         , cols: [[
             {type: 'numbers'}
-            , {field: 'app', width: 120, title: '系统编号'}
-            , {field: 'nameCn', width: 200, title: '系统名称'}
+            , {field: 'app',   title: '系统编号'}
+            , {field: 'nameCn',   title: '系统名称'}
             , {field: 'delFlag', width: 100, title: '状态' ,templet: '#userapp_statusTpl'}
             , {field: 'createOperator', width: 100, title: '创建人'}
             , {field: 'createdDatetime', width: 200,templet: '#createTimeTpl', title: '创建时间'}

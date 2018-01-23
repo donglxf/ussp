@@ -46,38 +46,31 @@ public class HtBoaInPositionService {
         List<Order> orders = new ArrayList<Order>();
         if (null != pageConf.getSortNames()) {
             for (int i = 0; i < pageConf.getSortNames().size(); i++) {
-                orders.add(new Order(pageConf.getSortOrders().get(i),
-                        pageConf.getSortNames().get(i)));
+                orders.add(new Order(pageConf.getSortOrders().get(i), pageConf.getSortNames().get(i)));
             }
             sort = new Sort(orders);
         }
         if (null != pageConf.getPage() && null != pageConf.getSize())
-            pageable = new PageRequest(pageConf.getPage(), pageConf.getSize(),
-                    sort);
-        String search = pageConf.getSearch();
+            pageable = new PageRequest(pageConf.getPage(), pageConf.getSize(),  sort);
+        String search = "";
         String orgPath = "";
         if (query != null && query.size() > 0 && query.get("orgCode") != null) {
         	orgPath = "%" +query.get("orgCode")+ "%";
         }
+        if (query != null && query.size() > 0 && query.get("keyWord") != null) {
+        	search = "%" +query.get("keyWord")+ "%";
+        }
         
         if (null == search || 0 == search.trim().length())
             search = "%%";
-        else
-            search = "%" + search + "%";
+    
         
         if (null != pageable) {
             Page<BoaInPositionInfo> p = this.htBoaInPositionRepository.listPositionByPageWeb(pageable, search,orgPath);
-            for (BoaInPositionInfo u : p.getContent()) {
-                u.setUsers(this.htBoaInPositionRepository.listHtBoaInUser(u.getPositionCode()));
-                u.setRoles(this.htBoaInPositionRepository.listHtBoaInRole(u.getPositionCode()));
-            }
             return p;
         } else {
             List<BoaInPositionInfo> p = this.htBoaInPositionRepository.listPositionInfo(search);
-            for (BoaInPositionInfo u : p) {
-                u.setUsers(this.htBoaInPositionRepository.listHtBoaInUser(u.getPositionCode()));
-                u.setRoles(this.htBoaInPositionRepository.listHtBoaInRole(u.getPositionCode()));
-            }
+          
             return p;
         }
     }

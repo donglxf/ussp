@@ -1,13 +1,22 @@
 package com.ht.ussp.uc.app.service;
 
-import com.ht.ussp.uc.app.domain.HtBoaInApp;
-import com.ht.ussp.uc.app.repository.HtBoaInAppRepository;
-import com.ht.ussp.uc.app.vo.AppAndResourceVo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
+import org.springframework.stereotype.Service;
+
+import com.ht.ussp.uc.app.domain.HtBoaInApp;
+import com.ht.ussp.uc.app.model.BoaInAppInfo;
+import com.ht.ussp.uc.app.model.PageConf;
+import com.ht.ussp.uc.app.repository.HtBoaInAppRepository;
+import com.ht.ussp.uc.app.vo.AppAndResourceVo;
 
 @Service
 public class HtBoaInAppService {
@@ -33,5 +42,47 @@ public class HtBoaInAppService {
             aaaList.add(aaa);
         }
         return aaaList;
+    }
+    
+    public Object findAllByPage(PageConf pageConf,Map<String, String> query) {
+        Sort sort = null;
+        Pageable pageable = null;
+        List<Order> orders = new ArrayList<Order>();
+        if (null != pageConf.getSortNames()) {
+            for (int i = 0; i < pageConf.getSortNames().size(); i++) {
+                orders.add(new Order(pageConf.getSortOrders().get(i), pageConf.getSortNames().get(i)));
+            }
+            sort = new Sort(orders);
+        }
+        if (null != pageConf.getPage() && null != pageConf.getSize())
+            pageable = new PageRequest(pageConf.getPage(), pageConf.getSize(), sort);
+        
+        String orgPath = "";
+        if (query != null && query.size() > 0 && query.get("orgCode") != null) {
+        	orgPath = "%" +query.get("orgCode")+ "%";
+        }
+        
+        String search = pageConf.getSearch();
+        if (null == search || 0 == search.trim().length())
+            search = "%%";
+        else
+            search = "%" + search + "%";
+        if (null != pageable) {
+            Page<BoaInAppInfo> p = this.htBoaInAppRepository.listAllAppByPage(pageable, search );
+            return p;
+        } 
+        return null;
+    }
+    
+    public HtBoaInApp add(HtBoaInApp u) {
+        return this.htBoaInAppRepository.saveAndFlush(u);
+    }
+
+    public HtBoaInApp update(HtBoaInApp u) {
+        return this.htBoaInAppRepository.save(u);
+    }
+    
+    public void delete(long id) {
+        this.htBoaInAppRepository.delete(id);
     }
 }

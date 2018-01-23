@@ -2,13 +2,11 @@ package com.ht.ussp.uc.app.resource;
 
 import java.util.Date;
 
-import com.ht.ussp.uc.app.vo.PageVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,6 +20,7 @@ import com.ht.ussp.uc.app.model.BoaInRoleInfo;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.service.HtBoaInRoleService;
+import com.ht.ussp.uc.app.vo.PageVo;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -71,7 +70,8 @@ public class RoleResource {
         return result;
     }
     
-    @ApiOperation(value = "对内：新增/编辑角色记录", notes = "提交角色基础信息新增/编辑角色")
+    @SuppressWarnings({ "unused", "rawtypes" })
+	@ApiOperation(value = "对内：新增/编辑角色记录", notes = "提交角色基础信息新增/编辑角色")
     @ApiImplicitParam(name = "boaInRoleInfo", value = "角色信息实体", required = true, dataType = "BoaInRoleInfo")
     @RequestMapping(value = { "/in/add" }, method = RequestMethod.POST)
     public Result add(@RequestBody BoaInRoleInfo boaInRoleInfo) {
@@ -112,11 +112,11 @@ public class RoleResource {
        // return new ResponseModal(200, msg, u);
     }
     
-    @ApiOperation(value = "对内：禁用/启用角色", notes = "禁用/启用角色")
+    @SuppressWarnings({ "unused", "rawtypes" })
+	@ApiOperation(value = "对内：禁用/启用角色", notes = "禁用/启用角色")
     @RequestMapping(value = { "/in/stop" }, method = RequestMethod.POST)
     public Result stop( Long id, String status) {
         long sl = System.currentTimeMillis(), el = 0L;
-        ResponseModal r = null;
         String msg = "成功";
         String logHead = "角色记录查询：role/in/add param-> {}";
         String logStart = logHead + " | START:{}";
@@ -141,10 +141,11 @@ public class RoleResource {
        // return new ResponseModal(200, msg, u);
     }
     
-    @ApiOperation(value = "对内：删除角色记录", notes = "提交角色编号，可批量删除")
+    @SuppressWarnings("rawtypes")
+	@ApiOperation(value = "对内：物理删除角色记录", notes = "提交角色编号，可批量删除")
     @ApiImplicitParam(name = "codes", value = "角色编号集", required = true, dataType = "Codes")
-    @RequestMapping(value = {"/in/delete" }, method = RequestMethod.POST)
-    public Result delete(int id) {
+    @RequestMapping(value = {"/in/deleteTrunc" }, method = RequestMethod.POST)
+    public Result deleteTrunc(int id) {
         long sl = System.currentTimeMillis(), el = 0L;
         String msg = "成功";
         String logHead = "角色记录删除：role/in/delete param-> {}";
@@ -158,5 +159,27 @@ public class RoleResource {
         //return new ResponseModal(200, msg);
     }
 
+ 
+      
+     @SuppressWarnings("rawtypes")
+     @ApiOperation(value = "对内：删除标记岗位记录", notes = "提交岗位编号，可批量删除")
+     @RequestMapping(value = {"/in/delete" }, method = RequestMethod.POST)
+     public Result delete(long id) {
+          long sl = System.currentTimeMillis(), el = 0L;
+          String msg = "成功";
+          String logHead = "岗位记录删除：position/in/delete param-> {}";
+          String logStart = logHead + " | START:{}";
+          String logEnd = logHead + " {} | END:{}, COST:{}";
+          log.info(logStart, "codes: " + id, sl);
+          HtBoaInRole u = htBoaInRoleService.findById(id);
+          u.setDelFlag(1);
+          u.setUpdateOperator("del");
+          u.setLastModifiedDatetime(new Date());
+          htBoaInRoleService.update(u);
+          el = System.currentTimeMillis();
+          log.info(logEnd, "codes: " + id, msg, el, el - sl);
+          return Result.buildSuccess();
+          
+       }
 
 }

@@ -32,7 +32,6 @@ import com.ht.ussp.util.FastJsonUtil;
  */
 @Component
 public class AjaxAuthenticationProvider implements AuthenticationProvider {
-	
 	@Autowired
 	private UserClient userClient;
 	
@@ -53,7 +52,7 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
         	userName=params.split(";")[1];
         }
         ResponseModal loginJson = userClient.validateUser(app,userName);
-        if(loginJson.getStatus_code()!=1) {
+        if(!"0000".equals(loginJson.getStatus_code())) {
         	throw new AuthenticationCredentialsNotFoundException(loginJson.getResult_msg());
         }
         UserVo userVo=new UserVo();
@@ -73,7 +72,7 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
         if("N".equals(userVo.getController())) {
         	 ResponseModal roleCodes = userClient.getRoleCodes(userVo.getUserId());
         	 
-        	 if(loginJson.getStatus_code()!=1) {
+        	 if(!"0000".equals(loginJson.getStatus_code())) {
              	throw new AuthenticationCredentialsNotFoundException(loginJson.getResult_msg());
              }
         	

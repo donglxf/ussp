@@ -30,15 +30,11 @@ import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
 import com.ht.ussp.uc.app.model.SysStatus;
 import com.ht.ussp.uc.app.service.HtBoaInLoginService;
-import com.ht.ussp.uc.app.service.HtBoaInOrgService;
-import com.ht.ussp.uc.app.service.HtBoaInPositionRoleService;
-import com.ht.ussp.uc.app.service.HtBoaInPositionService;
-import com.ht.ussp.uc.app.service.HtBoaInPositionUserService;
 import com.ht.ussp.uc.app.service.HtBoaInPwdHistService;
-import com.ht.ussp.uc.app.service.HtBoaInRoleService;
 import com.ht.ussp.uc.app.service.HtBoaInUserAppService;
 import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
+import com.ht.ussp.uc.app.vo.LoginInfoVo;
 import com.ht.ussp.uc.app.vo.PageVo;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
 import com.ht.ussp.uc.app.vo.UserVo;
@@ -93,7 +89,7 @@ public class UserResource {
             return r;
         el = System.currentTimeMillis();
         log.info(logEnd, "userId: " + userId, msg, el, el - sl);
-        return new ResponseModal(200, msg, selfUserInfoList.get(0));
+        return new ResponseModal("200", msg, selfUserInfoList.get(0));
     }
 
     @ApiOperation(value = "对内：用户个人信息修改", notes = "已登录用户修改自己的个人信息")
@@ -137,7 +133,7 @@ public class UserResource {
 			return r;
 		el = System.currentTimeMillis();
 		log.info(logEnd, "selfUserInfo: " + selfBoaInUserInfo, msg, el, el - sl);
-		return new ResponseModal(200, msg, selfUserInfoList.get(0));
+		return new ResponseModal("200", msg, selfUserInfoList.get(0));
 	}
 
     @ApiOperation(value = "对内：修改密码", notes = "修改密码")
@@ -161,7 +157,7 @@ public class UserResource {
         HtBoaInLogin u = htBoaInLoginService.findByUserId(htBoaInUser.getUserId());
         //验证原密码是否正确
         if(!u.getPassword().equals(changePwd.getOldPwd())) {
-        	return new ResponseModal(500, "原密码输入不正确");
+        	return new ResponseModal("500", "原密码输入不正确");
         }
         u.setPassword(changePwd.getNewPwd());
 
@@ -175,7 +171,7 @@ public class UserResource {
         htBoaInPwdHistService.add(htBoaInPwdHist);
         el = System.currentTimeMillis();
         log.info(logEnd, "resetPwd: " + changePwd, msg, el, el - sl);
-        return new ResponseModal(200, "成功");
+        return new ResponseModal("200", "成功");
     }
 
     @ApiOperation(value = "对内：根据UserId查询用户角色", notes = "根据UserId查询用户角色")
@@ -207,12 +203,12 @@ public class UserResource {
             String msg = "无效参数，" + exInfo + "查无信息体";
             long el = System.currentTimeMillis();
             log.error(logEnd, param, msg, el, el - sl);
-            return new ResponseModal(500, msg);
+            return new ResponseModal("500", msg);
         } else if (row != list.size()) {
             String msg = "查询异常！查出" + exInfo + "记录数不符合要求";
             long el = System.currentTimeMillis();
             log.error(logEnd, param, msg, el, el - sl);
-            return new ResponseModal(500, msg);
+            return new ResponseModal("500", msg);
         }
         return null;
     }
@@ -375,5 +371,12 @@ public class UserResource {
         }
         return Result.buildFail();
     }
+    
+	@GetMapping(value = "/queryUserInfo")
+	@ApiOperation(value = "查找用户信息")
+	public LoginInfoVo queryUserInfo(String userId) {
+		LoginInfoVo loginInfoVo=htBoaInUserService.queryUserInfo(userId);
+		return loginInfoVo;
+	}  
 
 }

@@ -17,8 +17,8 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.ussp.gateway.app.exception.AuthMethodNotSupportedException;
 import com.ht.ussp.gateway.app.exception.JwtExpiredTokenException;
-import com.ht.ussp.gateway.app.util.ErrorCode;
-import com.ht.ussp.gateway.app.util.ErrorResponse;
+import com.ht.ussp.gateway.app.model.ResponseModal;
+import com.ht.ussp.gateway.app.util.SysStatus;
 
 /**
  * 
@@ -39,19 +39,18 @@ public class AjaxAwareAuthenticationFailureHandler implements AuthenticationFail
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException e) throws IOException, ServletException {
-		
+		response.setCharacterEncoding("UTF-8");
 		response.setStatus(HttpStatus.UNAUTHORIZED.value());
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		
 		if (e instanceof BadCredentialsException) {
-			mapper.writeValue(response.getWriter(), ErrorResponse.of("Invalid username or password", ErrorCode.AUTHENTICATION, HttpStatus.UNAUTHORIZED));
+			mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.INVALID_USER));
 		} else
 			if (e instanceof JwtExpiredTokenException) {
-			mapper.writeValue(response.getWriter(), ErrorResponse.of("Token has expired", ErrorCode.JWT_TOKEN_EXPIRED, HttpStatus.UNAUTHORIZED));
+				mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.TOKEN_IS_EXPIRED));
 		} else if (e instanceof AuthMethodNotSupportedException) {
-		    mapper.writeValue(response.getWriter(), ErrorResponse.of(e.getMessage(), ErrorCode.AUTHENTICATION, HttpStatus.UNAUTHORIZED));
+			mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.METHOD_NOT_SUPPORTED));
 		}
-
-		mapper.writeValue(response.getWriter(), ErrorResponse.of("Authentication failed", ErrorCode.AUTHENTICATION, HttpStatus.UNAUTHORIZED));
+		mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.AUTH_FAILED));
 	}
 }

@@ -47,8 +47,9 @@ layui.use(['form', 'table' ], function () {
         	 , {field: 'positionCode', width: 120, title: '岗位编号'}
              , {field: 'positionNameCn',   title: '岗位名称'}
              , {field: 'porgNameCn', width: 220, title: '所属机构'}
-             , {field: 'delFlag', width: 100, title: '状态'}
+             , {field: 'delFlag', width: 100, title: '状态' ,templet: '#statusTpl'}
              , {field: 'createOperator', width: 100, title: '创建人'}
+             , {field: 'createdDatetime', width: 200,templet: '#createTimeTpl', title: '创建时间'}
         ]]
     });
    

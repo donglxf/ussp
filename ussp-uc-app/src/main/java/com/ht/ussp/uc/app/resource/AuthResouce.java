@@ -39,9 +39,10 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 
 /**
- * @author wim qiuwenwu@hongte.info
+ * 
  * @ClassName: RoleResouce
  * @Description: 与资源相关
+ * @author wim qiuwenwu@hongte.info
  * @date 2018年1月13日 下午6:22:39
  */
 
@@ -51,185 +52,188 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class AuthResouce {
 
-    @Autowired
-    protected RedisTemplate<String, String> redis;
-
-    @Autowired
-    private HtBoaInResourceService htBoaInResourceService;
+	@Autowired
+	protected RedisTemplate<String, String> redis;
+	
+	@Autowired
+	private HtBoaInResourceService htBoaInResourceService;
 
     @Autowired
     private HtBoaInRoleResService htBoaInRoleResService;
 
-    @Autowired
-    private HtBoaInUserAppService htBoaInUserAppService;
+	@Autowired
+	private HtBoaInUserAppService htBoaInUserAppService;
+	
+	@Autowired
+	private HtBoaInUserRoleService htBoaInUserRoleService;
 
-    @Autowired
-    private HtBoaInUserRoleService htBoaInUserRoleService;
+	
+	/**
+	 * 
+	 * @Title: saveResourcesToRedis 
+	 * @Description: 保存所有资源到REDIS  
+	 * @return ResponseModal
+	 * @throws
+	 * @author wim qiuwenwu@hongte.info 
+	 * @date 2018年1月18日 下午10:27:37
+	 */
+	@PostMapping(value = "/saveResources")
+	@ApiOperation(value = "获取并保存用户资源")
+	public ResponseModal saveResourcesToRedis(@RequestBody UserVo userVo,
+			@RequestParam(value = "roleCodes", required = true) List<String> roleCodes) {
+		ResponseModal rm = new ResponseModal();
+		if (null == userVo || LogicUtil.isNullOrEmpty(userVo.getUserId()) || LogicUtil.isNullOrEmpty(userVo.getApp())) {
+			rm.setSysStatus(SysStatus.MAILPARAM_ERROR);
+			return rm;
+		}
+		String userId = userVo.getUserId();
+		String app = userVo.getApp();
+		String controller = userVo.getController();
 
+		List<String> res_types = new ArrayList<String>();
 
-    /**
-     * @return ResponseModal
-     * @throws
-     * @Title: saveResourcesToRedis
-     * @Description: 保存所有资源到REDIS
-     * @author wim qiuwenwu@hongte.info
-     * @date 2018年1月18日 下午10:27:37
-     */
-    @PostMapping(value = "/saveResources")
-    @ApiOperation(value = "获取并保存用户资源")
-    public ResponseModal saveResourcesToRedis(@RequestBody UserVo userVo,
-                                              @RequestParam(value = "roleCodes", required = true) List<String> roleCodes) {
-        ResponseModal rm = new ResponseModal();
-        if (null == userVo || LogicUtil.isNullOrEmpty(userVo.getUserId()) || LogicUtil.isNullOrEmpty(userVo.getApp())) {
-            rm.setSysStatus(SysStatus.MAILPARAM_ERROR);
-            return rm;
-        }
-        String userId = userVo.getUserId();
-        String app = userVo.getApp();
-        String controller = userVo.getController();
+		// 定义权限分组名称LIST
+		List<ResVo> module_res = new ArrayList<ResVo>();
+		List<ResVo> menu_res = new ArrayList<ResVo>();
+		List<ResVo> button_res = new ArrayList<ResVo>();
+		List<ResVo> api_res = new ArrayList<ResVo>();
 
-        List<String> res_types = new ArrayList<String>();
+		// 定义存储到LIST中的资源KEY值
+		StringBuffer module_key = new StringBuffer();
+		StringBuffer menu_key = new StringBuffer();
+		StringBuffer button_key = new StringBuffer();
+		StringBuffer api_key = new StringBuffer();
+		module_key.append(userId).append(":").append(app).append(":").append("module");
+		menu_key.append(userId).append(":").append(app).append(":").append("menu");
+		button_key.append(userId).append(":").append(app).append(":").append("btn");
+		api_key.append(userId).append(":").append(app).append(":").append("api");
 
-        // 定义权限分组名称LIST
-        List<ResVo> module_res = new ArrayList<ResVo>();
-        List<ResVo> menu_res = new ArrayList<ResVo>();
-        List<ResVo> button_res = new ArrayList<ResVo>();
-        List<ResVo> api_res = new ArrayList<ResVo>();
+		// 所有资源类型
+		res_types.add(Constants.RES_TYPE_BUTTON);
+		res_types.add(Constants.RES_TYPE_GROUP);
+		res_types.add(Constants.RES_TYPE_VIEW);
+		res_types.add(Constants.RES_TYPE_MODULE);
+		res_types.add(Constants.RES_TYPE_TAB);
+		res_types.add(Constants.RES_TYPE_API);
+		// 管理员资源权限操作
+		if ("Y".equals(controller)) {
+			List<ResVo> res = htBoaInResourceService.queryResForY(res_types, app);
+			addToList(res, module_res, menu_res, button_res, api_res);
+		}
 
-        // 定义存储到LIST中的资源KEY值
-        StringBuffer module_key = new StringBuffer();
-        StringBuffer menu_key = new StringBuffer();
-        StringBuffer button_key = new StringBuffer();
-        StringBuffer api_key = new StringBuffer();
-        module_key.append(userId).append(":").append(app).append(":").append("module");
-        menu_key.append(userId).append(":").append(app).append(":").append("menu");
-        button_key.append(userId).append(":").append(app).append(":").append("btn");
-        api_key.append(userId).append(":").append(app).append(":").append("api");
+		// 非管理员权限操作
+		if ("N".equals(controller)) {
+			List<String> res_code = htBoaInRoleResService.queryResByCode(roleCodes);
 
-        // 所有资源类型
-        res_types.add(Constants.RES_TYPE_BUTTON);
-        res_types.add(Constants.RES_TYPE_GROUP);
-        res_types.add(Constants.RES_TYPE_VIEW);
-        res_types.add(Constants.RES_TYPE_MODULE);
-        res_types.add(Constants.RES_TYPE_TAB);
-        res_types.add(Constants.RES_TYPE_API);
-        // 管理员资源权限操作
-        if ("Y".equals(controller)) {
-            List<ResVo> res = htBoaInResourceService.queryResForY(res_types, app);
-            addToList(res, module_res, menu_res, button_res, api_res);
-        }
+			if (res_code.size() > 0) {
+				List<ResVo> res = htBoaInResourceService.queryResForN(res_code, res_types, app);
 
-        // 非管理员权限操作
-        if ("N".equals(controller)) {
-            List<String> res_code = htBoaInRoleResService.queryResByCode(roleCodes);
-
-            if (res_code.size() > 0) {
-                List<ResVo> res = htBoaInResourceService.queryResForN(res_code, res_types, app);
-
-                addToList(res, module_res, menu_res, button_res, api_res);
-            }
-        }
-        // api权限不能为空
+				addToList(res, module_res, menu_res, button_res, api_res);
+			}
+		}
+    	// api权限不能为空
 //		if (api_res.isEmpty()) {
 //			rm.setSysStatus(SysStatus.API_NOT_NULL);
 //			return rm;
 //		}
-        // 登录需要重新获取资源，保存到REDIS
-        if (module_res != null && module_res.size() > 0) {
-            redis.delete(module_key.toString());
-            redis.opsForList().leftPushAll(module_key.toString(), FastJsonUtil.objectToJson(module_res));
-        }
+		// 登录需要重新获取资源，保存到REDIS
+		if (module_res != null && module_res.size() > 0) {
+			redis.delete(module_key.toString());
+			redis.opsForList().leftPushAll(module_key.toString(), FastJsonUtil.objectToJson(module_res));
+		}
 
-        if (menu_res != null && menu_res.size() > 0) {
-            redis.delete(menu_key.toString());
-            redis.opsForList().leftPushAll(menu_key.toString(), FastJsonUtil.objectToJson(menu_res));
-        }
+		if (menu_res != null && menu_res.size() > 0) {
+			redis.delete(menu_key.toString());
+			redis.opsForList().leftPushAll(menu_key.toString(), FastJsonUtil.objectToJson(menu_res));
+		}
 
-        if (button_res != null && button_res.size() > 0) {
-            redis.delete(button_key.toString());
-            redis.opsForList().leftPushAll(button_key.toString(), FastJsonUtil.objectToJson(button_res));
-        }
+		if (button_res != null && button_res.size() > 0) {
+			redis.delete(button_key.toString());
+			redis.opsForList().leftPushAll(button_key.toString(), FastJsonUtil.objectToJson(button_res));
+		}
 
-        if (api_res != null && api_res.size() > 0) {
-            redis.delete(api_key.toString());
-            redis.opsForList().leftPushAll(api_key.toString(), FastJsonUtil.objectToJson(api_res));
-        }
+		if (api_res != null && api_res.size() > 0) {
+			redis.delete(api_key.toString());
+			redis.opsForList().leftPushAll(api_key.toString(), FastJsonUtil.objectToJson(api_res));
+		}
 
-        rm.setSysStatus(SysStatus.SUCCESS);
+		rm.setSysStatus(SysStatus.SUCCESS);
 
-        return rm;
+		return rm;
 
-    }
+	}
 
-    /**
-     * @return Boolean
-     * @throws
-     * @Title: IsHasAuth
-     * @Description: 验证是否有资源权限
-     * @author wim qiuwenwu@hongte.info
-     * @date 2018年1月18日 下午10:54:08
-     */
-    @GetMapping(value = "/IsHasAuth")
-    @ApiOperation(value = "验证资源")
-    public Boolean IsHasAuth(@RequestParam("key") String key, @RequestParam("url") String url) {
-        Boolean flag = false;
-        if (LogicUtil.isNullOrEmpty(key) || LogicUtil.isNullOrEmpty(url)) {
-            return flag;
-        }
-        try {
-            List<String> apiValues = redis.opsForList().range(key, 0, -1);
-            JSONArray json = JSONArray.parseArray(apiValues.get(0));
+	/**
+	 * 
+	 * @Title: IsHasAuth 
+	 * @Description: 验证是否有资源权限
+	 * @return Boolean
+	 * @throws
+	 * @author wim qiuwenwu@hongte.info 
+	 * @date 2018年1月18日 下午10:54:08
+	 */
+	@GetMapping(value = "/IsHasAuth")
+	@ApiOperation(value = "验证资源")
+	public Boolean IsHasAuth(@RequestParam("key") String key, @RequestParam("url") String url) {
+		Boolean flag = false;
+		if (LogicUtil.isNullOrEmpty(key) || LogicUtil.isNullOrEmpty(url)) {
+			return flag;
+		}
+		try {
+			List<String> apiValues = redis.opsForList().range(key, 0, -1);
+			JSONArray json = JSONArray.parseArray(apiValues.get(0));
 
-            if (json.size() > 0) {
-                for (int i = 0; i < json.size(); i++) {
-                    JSONObject job = json.getJSONObject(i);
-                    if (url.equals(job.get("resContent"))) {
-                        log.info("isHasAuth:" + url.equals(job.get("resContent")));
-                        flag = true;
-                        return flag;
-                    }
-                }
+			if (json.size() > 0) {
+				for (int i = 0; i < json.size(); i++) {
+					JSONObject job = json.getJSONObject(i);
+					if (url.equals(job.get("resContent"))) {
+						log.info("isHasAuth:" + url.equals(job.get("resContent")));
+						flag = true;
+						return flag;
+					}
+				}
 
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return flag;
-        }
-        return flag;
-    }
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return flag;
+		}
+		return flag;
+	};
 
-    /**
-     * @return void
-     * @throws
-     * @Title: addToList
-     * @Description: 将资源分组添加到List中
-     * @author wim qiuwenwu@hongte.info
-     * @date 2018年1月18日 下午10:27:07
-     */
-    public void addToList(List<ResVo> res, List<ResVo> module_res, List<ResVo> menu_res, List<ResVo> button_res,
-                          List<ResVo> api_res) {
-        if (res.size() > 0) {
-            for (int i = 0; i < res.size(); i++) {
-                if (Constants.RES_TYPE_MODULE.equals(res.get(i).getResType())) {
-                    // 保存模块资源
-                    module_res.add(res.get(i));
-                    log.info(module_res);
-                } else if (Constants.RES_TYPE_VIEW.equals(res.get(i).getResType())
-                        || Constants.RES_TYPE_GROUP.equals(res.get(i).getResType())) {
-                    // 保存菜单资源
-                    menu_res.add(res.get(i));
-                } else if (Constants.RES_TYPE_BUTTON.equals(res.get(i).getResType())
-                        || Constants.RES_TYPE_TAB.equals(res.get(i).getResType())) {
-                    // 保存按钮资源
-                    button_res.add(res.get(i));
+	/**
+	 * 
+	 * @Title: addToList 
+	 * @Description: 将资源分组添加到List中
+	 * @return void
+	 * @throws
+	 * @author wim qiuwenwu@hongte.info 
+	 * @date 2018年1月18日 下午10:27:07
+	 */
+	public void addToList(List<ResVo> res, List<ResVo> module_res, List<ResVo> menu_res, List<ResVo> button_res,
+			List<ResVo> api_res) {
+		if (res.size() > 0) {
+			for (int i = 0; i < res.size(); i++) {
+				if (Constants.RES_TYPE_MODULE.equals(res.get(i).getResType())) {
+					// 保存模块资源
+					module_res.add(res.get(i));
+					log.info(module_res);
+				} else if (Constants.RES_TYPE_VIEW.equals(res.get(i).getResType())
+						|| Constants.RES_TYPE_GROUP.equals(res.get(i).getResType())) {
+					// 保存菜单资源
+					menu_res.add(res.get(i));
+				} else if (Constants.RES_TYPE_BUTTON.equals(res.get(i).getResType())
+						|| Constants.RES_TYPE_TAB.equals(res.get(i).getResType())) {
+					// 保存按钮资源
+					button_res.add(res.get(i));
 
-                } else if (Constants.RES_TYPE_API.equals(res.get(i).getResType())) {
-                    // 保存API
-                    api_res.add(res.get(i));
-                }
-            }
-        }
-    }
+				} else if (Constants.RES_TYPE_API.equals(res.get(i).getResType())) {
+					// 保存API
+					api_res.add(res.get(i));
+				}
+			}
+		}
+	};
 
     /**
      * 加载首页菜单
@@ -330,40 +334,40 @@ public class AuthResouce {
                         res_types.add(Constants.RES_TYPE_GROUP);
                     }
 
-                    if ("button".equals(resourceName)) {
-                        res_types.add(Constants.RES_TYPE_BUTTON);
-                        res_types.add(Constants.RES_TYPE_TAB);
-                    }
-                    List<String> allRoleCodes = htBoaInUserRoleService.getAllRoleCodes(userId);
-
-                    List<String> res_code = htBoaInRoleResService.queryResByCode(allRoleCodes);
-
-
-                    if (res_code.size() > 0) {
-                        List<ResVo> res = htBoaInResourceService.queryResForN(res_code, res_types, app);
-                        if (res.isEmpty()) {
-                            rm.setSysStatus(SysStatus.NO_RESULT);
-                            return rm;
-                        }
-                        redis.opsForList().leftPushAll(key.toString(), FastJsonUtil.objectToJson(res));
-                        rm.setResult(res);
-                        rm.setSysStatus(SysStatus.SUCCESS);
-                        return rm;
-                    }
-
-
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                rm.setSysStatus(SysStatus.ERROR);
-                return rm;
-            }
-            return rm;
-        } else {
-            rm.setSysStatus(SysStatus.PARAM_ERROR);
-            return rm;
-        }
-    }
+					if("button".equals(resourceName) ) {
+						res_types.add(Constants.RES_TYPE_BUTTON);
+						res_types.add(Constants.RES_TYPE_TAB);
+					}
+						List<String> allRoleCodes=htBoaInUserRoleService.getAllRoleCodes(userId);
+						
+						List<String> res_code = htBoaInRoleResService.queryResByCode(allRoleCodes);
+						
+						
+						if (res_code.size() > 0) {
+							List<ResVo> res = htBoaInResourceService.queryResForN(res_code, res_types, app);
+								if(res.isEmpty()) {
+									rm.setSysStatus(SysStatus.NO_RESULT);
+									return rm;
+								}			
+							redis.opsForList().leftPushAll(key.toString(), FastJsonUtil.objectToJson(res));
+							rm.setResult(res);
+							rm.setSysStatus(SysStatus.SUCCESS);
+							return rm;
+					}
+						
+						
+				} 
+			} catch (Exception e) {
+				e.printStackTrace();
+				rm.setSysStatus(SysStatus.ERROR);
+				return rm;
+			}
+			return rm;
+		} else {
+			rm.setSysStatus(SysStatus.PARAM_ERROR);
+			return rm;
+		}
+	}
 
 
     /**

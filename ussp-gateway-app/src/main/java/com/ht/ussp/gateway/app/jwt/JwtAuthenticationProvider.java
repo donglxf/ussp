@@ -40,7 +40,6 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         RawAccessJwtToken rawAccessToken = (RawAccessJwtToken) authentication.getCredentials();
         //验签
         Jws<Claims> jwsClaims = rawAccessToken.parseClaims(jwtSettings.getTokenSigningKey());
-//        String subject = jwsClaims.getBody().getSubject();
         List<String> roles = jwsClaims.getBody().get("roles", List.class);
         String userId=jwsClaims.getBody().get("userId").toString();
         String orgCode=jwsClaims.getBody().get("orgCode").toString();
@@ -51,11 +50,6 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     		authorities.add(authority);
     	}
         
-//        List<GrantedAuthority> authorities = scopes.stream()
-//            .map(SimpleGrantedAuthority::new)
-//            .collect(Collectors.toList());
-//        
-//        UserContext context = UserContext.create(subject, authorities);
         UserVo userVo=new UserVo();
         userVo.setUserId(userId);
         userVo.setOrgCode(orgCode);

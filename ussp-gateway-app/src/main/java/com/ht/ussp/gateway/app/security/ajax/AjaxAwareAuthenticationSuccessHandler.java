@@ -70,7 +70,7 @@ public class AjaxAwareAuthenticationSuccessHandler implements AuthenticationSucc
 		}
 		// 查找并保存资源
 		ResponseModal saveResources = roleClient.saveResources(userVo,list);
-		 if(saveResources.getStatus_code()!=1) {
+		 if(!"0000".equals(saveResources.getStatus_code())) {
           	throw new AuthenticationCredentialsNotFoundException(saveResources.getResult_msg());
           }
 		

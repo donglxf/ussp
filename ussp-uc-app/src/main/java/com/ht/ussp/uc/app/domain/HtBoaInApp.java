@@ -21,6 +21,7 @@ public class HtBoaInApp implements Serializable {
 
 	@Id
 	@Column(name = "ID", unique = true, nullable = false)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 
 	@Column(name="APP")

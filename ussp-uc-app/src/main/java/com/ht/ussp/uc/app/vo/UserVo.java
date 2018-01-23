@@ -1,6 +1,13 @@
 package com.ht.ussp.uc.app.vo;
 import java.util.Date;
 
+/**
+ * 
+ * @ClassName: UserVo
+ * @Description: 系统内部使用VO
+ * @author wim qiuwenwu@hongte.info
+ * @date 2018年1月22日 下午10:04:51
+ */
 public class UserVo {
 
 	@SuppressWarnings("unused")
