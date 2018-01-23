@@ -52,9 +52,12 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
 //        	userName=params.split(";")[1];
 //        }
         ResponseModal loginJson = userClient.validateUser(app,userName);
-        if(!"0000".equals(loginJson.getStatus_code())) {
+        if("9902".equals(loginJson.getStatus_code())) {
+        	throw new BadCredentialsException("用户名不存在");
+        }else if(!"0000".equals(loginJson.getStatus_code())) {
         	throw new AuthenticationCredentialsNotFoundException(loginJson.getResult_msg());
         }
+      
         UserVo userVo=new UserVo();
         userVo=FastJsonUtil.objectToPojo(loginJson.getResult(), UserVo.class);
         
