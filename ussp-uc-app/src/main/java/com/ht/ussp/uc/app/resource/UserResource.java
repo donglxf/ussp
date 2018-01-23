@@ -263,31 +263,31 @@ public class UserResource {
 		return rm;
 	}
 
-    /**
-	 *
-	 * @Title: getRoleCodes
-	 * @Description: 获取用户角色编码
-	 * @return ResponseModal
-	 * @throws
-	 * @author wim qiuwenwu@hongte.info
-	 * @date 2018年1月18日 下午6:29:59
-	 */
-	@GetMapping("/getRoleCodes")
-	@ApiOperation(value = "获取用户角色编码")
-	public ResponseModal getRoleCodes(@RequestParam(value = "userId", required = true) String userId) {
-		ResponseModal rm = new ResponseModal();
-		List<String> roleCodes = new ArrayList<>();
-		roleCodes=htBoaInUserRoleService.getAllRoleCodes(userId);
-		if (roleCodes.isEmpty()) {
-			rm.setSysStatus(SysStatus.NO_ROLE);
-			return rm;
-		} else {
-			rm.setSysStatus(SysStatus.SUCCESS);
-			rm.setResult(roleCodes);
-			return rm;
-		}
-
-	}
+//    /**
+//	 *
+//	 * @Title: getRoleCodes
+//	 * @Description: 获取用户角色编码
+//	 * @return ResponseModal
+//	 * @throws
+//	 * @author wim qiuwenwu@hongte.info
+//	 * @date 2018年1月18日 下午6:29:59
+//	 */
+//	@GetMapping("/getRoleCodes")
+//	@ApiOperation(value = "获取用户角色编码")
+//	public ResponseModal getRoleCodes(@RequestParam(value = "userId", required = true) String userId) {
+//		ResponseModal rm = new ResponseModal();
+//		List<String> roleCodes = new ArrayList<>();
+//		roleCodes=htBoaInUserRoleService.getAllRoleCodes(userId);
+//		if (roleCodes.isEmpty()) {
+//			rm.setSysStatus(SysStatus.NO_ROLE);
+//			return rm;
+//		} else {
+//			rm.setSysStatus(SysStatus.SUCCESS);
+//			rm.setResult(roleCodes);
+//			return rm;
+//		}
+//
+//	}
 
    /**
 	 * 用户信息分页查询<br>

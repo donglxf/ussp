@@ -52,9 +52,12 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
 //        	userName=params.split(";")[1];
 //        }
         ResponseModal loginJson = userClient.validateUser(app,userName);
-        if(!"0000".equals(loginJson.getStatus_code())) {
+        if("9902".equals(loginJson.getStatus_code())) {
+        	throw new BadCredentialsException("用户名不存在");
+        }else if(!"0000".equals(loginJson.getStatus_code())) {
         	throw new AuthenticationCredentialsNotFoundException(loginJson.getResult_msg());
         }
+      
         UserVo userVo=new UserVo();
         userVo=FastJsonUtil.objectToPojo(loginJson.getResult(), UserVo.class);
         
@@ -69,27 +72,27 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
         }
         
         //获取用户角色编码
-        if("N".equals(userVo.getController())) {
-        	 ResponseModal roleCodes = userClient.getRoleCodes(userVo.getUserId());
-        	 
-        	 if(!"0000".equals(loginJson.getStatus_code())) {
-             	throw new AuthenticationCredentialsNotFoundException(loginJson.getResult_msg());
-             }
-        	
-        	Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(); 
-        	
-        	//将角色编码转换为list
-        	List<String> list=new ArrayList<String>();
-        	String str= FastJsonUtil.objectToJson(roleCodes.getResult());
-        	list=FastJsonUtil.jsonToList(str, String.class);
-        	
-        	//转换成GrantedAuthority集合
-        	for(String roleCode:list) {
-        		SimpleGrantedAuthority authority = new SimpleGrantedAuthority(roleCode); 
-        		authorities.add(authority);
-        	}
-        	 return new UsernamePasswordAuthenticationToken(userVo, null, authorities);
-        }
+//        if("N".equals(userVo.getController())) {
+//        	 ResponseModal roleCodes = userClient.getRoleCodes(userVo.getUserId());
+//        	 
+//        	 if(!"0000".equals(loginJson.getStatus_code())) {
+//             	throw new AuthenticationCredentialsNotFoundException(loginJson.getResult_msg());
+//             }
+//        	
+//        	Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(); 
+//        	
+//        	//将角色编码转换为list
+//        	List<String> list=new ArrayList<String>();
+//        	String str= FastJsonUtil.objectToJson(roleCodes.getResult());
+//        	list=FastJsonUtil.jsonToList(str, String.class);
+//        	
+//        	//转换成GrantedAuthority集合
+//        	for(String roleCode:list) {
+//        		SimpleGrantedAuthority authority = new SimpleGrantedAuthority(roleCode); 
+//        		authorities.add(authority);
+//        	}
+//        	 return new UsernamePasswordAuthenticationToken(userVo, null, authorities);
+//        }
         
         return new UsernamePasswordAuthenticationToken(userVo, null, null);
     }

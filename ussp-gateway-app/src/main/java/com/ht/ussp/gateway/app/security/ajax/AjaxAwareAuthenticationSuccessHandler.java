@@ -60,16 +60,16 @@ public class AjaxAwareAuthenticationSuccessHandler implements AuthenticationSucc
 		tokenMap.put("refreshToken", refreshToken.getToken());
 
 		// 从authentication中获取用户角色编码
-		List<String> list = new ArrayList<String>();
-		for (GrantedAuthority roleCode : authentication.getAuthorities()) {
-			list.add(roleCode.getAuthority());
-		}
-
-		if (list.isEmpty()&& !("N").equals(userVo.getController())) {
-			throw new IllegalArgumentException("User doesn't have any privileges");
-		}
+//		List<String> list = new ArrayList<String>();
+//		for (GrantedAuthority roleCode : authentication.getAuthorities()) {
+//			list.add(roleCode.getAuthority());
+//		}
+//
+//		if (list.isEmpty()&& !("N").equals(userVo.getController())) {
+//			throw new IllegalArgumentException("User doesn't have any privileges");
+//		}
 		// 查找并保存资源
-		ResponseModal saveResources = roleClient.saveResources(userVo,list);
+		ResponseModal saveResources = roleClient.saveResources(userVo);
 		 if(!"0000".equals(saveResources.getStatus_code())) {
           	throw new AuthenticationCredentialsNotFoundException(saveResources.getResult_msg());
           }

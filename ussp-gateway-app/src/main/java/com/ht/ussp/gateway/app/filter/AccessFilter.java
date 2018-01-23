@@ -83,7 +83,7 @@ public class AccessFilter extends ZuulFilter {
 		if (!roleClient.IsHasAuth(api_key.toString(), validateUrl)) {
 			ctx.setSendZuulResponse(false);
 			ctx.setResponseStatusCode(418);
-			ctx.setResponseBody("{\"result\":\"HAS NO AUTH!\"}");
+			ctx.setResponseBody("{\"result\":\"您没有访问权限!\"}");
 			return null;
 		}
 		ctx.addZuulRequestHeader("userId", userId);
