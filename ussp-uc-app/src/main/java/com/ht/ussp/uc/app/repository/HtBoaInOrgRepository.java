@@ -2,10 +2,14 @@ package com.ht.ussp.uc.app.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.ht.ussp.uc.app.domain.HtBoaInOrg;
+import com.ht.ussp.uc.app.model.BoaInOrgInfo;
 
 /**
  * 
@@ -28,5 +32,11 @@ public interface HtBoaInOrgRepository
      * @Date 2018/1/13 10:49
      */
     List<HtBoaInOrg> findByParentOrgCode(String parentOrgCode, Sort sort);
+    
+    @Query("SELECT new com.ht.ussp.uc.app.model.BoaInOrgInfo (u.orgCode, u.orgName, u.orgNameCn, u.parentOrgCode, u.rootOrgCode, u.orgPath, u.orgType, u.sequence,  u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,u.delFlag,u.id) FROM HtBoaInOrg u  WHERE  (u.orgCode LIKE ?1 OR u.orgName LIKE ?1 OR u.orgNameCn LIKE ?1) AND u.orgPath like ?2   GROUP BY u")
+    public Page<BoaInOrgInfo> lisOrgByPageWeb(Pageable arg0, String search,String orgPath);
+    
+/*    @Query("SELECT new com.ht.ussp.uc.app.model.BoaInOrgInfo (u.orgCode, u.orgName, u.orgNameCn, u.parentOrgCode, u.rootOrgCode, u.orgPath, u.orgType, u.sequence,  u.createOperator) FROM HtBoaInOrg u  WHERE  u.orgCode LIKE ?1 OR u.orgName LIKE ?1 OR u.orgNameCn LIKE ?1    GROUP BY u")
+    public Page<BoaInOrgInfo> lisOrgByPageWeb(Pageable arg0, String search);*/
 
 }
