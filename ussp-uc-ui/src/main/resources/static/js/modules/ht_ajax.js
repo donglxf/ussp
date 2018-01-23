@@ -1,8 +1,8 @@
 /**
  * add by tanrq 2018/1/20
  */
-layui.define(["cookie", "config"], function (exports) {
-        var $ = layui.jquery, cookie = layui.cookie, config = layui.config;
+layui.define(["cookie", "ht_config"], function (exports) {
+        var $ = layui.jquery, cookie = layui.cookie, ht_config = layui.ht_config;
 
         var ht_ajax = {
             config: {},
@@ -26,33 +26,39 @@ layui.define(["cookie", "config"], function (exports) {
                 // 如果refreshToken失效，则直接跳转到登录页面
                 if (refreshToken == null || refreshToken == "") {
                     top.location.href = "/login.html";
+                    return false;
                 } else {
+                    console.info("延长refreshToken时间")
                     //延长refreshToken时间
                     cookie.setRefreshToken(refreshToken);
                 }
                 // 验证token是否失效，失效则重新请求后台更新token，如果无法更新，则重新登录
                 if ((token == null || token == "") && (noToken == false || !noToken)) {
-                    console.debug("token无效，重新加载token", refreshToken, config.refreshTokenUrl);
+                    console.debug("token无效，重新加载token");
                     $.ajax({
                         type: 'GET',
-                        url: config.refreshTokenUrl,
+                        async: false,
+                        url: ht_config.refreshTokenUrl,
                         headers: {
                             Authorization: "Bearer " + refreshToken
                         },
                         noToken: true,
                         success: function (data) {
-                            data.code
                             if (data == null || data["token"] == null || data["token"] == "") {
                                 top.location.href = "/login.html";
+                                return false;
                             } else {
                                 cookie.setToken(data["token"]);
+                                return true;
                             }
                         },
                         error: function () {
                             top.location.href = "/login.html";
+                            return false;
                         }
                     });
                 }
+                return true;
             },
             /**
              * 扩展jquery ajax方法
@@ -64,8 +70,10 @@ layui.define(["cookie", "config"], function (exports) {
                 // 重写jquery的ajax方法
                 $.ajax = function (opt) {
                     //所有ajax请求前先验证token是否存在
-                    ht_ajax.validationAndRefreshToken(opt.noToken);
-
+                    var isValidation = ht_ajax.validationAndRefreshToken(opt.noToken);
+                    if (!isValidation) {
+                        return false;
+                    }
                     //因为可能存在同域名下的不同异步请求，所有不能通过地址过滤的方式来判断是否需要拼接basePath
                     // var ignoreUrl = ['.js', '.css', '.html', '.htm', '.png', '.gif', '.jpg', '.icon'];
                     // //自动拼接请求地址
@@ -74,18 +82,6 @@ layui.define(["cookie", "config"], function (exports) {
                     //         console.info(opt.url, item);
                     //     }
                     // });
-
-                    var headers = {
-                        app: config.app /*系统编码统一通过http headers进行传输*/
-                    }
-                    //noToken 默认为false，当为true时，则不传输token
-                    if (opt.noToken == false || !opt.noToken) {
-                        headers.Authorization = "Bearer " + cookie.getToken();
-                    }
-                    headers = $.extend({}, opt.headers, headers);
-                    var _opt = $.extend({}, opt, {
-                        headers: $.extend({}, opt.headers, headers)
-                    });
 
                     // 备份opt中error和success方法
                     var fn = {
@@ -100,8 +96,9 @@ layui.define(["cookie", "config"], function (exports) {
                     if (opt.success) {
                         fn.success = opt.success;
                     }
+
                     // 扩展增强处理
-                    _opt = $.extend({}, _opt, {
+                    $.extend(opt, {
                         error: function (XMLHttpRequest, textStatus, errorThrown) {
                             //TODO 需判断是否token失效，和API权限是否验证通过
                             fn.error(XMLHttpRequest, textStatus, errorThrown);
@@ -113,7 +110,20 @@ layui.define(["cookie", "config"], function (exports) {
                             // 请求完成后回调函数 (请求成功或失败之后均调用)。
                         }
                     });
-                    return _ajax(_opt);
+
+                    var headers = {
+                        app: ht_config.app /*系统编码统一通过http headers进行传输*/
+                    }
+                    //noToken 默认为false，当为true时，则不传输token
+                    if (opt.noToken == false || !opt.noToken) {
+                        headers.Authorization = "Bearer " + cookie.getToken();
+                    }
+                    headers = $.extend({}, opt.headers, headers);
+                    $.extend(opt, {
+                        headers: $.extend({}, opt.headers, headers)
+                    });
+
+                    return _ajax(opt);
                 };
             }
         };

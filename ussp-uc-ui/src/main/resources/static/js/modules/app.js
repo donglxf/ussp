@@ -76,9 +76,11 @@ layui.define(['element', 'table', 'nprogress', 'tab', 'navbar', 'onelevel', 'lay
                 // });
                 navbar.set({
                     remote: {
-                        url: '/datas/navbar1.json'
+                        url: 'http://localhost:9999/auth/loadMenu?app=UC&userId=10001'
                     }
                 }).render(function (data) {
+                    console.info("打开菜单", data);
+                    //阻塞
                     tab.tabAdd(data);
                 });
             }
