@@ -3,6 +3,7 @@ var addPositionUrl=basepath +"position/in/add"; //添加岗位信息
 var delPositionUrl=basepath +"position/in/delete"; //添加岗位信息
 var orgTreeUrl = basepath +"org/tree.json"; //机构列表
 var statusPositionUrl=basepath +"position/in/stop"; //禁用
+var checkPositionCodeExistUrl=basepath +"position/isExistPositionCode"; //校验岗位编码是否已经存在
 
 layui.use(['form', 'ztree', 'table'], function () {
     var $ = layui.jquery
@@ -84,6 +85,29 @@ layui.use(['form', 'ztree', 'table'], function () {
             refreshTable($("#position_search_keyword").val());
         }
     };
+    //自定义验证规则
+	form.verify({
+		  //校验编码是否已经存在
+		  checkExistPosCode : function(value) {
+			  var isExist="";
+			  if(value){
+					  $.ajax({
+						url : checkPositionCodeExistUrl + "?positionCode=" + value,
+						type : 'POST',
+						async : false,
+						success : function(result) {
+							if (result["returnCode"] == "0000") {
+						    	isExist = "1";
+						    }  
+						}
+					});
+			  }
+			  if(isExist){
+				  return "岗位编码已经存在使用，请重新输入岗位编码";
+			  }
+		  },
+		  
+	});
     var refreshTable = function (keyword) {
         if (!keyword) {
             keyword = null;

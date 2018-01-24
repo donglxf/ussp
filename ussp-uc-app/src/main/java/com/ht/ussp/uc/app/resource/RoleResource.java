@@ -1,6 +1,7 @@
 package com.ht.ussp.uc.app.resource;
 
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,9 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.core.ReturnCodeEnum;
+import com.ht.ussp.uc.app.domain.HtBoaInPosition;
 import com.ht.ussp.uc.app.domain.HtBoaInRole;
 import com.ht.ussp.uc.app.model.BoaInRoleInfo;
 import com.ht.ussp.uc.app.model.PageConf;
@@ -172,7 +175,8 @@ public class RoleResource {
           String logEnd = logHead + " {} | END:{}, COST:{}";
           log.info(logStart, "codes: " + id, sl);
           HtBoaInRole u = htBoaInRoleService.findById(id);
-          u.setDelFlag(1);
+          u.setDelFlag(Constants.DEL_1);
+          u.setStatus(Constants.STATUS_1);
           u.setUpdateOperator("del");
           u.setLastModifiedDatetime(new Date());
           htBoaInRoleService.update(u);
@@ -181,5 +185,16 @@ public class RoleResource {
           return Result.buildSuccess();
           
        }
-
+     
+    @SuppressWarnings("rawtypes")
+    @ApiOperation(value = "对内：角色编码是否存在")
+    @RequestMapping(value = {"/isExistRoleCode" }, method = RequestMethod.POST)
+    public Result isExistRoleCode( String roleCode) {
+        List<HtBoaInRole> listHtBoaInRole = htBoaInRoleService.findByRoleCode(roleCode);
+        if(listHtBoaInRole.isEmpty()) {
+     	   return Result.buildFail();
+        }else {
+     	   return Result.buildSuccess();
+        }
+     }
 }

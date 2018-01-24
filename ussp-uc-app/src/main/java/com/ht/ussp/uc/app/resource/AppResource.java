@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.core.ReturnCodeEnum;
@@ -178,7 +179,8 @@ public class AppResource {
           String logEnd = logHead + " {} | END:{}, COST:{}";
           log.info(logStart, "codes: " + id, sl);
           HtBoaInApp u = htBoaInAppService.findById(id);
-          u.setDelFlag(1);
+          u.setDelFlag(Constants.DEL_1);
+          u.setStatus(Constants.STATUS_1);
           u.setUpdateOperator("del");
           u.setLastModifiedDatetime(new Date());
           htBoaInAppService.update(u);

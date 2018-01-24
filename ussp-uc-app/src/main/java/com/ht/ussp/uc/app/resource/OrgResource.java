@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.core.ReturnCodeEnum;
@@ -144,7 +145,7 @@ public class OrgResource {
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.info(logStart, "codes: " + id, sl);
         HtBoaInOrg u = htBoaInOrgService.findById(id);
-        u.setDelFlag(1);
+        u.setDelFlag(Constants.DEL_1);
         u.setUpdateOperator("del");
         u.setLastModifiedDatetime(new Date());
         htBoaInOrgService.update(u);
@@ -169,5 +170,17 @@ public class OrgResource {
         el = System.currentTimeMillis();
         log.info(logEnd, "codes: " + id, msg, el, el - sl);
         return Result.buildSuccess();
+    }
+    
+    @SuppressWarnings("rawtypes")
+   	@ApiOperation(value = "对内：机构编码是否存在")
+    @RequestMapping(value = {"/isExistOrgCode" }, method = RequestMethod.POST)
+    public Result isExistOrgCode( String orgCode) {
+       List<HtBoaInOrg> listHtBoaInOrg = htBoaInOrgService.findByOrgCode(orgCode);
+       if(listHtBoaInOrg.isEmpty()) {
+    	   return Result.buildFail();
+       }else {
+    	   return Result.buildSuccess();
+       }
     }
 }

@@ -1,6 +1,7 @@
 package com.ht.ussp.uc.app.resource;
 
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -169,6 +170,18 @@ public class PositionResource {
        el = System.currentTimeMillis();
        log.info(logEnd, "codes: " + id, msg, el, el - sl);
        return Result.buildSuccess();
+    }
+    
+    @SuppressWarnings("rawtypes")
+   	@ApiOperation(value = "对内：岗位编码是否存在")
+    @RequestMapping(value = {"/isExistPositionCode" }, method = RequestMethod.POST)
+    public Result isExistPositionCode( String positionCode) {
+       List<HtBoaInPosition> listHtBoaInPosition = htBoaInPositionService.findByPositionCode(positionCode);
+       if(listHtBoaInPosition.isEmpty()) {
+    	   return Result.buildFail();
+       }else {
+    	   return Result.buildSuccess();
+       }
     }
     
 }
