@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,6 +20,7 @@ import com.ht.ussp.gateway.app.jwt.RawAccessJwtToken;
 import com.ht.ussp.gateway.app.jwt.TokenExtractor;
 import com.ht.ussp.gateway.app.model.ResponseModal;
 import com.ht.ussp.gateway.app.util.SysStatus;
+import com.ht.ussp.util.LogicUtil;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 
@@ -47,6 +49,9 @@ public class AccessFilter extends ZuulFilter {
 
 	@Autowired
 	private ObjectMapper mapper;
+	
+	@Value("${ignoreUrl}")
+	private String ignoreUrl;
 
 	/**
 	 * 定义该过滤器是否要执行
@@ -60,11 +65,20 @@ public class AccessFilter extends ZuulFilter {
 	public Object run() {
 		Jws<Claims> jwsClaims;
 		RequestContext ctx = RequestContext.getCurrentContext();
+		ctx.getResponse().setCharacterEncoding("UTF-8");
 		HttpServletRequest request = ctx.getRequest();
+		String uri = request.getRequestURI().toString();
+		String validateUrl = uri.substring(uri.indexOf("/", uri.indexOf("/") + 1));
+		if(LogicUtil.isNotNullAndEmpty(ignoreUrl) && validateUrl.indexOf(ignoreUrl)!=-1) {
+			ctx.setSendZuulResponse(true);
+			ctx.setResponseStatusCode(200);
+			return null;
+		}
+		log.info("------------validateUrl------" + validateUrl);
 		// 必须带Authorization
 		String tokenPayload = request.getHeader(WebSecurityConfig.AUTHENTICATION_HEADER_NAME);
 		String app = request.getHeader("app");
-		ctx.getResponse().setCharacterEncoding("UTF-8");
+		
 		if (StringUtils.isEmpty(tokenPayload)) {
 			ctx.setSendZuulResponse(false);
 			try {
@@ -100,9 +114,7 @@ public class AccessFilter extends ZuulFilter {
 		
 		
 		// 判断请求是否有权限通过
-		String uri = request.getRequestURI().toString();
-		String validateUrl = uri.substring(uri.indexOf("/", uri.indexOf("/") + 1));
-		log.info("------------validateUrl------" + validateUrl);
+	
 		String userId = jwsClaims.getBody().get("userId").toString();
 		String orgCode = jwsClaims.getBody().get("orgCode").toString();
 		StringBuffer api_key = new StringBuffer();
