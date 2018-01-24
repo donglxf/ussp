@@ -1,9 +1,9 @@
-layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth_button'], function () {
+layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
     var $ = layui.jquery
         , config = layui.ht_config
         , form = layui.form
         , table = layui.table
-        , ht_auth_button = layui.ht_auth_button
+        , ht_auth = layui.ht_auth
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
@@ -84,7 +84,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth_button'], function ()
                     orgCode: selectNodes[0]["orgCode"]
                 }
             });
-            ht_auth_button.render();
+            ht_auth.render();
         }
     }
     //渲染组织机构树
@@ -263,7 +263,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth_button'], function ()
         }
     );
     table.on('renderComplete(filter_user_datatable)', function (obj) {
-        ht_auth_button.render();
+        ht_auth.render();
     });
     //监听工具栏
     $('#user_table_tools .layui-btn').on('click', function () {
@@ -298,5 +298,5 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth_button'], function ()
         }
     }
 
-    ht_auth_button.render();
+    ht_auth.render("user_auth");
 })

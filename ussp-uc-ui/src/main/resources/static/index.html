@@ -138,22 +138,25 @@
     layui.config({
         base: '/js/modules/',
         version: false
-    }).use(['cookie'], function () {
-        var cookie = layui.cookie;
+    }).use(['layer', 'ht_cookie'], function () {
+        var layer = layui.layer, cookie = layui.ht_cookie;
         var refreshToken = cookie.getRefreshToken();
         // 如果refreshToken失效，则直接跳转到登录页面
         if (refreshToken == null || refreshToken == "") {
-            top.location.href = "/login.html";
+            layer.confirm("登录超时，请重新登录。", function (index) {
+                top.location.href = "/login.html";
+                layer.close(index);
+            });
             return false;
         }
         layui.config({
             base: '/js/modules/',
             version: false
-        }).use(['app', 'message', 'ht_ajax', 'cookie', 'ht_auth_button'], function () {
+        }).use(['app', 'message', 'ht_ajax', 'ht_cookie', 'ht_auth'], function () {
             var app = layui.app,
                 $ = layui.jquery,
-                cookie = layui.cookie,
-                htAuthButton = layui.ht_auth_button,
+                cookie = layui.ht_cookie,
+                ht_auth = layui.ht_auth,
                 layer = layui.layer;
             //将message设置为全局以便子页面调用
             message = layui.message;
@@ -189,7 +192,8 @@
                 cookie.deleteRefreshToken();
                 window.location.href = "/login.html";
             });
-            htAuthButton.load();
+            //初始化权限资源
+            ht_auth.load();
         });
     });
 </script>

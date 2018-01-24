@@ -6,11 +6,12 @@
  * LICENSE:MIT
  */
 var tab;
-layui.define(['element', 'table', 'nprogress', 'tab', 'navbar', 'onelevel', 'laytpl', 'spa', 'ht_config'], function (exports) {
+layui.define(['element', 'table', 'nprogress', 'tab', 'navbar', 'onelevel', 'laytpl', 'spa', 'ht_config', 'ht_auth'], function (exports) {
     var $ = layui.jquery,
         element = layui.element,
         table = layui.table,
         config = layui.ht_config,
+        auth = layui.ht_auth,
         _win = $(window),
         _doc = $(document),
         _body = $('.kit-body'),
@@ -80,7 +81,6 @@ layui.define(['element', 'table', 'nprogress', 'tab', 'navbar', 'onelevel', 'lay
                         url: config.loadMenuUrl
                     }
                 }).render(function (data) {
-                    console.info("打开菜单", data);
                     //阻塞
                     tab.tabAdd(data);
                 });
@@ -247,6 +247,5 @@ layui.define(['element', 'table', 'nprogress', 'tab', 'navbar', 'onelevel', 'lay
         }
     };
 
-    //输出test接口
     exports('app', app);
 });
