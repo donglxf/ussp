@@ -138,45 +138,57 @@
     layui.config({
         base: '/js/modules/',
         version: false
-    }).use(['app', 'message', 'ht_ajax', 'cookie'], function () {
-        var app = layui.app,
-            $ = layui.jquery,
-            cookie = layui.cookie,
-            layer = layui.layer;
-        //将message设置为全局以便子页面调用
-        message = layui.message;
-        //主入口
-        app.set({
-            type: 'page'
-        }).init();
-        $('dl.skin > dd').on('click', function () {
-            var $that = $(this);
-            var skin = $that.children('a').data('skin');
-            switchSkin(skin);
+    }).use(['cookie'], function () {
+        var cookie = layui.cookie;
+        var refreshToken = cookie.getRefreshToken();
+        // 如果refreshToken失效，则直接跳转到登录页面
+        if (refreshToken == null || refreshToken == "") {
+            top.location.href = "/login.html";
+            return false;
+        }
+        layui.config({
+            base: '/js/modules/',
+            version: false
+        }).use(['app', 'message', 'ht_ajax', 'cookie'], function () {
+            var app = layui.app,
+                $ = layui.jquery,
+                cookie = layui.cookie,
+                layer = layui.layer;
+            //将message设置为全局以便子页面调用
+            message = layui.message;
+            //主入口
+            app.set({
+                type: 'page'
+            }).init();
+            $('dl.skin > dd').on('click', function () {
+                var $that = $(this);
+                var skin = $that.children('a').data('skin');
+                switchSkin(skin);
+            });
+            var setSkin = function (value) {
+                    layui.data('kit_skin', {
+                        key: 'skin',
+                        value: value
+                    });
+                },
+                getSkinName = function () {
+                    return layui.data('kit_skin').skin;
+                },
+                switchSkin = function (value) {
+                    var _target = $('link[kit-skin]')[0];
+                    _target.href = _target.href.substring(0, _target.href.lastIndexOf('/') + 1) + value + _target.href.substring(_target.href.lastIndexOf('.'));
+                    setSkin(value);
+                },
+                initSkin = function () {
+                    var skin = getSkinName();
+                    switchSkin(skin === undefined ? 'default' : skin);
+                }();
+            $("#login_out").on("click", function () {
+                cookie.deleteToken();
+                cookie.deleteRefreshToken();
+                window.location.href = "/login.html";
+            })
         });
-        var setSkin = function (value) {
-                layui.data('kit_skin', {
-                    key: 'skin',
-                    value: value
-                });
-            },
-            getSkinName = function () {
-                return layui.data('kit_skin').skin;
-            },
-            switchSkin = function (value) {
-                var _target = $('link[kit-skin]')[0];
-                _target.href = _target.href.substring(0, _target.href.lastIndexOf('/') + 1) + value + _target.href.substring(_target.href.lastIndexOf('.'));
-                setSkin(value);
-            },
-            initSkin = function () {
-                var skin = getSkinName();
-                switchSkin(skin === undefined ? 'default' : skin);
-            }();
-        $("#login_out").on("click", function () {
-            cookie.deleteToken();
-            cookie.deleteRefreshToken();
-            window.location.href = "/login.html";
-        })
     });
 </script>
 </body>

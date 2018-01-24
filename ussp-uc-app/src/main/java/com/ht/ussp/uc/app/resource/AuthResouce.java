@@ -239,56 +239,6 @@ public class AuthResouce {
 		}
 	};
 
-    /**
-     * 加载首页菜单
-     *
-     * @return 菜单集合
-     * @author 谭荣巧
-     * @Date 2018/1/22 11:56
-     */
-    @GetMapping("/loadMenu")
-    public List<MenuVo> loadMenu(String app, String userId) {
-        ResponseModal rm = new ResponseModal();
-        String key = String.format("%s:%s:%s", userId, app, "menu");
-        if (StringUtils.isEmpty(userId)) {
-            log.warn("菜单资源加载失败，无效用户编码：" + userId);
-            return null;
-        }
-        if (StringUtils.isEmpty(app)) {
-            log.warn("菜单资源加载失败，无效系统编码：" + app + "。");
-            return null;
-        }
-        List<String> resourceValues = redis.opsForList().range(key.toString(), 0, -1);
-        List<ResVo> resVoList = null;
-        //先从redis里面取资源，如果获取为空，则从数据库重新查找
-        if (!resourceValues.isEmpty() && !resourceValues.get(0).isEmpty()) {
-            resVoList = JSONArray.parseArray(resourceValues.get(0), ResVo.class);
-        } else {
-            resVoList = htBoaInResourceService.loadByUserIdAndApp(userId, app, new String[]{"view", "group"});
-        }
-        if (!resVoList.isEmpty()) {
-            return toMenuVo(null, resVoList);
-        }
-        return null;
-    }
-
-    private List<MenuVo> toMenuVo(String resParent, List<ResVo> resVoList) {
-        List<MenuVo> menuList = new ArrayList<>();
-        MenuVo menu;
-        for (ResVo resVo : resVoList) {
-            if ((StringUtils.isEmpty(resParent) && StringUtils.isEmpty(resVo.getResParent())) || (!StringUtils.isEmpty(resParent) && resParent.equals(resVo.getResParent()))) {
-                menu = new MenuVo();
-                menu.setId(resVo.getResCode());
-                menu.setTitle(resVo.getResNameCn());
-                menu.setIcon(resVo.getFontIcon());
-                menu.setUrl(resVo.getResContent());
-                menu.setSpread(true);
-                menu.setChildren(toMenuVo(resVo.getResCode(), resVoList));
-                menuList.add(menu);
-            }
-        }
-        return menuList;
-    }
 
     /**
      * @return ResponseModal
@@ -420,5 +370,90 @@ public class AuthResouce {
             }
             htBoaInResourceService.save(newResList);
         }
+    }
+
+    /**
+     * 加载首页菜单
+     *
+     * @return 菜单集合
+     * @author 谭荣巧
+     * @Date 2018/1/22 11:56
+     */
+    @GetMapping("/loadBtnAndTab")
+    public List<ResVo> loadBtnAndTab(@RequestHeader("app") String app, @RequestHeader("userId") String userId) {
+        String key = String.format("%s:%s:%s", userId, app, "button");
+        if (StringUtils.isEmpty(userId)) {
+            log.warn("菜单资源加载失败，无效用户编码：" + userId);
+            return null;
+        }
+        if (StringUtils.isEmpty(app)) {
+            log.warn("菜单资源加载失败，无效系统编码：" + app + "。");
+            return null;
+        }
+        List<ResVo> resVoList;
+        List<String> resourceValues = redis.opsForList().range(key.toString(), 0, -1);
+        //先从redis里面取资源，如果获取为空，则从数据库重新查找
+        if (!resourceValues.isEmpty() && !resourceValues.get(0).isEmpty()) {
+            resVoList = JSONArray.parseArray(resourceValues.get(0), ResVo.class);
+        } else {
+            resVoList = htBoaInResourceService.loadByUserIdAndApp(userId, app, new String[]{"btn", "tab"});
+        }
+        return resVoList;
+    }
+
+    /**
+     * 加载首页菜单
+     *
+     * @return 菜单集合
+     * @author 谭荣巧
+     * @Date 2018/1/22 11:56
+     */
+    @GetMapping("/loadMenu")
+    public List<MenuVo> loadMenu(@RequestHeader("app") String app, @RequestHeader("userId") String userId) {
+        String key = String.format("%s:%s:%s", userId, app, "menu");
+        if (StringUtils.isEmpty(userId)) {
+            log.warn("菜单资源加载失败，无效用户编码：" + userId);
+            return null;
+        }
+        if (StringUtils.isEmpty(app)) {
+            log.warn("菜单资源加载失败，无效系统编码：" + app + "。");
+            return null;
+        }
+        List<String> resourceValues = redis.opsForList().range(key.toString(), 0, -1);
+        List<ResVo> resVoList;
+        //先从redis里面取资源，如果获取为空，则从数据库重新查找
+        if (!resourceValues.isEmpty() && !resourceValues.get(0).isEmpty()) {
+            resVoList = JSONArray.parseArray(resourceValues.get(0), ResVo.class);
+        } else {
+            resVoList = htBoaInResourceService.loadByUserIdAndApp(userId, app, new String[]{"view", "group"});
+        }
+        if (resVoList != null && !resVoList.isEmpty()) {
+            return toMenuVo(null, resVoList);
+        }
+        return null;
+    }
+
+    /**
+     * 递归转换数据<br>
+     *
+     * @author 谭荣巧
+     * @Date 2018/1/23 17:19
+     */
+    private List<MenuVo> toMenuVo(String resParent, List<ResVo> resVoList) {
+        List<MenuVo> menuList = new ArrayList<>();
+        MenuVo menu;
+        for (ResVo resVo : resVoList) {
+            if ((StringUtils.isEmpty(resParent) && StringUtils.isEmpty(resVo.getResParent())) || (!StringUtils.isEmpty(resParent) && resParent.equals(resVo.getResParent()))) {
+                menu = new MenuVo();
+                menu.setId(resVo.getResCode());
+                menu.setTitle(resVo.getResNameCn());
+                menu.setIcon(resVo.getFontIcon());
+                menu.setUrl(resVo.getResContent());
+                menu.setSpread(true);
+                menu.setChildren(toMenuVo(resVo.getResCode(), resVoList));
+                menuList.add(menu);
+            }
+        }
+        return menuList;
     }
 }

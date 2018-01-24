@@ -40,20 +40,20 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         RawAccessJwtToken rawAccessToken = (RawAccessJwtToken) authentication.getCredentials();
         //验签
         Jws<Claims> jwsClaims = rawAccessToken.parseClaims(jwtSettings.getTokenSigningKey());
-        List<String> roles = jwsClaims.getBody().get("roles", List.class);
+//        List<String> roles = jwsClaims.getBody().get("roles", List.class);
         String userId=jwsClaims.getBody().get("userId").toString();
         String orgCode=jwsClaims.getBody().get("orgCode").toString();
         
-        Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(); 
-     	for(String roleCode:roles) {
-    		SimpleGrantedAuthority authority = new SimpleGrantedAuthority(roleCode); 
-    		authorities.add(authority);
-    	}
+//        Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(); 
+//     	for(String roleCode:roles) {
+//    		SimpleGrantedAuthority authority = new SimpleGrantedAuthority(roleCode); 
+//    		authorities.add(authority);
+//    	}
         
         UserVo userVo=new UserVo();
         userVo.setUserId(userId);
         userVo.setOrgCode(orgCode);
-        return new JwtAuthenticationToken(userVo, authorities);
+        return new JwtAuthenticationToken(userVo, null);
     }
 
     @Override
