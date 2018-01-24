@@ -27,4 +27,11 @@ public class Constants {
 	public static final String RES_TYPE_TAB="tab";//标签页
 	public static final String RES_TYPE_API="api";// API
 	
+	
+	public static final String STATUS_0="0";// 系统 用户 角色 机构 禁用标记： 0：正常  1禁用
+	public static final String STATUS_1="1";// 系统 用户 角色 机构 禁用标记： 0：正常  1禁用
+	
+	public static final int DEL_0=0;// 系统 用户 角色 机构 删除标记： 0：正常  1:已删除
+	public static final int DEL_1=1;// 系统 用户 角色 机构 删除标记： 0：正常  1:已删除
+	
 }

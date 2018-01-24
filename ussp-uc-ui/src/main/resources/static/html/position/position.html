@@ -33,25 +33,6 @@
                 </div>
             </div>
         </div>
-        <div id="div-advanced-search" style="display: none;">
-            <form class="form-horizontal well clearfix">
-                <div class="form-group">
-                    <label class="control-label col-xs-1">用户名：</label>
-                    <div class="col-xs-2">
-                        <input id="search_empCode" name="empCode" type="text" class="form-control  input-sm"
-                               aria-required="true">
-                    </div>
-                    <div class="btn-group pull-right" style="margin-right: 15px;">
-                        <button type="button" class="btn btn-primary btn-sm" id="btn-advanced-rest">
-                            <i class="fa fa-reset"></i> 重置
-                        </button>
-                        <button type="button" class="btn btn-primary btn-sm" id="btn-advanced-search">
-                            <i class="fa fa-search"></i> 查询
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </div>
         <div class="row row-lg">
             <table id="position_datatable" lay-filter="filter_position_datatable">
             </table>
@@ -83,7 +64,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">岗位编号<b>*</b></label>
                 <div class="layui-input-block">
-                    <input type="text" name="positionCode" lay-verify="required" maxlength="20" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="text" name="positionCode" id="positionCode" lay-verify="required|checkExistPosCode" maxlength="20" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
             </div>
             <div class="layui-form-item">
@@ -112,7 +93,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">岗位编号<b>*</b></label>
                 <div class="layui-input-block">
-                    <input type="text" name="positionCode" lay-verify="required" maxlength="20" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="text" name="positionCode" lay-verify="required" maxlength="20" readonly  lay-verType="tips" class="layui-input layui-input-sm layui-bg-gray">
                 </div>
             </div>
             <div class="layui-form-item">

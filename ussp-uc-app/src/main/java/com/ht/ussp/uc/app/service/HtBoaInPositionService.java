@@ -87,4 +87,8 @@ public class HtBoaInPositionService {
         this.htBoaInPositionRepository.delete(id);;
     }
 
+	public List<HtBoaInPosition> findByPositionCode(String positionCode) {
+		return this.htBoaInPositionRepository.findByPositionCode(positionCode);
+	}
+
 }

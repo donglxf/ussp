@@ -131,5 +131,9 @@ public class HtBoaInRoleService {
     public void delete(long id) {
         this.htBoaInRoleRepository.delete(id);
     }
+
+	public List<HtBoaInRole> findByRoleCode(String roleCode) {
+		return this.htBoaInRoleRepository.findByRoleCode(roleCode);
+	}
     
 }

@@ -1,8 +1,9 @@
-layui.use(['element', 'form', 'ztree', 'table'], function () {
+layui.use(['element', 'form', 'ztree', 'table', 'ht_config'], function () {
     var $ = layui.jquery
         , element = layui.element
         , form = layui.form
         , table = layui.table
+        , config = layui.ht_config
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
@@ -159,7 +160,7 @@ layui.use(['element', 'form', 'ztree', 'table'], function () {
                     var apiCheckStatus = table.checkStatus('resource_api_dalog_datatable');
                     $.ajax({
                         type: "POST",
-                        url: basepath + 'resource/relevance',
+                        url: config.basePath + 'resource/relevance',
                         data: JSON.stringify({
                             parentCode: parentCode,
                             resourceList: apiCheckStatus.data
@@ -191,7 +192,7 @@ layui.use(['element', 'form', 'ztree', 'table'], function () {
                     table.render({
                         id: 'resource_api_dalog_datatable'
                         , elem: $('#resource_api_dalog_datatable', layero)
-                        , url: basepath + 'resource/page/load.json'
+                        , url: config.basePath + 'resource/page/load.json'
                         , where: {
                             app: app,
                             resType: "api"
@@ -263,12 +264,12 @@ layui.use(['element', 'form', 'ztree', 'table'], function () {
     appAndResourceTree = $.fn.zTree.init($('#resource_app_auth_ztree_left'), {
             async: {
                 enable: true,
-                url: basepath + "resource/app/load",
+                url: config.basePath + "resource/app/load",
                 dataFilter: function (treeId, parentNode, childNodes) {
                     if (!childNodes) return null;
                     for (var i = 0, l = childNodes.length; i < l; i++) {
                         //childNodes[i].open = true;
-                        childNodes[i].name = childNodes[i]["nameCn"].replace(/\.n/g, '.');
+                        childNodes[i].name = childNodes[i]["nameCn"];
                     }
                     return childNodes;
                 }
@@ -490,7 +491,7 @@ layui.use(['element', 'form', 'ztree', 'table'], function () {
         table.render({
             id: 'resource_' + type + '_datatable'
             , elem: '#resource_' + type + '_datatable'
-            , url: basepath + 'resource/page/load.json'
+            , url: config.basePath + 'resource/page/load.json'
             , where: {
                 app: app,
                 resType: resType,
@@ -509,7 +510,7 @@ layui.use(['element', 'form', 'ztree', 'table'], function () {
     var tableToolEvent = function (obj, type) {
         var data = obj.data;
         if (obj.event === 'detail') {
-            $.post(basepath + 'resource/view?id=' + data.id, null, function (result) {
+            $.post(config.basePath + 'resource/view?id=' + data.id, null, function (result) {
                 if (result["returnCode"] == "0000") {
                     viewDialog = layer.open({
                         type: 1,
@@ -544,7 +545,7 @@ layui.use(['element', 'form', 'ztree', 'table'], function () {
             });
         } else if (obj.event === 'del') {
             layer.confirm('是否删除资源' + data.resNameCn + "？", function (index) {
-                $.post(basepath + 'resource/delete?id=' + data.id, null, function (result) {
+                $.post(config.basePath + 'resource/delete?id=' + data.id, null, function (result) {
                     if (result["returnCode"] == "0000") {
                         if (type == 'module') {
                             moduleTableLoad = false;
@@ -564,7 +565,7 @@ layui.use(['element', 'form', 'ztree', 'table'], function () {
             });
         } else if (obj.event === 'edit') {
             layer.close(editDialog);
-            $.post(basepath + 'resource/view?id=' + data.id, null, function (result) {
+            $.post(config.basePath + 'resource/view?id=' + data.id, null, function (result) {
                 if (result["returnCode"] == "0000") {
                     editDialog = layer.open({
                         type: 1,
@@ -605,7 +606,7 @@ layui.use(['element', 'form', 'ztree', 'table'], function () {
                                 data.field.resType = type;
                                 $.ajax({
                                     type: "POST",
-                                    url: basepath + 'resource/update',
+                                    url: config.basePath + 'resource/update',
                                     data: JSON.stringify($.extend({}, result.data, data.field)),
                                     contentType: "application/json; charset=utf-8",
                                     success: function (result) {

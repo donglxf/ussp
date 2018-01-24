@@ -35,7 +35,7 @@ public interface HtBoaInUserAppRepository extends JpaRepository<HtBoaInUserApp,L
 	Page<BoaInAppInfo> listUserAppByPageWeb(Pageable arg0, String search,String userId);
 	
 	@Query("SELECT new com.ht.ussp.uc.app.model.BoaInAppInfo(u.app, u.name, u.nameCn,  u.status, u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,u.delFlag,u.id) "
-			+ "FROM HtBoaInApp u    WHERE ( u.app LIKE ?1 OR u.name LIKE ?1 OR u.nameCn LIKE ?1 )   GROUP BY u")
+			+ "FROM HtBoaInApp u    WHERE ( u.app LIKE ?1 OR u.name LIKE ?1 OR u.nameCn LIKE ?1 ) AND u.status=0 AND  u.delFlag=0  GROUP BY u")
 	Page<BoaInAppInfo> listAllUserAppByPage(Pageable arg0, String search);
 
 	/**

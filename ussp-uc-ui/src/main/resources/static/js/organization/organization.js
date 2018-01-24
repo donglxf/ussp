@@ -2,7 +2,7 @@ var orgListByPageUrl=basepath +"org/list.json"; //列出所有机构记录列表
 var addOrganizationUrl=basepath +"org/add"; //添加机构信息
 var delOrganizationUrl=basepath +"org/delete"; //添加机构信息
 var orgTreeUrl = basepath +"org/tree.json"; //机构列表
-
+var checkOrgCodeExistUrl = basepath +"org/isExistOrgCode"; //校验岗位编码是否已经存在
 layui.use(['form', 'ztree', 'table'], function () {
     var $ = layui.jquery
         , form = layui.form
@@ -88,6 +88,29 @@ layui.use(['form', 'ztree', 'table'], function () {
             refreshOrgTable($("#organization_search_keyword").val());
         }
     };
+    //自定义验证规则
+	form.verify({
+		  //校验编码是否已经存在
+		  checkExistOrgCode : function(value) {
+			  var isExist="";
+			  if(value){
+					  $.ajax({
+						url : checkOrgCodeExistUrl + "?orgCode=" + value,
+						type : 'POST',
+						async : false,
+						success : function(result) {
+							if (result["returnCode"] == "0000") {
+						    	isExist = "1";
+						    }  
+						}
+					});
+			  }
+			  if(isExist){
+				  return "机构编码已经存在使用，请重新输入机构编码";
+			  }
+		  },
+		  
+	});
     var refreshOrgTable = function (keyword) {
         if (!keyword) {
             keyword = null;
