@@ -8,8 +8,9 @@ layui.define(['jquery', 'ht_config'], function (exports) {
     "use strict";
 
     var $ = layui.jquery
-        , ht_config = layui.ht_config
+        , config = layui.ht_config
         , ELEM = '.layui-tab-content'
+        , AuthBtns = []
         , HtAuthButtion = function () {
         this.config = {}
     };
@@ -19,18 +20,33 @@ layui.define(['jquery', 'ht_config'], function (exports) {
         return that;
     };
     HtAuthButtion.prototype.render = function (filter) {
-        var that = this
-            , elemTab = $(ELEM + function () {
+        var elemTab = $(ELEM + function () {
             return filter ? ('[lay-filter="' + filter + '"]') : '';
         }()), elemButton = elemTab.find("[lay-auth]");
-        //console.info(elemTab, elemButton);
+        layui.each(AuthBtns, function (index, item) {
+            console.info(item);
+            layui.each(elemButton, function (index, btn) {
+                var layAuth = $(btn).attr("lay-auth");
+                if(layAuth==item.resContent){
+                    $(btn).hide();
+                }
+            });
+        });
+        console.info(elemTab, elemButton);
         //elemButton.hide();
-        // layui.each(elemButton, function (index, btn) {
-        //     //console.info(btn);
-        //     $(btn).hide();
-        // });
+
     };
-    HtAuthButtion.prototype.load = function (menuCode) {
+    HtAuthButtion.prototype.load = function () {
+        $.ajax({
+            url: config.loadBtnAndTabUrl
+            , type: "GET"
+            , error: function (xhr, status, thrown) {
+                layui.hint().error('Navbar error:AJAX请求出错.' + thrown);
+            }
+            , success: function (data) {
+                AuthBtns = data;
+            }
+        })
     };
 
     //自动完成渲染

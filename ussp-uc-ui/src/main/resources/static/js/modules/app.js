@@ -6,10 +6,11 @@
  * LICENSE:MIT
  */
 var tab;
-layui.define(['element', 'table', 'nprogress', 'tab', 'navbar', 'onelevel', 'laytpl', 'spa'], function (exports) {
+layui.define(['element', 'table', 'nprogress', 'tab', 'navbar', 'onelevel', 'laytpl', 'spa', 'ht_config'], function (exports) {
     var $ = layui.jquery,
         element = layui.element,
         table = layui.table,
+        config = layui.ht_config,
         _win = $(window),
         _doc = $(document),
         _body = $('.kit-body'),
@@ -76,7 +77,7 @@ layui.define(['element', 'table', 'nprogress', 'tab', 'navbar', 'onelevel', 'lay
                 // });
                 navbar.set({
                     remote: {
-                        url: 'http://localhost:9999/auth/loadMenu?app=UC&userId=10001'
+                        url: config.loadMenuUrl
                     }
                 }).render(function (data) {
                     console.info("打开菜单", data);

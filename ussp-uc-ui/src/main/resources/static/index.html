@@ -149,10 +149,11 @@
         layui.config({
             base: '/js/modules/',
             version: false
-        }).use(['app', 'message', 'ht_ajax', 'cookie'], function () {
+        }).use(['app', 'message', 'ht_ajax', 'cookie', 'ht_auth_button'], function () {
             var app = layui.app,
                 $ = layui.jquery,
                 cookie = layui.cookie,
+                htAuthButton = layui.ht_auth_button,
                 layer = layui.layer;
             //将message设置为全局以便子页面调用
             message = layui.message;
@@ -187,7 +188,8 @@
                 cookie.deleteToken();
                 cookie.deleteRefreshToken();
                 window.location.href = "/login.html";
-            })
+            });
+            htAuthButton.load();
         });
     });
 </script>

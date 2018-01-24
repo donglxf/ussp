@@ -108,7 +108,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config'], function () {
                         data.field.resType = type;
                         $.ajax({
                             type: "POST",
-                            url: "http://localhost:9999/resource/add",
+                            url: config.basePath + "resource/add",
                             data: JSON.stringify(data.field),
                             contentType: "application/json; charset=utf-8",
                             success: function (result) {
@@ -192,7 +192,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config'], function () {
                     table.render({
                         id: 'resource_api_dalog_datatable'
                         , elem: $('#resource_api_dalog_datatable', layero)
-                        , url: config.basePath + 'resource/page/load.json'
+                        , url: config.basePath + 'resource/page/load'
                         , where: {
                             app: app,
                             resType: "api"
@@ -411,9 +411,10 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config'], function () {
                 clos = [[
                     {type: 'numbers'}
                     , {field: 'resCode', width: 120, title: '按钮编号'}
+                    , {field: 'resContent', width: 120, title: '按钮标识'}
                     , {field: 'resNameCn', title: '按钮名称'}
                     , {field: 'fontIcon', width: 60, title: '图标'}
-                    , {field: 'sequence', width: 60, title: '顺序'}
+                    // , {field: 'sequence', width: 60, title: '顺序'}
                     , {field: 'resParent', width: 120, title: '父菜单编号'}
                     , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl"}
                     , {field: 'updateOperator', width: 100, title: '更新人'}
@@ -491,7 +492,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config'], function () {
         table.render({
             id: 'resource_' + type + '_datatable'
             , elem: '#resource_' + type + '_datatable'
-            , url: config.basePath + 'resource/page/load.json'
+            , url: config.basePath + 'resource/page/load'
             , where: {
                 app: app,
                 resType: resType,

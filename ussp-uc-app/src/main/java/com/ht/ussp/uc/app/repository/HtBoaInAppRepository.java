@@ -45,7 +45,7 @@ public interface HtBoaInAppRepository extends JpaRepository<HtBoaInApp, Long> {
             "APP,NAME,NAME_CN,1,'app', '0',NULL,APP " +
             "FROM HT_BOA_IN_APP " +
             "WHERE STATUS='0' " +
-            ") A ORDER BY SEQUENCE,RES_NAME ", nativeQuery = true)
+            ") A ORDER BY SEQUENCE,RES_NAME_CN ", nativeQuery = true)
     List<Object[]> queryAppAndAuthTree();
     
     

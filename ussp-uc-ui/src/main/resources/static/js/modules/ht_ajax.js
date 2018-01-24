@@ -28,13 +28,12 @@ layui.define(["cookie", "ht_config"], function (exports) {
                     top.location.href = "/login.html";
                     return false;
                 } else {
-                    console.info("延长refreshToken时间")
                     //延长refreshToken时间
                     cookie.setRefreshToken(refreshToken);
                 }
                 // 验证token是否失效，失效则重新请求后台更新token，如果无法更新，则重新登录
                 if ((token == null || token == "") && (noToken == false || !noToken)) {
-                    console.debug("token无效，重新加载token");
+                    //console.debug("token无效，重新加载token");
                     $.ajax({
                         type: 'GET',
                         async: false,
