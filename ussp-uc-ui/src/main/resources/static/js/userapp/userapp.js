@@ -1,6 +1,7 @@
 
 var userId = "";
 var refreshAppTable = "";
+var basepaths = "";
 layui.use(['form', 'ztree', 'table','ht_config'], function () {
     var $ = layui.jquery
         , form = layui.form
@@ -45,7 +46,7 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
     var delUserAppListUrl=config.basePath + 'userapp/delete'; //删除用户角色 /delete/{id}
     var stopUserAppListUrl=config.basePath + 'userapp/stop'; //禁用/启用用户角色 /stop/{id}/{status}
     var orgTreeUrl = config.basePath +"org/tree"; //机构列表 
-    
+    basepaths = config.basePath;
     var refreshUserTable = function (keyword) {
         if (!keyword) {
             keyword = null;

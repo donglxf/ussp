@@ -1,7 +1,8 @@
-var appListByPageUrl=basepath +"userapp/listAppByPage"; //列出所有角色记录列表信息  
-var addUserAppListUrl=basepath + 'userapp/add'; //禁用/启用用户角色 /stop/{id}/{status}
+var appListByPageUrl=parent.basepaths +"userapp/listAppByPage"; //列出所有角色记录列表信息  
+var addUserAppListUrl=parent.basepaths + 'userapp/add'; //禁用/启用用户角色 /stop/{id}/{status}
 
 layui.use(['form', 'table' ], function () {
+	
     var $ = layui.jquery
         , form = layui.form
         , table = layui.table;
