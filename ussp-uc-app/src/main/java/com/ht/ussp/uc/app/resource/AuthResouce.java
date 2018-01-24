@@ -46,7 +46,6 @@ import lombok.extern.log4j.Log4j2;
  */
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping(value = "/auth")
 @Log4j2
 public class AuthResouce {
@@ -380,7 +379,7 @@ public class AuthResouce {
      * @Date 2018/1/22 11:56
      */
     @GetMapping("/loadBtnAndTab")
-    public List<ResVo> loadBtnAndTab(String app, String userId) {
+    public List<ResVo> loadBtnAndTab(@RequestHeader("app") String app, @RequestHeader("userId") String userId) {
         String key = String.format("%s:%s:%s", userId, app, "button");
         if (StringUtils.isEmpty(userId)) {
             log.warn("菜单资源加载失败，无效用户编码：" + userId);
@@ -409,7 +408,7 @@ public class AuthResouce {
      * @Date 2018/1/22 11:56
      */
     @GetMapping("/loadMenu")
-    public List<MenuVo> loadMenu(String app, String userId) {
+    public List<MenuVo> loadMenu(@RequestHeader("app") String app, @RequestHeader("userId") String userId) {
         String key = String.format("%s:%s:%s", userId, app, "menu");
         if (StringUtils.isEmpty(userId)) {
             log.warn("菜单资源加载失败，无效用户编码：" + userId);
