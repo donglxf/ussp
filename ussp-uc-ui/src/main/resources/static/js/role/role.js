@@ -80,14 +80,16 @@ layui.use(['form',   'table' ], function () {
 						async : false,
 						success : function(result) {
 							if (result["returnCode"] == "0000") {
+								isExist="";
+						    } else{
 						    	isExist = "1";
-						    }  
+						    }
 						}
 					});
 			  }
-			  if(isExist){
-				  return "角色编码已经存在使用，请重新输入角色编码";
-			  }
+			  if(isExist=="1"){
+				  return "新增角色编码不可用，请重新输入角色编码";
+			  } 
 		  },
 		  
 	});

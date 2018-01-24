@@ -2,23 +2,15 @@ package com.ht.ussp.uc.app.resource;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
-import com.ht.ussp.uc.app.domain.HtBoaInRole;
 import com.ht.ussp.uc.app.domain.HtBoaInUserRole;
-import com.ht.ussp.uc.app.model.BoaInRoleInfo;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
@@ -34,7 +26,6 @@ import lombok.extern.log4j.Log4j2;
  */
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping(value = "/userrole")
 @Log4j2
 public class UserRoleResource {
@@ -44,7 +35,7 @@ public class UserRoleResource {
 
     @SuppressWarnings("rawtypes")
    	@ApiOperation(value = "对内：根据UserId查询用户角色", notes = "根据UserId查询用户角色")
-    @RequestMapping(value = { "/listUserRoleByPage"}, method = RequestMethod.POST)
+    @RequestMapping(value = { "/listUserRoleByPage"}, produces = {"application/json"})
     public PageResult<HtBoaInUserRole> listUserRoleByPage(PageVo page) {
        	PageResult result = new PageResult();
        	PageConf pageConf = new PageConf();
@@ -65,7 +56,7 @@ public class UserRoleResource {
      }
 
     @ApiOperation(value = "对内：新增/编辑用户角色记录", notes = "提交用户角色信息新增/编辑角色")
-    @RequestMapping(value = { "/add" }, method = RequestMethod.POST)
+    @PostMapping(value = { "/add" }, produces = {"application/json"})
     public Result add(@RequestBody HtBoaInUserRole htBoaInUserRole) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
@@ -106,7 +97,7 @@ public class UserRoleResource {
     
     @SuppressWarnings({ "rawtypes", "unused" })
 	@ApiOperation(value = "对内：禁用/启用用户角色", notes = "禁用/启用用户角色")
-    @RequestMapping(value = { "/stop" }, method = RequestMethod.POST)
+    @PostMapping(value = { "/stop" }, produces = {"application/json"})
     public Result stop( Long id, String status) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
@@ -135,7 +126,7 @@ public class UserRoleResource {
     
     @ApiOperation(value = "对内：删除用户角色记录", notes = "提交角色编号，可批量删除")
     @ApiImplicitParam(name = "codes", value = "角色编号集", required = true, dataType = "Codes")
-    @RequestMapping(value = {"/delete" }, method = RequestMethod.POST)
+    @PostMapping(value = {"/delete" }, produces = {"application/json"})
     public Result delete(int id) {
         long sl = System.currentTimeMillis(), el = 0L;
         String msg = "成功";

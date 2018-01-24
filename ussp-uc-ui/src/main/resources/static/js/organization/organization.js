@@ -1,12 +1,9 @@
-var orgListByPageUrl=basepath +"org/list.json"; //列出所有机构记录列表信息  
-var addOrganizationUrl=basepath +"org/add"; //添加机构信息
-var delOrganizationUrl=basepath +"org/delete"; //添加机构信息
-var orgTreeUrl = basepath +"org/tree.json"; //机构列表
-var checkOrgCodeExistUrl = basepath +"org/isExistOrgCode"; //校验岗位编码是否已经存在
-layui.use(['form', 'ztree', 'table'], function () {
+
+layui.use(['form', 'ztree', 'table','ht_config'], function () {
     var $ = layui.jquery
         , form = layui.form
         , table = layui.table
+        , config = layui.ht_config
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
@@ -88,6 +85,12 @@ layui.use(['form', 'ztree', 'table'], function () {
             refreshOrgTable($("#organization_search_keyword").val());
         }
     };
+    var orgListByPageUrl=config.basePath +"org/list"; //列出所有机构记录列表信息  
+    var addOrganizationUrl=config.basePath +"org/add"; //添加机构信息
+    var delOrganizationUrl=config.basePath +"org/delete"; //添加机构信息
+    var orgTreeUrl = config.basePath +"org/tree"; //机构列表
+    var checkOrgCodeExistUrl = config.basePath +"org/isExistOrgCode"; //校验岗位编码是否已经存在
+    
     //自定义验证规则
 	form.verify({
 		  //校验编码是否已经存在
@@ -100,14 +103,16 @@ layui.use(['form', 'ztree', 'table'], function () {
 						async : false,
 						success : function(result) {
 							if (result["returnCode"] == "0000") {
+								isExist="";
+						    } else{
 						    	isExist = "1";
-						    }  
+						    }
 						}
 					});
 			  }
-			  if(isExist){
-				  return "机构编码已经存在使用，请重新输入机构编码";
-			  }
+			  if(isExist=="1"){
+				  return "新增机构编码不可用，请重新输入机构编码";
+			  } 
 		  },
 		  
 	});

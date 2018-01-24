@@ -1,16 +1,11 @@
-var loadUserListUrl=basepath + 'user/loadListByPage.json'; //列出所有用户信息
-var loadUserRoleListUrl=basepath + 'userrole/listUserRoleByPage.json'; //列出用户所有角色列表
-var delUserRoleListUrl=basepath + 'userrole/delete'; //删除用户角色 /delete/{id}
-var stopUserRoleListUrl=basepath + 'userrole/stop'; //禁用/启用用户角色 /stop/{id}/{status}
-var roleListByPageUrl=basepath +"role/in/list"; //列出所有角色记录列表信息  
 
-var orgTreeUrl = basepath +"/org/tree.json"; //机构列表 
 var userId = "";
 var refreshRoleTable;
-layui.use(['form', 'ztree', 'table'], function () {
+layui.use(['form', 'ztree', 'table','ht_config'], function () {
     var $ = layui.jquery
         , form = layui.form
         , table = layui.table
+        , config = layui.ht_config
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
@@ -44,6 +39,13 @@ layui.use(['form', 'ztree', 'table'], function () {
                  })
             },
     };
+    var loadUserListUrl=config.basePath + 'user/loadListByPage'; //列出所有用户信息
+    var loadUserRoleListUrl=config.basePath + 'userrole/listUserRoleByPage'; //列出用户所有角色列表
+    var delUserRoleListUrl=config.basePath + 'userrole/delete'; //删除用户角色 /delete/{id}
+    var stopUserRoleListUrl=config.basePath + 'userrole/stop'; //禁用/启用用户角色 /stop/{id}/{status}
+    var roleListByPageUrl=config.basePath +"role/in/list"; //列出所有角色记录列表信息  
+    var orgTreeUrl = config.basePath +"org/tree"; //机构列表 
+    
     var refreshUserTable = function (keyword) {
         if (!keyword) {
             keyword = null;

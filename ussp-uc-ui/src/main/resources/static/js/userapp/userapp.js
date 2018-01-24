@@ -1,14 +1,11 @@
-var loadUserListUrl=basepath + 'user/loadListByPage.json'; //列出所有用户系统信息
-var loadUserAppListUrl=basepath + 'userapp/listUserAppByPage.json'; //列出用户所有系统
-var delUserAppListUrl=basepath + 'userapp/delete'; //删除用户角色 /delete/{id}
-var stopUserAppListUrl=basepath + 'userapp/stop'; //禁用/启用用户角色 /stop/{id}/{status}
-var orgTreeUrl = basepath +"/org/tree.json"; //机构列表 
+
 var userId = "";
 var refreshAppTable = "";
-layui.use(['form', 'ztree', 'table'], function () {
+layui.use(['form', 'ztree', 'table','ht_config'], function () {
     var $ = layui.jquery
         , form = layui.form
         , table = layui.table
+        , config = layui.ht_config
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
@@ -42,6 +39,13 @@ layui.use(['form', 'ztree', 'table'], function () {
                  })
             },
     };
+    
+    var loadUserListUrl=config.basePath + 'user/loadListByPage'; //列出所有用户系统信息
+    var loadUserAppListUrl=config.basePath + 'userapp/listUserAppByPage'; //列出用户所有系统
+    var delUserAppListUrl=config.basePath + 'userapp/delete'; //删除用户角色 /delete/{id}
+    var stopUserAppListUrl=config.basePath + 'userapp/stop'; //禁用/启用用户角色 /stop/{id}/{status}
+    var orgTreeUrl = config.basePath +"org/tree"; //机构列表 
+    
     var refreshUserTable = function (keyword) {
         if (!keyword) {
             keyword = null;

@@ -14,11 +14,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.ussp.common.Constants;
@@ -65,7 +63,7 @@ public class OrgResource {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @ApiOperation(value = "对内：机构记录查询", notes = "列出所有机构记录列表信息")
-    @RequestMapping(value = {"/list"}, method = RequestMethod.POST)
+    @PostMapping(value = {"/list"}, produces = {"application/json"} )
     public PageResult<BoaInOrgInfo> list(PageVo page) {
         PageResult result = new PageResult();
         PageConf pageConf = new PageConf();
@@ -93,7 +91,7 @@ public class OrgResource {
     @SuppressWarnings({"unused", "rawtypes"})
     @ApiOperation(value = "对内：新增/编辑机构记录", notes = "提交机构基础信息新增/编辑机构")
     @ApiImplicitParam(name = "boaInOrgInfo", value = "机构信息实体", required = true, dataType = "BoaInOrgInfo")
-    @RequestMapping(value = {"/add"}, method = RequestMethod.POST)
+    @PostMapping(value = {"/add"}, produces = {"application/json"} )
     public Result add(@RequestBody BoaInOrgInfo boaInOrgInfo) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
@@ -136,7 +134,7 @@ public class OrgResource {
 
     @SuppressWarnings("rawtypes")
     @ApiOperation(value = "对内：删除标记机构记录", notes = "提交机构编号，可批量删除")
-    @RequestMapping(value = {"/delete"}, method = RequestMethod.POST)
+    @PostMapping(value = {"/delete"}, produces = {"application/json"} )
     public Result delete(long id) {
         long sl = System.currentTimeMillis(), el = 0L;
         String msg = "成功";
@@ -156,7 +154,7 @@ public class OrgResource {
 
     @SuppressWarnings("rawtypes")
     @ApiOperation(value = "对内：禁用/启用机构")
-    @RequestMapping(value = {"/stop"}, method = RequestMethod.POST)
+    @PostMapping(value = {"/stop"}, produces = {"application/json"} )
     public Result stop(long id, String status) {
         long sl = System.currentTimeMillis(), el = 0L;
         String msg = "成功";
@@ -173,14 +171,14 @@ public class OrgResource {
     }
     
     @SuppressWarnings("rawtypes")
-   	@ApiOperation(value = "对内：机构编码是否存在")
-    @RequestMapping(value = {"/isExistOrgCode" }, method = RequestMethod.POST)
+   	@ApiOperation(value = "对内：机构编码是否可用  true：可用  false：不可用")
+    @PostMapping(value = {"/isExistOrgCode" }, produces = {"application/json"} )
     public Result isExistOrgCode( String orgCode) {
        List<HtBoaInOrg> listHtBoaInOrg = htBoaInOrgService.findByOrgCode(orgCode);
        if(listHtBoaInOrg.isEmpty()) {
-    	   return Result.buildFail();
-       }else {
     	   return Result.buildSuccess();
+       }else {
+    	   return Result.buildFail();
        }
     }
 }

@@ -3,10 +3,9 @@ package com.ht.ussp.uc.app.resource;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.ussp.core.PageResult;
@@ -27,7 +26,6 @@ import lombok.extern.log4j.Log4j2;
  */
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping(value = "/positionrole")
 @Log4j2
 public class PositionRoleResource {
@@ -37,7 +35,7 @@ public class PositionRoleResource {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
    	@ApiOperation(value = "对内：根据UserId查询岗位角色", notes = "根据UserId查询岗位角色")
-    @RequestMapping(value = { "/listPositionRoleByPage"}, method = RequestMethod.POST)
+    @PostMapping(value = { "/listPositionRoleByPage"}, produces = {"application/json"})
     public PageResult<HtBoaInUserRole> listPositionRoleByPage(PageVo page) {
        	PageResult result = new PageResult();
        	PageConf pageConf = new PageConf();
@@ -59,7 +57,7 @@ public class PositionRoleResource {
 
     @SuppressWarnings({ "unused", "rawtypes" })
     @ApiOperation(value = "对内：岗位绑定角色", notes = "提交岗位编号和角色编号进行绑定")
-    @RequestMapping(value = { "/add" }, method = RequestMethod.POST)
+    @PostMapping(value = { "/add" }, produces = {"application/json"})
     public Result add(@RequestBody HtBoaInPositionRole htBoaInPositionRole) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
@@ -100,7 +98,7 @@ public class PositionRoleResource {
     
     @SuppressWarnings({ "rawtypes", "unused" })
 	@ApiOperation(value = "对内：禁用/启用岗位角色", notes = "禁用/启用岗位角色")
-    @RequestMapping(value = { "/stop" }, method = RequestMethod.POST)
+    @PostMapping(value = { "/stop" }, produces = {"application/json"})
     public Result stop(  Long id,  String status) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
@@ -129,7 +127,7 @@ public class PositionRoleResource {
     
     @SuppressWarnings("rawtypes")
     @ApiOperation(value = "对内：岗位解绑角色", notes = "提交岗位编号和角色编号进行解绑")
-    @RequestMapping(value = {"/delete" }, method = RequestMethod.POST)
+    @PostMapping(value = {"/delete" }, produces = {"application/json"})
     public Result delete(  Long id) {
         HtBoaInPositionRole u = new HtBoaInPositionRole();
         u.setId(id);

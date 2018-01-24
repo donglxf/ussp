@@ -1,13 +1,8 @@
-var positionListByPageUrl=basepath +"position/in/list.json"; //列出所有岗位记录列表信息  
-var addPositionUrl=basepath +"position/in/add"; //添加岗位信息
-var delPositionUrl=basepath +"position/in/delete"; //添加岗位信息
-var orgTreeUrl = basepath +"org/tree.json"; //机构列表
-var statusPositionUrl=basepath +"position/in/stop"; //禁用
-var checkPositionCodeExistUrl=basepath +"position/isExistPositionCode"; //校验岗位编码是否已经存在
 
-layui.use(['form', 'ztree', 'table'], function () {
+layui.use(['form', 'ztree', 'table','ht_config'], function () {
     var $ = layui.jquery
         , form = layui.form
+        , config = layui.ht_config
         , table = layui.table
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
@@ -85,6 +80,13 @@ layui.use(['form', 'ztree', 'table'], function () {
             refreshTable($("#position_search_keyword").val());
         }
     };
+    var positionListByPageUrl=config.basePath +"position/in/list"; //列出所有岗位记录列表信息  
+    var addPositionUrl=config.basePath +"position/in/add"; //添加岗位信息
+    var delPositionUrl=config.basePath +"position/in/delete"; //添加岗位信息
+    var orgTreeUrl = config.basePath +"org/tree"; //机构列表
+    var statusPositionUrl=config.basePath +"position/in/stop"; //禁用
+    var checkPositionCodeExistUrl=config.basePath +"position/isExistPositionCode"; //校验岗位编码是否已经存在
+    
     //自定义验证规则
 	form.verify({
 		  //校验编码是否已经存在
@@ -97,14 +99,16 @@ layui.use(['form', 'ztree', 'table'], function () {
 						async : false,
 						success : function(result) {
 							if (result["returnCode"] == "0000") {
+								isExist="";
+						    } else{
 						    	isExist = "1";
-						    }  
+						    }
 						}
 					});
 			  }
-			  if(isExist){
-				  return "岗位编码已经存在使用，请重新输入岗位编码";
-			  }
+			  if(isExist=="1"){
+				  return "新增岗位编码不可用，请重新输入岗位编码";
+			  } 
 		  },
 		  
 	});

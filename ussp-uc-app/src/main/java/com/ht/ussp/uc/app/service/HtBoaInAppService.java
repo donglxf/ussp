@@ -85,4 +85,8 @@ public class HtBoaInAppService {
     public void delete(long id) {
         this.htBoaInAppRepository.delete(id);
     }
+
+	public List<HtBoaInApp> findByAppCode(String appCode) {
+		return this.htBoaInAppRepository.findByApp(appCode);
+	}
 }

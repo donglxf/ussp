@@ -17,7 +17,6 @@ import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.core.ReturnCodeEnum;
-import com.ht.ussp.uc.app.domain.HtBoaInPosition;
 import com.ht.ussp.uc.app.domain.HtBoaInRole;
 import com.ht.ussp.uc.app.model.BoaInRoleInfo;
 import com.ht.ussp.uc.app.model.PageConf;
@@ -187,14 +186,14 @@ public class RoleResource {
        }
      
     @SuppressWarnings("rawtypes")
-    @ApiOperation(value = "对内：角色编码是否存在")
+    @ApiOperation(value = "对内：角色编码是否可用  true：可用  false：不可用")
     @RequestMapping(value = {"/isExistRoleCode" }, method = RequestMethod.POST)
     public Result isExistRoleCode( String roleCode) {
         List<HtBoaInRole> listHtBoaInRole = htBoaInRoleService.findByRoleCode(roleCode);
         if(listHtBoaInRole.isEmpty()) {
-     	   return Result.buildFail();
+        	 return Result.buildSuccess();
         }else {
-     	   return Result.buildSuccess();
+        	return Result.buildFail();
         }
      }
 }
