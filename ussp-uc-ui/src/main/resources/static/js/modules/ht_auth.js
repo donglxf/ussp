@@ -23,13 +23,14 @@ layui.define(['jquery', 'tab', 'ht_config'], function (exports) {
     HtAuth.prototype.render = function (filter) {
         var elemTab = $(ELEM + function () {
             return filter ? ('[lay-filter="' + filter + '"]') : '';
-        }()), elemButton = elemTab.find("[ht-atuh]");
+        }())
+            , elemButton = elemTab.find("[ht-atuh]")
+            , menuCode = elemTab.parent("[lay-item-id]").attr("lay-item-id");
+        menuCode = menuCode ? menuCode : tab.getId();
         layui.each(elemButton, function (index, btn) {
             var layAuth = $(btn).attr("ht-atuh");
             var isAuth = false;
             layui.each(AllAuth, function (index, item) {
-                //获取菜单编码
-                var menuCode = tab.getId();
                 //验证菜单编码和权限编码
                 if (menuCode == item.resParent && layAuth == item.resCode) {
                     isAuth = true;
