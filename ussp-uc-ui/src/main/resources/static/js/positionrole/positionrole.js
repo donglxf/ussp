@@ -1,10 +1,11 @@
     var positionCode = "";
     var refreshRoleTable;
-layui.use(['form', 'ztree', 'table','ht_config'], function () {
+layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     var $ = layui.jquery
         , form = layui.form
         , table = layui.table
         , config = layui.ht_config
+        , ht_auth = layui.ht_auth
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
@@ -62,6 +63,7 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
                  }
              });
         }
+        ht_auth.render();
     };
     var refreshpositionroleTable = function (keyword) {
         if (!keyword) {
@@ -82,6 +84,7 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
         	        }
         	   });
         }
+        ht_auth.render();
     };
    
     refreshRoleTable = function (sucess) {
@@ -104,6 +107,7 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
        	        }
        	   });
        }
+        ht_auth.render();
     };
     //渲染组织机构树
     orgTree = $.fn.zTree.init($('#positionrole_org_ztree_left'), {
@@ -253,6 +257,14 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
              });
         } 
     });
+    
+    table.on('renderComplete(filter_positionrole_user_datatable)', function (obj) {
+        ht_auth.render();
+    });
+    table.on('renderComplete(filter_positionrole_role_datatable)', function (obj) {
+        ht_auth.render();
+    });
+    
     //监听工具栏
     $('#positionrole_user_table_tools .layui-btn').on('click', function () {
         var type = $(this).data('type');
@@ -291,4 +303,5 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
             }
         }
     }
+    ht_auth.render("positionrole_auth");
 })

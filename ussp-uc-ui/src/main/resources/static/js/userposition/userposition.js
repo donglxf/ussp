@@ -1,7 +1,8 @@
-layui.use(['form', 'ztree', 'table','ht_config'], function () {
+layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     var $ = layui.jquery
         , form = layui.form
         , table = layui.table
+        , ht_auth = layui.ht_auth
         , config = layui.ht_config
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
@@ -62,6 +63,7 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
                      orgCode: selectNodes[0]["orgCode"]
                  }
              });
+        	 ht_auth.render();
         }
     };
     var refreshuserpositionTable = function (keyword) {
@@ -82,6 +84,7 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
                        }
         	        }
         	   });
+        	 ht_auth.render();
         }
     };
     
@@ -103,6 +106,7 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
                        }
         	        }
         	   });
+        	 ht_auth.render();
         }
     };
    
@@ -207,6 +211,7 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
             , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#userposition_role_datatable_bar'}
         ]]
     });
+    
     //监听操作栏
     table.on('tool(filter_userposition_user_datatable)', function (obj) {
         var data = obj.data;
@@ -258,6 +263,14 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
              });
         } 
     });
+    
+    table.on('renderComplete(filter_userposition_user_datatable)', function (obj) {
+        ht_auth.render();
+    });
+    table.on('renderComplete(filter_userposition_role_datatable)', function (obj) {
+        ht_auth.render();
+    });
+    
     //监听工具栏
     $('#userposition_user_table_tools .layui-btn').on('click', function () {
         var type = $(this).data('type');
@@ -295,4 +308,5 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
             }
         }
     }
+    ht_auth.render("userposition_auth");
 })

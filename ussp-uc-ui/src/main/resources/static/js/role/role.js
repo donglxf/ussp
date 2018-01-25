@@ -3,10 +3,11 @@ var addRoleUrl=basepath +"role/in/add"; //添加角色信息
 var delRoleUrl=basepath +"role/in/delete"; //删除角色信息
 var statusRoleUrl=basepath +"role/in/stop"; //禁用
 var checkRoleCodeExist = basepath +"role/isExistRoleCode"; //校验角色编码是否已经存在
-layui.use(['form',   'table' ], function () {
+layui.use(['form',   'table', 'ht_auth' ], function () {
     var $ = layui.jquery
         , form = layui.form
         , table = layui.table
+        , ht_auth = layui.ht_auth
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
@@ -105,6 +106,7 @@ layui.use(['form',   'table' ], function () {
                 keyWord: keyword
             }
         });
+        ht_auth.render();
     };
     //渲染用户数据表格
     table.render({
@@ -229,11 +231,15 @@ layui.use(['form',   'table' ], function () {
             });
         }
     });
+    table.on('renderComplete(filter_role_datatable)', function (obj) {
+        ht_auth.render();
+    });
     //监听工具栏
     $('#role_table_tools .layui-btn').on('click', function () {
         var type = $(this).data('type');
         active[type] ? active[type].call(this) : '';
     });
     
+    ht_auth.render("role_auth");
 
 })

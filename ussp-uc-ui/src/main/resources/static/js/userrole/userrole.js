@@ -1,9 +1,10 @@
 
 var userId = "";
 var refreshRoleTable;
-layui.use(['form', 'ztree', 'table','ht_config'], function () {
+layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     var $ = layui.jquery
         , form = layui.form
+        , ht_auth = layui.ht_auth
         , table = layui.table
         , config = layui.ht_config
         , addDialog = 0 //新增弹出框的ID
@@ -61,6 +62,7 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
                      orgCode: selectNodes[0]["orgCode"]
                  }
              });
+        	 ht_auth.render();
         }
     };
     var refreshUserRoleTable = function (keyword) {
@@ -81,6 +83,7 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
                        }
         	        }
         	   });
+        	 ht_auth.render();
         }
     };
     refreshRoleTable = function (sucess) {
@@ -102,6 +105,7 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
                        }
         	        }
         	   });
+        	 ht_auth.render();
         }
     };
    
@@ -210,6 +214,7 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
             , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#userrole_role_datatable_bar'}
         ]]
     });
+    
     //监听操作栏
     table.on('tool(filter_userrole_user_datatable)', function (obj) {
         var data = obj.data;
@@ -261,6 +266,14 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
              });
         } 
     });
+    
+    table.on('renderComplete(filter_userrole_user_datatable)', function (obj) {
+        ht_auth.render();
+    });
+    table.on('renderComplete(filter_userrole_role_datatable)', function (obj) {
+        ht_auth.render();
+    });
+    
     //监听工具栏
     $('#userrole_user_table_tools .layui-btn').on('click', function () {
         var type = $(this).data('type');
@@ -298,4 +311,5 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
             }
         }
     }
+    ht_auth.render("userrole_auth");
 })
