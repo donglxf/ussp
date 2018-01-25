@@ -268,12 +268,8 @@ layui.define(['jquery', 'element', 'nprogress', 'utils'], function (exports) {
             var contentHtm = '<div class="layui-tab-item layadmin-tabsbody-item layui-show" lay-item-id="' + id + '">{{content}}</div>';
             switch (_config.renderType) {
                 case renderType.page:
-                    contentHtm = contentHtm.replace('{{content}}', that.getBodyContent(url + '?v=' + new Date().getTime(), function () {
-                        setTimeout(function () {
-                            NProgress.done();
-                            _config.openWait && loadIndex && that.closeLoad(loadIndex);
-                        }, 500);
-                    }));
+                    contentHtm = contentHtm.replace('{{content}}', that.getBodyContent(url + '?v=' + new Date().getTime()));
+                    _config.openWait && loadIndex && that.closeLoad(loadIndex);
                     break;
                 case renderType.iframe:
                     contentHtm = contentHtm.replace('{{content}}', '<iframe src="' + url + '"></iframe>');
@@ -301,6 +297,7 @@ layui.define(['jquery', 'element', 'nprogress', 'utils'], function (exports) {
             });
             that.tabChange(id);
             that.winResize();
+            NProgress.done();
             if (_config.onSwitch) {
                 element.on('tab(' + that._filter + ')', function (data) {
                     _config.onSwitch({
