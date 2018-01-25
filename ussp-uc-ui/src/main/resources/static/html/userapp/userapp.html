@@ -1,4 +1,4 @@
-<div class="layui-fluid">
+<div class="layui-fluid" lay-filter="userapp_auth">
     <div class="tree col-xs-3" style="">
         <div>
             <div class="tree_search">
@@ -42,13 +42,13 @@
             </script>
         </div>
 		<div class="row row-lg">
-			<fieldset class="layui-elem-field layui-field-title" style="margin-top: 28px;margin-bottom: 0">
+			<!-- <fieldset class="layui-elem-field layui-field-title" style="margin-top: 28px;margin-bottom: 0">
 				<legend style="margin-left: 0">系统</legend>
-			</fieldset>
+			</fieldset> -->
 			<div class="layui-field-box">
 					<div class="row row-lg" id="userapp_app_table_tools">
 					   <div class="toolbarBtn btn-group"  >
-                             <button class="layui-btn layui-btn-sm" title="关联系统" data-type="loadAppList" > 关联系统 </button>
+                             <button class="layui-btn layui-btn-sm" title="关联系统" data-type="loadAppList" ht-atuh="loadAppList"> 关联系统 </button>
                         </div>
 						<div class="pull-right col-xs-4 row">
 							<div class="input-group input-group-sm">

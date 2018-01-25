@@ -1,10 +1,11 @@
 
 var userId = "";
 var refreshAppTable = "";
-layui.use(['form', 'ztree', 'table','ht_config'], function () {
+layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     var $ = layui.jquery
         , form = layui.form
         , table = layui.table
+        , ht_auth = layui.ht_auth
         , config = layui.ht_config
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
@@ -60,6 +61,7 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
                      orgCode: selectNodes[0]["orgCode"]
                  }
              });
+        	 ht_auth.render();
         }
     };
     var refreshUserAppTable = function (keyword) {
@@ -80,6 +82,7 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
                        }
         	        }
         	   });
+        	 ht_auth.render();
         }
     };
      refreshAppTable = function (sucess) {
@@ -101,6 +104,7 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
                        }
         	        }
         	   });
+        	 ht_auth.render();
         }
     };
    
@@ -255,6 +259,13 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
              });
         } 
     });
+    table.on('renderComplete(filter_userapp_user_datatable)', function (obj) {
+        ht_auth.render();
+    });
+    table.on('renderComplete(filter_userapp_app_datatable)', function (obj) {
+        ht_auth.render();
+    });
+    
     //监听工具栏
     $('#userapp_user_table_tools .layui-btn').on('click', function () {
         var type = $(this).data('type');
@@ -292,4 +303,5 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
             }
         }
     }
+    ht_auth.render("userapp_auth");
 })

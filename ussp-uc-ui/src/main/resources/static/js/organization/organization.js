@@ -1,9 +1,10 @@
 
-layui.use(['form', 'ztree', 'table','ht_config'], function () {
+layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     var $ = layui.jquery
         , form = layui.form
         , table = layui.table
         , config = layui.ht_config
+        , ht_auth = layui.ht_auth
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
@@ -52,7 +53,7 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
                                 layer.close(addDialog);
                                 if (message.returnCode == '0000') {
                                 	layer.msg("机构新增成功");
-                                    table.reload('organization_datatable', {
+                                   /* table.reload('organization_datatable', {
                                         page: {
                                             curr: 1 //重新从第 1 页开始
                                         }
@@ -61,7 +62,8 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
                                                 orgCode: nodes[0]["orgCode"]
                                             }
                                         }
-                                    });
+                                    });*/
+                                	refreshOrgTable();
                                 }
                                 if (orgTree) {
                                     orgTree.reAsyncChildNodes(null, "refresh");
@@ -137,6 +139,7 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
                  }
             }
         });
+        ht_auth.render();
     };
     //渲染组织机构树
     orgTree = $.fn.zTree.init($('#organization_org_ztree_left'), {
@@ -165,7 +168,7 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
             , callback: {
                 onClick: function (event, treeId, treeNode, clickFlag) {
                     //执行重载
-                    table.reload('organization_datatable', {
+                    /*table.reload('organization_datatable', {
                         page: {
                             curr: 1 //重新从第 1 页开始
                         }
@@ -174,7 +177,8 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
                                 orgCode: treeNode["orgCode"]
                             }
                         }
-                    });
+                    });*/
+                	refreshOrgTable();
                 },
                 onAsyncSuccess: function (event, treeId, treeNode, msgString) {
                     var node = orgTree.getNodeByParam("level ", "0");
@@ -322,6 +326,9 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
             
         }
     });
+    table.on('renderComplete(filter_organization_datatable)', function (obj) {
+        ht_auth.render();
+    });
     //监听工具栏
     $('#organization_table_tools .layui-btn').on('click', function () {
         var type = $(this).data('type');
@@ -354,4 +361,5 @@ layui.use(['form', 'ztree', 'table','ht_config'], function () {
             }
         }
     }
+    ht_auth.render("organization_auth");
 })
