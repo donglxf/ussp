@@ -1,9 +1,9 @@
-layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth_button'], function () {
+layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
     var $ = layui.jquery
         , config = layui.ht_config
         , form = layui.form
         , table = layui.table
-        , ht_auth_button = layui.ht_auth_button
+        , ht_auth = layui.ht_auth
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
@@ -84,7 +84,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth_button'], function ()
                     orgCode: selectNodes[0]["orgCode"]
                 }
             });
-            ht_auth_button.render();
+            ht_auth.render();
         }
     }
     //渲染组织机构树
@@ -191,7 +191,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth_button'], function ()
                 });
             } else if (obj.event === 'del') {
                 layer.confirm('是否删除用户' + data.userName + "？", function (index) {
-                    $.post(config.basePath + "user/delete/" + data.userId, null, function (result) {
+                    $.post(config.basePath + "user/delete?userId=" + data.userId, null, function (result) {
                         if (result["returnCode"] == "0000") {
                             refreshTable();
                             layer.close(index);
@@ -203,7 +203,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth_button'], function ()
                 });
             } else if (obj.event === 'edit') {
                 layer.close(editDialog);
-                $.post(config.basePath + "user/view/" + data.userId, null, function (result) {
+                $.post(config.basePath + "user/view?userId=" + data.userId, null, function (result) {
                     if (result["returnCode"] == "0000") {
                         editDialog = layer.open({
                             type: 1,
@@ -263,7 +263,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth_button'], function ()
         }
     );
     table.on('renderComplete(filter_user_datatable)', function (obj) {
-        ht_auth_button.render();
+        ht_auth.render();
     });
     //监听工具栏
     $('#user_table_tools .layui-btn').on('click', function () {
@@ -298,5 +298,5 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth_button'], function ()
         }
     }
 
-    ht_auth_button.render();
+    ht_auth.render("user_auth");
 })

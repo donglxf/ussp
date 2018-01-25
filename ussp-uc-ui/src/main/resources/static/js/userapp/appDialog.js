@@ -1,10 +1,16 @@
-var appListByPageUrl=basepath +"userapp/listAppByPage"; //列出所有角色记录列表信息  
-var addUserAppListUrl=basepath + 'userapp/add'; //禁用/启用用户角色 /stop/{id}/{status}
 
-layui.use(['form', 'table' ], function () {
+layui.config({
+    base: '/js/modules/',
+    version: false
+}).use(['app', 'message', 'ht_ajax', 'ht_cookie', 'ht_auth'],function () {
     var $ = layui.jquery
         , form = layui.form
+        , config = layui.ht_config
+        ,cookie = layui.ht_cookie
         , table = layui.table;
+    
+    var appListByPageUrl=config.basePath +"userapp/listAppByPage"; //列出所有角色记录列表信息  
+    var addUserAppListUrl=config.basePath + 'userapp/add'; //禁用/启用用户角色 /stop/{id}/{status}
     
     var loadRoleListTable = function (keyword) {
         if (!keyword) {

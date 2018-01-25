@@ -1,15 +1,8 @@
-var loadUserListUrl=basepath + 'user/loadListByPage.json'; //列出所有用户信息
-var loadUserPositionListUrl=basepath + 'userposition/listUserPositionByPage.json'; //列出用户所有岗位列表
-var delUserPositionListUrl=basepath + 'userposition/delete'; //删除用户岗位 /delete/{id}
-var stopUserPositionListUrl=basepath + 'userposition/stop'; //禁用/启用用户岗位 /stop/{id}/{status}
-var orgTreeUrl = basepath +"/org/tree.json"; //机构列表 
-var userId = "";
-var refreshPositionTable;
-
-layui.use(['form', 'ztree', 'table'], function () {
+layui.use(['form', 'ztree', 'table','ht_config'], function () {
     var $ = layui.jquery
         , form = layui.form
         , table = layui.table
+        , config = layui.ht_config
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
@@ -45,6 +38,15 @@ layui.use(['form', 'ztree', 'table'], function () {
 
             },
     };
+    
+    var loadUserListUrl=config.basePath + 'user/loadListByPage'; //列出所有用户信息
+    var loadUserPositionListUrl=config.basePath + 'userposition/listUserPositionByPage'; //列出用户所有岗位列表
+    var delUserPositionListUrl=config.basePath + 'userposition/delete'; //删除用户岗位 /delete/{id}
+    var stopUserPositionListUrl=config.basePath + 'userposition/stop'; //禁用/启用用户岗位 /stop/{id}/{status}
+    var orgTreeUrl = config.basePath +"org/tree"; //机构列表 
+    var userId = "";
+    var refreshPositionTable;
+    
     var refreshUserTable = function (keyword) {
         if (!keyword) {
             keyword = null;

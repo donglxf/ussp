@@ -1,9 +1,10 @@
-layui.use(['element', 'form', 'ztree', 'table', 'ht_config'], function () {
+layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
     var $ = layui.jquery
         , element = layui.element
         , form = layui.form
         , table = layui.table
         , config = layui.ht_config
+        , ht_auth = layui.ht_auth
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
@@ -108,7 +109,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config'], function () {
                         data.field.resType = type;
                         $.ajax({
                             type: "POST",
-                            url: "http://localhost:9999/resource/add",
+                            url: config.basePath + "resource/add",
                             data: JSON.stringify(data.field),
                             contentType: "application/json; charset=utf-8",
                             success: function (result) {
@@ -192,7 +193,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config'], function () {
                     table.render({
                         id: 'resource_api_dalog_datatable'
                         , elem: $('#resource_api_dalog_datatable', layero)
-                        , url: config.basePath + 'resource/page/load.json'
+                        , url: config.basePath + 'resource/page/load'
                         , where: {
                             app: app,
                             resType: "api"
@@ -407,13 +408,14 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config'], function () {
                 btnTableLoad = true;
                 resType = 'btn';
                 height = 'full-601';
-                initSort = {field: 'sequence', type: 'asc'};
+                initSort = {field: 'resCode', type: 'asc'};
                 clos = [[
                     {type: 'numbers'}
                     , {field: 'resCode', width: 120, title: '按钮编号'}
+                    , {field: 'resContent', width: 120, title: '按钮标识'}
                     , {field: 'resNameCn', title: '按钮名称'}
                     , {field: 'fontIcon', width: 60, title: '图标'}
-                    , {field: 'sequence', width: 60, title: '顺序'}
+                    // , {field: 'sequence', width: 60, title: '顺序'}
                     , {field: 'resParent', width: 120, title: '父菜单编号'}
                     , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl"}
                     , {field: 'updateOperator', width: 100, title: '更新人'}
@@ -428,13 +430,13 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config'], function () {
                 tabTableLoad = true;
                 resType = 'tab';
                 height = 'full-601';
-                initSort = {field: 'sequence', type: 'asc'};
+                initSort = {field: 'resCode', type: 'asc'};
                 clos = [[
                     {type: 'numbers'}
                     , {field: 'resCode', width: 120, title: 'TAB编号'}
                     , {field: 'resNameCn', width: 150, title: 'TAB名称'}
                     , {field: 'resContent', title: 'TAB链接'}
-                    , {field: 'sequence', width: 60, title: '顺序'}
+                    // , {field: 'sequence', width: 60, title: '顺序'}
                     , {field: 'resParent', width: 120, title: '父菜单编号'}
                     , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl"}
                     , {field: 'updateOperator', width: 100, title: '更新人'}
@@ -491,7 +493,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config'], function () {
         table.render({
             id: 'resource_' + type + '_datatable'
             , elem: '#resource_' + type + '_datatable'
-            , url: config.basePath + 'resource/page/load.json'
+            , url: config.basePath + 'resource/page/load'
             , where: {
                 app: app,
                 resType: resType,
@@ -746,4 +748,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config'], function () {
             }
         }
     }
+
+    //渲染权限按钮
+    ht_auth.render("resouce_auth");
 })

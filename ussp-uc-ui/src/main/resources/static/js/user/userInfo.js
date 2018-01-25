@@ -1,9 +1,9 @@
-var userBaseInfoUrl=basepath +"user/in/selfinfo"; //查看登录用户信息
-var editUserBaseInfoUrl=basepath +"user/in/selfinfo/set"; //查看登录用户信息
+
 var userId=10001; 
-layui.use(['form',   'table' ], function () {
+layui.use(['form',   'table' , 'ht_config'], function () {
     var $ = layui.jquery
         , form = layui.form
+        , config = layui.ht_config
         , table = layui.table
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
@@ -20,6 +20,8 @@ layui.use(['form',   'table' ], function () {
 	        	 });
 	        }
     };
+    var userBaseInfoUrl=config.basePath +"user/in/selfinfo"; //查看登录用户信息
+    var editUserBaseInfoUrl=config.basePath +"user/in/selfinfo/set"; //查看登录用户信息
  // 监听提交
 	form.on('submit(userInfo_filter_modify_form)', function(data) {
 		$.ajax({

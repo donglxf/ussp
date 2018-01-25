@@ -60,5 +60,7 @@ public interface HtBoaInRoleRepository
             "LEFT JOIN HT_BOA_IN_ROLE role ON roleAll.ROLE_CODE=role.ROLE_CODE " +
             "WHERE role.STATUS='0'", nativeQuery = true)
     List<String> findRoleCodeByUserId(String userId);
+    
+    List<HtBoaInRole> findByRoleCode(String roleCode);
 
 }

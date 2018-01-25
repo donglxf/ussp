@@ -1,6 +1,7 @@
 package com.ht.ussp.uc.app.resource;
 
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,11 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.core.ReturnCodeEnum;
@@ -178,7 +181,8 @@ public class AppResource {
           String logEnd = logHead + " {} | END:{}, COST:{}";
           log.info(logStart, "codes: " + id, sl);
           HtBoaInApp u = htBoaInAppService.findById(id);
-          u.setDelFlag(1);
+          u.setDelFlag(Constants.DEL_1);
+          u.setStatus(Constants.STATUS_1);
           u.setUpdateOperator("del");
           u.setLastModifiedDatetime(new Date());
           htBoaInAppService.update(u);
@@ -187,4 +191,17 @@ public class AppResource {
           return Result.buildSuccess();
           
        }
+     
+     
+     @SuppressWarnings("rawtypes")
+     @ApiOperation(value = "对内：机构编码是否可用  true：可用  false：不可用")
+     @PostMapping(value = {"/isExistAppCode" }, produces = {"application/json"} )
+     public Result isExistAppCode( String appCode) {
+        List<HtBoaInApp> listHtBoaInApp = htBoaInAppService.findByAppCode(appCode);
+        if(listHtBoaInApp.isEmpty()) {
+        	return Result.buildSuccess();
+        }else {
+        	return Result.buildFail();
+        }
+     }
 }

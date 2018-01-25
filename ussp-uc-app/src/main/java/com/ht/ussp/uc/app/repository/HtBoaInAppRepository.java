@@ -45,7 +45,7 @@ public interface HtBoaInAppRepository extends JpaRepository<HtBoaInApp, Long> {
             "APP,NAME,NAME_CN,1,'app', '0',NULL,APP " +
             "FROM HT_BOA_IN_APP " +
             "WHERE STATUS='0' " +
-            ") A ORDER BY SEQUENCE,RES_NAME ", nativeQuery = true)
+            ") A ORDER BY SEQUENCE,RES_NAME_CN ", nativeQuery = true)
     List<Object[]> queryAppAndAuthTree();
     
     
@@ -53,6 +53,7 @@ public interface HtBoaInAppRepository extends JpaRepository<HtBoaInApp, Long> {
 	@Query("SELECT new com.ht.ussp.uc.app.model.BoaInAppInfo(u.app, u.name, u.nameCn,  u.status, u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,u.delFlag,u.id) "
 			+ "FROM HtBoaInApp u    WHERE ( u.app LIKE ?1 OR u.name LIKE ?1 OR u.nameCn LIKE ?1 )  AND  u.delFlag=0  GROUP BY u")
 	public Page<BoaInAppInfo> listAllAppByPage(Pageable arg0, String search);
-    
+
+	List<HtBoaInApp> findByApp(String app);
 
 }

@@ -3,10 +3,9 @@ package com.ht.ussp.uc.app.resource;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.ussp.core.PageResult;
@@ -27,7 +26,6 @@ import lombok.extern.log4j.Log4j2;
  */
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping(value = "/userposition")
 @Log4j2
 public class UserPositionResource {
@@ -37,7 +35,7 @@ public class UserPositionResource {
 
     @SuppressWarnings("rawtypes")
    	@ApiOperation(value = "对内：根据UserId查询用户岗位", notes = "根据UserId查询用户岗位")
-       @RequestMapping(value = { "/listUserPositionByPage"}, method = RequestMethod.POST)
+       @PostMapping(value = { "/listUserPositionByPage"}, produces = {"application/json"})
        public PageResult<HtBoaInPositionUser> listUserPositionByPage(PageVo page) {
        	PageResult result = new PageResult();
        	PageConf pageConf = new PageConf();
@@ -58,7 +56,7 @@ public class UserPositionResource {
        }
 
     @ApiOperation(value = "对内：新增/编辑用户岗位记录", notes = "提交用户岗位信息新增/编辑角色")
-    @RequestMapping(value = { "/add" }, method = RequestMethod.POST)
+    @PostMapping(value = { "/add" }, produces = {"application/json"})
     public Result add(@RequestBody HtBoaInPositionUser htBoaInPositionUser) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
@@ -98,7 +96,7 @@ public class UserPositionResource {
     
     @SuppressWarnings({ "rawtypes", "unused" })
 	@ApiOperation(value = "对内：禁用/启用用户岗位", notes = "禁用/启用用户岗位")
-    @RequestMapping(value = { "/stop" }, method = RequestMethod.POST)
+    @PostMapping(value = { "/stop" }, produces = {"application/json"})
     public Result stop(Long id,String status) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
@@ -127,7 +125,7 @@ public class UserPositionResource {
     
     @ApiOperation(value = "对内：删除用户岗位记录", notes = "提交角色编号，可批量删除")
     @ApiImplicitParam(name = "codes", value = "角色编号集", required = true, dataType = "Codes")
-    @RequestMapping(value = {"/delete" }, method = RequestMethod.POST)
+    @PostMapping(value = {"/delete" }, produces = {"application/json"})
     public Result delete(  int id) {
         long sl = System.currentTimeMillis(), el = 0L;
         String msg = "成功";

@@ -3,7 +3,7 @@ package com.ht.ussp.uc.app.resource;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,7 +27,6 @@ import lombok.extern.log4j.Log4j2;
  */
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping(value = "/userapp")
 @Log4j2
 public class UserAppResource {
@@ -37,7 +36,7 @@ public class UserAppResource {
 
     @SuppressWarnings("rawtypes")
    	@ApiOperation(value = "对内：根据UserId查询用户系统", notes = "根据UserId查询用户系统")
-       @RequestMapping(value = { "/listUserAppByPage"}, method = RequestMethod.POST)
+    @PostMapping(value = {"/listUserAppByPage" }, produces = { "application/json" })
        public PageResult<HtBoaInUserApp> listUserAppByPage(PageVo page) {
        	PageResult result = new PageResult();
        	PageConf pageConf = new PageConf();
@@ -62,6 +61,7 @@ public class UserAppResource {
      * @param page
      * @return
      */
+    @ApiOperation(value = "对内：查询用户系统" )
     @RequestMapping(value = { "/listAppByPage"}, method = RequestMethod.POST)
     public PageResult<HtBoaInUserApp> listAppByPage(PageVo page) {
     	PageResult result = new PageResult();

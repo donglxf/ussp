@@ -1,8 +1,8 @@
-var changePwdUrl=basepath +"user/in/changePwd"; //修改密码
 var userId="912d97ecf09d402ea8cba9c1c1af3366"; 
-layui.use(['form',   'table' ], function () {
+layui.use(['form',   'table' ,'ht_config'], function () {
     var $ = layui.jquery
         , form = layui.form
+        , config = layui.ht_config
         , table = layui.table;
     $("#userId").val(userId);
     //自定义验证规则
@@ -29,6 +29,8 @@ layui.use(['form',   'table' ], function () {
 			  }
 		  },
 	});
+	 var changePwdUrl=config.basePath +"user/in/changePwd"; //修改密码
+
  // 监听提交
 	form.on('submit(changePwd_filter_modify_form)', function(data) {
 		$.ajax({

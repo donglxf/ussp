@@ -2,7 +2,7 @@ var roleListByPageUrl=basepath +"role/in/list"; //列出所有角色记录列表
 var addRoleUrl=basepath +"role/in/add"; //添加角色信息
 var delRoleUrl=basepath +"role/in/delete"; //删除角色信息
 var statusRoleUrl=basepath +"role/in/stop"; //禁用
-
+var checkRoleCodeExist = basepath +"role/isExistRoleCode"; //校验角色编码是否已经存在
 layui.use(['form',   'table' ], function () {
     var $ = layui.jquery
         , form = layui.form
@@ -67,6 +67,32 @@ layui.use(['form',   'table' ], function () {
         	refreshTable($("#role_search_keyword").val());
         }
     };
+    
+    //自定义验证规则
+	form.verify({
+		  //校验编码是否已经存在
+		  checkExistRoleCode : function(value) {
+			  var isExist="";
+			  if(value){
+					  $.ajax({
+						url : checkRoleCodeExist + "?roleCode=" + value,
+						type : 'POST',
+						async : false,
+						success : function(result) {
+							if (result["returnCode"] == "0000") {
+								isExist="";
+						    } else{
+						    	isExist = "1";
+						    }
+						}
+					});
+			  }
+			  if(isExist=="1"){
+				  return "新增角色编码不可用，请重新输入角色编码";
+			  } 
+		  },
+		  
+	});
     var refreshTable = function (keyword) {
         if (!keyword) {
             keyword = null;

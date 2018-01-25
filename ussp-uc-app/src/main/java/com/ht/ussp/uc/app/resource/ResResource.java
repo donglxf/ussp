@@ -37,7 +37,6 @@ import java.util.UUID;
  * @Date 2018/1/18 21:40
  */
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping(value = "/resource")
 @Log4j2
 public class ResResource {
@@ -61,7 +60,7 @@ public class ResResource {
      * @Date 2018/1/12 9:01
      */
     @ApiOperation(value = "用户信息分页查询")
-    @PostMapping(value = "/page/load")
+    @PostMapping(value = "/page/load", produces = {"application/json"})
     public PageResult<List<UserMessageVo>> loadListByPage(ResourcePageVo page) {
         return htBoaInResourceService.getPage(page.getPageRequest(), page.getApp(), page.getParentCode(), page.getResType(), page.getKeyWord());
     }

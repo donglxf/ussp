@@ -1,4 +1,4 @@
-<div class="layui-fluid">
+<div class="layui-fluid" lay-filter="resouce_auth">
     <div class="tree col-xs-3" style="">
         <div>
             <div class="tree_search">
@@ -254,6 +254,13 @@
                 </div>
             </div>
             <div class="layui-form-item">
+                <label class="layui-form-label">按钮标识<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="resContent" lay-verify="required" autocomplete="off" lay-verType="tips"
+                           class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
                 <label class="layui-form-label">按钮名称<b>*</b></label>
                 <div class="layui-input-block">
                     <input type="text" name="resNameCn" lay-verify="required" autocomplete="off" lay-verType="tips"
@@ -266,13 +273,13 @@
                     <input type="tel" name="fontIcon" autocomplete="off" class="layui-input layui-input-sm">
                 </div>
             </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">按钮顺序<b>*</b></label>
-                <div class="layui-input-block">
-                    <input type="text" name="sequence" lay-verify="required|number" autocomplete="off"
-                           lay-verType="tips" class="layui-input layui-input-sm">
-                </div>
-            </div>
+            <!--<div class="layui-form-item">-->
+                <!--<label class="layui-form-label">按钮顺序<b>*</b></label>-->
+                <!--<div class="layui-input-block">-->
+                    <!--<input type="text" name="sequence" lay-verify="required|number" autocomplete="off"-->
+                           <!--lay-verType="tips" class="layui-input layui-input-sm">-->
+                <!--</div>-->
+            <!--</div>-->
             <div class="layui-form-item">
                 <label class="layui-form-label">所属菜单编码</label>
                 <div class="layui-input-block">
@@ -318,13 +325,13 @@
                     <input type="tel" name="resContent" autocomplete="off" class="layui-input layui-input-sm">
                 </div>
             </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">TAB顺序<b>*</b></label>
-                <div class="layui-input-block">
-                    <input type="text" name="sequence" lay-verify="required|number" autocomplete="off"
-                           lay-verType="tips" class="layui-input layui-input-sm">
-                </div>
-            </div>
+            <!--<div class="layui-form-item">-->
+                <!--<label class="layui-form-label">TAB顺序<b>*</b></label>-->
+                <!--<div class="layui-input-block">-->
+                    <!--<input type="text" name="sequence" lay-verify="required|number" autocomplete="off"-->
+                           <!--lay-verType="tips" class="layui-input layui-input-sm">-->
+                <!--</div>-->
+            <!--</div>-->
             <div class="layui-form-item">
                 <label class="layui-form-label">所属菜单编码</label>
                 <div class="layui-input-block">

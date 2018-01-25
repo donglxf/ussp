@@ -46,5 +46,13 @@ public interface HtBoaInPositionRepository
     
     @Query("SELECT u FROM HtBoaInRole u, HtBoaInPositionRole pr WHERE pr.positionCode = ?1 AND pr.roleCode = u.roleCode")
     public List<HtBoaInRole> listHtBoaInRole(String positionCode);
+    
+
+    /**
+     * @return HtBoaInPosition
+     * @Title: findByPositionCode
+     * @Description: 通过岗位编码查询岗位信息
+     */
+    List<HtBoaInPosition> findByPositionCode(String positionCode);
 
 }

@@ -64,7 +64,7 @@
       {{#  if(d.delFlag == '0'){ }}
                       正常
       {{#  } else { }}
-                     已删除
+		<font color="red">已删除</font>
       {{#  } }}
 	        </script>
         </div>
@@ -75,7 +75,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">机构编号<b>*</b></label>
                 <div class="layui-input-block">
-                    <input type="text" name="orgCode" lay-verify="required" maxlength="20" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="text" name="orgCode" lay-verify="required|checkExistOrgCode"  maxlength="20" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
             </div>
             <div class="layui-form-item">
@@ -108,7 +108,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">机构编号<b>*</b></label>
                 <div class="layui-input-block">
-                    <input type="text" name="orgCode" lay-verify="required" maxlength="20" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="text" name="orgCode" lay-verify="required" maxlength="20" readonly autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm layui-bg-gray">
                 </div>
             </div>
             <div class="layui-form-item">

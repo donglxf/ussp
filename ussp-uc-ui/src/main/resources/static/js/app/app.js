@@ -2,6 +2,7 @@ var appListByPageUrl=basepath +"system/list"; //列出所有系统记录列表�
 var addappUrl=basepath +"system/add"; //添加系统信息
 var delappUrl=basepath +"system/delete"; //删除系统信息
 var statusappUrl=basepath +"system/stop"; //禁用
+var checkAppCodeExistUrl = basepath +"system/isExistAppCode"; //校验岗位编码是否已经存在
 
 layui.use(['form',   'table' ], function () {
     var $ = layui.jquery
@@ -67,6 +68,34 @@ layui.use(['form',   'table' ], function () {
         	refreshTable($("#app_search_keyword").val());
         }
     };
+    
+
+    //自定义验证规则
+	form.verify({
+		  //校验编码是否已经存在
+		  checkExistAppCode : function(value) {
+			  var isExist="";
+			  if(value){
+					  $.ajax({
+						url : checkAppCodeExistUrl + "?appCode=" + value,
+						type : 'POST',
+						async : false,
+						success : function(result) {
+							if (result["returnCode"] == "0000") {
+								isExist="";
+						    } else{
+						    	isExist = "1";
+						    }
+						}
+					});
+			  }
+			  if(isExist=="1"){
+				  return "新增系统编码不可用，请重新输入系统编码";
+			  } 
+		  },
+		  
+	});
+	
     var refreshTable = function (keyword) {
         if (!keyword) {
             keyword = null;

@@ -1,10 +1,16 @@
-var positionListByPageUrl=basepath +"position/in/list.json"; //列出所有岗位记录列表信息  
-var addUserPositionListUrl=basepath + 'userposition/add'; //禁用/启用用户角色 /stop/{id}/{status}
 
-layui.use(['form', 'table' ], function () {
+layui.config({
+    base: '/js/modules/',
+    version: false
+}).use(['app', 'message', 'ht_ajax', 'ht_cookie', 'ht_auth'],function () {
     var $ = layui.jquery
         , form = layui.form
+        , config = layui.ht_config
+        ,cookie = layui.ht_cookie
         , table = layui.table;
+    
+    var positionListByPageUrl=config.basePath  +"position/in/list.json"; //列出所有岗位记录列表信息  
+    var addUserPositionListUrl=config.basePath  + 'userposition/add'; //禁用/启用用户角色 /stop/{id}/{status}
     
     var loadPositionListTable = function (keyword) {
         var selectNodes = orgTree.getSelectedNodes();
