@@ -3,29 +3,29 @@ spring:
 
 ---
 server:
-  port: 9000
+  port: ${SERVER_PORT}
 spring:
     profiles: dev
     application:
       name: ussp-gateway-app
-    cloud: 
-      inetutils: 
-        preferred-networks: 192.169.0
-    redis:
-        database : 5
-        host : 192.168.15.100
-        port : 6379
-        password : 123456
-        #毫秒
-        timeout : 3000  
-        pool : 
-            max-active : 1000
-            #等待可用连接的最大时间，超过该时间，将抛出异常，-1表示永不超时，单位毫秒
-            max-wait : 10000  
-            #最大空闲连接，默认8
-            max-idle : 20 
-            #最小空闲连接，默认0 
-            min-idle : 5   
+#    cloud: 
+#      inetutils: 
+#        preferred-networks: 192.169.0
+#    redis:
+#        database : 5
+#        host : 192.168.15.100
+#        port : 6379
+#        password : 123456
+#        #毫秒
+#        timeout : 3000  
+#        pool : 
+#            max-active : 1000
+#            #等待可用连接的最大时间，超过该时间，将抛出异常，-1表示永不超时，单位毫秒
+#            max-wait : 10000  
+#            #最大空闲连接，默认8
+#            max-idle : 20 
+#            #最小空闲连接，默认0 
+#            min-idle : 5   
  
 zuul:
   routes:
@@ -47,7 +47,8 @@ eureka:
     prefer-ip-address: true
   client:
     serviceUrl:
-      defaultZone: http://localhost:8870/eureka/
+#      defaultZone: http://localhost:30101/eureka/
+      defaultZone: ${ADDITIONAL_EUREKA_SERVER_LIST}
       
 gateway:
   security: 
@@ -56,7 +57,7 @@ gateway:
       refreshTokenExpTime: 720
       tokenIssuer: qiuwenwu@hongte.info
       tokenSigningKey: xm8EV6Hy5RMFK4EEACIDAwQus
-      
+ 
 ht:
   ignoreUrl: #不验证的url(可以使用通配符（*）)
      web: uc/echo #不需要验证token
