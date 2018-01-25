@@ -1,11 +1,17 @@
-var roleListByPageUrl=basepath +"role/in/list"; //列出所有角色记录列表信息  
-var addUserRoleListUrl=basepath + 'userrole/add'; //禁用/启用用户角色 /stop/{id}/{status}
-var addPositionRoleListUrl=basepath + 'positionrole/add'; //禁用/启用用户角色 /stop/{id}/{status}
 
-layui.use(['form', 'table' ], function () {
+
+layui.config({
+    base: '/js/modules/',
+    version: false
+}).use(['app', 'message', 'ht_ajax', 'ht_cookie', 'ht_auth'],function () {
     var $ = layui.jquery
         , form = layui.form
+        , config = layui.ht_config
+        ,cookie = layui.ht_cookie
         , table = layui.table;
+    
+    var roleListByPageUrl=config.basePath +"role/in/list"; //列出所有角色记录列表信息  
+    var addUserRoleListUrl=config.basePath + 'userrole/add'; //禁用/启用用户角色 /stop/{id}/{status}
     
     var loadRoleListTable = function (keyword) {
         if (!keyword) {

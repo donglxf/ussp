@@ -1,4 +1,3 @@
- var basepath = "http://localhost:9999/";
  
  Date.prototype.Format = function (fmt) { //author: meizz   
      var o = {
