@@ -30,7 +30,6 @@ layui.define(['jquery', 'tab', 'ht_config'], function (exports) {
             layui.each(AllAuth, function (index, item) {
                 //获取菜单编码
                 var menuCode = tab.getId();
-                console.info(menuCode, item.resParent, "<>", layAuth, item.resCode)
                 //验证菜单编码和权限编码
                 if (menuCode == item.resParent && layAuth == item.resCode) {
                     isAuth = true;

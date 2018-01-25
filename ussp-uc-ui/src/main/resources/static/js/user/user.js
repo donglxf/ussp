@@ -76,6 +76,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
         var selectNodes = orgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
             table.reload('user_datatable', {
+                height: 'full-200',
                 page: {
                     curr: 1 //重新从第 1 页开始
                 }
@@ -84,7 +85,6 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
                     orgCode: selectNodes[0]["orgCode"]
                 }
             });
-            ht_auth.render();
         }
     }
     //渲染组织机构树
@@ -262,9 +262,9 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
             }
         }
     );
-    table.on('renderComplete(filter_user_datatable)', function (obj) {
-        ht_auth.render();
-    });
+    // table.on('renderComplete(filter_user_datatable)', function (obj) {
+    //     ht_auth.render();
+    // });
     //监听工具栏
     $('#user_table_tools .layui-btn').on('click', function () {
         var type = $(this).data('type');

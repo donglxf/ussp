@@ -171,7 +171,11 @@ public class ResourceApiSynch {
                     log.warn("无法同步API资源到用户权限中心，可能没有启用Fegin组件，请启用后，加入basePackages = {\"com.ht.ussp.client\"}");
                 } else {
                     apiDto.setApp(app);
-                    ucResourceClient.resourceApiAynch(apiDto);
+                    try {
+                        ucResourceClient.resourceApiAynch(apiDto);
+                    } catch (Exception e) {
+                        log.warn("同步API资源发生异常，请尝试重启服务。异常：" + e.getMessage());
+                    }
                 }
             }
             if (log.isDebugEnabled()) {
