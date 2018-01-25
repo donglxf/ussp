@@ -269,7 +269,9 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                 dataFilter: function (treeId, parentNode, childNodes) {
                     if (!childNodes) return null;
                     for (var i = 0, l = childNodes.length; i < l; i++) {
-                        //childNodes[i].open = true;
+                        if (childNodes[i].parentCode == '0') {
+                            childNodes[i].open = true;
+                        }
                         childNodes[i].name = childNodes[i]["nameCn"];
                     }
                     return childNodes;
@@ -411,8 +413,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                 initSort = {field: 'resCode', type: 'asc'};
                 clos = [[
                     {type: 'numbers'}
-                    , {field: 'resCode', width: 120, title: '按钮编号'}
-                    , {field: 'resContent', width: 120, title: '按钮标识'}
+                    , {field: 'resCode', width: 120, title: '按钮权限标识'}
                     , {field: 'resNameCn', title: '按钮名称'}
                     , {field: 'fontIcon', width: 60, title: '图标'}
                     // , {field: 'sequence', width: 60, title: '顺序'}
@@ -433,7 +434,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                 initSort = {field: 'resCode', type: 'asc'};
                 clos = [[
                     {type: 'numbers'}
-                    , {field: 'resCode', width: 120, title: 'TAB编号'}
+                    , {field: 'resCode', width: 120, title: 'TAB权限标识'}
                     , {field: 'resNameCn', width: 150, title: 'TAB名称'}
                     , {field: 'resContent', title: 'TAB链接'}
                     // , {field: 'sequence', width: 60, title: '顺序'}

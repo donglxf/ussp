@@ -30,21 +30,25 @@ public interface HtBoaInAppRepository extends JpaRepository<HtBoaInApp, Long> {
             "APP " +
             "FROM HT_BOA_IN_RESOURCE " +
             "WHERE RES_TYPE IN('view','group','module') AND STATUS='0' " +
+			"AND DEL_FLAG='0' " +
             "UNION ALL " +
             "SELECT " +
             "CONCAT(APP,'_menu'),'menu','菜单',1,'menuType',APP,NULL,APP  " +
             "FROM HT_BOA_IN_APP " +
             "WHERE STATUS='0' " +
+			"AND DEL_FLAG='0' " +
             "UNION ALL " +
             "SELECT " +
             "CONCAT(APP,'_module'),'module','模块',2,'moduleType',APP,NULL,APP " +
             "FROM HT_BOA_IN_APP " +
             "WHERE STATUS='0' " +
+			"AND DEL_FLAG='0' " +
             "UNION ALL " +
             "SELECT " +
             "APP,NAME,NAME_CN,1,'app', '0',NULL,APP " +
             "FROM HT_BOA_IN_APP " +
             "WHERE STATUS='0' " +
+			"AND DEL_FLAG='0' " +
             ") A ORDER BY SEQUENCE,RES_NAME_CN ", nativeQuery = true)
     List<Object[]> queryAppAndAuthTree();
     
