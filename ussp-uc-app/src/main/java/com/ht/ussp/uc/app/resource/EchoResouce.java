@@ -25,9 +25,9 @@ public class EchoResouce {
 
 	 @ApiOperation("get demo")
 	    @RequestMapping(value={"/getHeaderDemo"}, method=RequestMethod.GET)
-	    public String getEcho(@RequestHeader("userId") String userId) {
-		 log.info("====userId===="+userId);
-	        return userId;
+	    public String getEcho() {
+		 log.info("====userId===="+1111);
+	        return "echo";
 	    }
 	 
 	 @ApiOperation(value="post demo",notes="for create")
