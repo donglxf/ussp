@@ -328,8 +328,8 @@ public class UserResource {
         return Result.buildFail();
     }
 
-    @PostMapping("/delete/{userId}")
-    public Result delAsync(@PathVariable String userId) {
+    @PostMapping("/delete")
+    public Result delAsync(String userId) {
         if (userId != null && !"".equals(userId.trim())) {
             boolean isDel = htBoaInUserService.setDelFlagByUserId(userId);
             if (isDel) {
@@ -339,8 +339,8 @@ public class UserResource {
         return Result.buildFail();
     }
 
-    @PostMapping("/view/{userId}")
-    public Result viewAsync(@PathVariable String userId) {
+    @PostMapping("/view")
+    public Result viewAsync(String userId) {
         if (userId != null && !"".equals(userId.trim())) {
             return Result.buildSuccess(htBoaInUserService.getUserByUserId(userId));
         }

@@ -341,6 +341,8 @@ public class AuthResouce {
             HtBoaInResource oldRes;
             List<ApiInfoDto> apiDtoList = apiResourceDto.getApiInfoList();
             List<HtBoaInResource> newResList = new ArrayList<>();
+            int insertCount = 0;
+            int updateCount = 0;
             for (ApiInfoDto api : apiDtoList) {
                 tempList = oldResList.stream().filter(demo -> api.getMethod().equals(demo.getRemark())).distinct().collect(Collectors.toList());
                 if (tempList != null && tempList.size() > 0) {
@@ -350,6 +352,7 @@ public class AuthResouce {
                         oldRes.setResNameCn(api.getApiDescribe());
                         oldRes.setResContent(api.getMapping());
                         newResList.add(oldRes);
+                        updateCount++;
                     }
                 } else {
                     HtBoaInResource re = new HtBoaInResource();
@@ -365,8 +368,11 @@ public class AuthResouce {
                     re.setStatus("0");
                     re.setDelFlag(0);
                     newResList.add(re);
+                    insertCount++;
                 }
             }
+            log.debug("共新增API资源" + insertCount + "个");
+            log.debug("共更新API资源" + updateCount + "个");
             htBoaInResourceService.save(newResList);
         }
     }

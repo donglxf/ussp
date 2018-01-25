@@ -191,7 +191,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
                 });
             } else if (obj.event === 'del') {
                 layer.confirm('是否删除用户' + data.userName + "？", function (index) {
-                    $.post(config.basePath + "user/delete/" + data.userId, null, function (result) {
+                    $.post(config.basePath + "user/delete?userId=" + data.userId, null, function (result) {
                         if (result["returnCode"] == "0000") {
                             refreshTable();
                             layer.close(index);
@@ -203,7 +203,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
                 });
             } else if (obj.event === 'edit') {
                 layer.close(editDialog);
-                $.post(config.basePath + "user/view/" + data.userId, null, function (result) {
+                $.post(config.basePath + "user/view?userId=" + data.userId, null, function (result) {
                     if (result["returnCode"] == "0000") {
                         editDialog = layer.open({
                             type: 1,
