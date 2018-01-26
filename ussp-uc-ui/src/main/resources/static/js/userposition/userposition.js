@@ -30,7 +30,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                      area: ['70%', '80%'],
                      maxmin: true,
                      shadeClose: true,
-                     title: "分配角色",
+                     title: "分配岗位",
                      content: "/html/userposition/positionDialog.html",
                      success: function (layero, index) {
                     	 /* 渲染表单 */
@@ -88,7 +88,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     
     refreshPositionTable = function (sucess) {
     	if(sucess==1){
-        	layer.msg("分配角色成功");
+        	layer.msg("分配岗位成功");
         }else{
         	return;
         }
