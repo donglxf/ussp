@@ -1,3 +1,5 @@
+var userpositionUserId = "";
+var refreshPositionTable;
 layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     var $ = layui.jquery
         , form = layui.form
@@ -18,7 +20,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
             	refreshuserpositionTable($("#userposition_role_search_keyword").val());
             },
             loadPositionList:function(){
-            	if(userId==""){
+            	if(userpositionUserId==""){
             		layer.msg("请先选择用户！");
             		return;
             	}
@@ -45,8 +47,6 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     var delUserPositionListUrl=config.basePath + 'userposition/delete'; //删除用户岗位 /delete/{id}
     var stopUserPositionListUrl=config.basePath + 'userposition/stop'; //禁用/启用用户岗位 /stop/{id}/{status}
     var orgTreeUrl = config.basePath +"org/tree"; //机构列表 
-    var userId = "";
-    var refreshPositionTable;
     
     var refreshUserTable = function (keyword) {
         if (!keyword) {
@@ -79,7 +79,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         	        	query: {
                   		     keyWord: keyword,
                             orgCode: selectNodes[0]["orgCode"],
-                            userId:userId
+                            userId:userpositionUserId
                        }
         	        }
         	   });
@@ -100,7 +100,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         	        }
         	        , where: {
         	        	query: {
-                            userId:userId
+                            userId:userpositionUserId
                        }
         	        }
         	   });
@@ -212,7 +212,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     //监听操作栏
     table.on('tool(filter_userposition_user_datatable)', function (obj) {
         var data = obj.data;
-        userId = data.userId;
+        userpositionUserId = data.userId;
         if (obj.event === 'getRole') {
         	refreshuserpositionTable();
         }  

@@ -9,7 +9,7 @@ layui.config({
         ,cookie = layui.ht_cookie
         , table = layui.table;
     
-    var positionListByPageUrl=config.basePath  +"position/in/list.json"; //列出所有岗位记录列表信息  
+    var positionListByPageUrl=config.basePath  +"position/in/list"; //列出所有岗位记录列表信息  
     var addUserPositionListUrl=config.basePath  + 'userposition/add'; //禁用/启用用户角色 /stop/{id}/{status}
     
     var loadPositionListTable = function (keyword) {
@@ -70,7 +70,7 @@ layui.config({
     	 if(postiondata.length>0){
     		 $.each(postiondata, function (name, value) {
                  $("#positionCode").val(value.positionCode);
-        		 $("#userId").val(parent.userId);
+        		 $("#userId").val(parent.userpositionUserId);
         		 form.render(null, "filter_add_position_form");
         		 form.on('submit(filter_add_position_form)', function (data) {
                      $.ajax({
