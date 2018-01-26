@@ -139,7 +139,6 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                  }
             }
         });
-        ht_auth.render();
     };
     //渲染组织机构树
     orgTree = $.fn.zTree.init($('#organization_org_ztree_left'), {
@@ -327,7 +326,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         }
     });
     table.on('renderComplete(filter_organization_datatable)', function (obj) {
-        ht_auth.render();
+    	ht_auth.render("organization_auth");
     });
     //监听工具栏
     $('#organization_table_tools .layui-btn').on('click', function () {

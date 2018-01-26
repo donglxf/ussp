@@ -17,7 +17,7 @@ layui.use(['form',   'table', 'ht_auth' ], function () {
             layer.close(addDialog);
             addDialog = layer.open({
                 type: 1,
-                area: ['400px', '400px'],
+                area: ['600px', '500px'],
                 maxmin: true,
                 shadeClose: true,
                 title: "新增系统",
@@ -110,7 +110,6 @@ layui.use(['form',   'table', 'ht_auth' ], function () {
                 keyWord: keyword
             }
         });
-        ht_auth.render();
     };
     //渲染用户数据表格
     table.render({
@@ -236,7 +235,7 @@ layui.use(['form',   'table', 'ht_auth' ], function () {
         }
     });
     table.on('renderComplete(filter_app_datatable)', function (obj) {
-        ht_auth.render();
+    	ht_auth.render("app_auth");
     });
     //监听工具栏
     $('#app_table_tools .layui-btn').on('click', function () {

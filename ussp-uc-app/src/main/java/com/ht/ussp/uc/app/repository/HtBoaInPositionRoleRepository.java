@@ -30,7 +30,7 @@ public interface HtBoaInPositionRoleRepository extends JpaRepository <HtBoaInPos
     void delete(String positionCode, String roleCode);
     
     
-    @Query("SELECT new com.ht.ussp.uc.app.model.BoaInRoleInfo(u.roleCode, u.roleName, u.roleNameCn,  u.status, u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,ur.delFlag,ur.id) "
+    @Query("SELECT new com.ht.ussp.uc.app.model.BoaInRoleInfo(u.roleCode, u.roleName, u.roleNameCn,  u.status, u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,ur.delFlag,ur.id,u.app) "
 			+ "FROM HtBoaInPositionRole ur ,HtBoaInRole u    WHERE  ur.roleCode = u.roleCode AND  (u.roleCode LIKE ?1 OR u.roleName LIKE ?1 OR u.roleNameCn LIKE ?1 ) and ur.positionCode=?2 GROUP BY u")
 	public Page<HtBoaInPositionRole> listPositionRoleByPageWeb(Pageable arg0, String search,String positionCode);
     

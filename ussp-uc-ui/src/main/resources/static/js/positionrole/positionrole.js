@@ -63,7 +63,6 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                  }
              });
         }
-        ht_auth.render();
     };
     var refreshpositionroleTable = function (keyword) {
         if (!keyword) {
@@ -84,7 +83,6 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         	        }
         	   });
         }
-        ht_auth.render();
     };
    
     refreshRoleTable = function (sucess) {
@@ -107,7 +105,6 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
        	        }
        	   });
        }
-        ht_auth.render();
     };
     //渲染组织机构树
     orgTree = $.fn.zTree.init($('#positionrole_org_ztree_left'), {
@@ -259,10 +256,10 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     });
     
     table.on('renderComplete(filter_positionrole_user_datatable)', function (obj) {
-        ht_auth.render();
+    	ht_auth.render("positionrole_auth");
     });
     table.on('renderComplete(filter_positionrole_role_datatable)', function (obj) {
-        ht_auth.render();
+    	ht_auth.render("positionrole_auth");
     });
     
     //监听工具栏

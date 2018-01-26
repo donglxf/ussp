@@ -56,7 +56,14 @@
                     <input type="text" name="roleNameCn" lay-verify="required" maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
             </div>
-            <button class="layui-btn hide" lay-submit="" lay-filter="filter_add_role_form"></button>
+			<div class="layui-form-item">
+				<label class="layui-form-label">所属系统<b>*</b></label>
+				<div class="layui-input-block">
+					<select name="app" id="app"     lay-verify="required" > 
+					</select>
+				</div>
+			</div>
+			<button class="layui-btn hide" lay-submit="" lay-filter="filter_add_role_form"></button>
         </form>
     </div>
     <!--修改表单-->
@@ -74,6 +81,13 @@
                     <input type="text" name="roleNameCn" lay-verify="required" maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
             </div>
+            <div class="layui-form-item">
+				<label class="layui-form-label">所属系统<b>*</b></label>
+				<div class="layui-input-block">
+					<select name="app" id="app" disabled     lay-verify="required" > 
+					</select>
+				</div>
+			</div>
             <input type="hidden" name="id"   readonly  >
             <button class="layui-btn hide" lay-submit="" lay-filter="filter_modify_role_form"></button>
         </form>

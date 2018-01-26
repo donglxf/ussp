@@ -3,10 +3,14 @@ var addRoleUrl=basepath +"role/in/add"; //添加角色信息
 var delRoleUrl=basepath +"role/in/delete"; //删除角色信息
 var statusRoleUrl=basepath +"role/in/stop"; //禁用
 var checkRoleCodeExist = basepath +"role/isExistRoleCode"; //校验角色编码是否已经存在
-layui.use(['form',   'table', 'ht_auth' ], function () {
+
+layui.use(['form', 'laytpl' , 'table','ht_config', 'ht_auth' ], function () {
+
     var $ = layui.jquery
         , form = layui.form
         , table = layui.table
+        , config = layui.ht_config
+        ,laytpl = layui.laytpl
         , ht_auth = layui.ht_auth
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
@@ -16,7 +20,7 @@ layui.use(['form',   'table', 'ht_auth' ], function () {
             layer.close(addDialog);
             addDialog = layer.open({
                 type: 1,
-                area: ['400px', '400px'],
+                area: ['600px', '500px'],
                 maxmin: true,
                 shadeClose: true,
                 title: "新增角色",
@@ -34,6 +38,16 @@ layui.use(['form',   'table', 'ht_auth' ], function () {
                     layer.closeAll('tips');
                 },
                 success: function (layero, index) {
+                	//初始化
+                	 $.post(appListByPageUrl,{"page":1,"limit":100},function(data){
+                     	var optionHtml="<option value=''>请选择系统</option>";
+                     	 $.each(data.data, function (name, value) {
+                     		 optionHtml += "<option value='"+value.app+"'>"+value.nameCn+"</option>"
+                          });
+                         var getTpl = $("#app",layero).html(optionHtml);
+                         form.render('select','filter_add_role_form');
+                     },'json');
+                	
                     //填充选中的组织机构
                     form.render(null, "filter_add_role_form");
                     form.on('submit(filter_add_role_form)', function (data) {
@@ -68,7 +82,7 @@ layui.use(['form',   'table', 'ht_auth' ], function () {
         	refreshTable($("#role_search_keyword").val());
         }
     };
-    
+    var appListByPageUrl=config.basePath +"userapp/listAppByPage"; //列出所有角色记录列表信息
     //自定义验证规则
 	form.verify({
 		  //校验编码是否已经存在
@@ -99,14 +113,14 @@ layui.use(['form',   'table', 'ht_auth' ], function () {
             keyword = null;
         }
         table.reload('role_datatable', {
-            page: {
+        	height: 'full-200'
+            , page: {
                 curr: 1 //重新从第 1 页开始
             }
             , where: {
                 keyWord: keyword
             }
         });
-        ht_auth.render();
     };
     //渲染用户数据表格
     table.render({
@@ -114,13 +128,6 @@ layui.use(['form',   'table', 'ht_auth' ], function () {
         , elem: '#role_datatable'
         , url: roleListByPageUrl
         , method: 'post' //如果无需自定义HTTP类型，可不加该参数
-        , response: {
-            statusName: 'returnCode' //数据状态的字段名称，默认：code
-            , statusCode: "0000" //成功的状态码，默认：0
-            , msgName: 'msg' //状态信息的字段名称，默认：msg
-            , countName: 'count' //数据总数的字段名称，默认：count
-            , dataName: 'data' //数据列表的字段名称，默认：data
-        } //如果无需自定义数据响应名称，可不加该参数
         , page: true
         , height: 'full-200'
         , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
@@ -128,6 +135,7 @@ layui.use(['form',   'table', 'ht_auth' ], function () {
             {type: 'numbers'}
             , {field: 'roleCode', width: 150, title: '角色编号'}
             , {field: 'roleNameCn',   title: '角色名称'}
+            , {field: 'app',   title: '所属系统'}
             , {field: 'status', width: 100,templet: '#statusTpl', title: '状态'}
             , {field: 'createOperator',   title: '创建人'}
             , {field: 'createdDatetime', width: 200,templet: '#createTimeTpl', title: '创建时间'}
@@ -182,7 +190,7 @@ layui.use(['form',   'table', 'ht_auth' ], function () {
                  area: ['400px', '400px'],
                  maxmin: true,
                  shadeClose: true,
-                 title: "新增岗位",
+                 title: "修改角色",
                  content: $("#role_modify_data_div").html(),
                  btn: ['保存', '取消'],
                  yes: function (index, layero) {
@@ -204,7 +212,22 @@ layui.use(['form',   'table', 'ht_auth' ], function () {
                             $input.val(value);
                         }
                     });
-                    
+                   //初始化
+               	  $.post(appListByPageUrl,{"page":1,"limit":100},function(appdata){
+                    	var optionHtml="<option value=''>请选择系统</option>";
+                    	 $.each(appdata.data, function (name, value) {
+                    		 if(data.app==value.app){
+                    			 console.log("ccccccccccc "+(data.app==value.app));
+                    			 optionHtml += "<option value='"+value.app+"' selected>"+value.nameCn+"</option>";
+                    		 }else{
+                    			 optionHtml += "<option value='"+value.app+"'>"+value.nameCn+"</option>";
+                    		 }
+                         });
+                        var getTpl = $("#app",layero).html(optionHtml);
+                        form.render('select','filter_modify_data_form');
+                    },'json');
+               	  
+               	  
                     form.render(null, "filter_modify_role_form");
                     form.on('submit(filter_modify_role_form)', function (data) {
                         $.ajax({
@@ -232,7 +255,7 @@ layui.use(['form',   'table', 'ht_auth' ], function () {
         }
     });
     table.on('renderComplete(filter_role_datatable)', function (obj) {
-        ht_auth.render();
+        ht_auth.render("role_auth");
     });
     //监听工具栏
     $('#role_table_tools .layui-btn').on('click', function () {
@@ -240,6 +263,15 @@ layui.use(['form',   'table', 'ht_auth' ], function () {
         active[type] ? active[type].call(this) : '';
     });
     
+    
+    /***
+     * 角色关联系统
+     * @param value
+     * @param list
+     */
+    function appSelect(){
+      
+    }
     ht_auth.render("role_auth");
 
 })

@@ -99,6 +99,7 @@ public class RoleResource {
         u.setRoleNameCn(boaInRoleInfo.getRoleNameCn());
         u.setRootOrgCode(boaInRoleInfo.getROrgCode());
         u.setStatus(boaInRoleInfo.getStatus());
+        u.setApp(boaInRoleInfo.getApp());
         if(boaInRoleInfo.getId()>0) {
         	u.setId(boaInRoleInfo.getId());
         	u = htBoaInRoleService.update(u);
