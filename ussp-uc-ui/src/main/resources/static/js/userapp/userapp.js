@@ -61,7 +61,6 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                      orgCode: selectNodes[0]["orgCode"]
                  }
              });
-        	 ht_auth.render();
         }
     };
     var refreshUserAppTable = function (keyword) {
@@ -82,7 +81,6 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                        }
         	        }
         	   });
-        	 ht_auth.render();
         }
     };
      refreshAppTable = function (sucess) {
@@ -104,7 +102,6 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                        }
         	        }
         	   });
-        	 ht_auth.render();
         }
     };
    
@@ -260,10 +257,10 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         } 
     });
     table.on('renderComplete(filter_userapp_user_datatable)', function (obj) {
-        ht_auth.render();
+    	ht_auth.render("userapp_auth");
     });
     table.on('renderComplete(filter_userapp_app_datatable)', function (obj) {
-        ht_auth.render();
+    	ht_auth.render("userapp_auth");
     });
     
     //监听工具栏

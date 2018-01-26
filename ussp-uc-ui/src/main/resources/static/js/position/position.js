@@ -131,7 +131,6 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                      }
                 }
             });
-            ht_auth.render();
         }
     };
     //渲染组织机构树
@@ -336,7 +335,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         }
     });
     table.on('renderComplete(filter_position_datatable)', function (obj) {
-        ht_auth.render();
+    	ht_auth.render("position_auth");
     });
     //监听工具栏
     $('#position_table_tools .layui-btn').on('click', function () {

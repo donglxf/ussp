@@ -33,7 +33,7 @@ public interface HtBoaInOrgRepository
      */
     List<HtBoaInOrg> findByParentOrgCode(String parentOrgCode, Sort sort);
     
-    @Query("SELECT new com.ht.ussp.uc.app.model.BoaInOrgInfo (u.orgCode, u.orgName, u.orgNameCn, u.parentOrgCode, u.rootOrgCode, u.orgPath, u.orgType, u.sequence,  u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,u.delFlag,u.id) FROM HtBoaInOrg u  WHERE  (u.orgCode LIKE ?1 OR u.orgName LIKE ?1 OR u.orgNameCn LIKE ?1) AND u.orgPath like ?2   GROUP BY u")
+    @Query("SELECT new com.ht.ussp.uc.app.model.BoaInOrgInfo (u.orgCode, u.orgName, u.orgNameCn, u.parentOrgCode, u.rootOrgCode, u.orgPath, u.orgType, u.sequence,  u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,u.delFlag,u.id) FROM HtBoaInOrg u  WHERE  (u.orgCode LIKE ?1 OR u.orgName LIKE ?1 OR u.orgNameCn LIKE ?1) AND u.orgPath like ?2 and u.delFlag=0   GROUP BY u")
     public Page<BoaInOrgInfo> lisOrgByPageWeb(Pageable arg0, String search,String orgPath);
 
 	List<HtBoaInOrg> findByOrgCode(String orgCode);

@@ -66,8 +66,8 @@ public class HtBoaInRoleService {
         if (null != pageable) {
             Page<BoaInRoleInfo> p = this.htBoaInRoleRepository.listRoleInfoByPageWeb(pageable, search );
             for (BoaInRoleInfo u : p.getContent()) {
-                u.setUsers(this.htBoaInRoleRepository.listHtBoaInUser(u.getRoleCode()));
-                u.setPositions(this.htBoaInRoleRepository.listHtBoaInPosition(u.getRoleCode()));
+               // u.setUsers(this.htBoaInRoleRepository.listHtBoaInUser(u.getRoleCode()));
+                //u.setPositions(this.htBoaInRoleRepository.listHtBoaInPosition(u.getRoleCode()));
             }
             return p;
         } else {

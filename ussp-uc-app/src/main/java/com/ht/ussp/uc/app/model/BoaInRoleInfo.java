@@ -60,6 +60,9 @@ public class BoaInRoleInfo {
     
     @ApiModelProperty(value = "状态", dataType = "int")
     int delFlag;
+    
+    @ApiModelProperty(value = "系统", dataType = "string")
+    String app;
 
     @ApiModelProperty(value = "用户集")
     List<HtBoaInUser> users = new ArrayList<HtBoaInUser>(0);
@@ -91,7 +94,7 @@ public class BoaInRoleInfo {
     public BoaInRoleInfo(String roleCode, String roleName, String roleNameCn,
             String status, String createOperator,
             Date createdDatetime, String updateOperator,
-            Date lastModifiedDatetime,int delFlag,Long id) {
+            Date lastModifiedDatetime,int delFlag,Long id,String app) {
         this.roleCode = roleCode;
         this.roleName = roleName;
         this.roleNameCn = roleNameCn;
@@ -102,6 +105,7 @@ public class BoaInRoleInfo {
         this.lastModifiedDatetime = lastModifiedDatetime;
         this.delFlag = delFlag;
         this.id = id;
+        this.app = app;
     }
 
 }

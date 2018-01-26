@@ -62,7 +62,6 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                      orgCode: selectNodes[0]["orgCode"]
                  }
              });
-        	 ht_auth.render();
         }
     };
     var refreshUserRoleTable = function (keyword) {
@@ -83,7 +82,6 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                        }
         	        }
         	   });
-        	 ht_auth.render();
         }
     };
     refreshRoleTable = function (sucess) {
@@ -105,7 +103,6 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                        }
         	        }
         	   });
-        	 ht_auth.render();
         }
     };
    
@@ -268,10 +265,10 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     });
     
     table.on('renderComplete(filter_userrole_user_datatable)', function (obj) {
-        ht_auth.render();
+    	ht_auth.render("userrole_auth");
     });
     table.on('renderComplete(filter_userrole_role_datatable)', function (obj) {
-        ht_auth.render();
+    	ht_auth.render("userrole_auth");
     });
     
     //监听工具栏

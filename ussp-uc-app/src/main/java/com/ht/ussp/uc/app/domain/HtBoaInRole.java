@@ -57,6 +57,9 @@ public class HtBoaInRole implements Serializable {
 
 	@Column(name="UPDATE_OPERATOR")
 	private String updateOperator;
+	
+	@Column(name="app")
+	private String app;
 
 	public HtBoaInRole() {
 	}
@@ -157,4 +160,13 @@ public class HtBoaInRole implements Serializable {
 		this.updateOperator = updateOperator;
 	}
 
+	public String getApp() {
+		return app;
+	}
+
+	public void setApp(String app) {
+		this.app = app;
+	}
+
+	
 }

@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,7 +35,6 @@ import io.swagger.annotations.ApiOperation;
  */
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping(value = "/role")
 public class RoleResource {
 
@@ -99,6 +97,7 @@ public class RoleResource {
         u.setRoleNameCn(boaInRoleInfo.getRoleNameCn());
         u.setRootOrgCode(boaInRoleInfo.getROrgCode());
         u.setStatus(boaInRoleInfo.getStatus());
+        u.setApp(boaInRoleInfo.getApp());
         if(boaInRoleInfo.getId()>0) {
         	u.setId(boaInRoleInfo.getId());
         	u = htBoaInRoleService.update(u);
