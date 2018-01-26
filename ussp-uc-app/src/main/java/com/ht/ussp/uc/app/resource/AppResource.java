@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -83,7 +84,7 @@ public class AppResource {
     @SuppressWarnings({ "unused", "rawtypes" })
 	@ApiOperation(value = "对内：新增/编辑系统信息记录")
     @RequestMapping(value = { "/add" }, method = RequestMethod.POST)
-    public Result add(@RequestBody BoaInAppInfo boaInAppInfo) {
+    public Result add(@RequestBody BoaInAppInfo boaInAppInfo,@RequestHeader("userId") String userId) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
         String msg = "成功";
@@ -106,11 +107,12 @@ public class AppResource {
         u.setNameCn(boaInAppInfo.getNameCn());
         if(boaInAppInfo.getId()>0) {
         	u.setId(boaInAppInfo.getId());
+        	u.setUpdateOperator(userId);
         	u = htBoaInAppService.update(u);
         } else {
         	u.setCreatedDatetime(new Date());
         	u.setStatus("0");
-            u.setCreateOperator("1000");
+            u.setCreateOperator(userId);
             u = htBoaInAppService.add(u);
         }
         el = System.currentTimeMillis();
@@ -122,7 +124,7 @@ public class AppResource {
     @SuppressWarnings({ "unused", "rawtypes" })
 	@ApiOperation(value = "对内：禁用/启用角色", notes = "禁用/启用角色")
     @RequestMapping(value = { "/stop" }, method = RequestMethod.POST)
-    public Result stop( Long id, String status) {
+    public Result stop( Long id, String status,@RequestHeader("userId") String userId) {
         long sl = System.currentTimeMillis(), el = 0L;
         String msg = "成功";
         String logHead = "角色记录查询：role/in/add param-> {}";
@@ -140,6 +142,7 @@ public class AppResource {
     	}
         u.setLastModifiedDatetime(new Date());
         u.setStatus(status);
+        u.setUpdateOperator(userId);
         u = htBoaInAppService.update(u);
         
         el = System.currentTimeMillis();
@@ -171,7 +174,7 @@ public class AppResource {
      @SuppressWarnings("rawtypes")
      @ApiOperation(value = "对内：删除标记岗位记录", notes = "提交岗位编号，可批量删除")
      @RequestMapping(value = {"/delete" }, method = RequestMethod.POST)
-     public Result delete(long id) {
+     public Result delete(long id,@RequestHeader("userId") String userId) {
           long sl = System.currentTimeMillis(), el = 0L;
           String msg = "成功";
           String logHead = "岗位记录删除：position/in/delete param-> {}";
@@ -181,7 +184,7 @@ public class AppResource {
           HtBoaInApp u = htBoaInAppService.findById(id);
           u.setDelFlag(Constants.DEL_1);
           u.setStatus(Constants.STATUS_1);
-          u.setUpdateOperator("del");
+          u.setUpdateOperator(userId);
           u.setLastModifiedDatetime(new Date());
           htBoaInAppService.update(u);
           el = System.currentTimeMillis();

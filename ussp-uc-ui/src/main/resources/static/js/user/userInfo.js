@@ -9,7 +9,7 @@ layui.use(['form',   'table' , 'ht_config'], function () {
         , editDialog = 0 //修改弹出框的ID
         , active = {
 	        userInfoDetail:function(){
-	        	 $.get(userBaseInfoUrl + "/" + userId, null, function (result) {
+	        	 $.get(userBaseInfoUrl , null, function (result) {
 	        		 //表单数据填充
                      $.each(result.result, function (name, value) {
                          var $input = $("input[name=" + name + "]");

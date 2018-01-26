@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -92,7 +93,7 @@ public class OrgResource {
     @ApiOperation(value = "对内：新增/编辑机构记录", notes = "提交机构基础信息新增/编辑机构")
     @ApiImplicitParam(name = "boaInOrgInfo", value = "机构信息实体", required = true, dataType = "BoaInOrgInfo")
     @PostMapping(value = {"/add"}, produces = {"application/json"} )
-    public Result add(@RequestBody BoaInOrgInfo boaInOrgInfo) {
+    public Result add(@RequestBody BoaInOrgInfo boaInOrgInfo,@RequestHeader("userId") String userId) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
         String msg = "成功";
@@ -118,10 +119,11 @@ public class OrgResource {
         u.setOrgPath(boaInOrgInfo.getOrgPath());
         if (boaInOrgInfo.getId() > 0) {
             u.setId(boaInOrgInfo.getId());
+            u.setUpdateOperator(userId);
             u = htBoaInOrgService.update(u);
         } else {
             u.setCreatedDatetime(new Date());
-            u.setCreateOperator("1000");
+            u.setCreateOperator(userId);
             u.setOrgPath(boaInOrgInfo.getOrgPath() + boaInOrgInfo.getOrgCode() + "/");
             u = htBoaInOrgService.add(u);
         }
@@ -135,7 +137,7 @@ public class OrgResource {
     @SuppressWarnings("rawtypes")
     @ApiOperation(value = "对内：删除标记机构记录", notes = "提交机构编号，可批量删除")
     @PostMapping(value = {"/delete"}, produces = {"application/json"} )
-    public Result delete(long id) {
+    public Result delete(long id,@RequestHeader("userId") String userId) {
         long sl = System.currentTimeMillis(), el = 0L;
         String msg = "成功";
         String logHead = "机构记录删除：org/delete param-> {}";
@@ -144,7 +146,7 @@ public class OrgResource {
         log.info(logStart, "codes: " + id, sl);
         HtBoaInOrg u = htBoaInOrgService.findById(id);
         u.setDelFlag(Constants.DEL_1);
-        u.setUpdateOperator("del");
+        u.setUpdateOperator(userId);
         u.setLastModifiedDatetime(new Date());
         htBoaInOrgService.update(u);
         el = System.currentTimeMillis();
@@ -155,7 +157,7 @@ public class OrgResource {
     @SuppressWarnings("rawtypes")
     @ApiOperation(value = "对内：禁用/启用机构")
     @PostMapping(value = {"/stop"}, produces = {"application/json"} )
-    public Result stop(long id, String status) {
+    public Result stop(long id, String status,@RequestHeader("userId") String userId) {
         long sl = System.currentTimeMillis(), el = 0L;
         String msg = "成功";
         String logHead = "机构记录删除：org/delete param-> {}";
@@ -164,6 +166,7 @@ public class OrgResource {
         log.info(logStart, "codes: " + id, sl);
         HtBoaInOrg u = htBoaInOrgService.findById(id);
         u.setLastModifiedDatetime(new Date());
+        u.setUpdateOperator(userId);
         htBoaInOrgService.update(u);
         el = System.currentTimeMillis();
         log.info(logEnd, "codes: " + id, msg, el, el - sl);

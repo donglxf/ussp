@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -74,7 +75,7 @@ public class RoleResource {
 	@ApiOperation(value = "对内：新增/编辑角色记录", notes = "提交角色基础信息新增/编辑角色")
     @ApiImplicitParam(name = "boaInRoleInfo", value = "角色信息实体", required = true, dataType = "BoaInRoleInfo")
     @RequestMapping(value = { "/in/add" }, method = RequestMethod.POST)
-    public Result add(@RequestBody BoaInRoleInfo boaInRoleInfo) {
+    public Result add(@RequestBody BoaInRoleInfo boaInRoleInfo,@RequestHeader("userId") String userId) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
         String msg = "成功";
@@ -100,11 +101,12 @@ public class RoleResource {
         u.setApp(boaInRoleInfo.getApp());
         if(boaInRoleInfo.getId()>0) {
         	u.setId(boaInRoleInfo.getId());
+        	u.setUpdateOperator(userId);
         	u = htBoaInRoleService.update(u);
         } else {
         	u.setCreatedDatetime(new Date());
         	u.setStatus("0");
-            u.setCreateOperator("1000");
+            u.setCreateOperator(userId);
             u = htBoaInRoleService.add(u);
         }
         el = System.currentTimeMillis();
@@ -116,7 +118,7 @@ public class RoleResource {
     @SuppressWarnings({ "unused", "rawtypes" })
 	@ApiOperation(value = "对内：禁用/启用角色", notes = "禁用/启用角色")
     @RequestMapping(value = { "/in/stop" }, method = RequestMethod.POST)
-    public Result stop( Long id, String status) {
+    public Result stop( Long id, String status,@RequestHeader("userId") String userId) {
         long sl = System.currentTimeMillis(), el = 0L;
         String msg = "成功";
         String logHead = "角色记录查询：role/in/add param-> {}";
@@ -134,6 +136,7 @@ public class RoleResource {
     	}
         u.setLastModifiedDatetime(new Date());
         u.setStatus(status);
+        u.setUpdateOperator(userId);
         u = htBoaInRoleService.update(u);
         
         el = System.currentTimeMillis();

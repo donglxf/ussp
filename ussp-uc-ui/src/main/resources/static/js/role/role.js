@@ -220,7 +220,6 @@ layui.use(['form', 'laytpl' , 'table','ht_config', 'ht_auth' ], function () {
                     	var optionHtml="<option value=''>请选择系统</option>";
                     	 $.each(appdata.data, function (name, value) {
                     		 if(data.app==value.app){
-                    			 console.log("ccccccccccc "+(data.app==value.app));
                     			 optionHtml += "<option value='"+value.app+"' selected>"+value.nameCn+"</option>";
                     		 }else{
                     			 optionHtml += "<option value='"+value.app+"'>"+value.nameCn+"</option>";

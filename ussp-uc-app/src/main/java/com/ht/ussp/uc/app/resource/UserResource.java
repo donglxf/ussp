@@ -1,14 +1,20 @@
 package com.ht.ussp.uc.app.resource;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
@@ -63,8 +69,8 @@ public class UserResource {
 
     @ApiOperation(value = "对内：用户个人信息查询", notes = "已登录用户查看自己的个人信息")
     @ApiImplicitParam(name = "userId", value = "用户ID", required = true, paramType = "path", dataType = "int")
-    @RequestMapping(value = {"/in/selfinfo/{userId}"}, method = RequestMethod.GET)
-    public ResponseModal getSelfInfo(@PathVariable String userId) {
+    @RequestMapping(value = {"/in/selfinfo"}, method = RequestMethod.GET)
+    public ResponseModal getSelfInfo(@RequestHeader("userId") String userId) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
         String msg = "成功";
@@ -129,7 +135,7 @@ public class UserResource {
 
     @ApiOperation(value = "对内：修改密码", notes = "修改密码")
     @RequestMapping(value = {"/in/changePwd"}, method = RequestMethod.POST)
-    public ResponseModal changePwd(@RequestBody ChangePwd changePwd) {
+    public ResponseModal changePwd(@RequestBody ChangePwd changePwd,@RequestHeader("userId") String userId) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
         String msg = "成功";
@@ -138,14 +144,14 @@ public class UserResource {
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.info(logStart, changePwd.toString(), sl);
         HtBoaInUser htBoaInUser = new HtBoaInUser();
-        htBoaInUser.setUserId(changePwd.getUserId());
+        htBoaInUser.setUserId(userId);
         List<HtBoaInUser> htBoaInUserList = htBoaInUserService.findAll(htBoaInUser);
         r = exceptionReturn(logEnd, "changePwd: " + changePwd, htBoaInUserList, sl, "个人用户信息", 1);
         if (null != r)
             return r;
         htBoaInUser = htBoaInUserList.get(0);
 
-        HtBoaInLogin u = htBoaInLoginService.findByUserId(htBoaInUser.getUserId());
+        HtBoaInLogin u = htBoaInLoginService.findByUserId(userId);
         //验证原密码是否正确
         if (!u.getPassword().equals(changePwd.getOldPwd())) {
             return new ResponseModal("500", "原密码输入不正确");

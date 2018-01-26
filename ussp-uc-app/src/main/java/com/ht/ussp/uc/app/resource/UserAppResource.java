@@ -5,6 +5,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -84,7 +85,7 @@ public class UserAppResource {
     
     @ApiOperation(value = "对内：新增/编辑用户系统记录", notes = "提交用户系统信息新增/编辑角色")
     @RequestMapping(value = { "/add" }, method = RequestMethod.POST)
-    public Result add(@RequestBody HtBoaInUserApp htBoaInUserApp) {
+    public Result add(@RequestBody HtBoaInUserApp htBoaInUserApp,@RequestHeader("userId") String userId) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
         String msg = "成功";
@@ -109,10 +110,11 @@ public class UserAppResource {
         u.setApp(htBoaInUserApp.getApp());
         if(htBoaInUserApp.getId()!=null && htBoaInUserApp.getId()>0) {
         	u.setId(htBoaInUserApp.getId());
+        	u.setUpdateOperator(userId);
         	u = htBoaInUserAppService.update(u);
         } else {
         	u.setCreatedDatetime(new Date());
-        	u.setCreateOperator("10001");
+        	u.setCreateOperator(userId);
             u = htBoaInUserAppService.add(u);
         }
         el = System.currentTimeMillis();
@@ -124,7 +126,7 @@ public class UserAppResource {
     @SuppressWarnings({ "rawtypes", "unused" })
 	@ApiOperation(value = "对内：禁用/启用用户系统", notes = "禁用/启用用户系统")
     @RequestMapping(value = { "/stop" }, method = RequestMethod.POST)
-    public Result stop(Long id, String status) {
+    public Result stop(Long id, String status,@RequestHeader("userId") String userId) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
         String msg = "成功";
@@ -143,6 +145,7 @@ public class UserAppResource {
     	}
         u.setLastModifiedDatetime(new Date());
         u.setDelFlag(Integer.parseInt(status));
+        u.setUpdateOperator(userId);
         u = htBoaInUserAppService .update(u);
         
         el = System.currentTimeMillis();

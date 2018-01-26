@@ -5,6 +5,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -58,7 +59,7 @@ public class PositionRoleResource {
     @SuppressWarnings({ "unused", "rawtypes" })
     @ApiOperation(value = "对内：岗位绑定角色", notes = "提交岗位编号和角色编号进行绑定")
     @PostMapping(value = { "/add" }, produces = {"application/json"})
-    public Result add(@RequestBody HtBoaInPositionRole htBoaInPositionRole) {
+    public Result add(@RequestBody HtBoaInPositionRole htBoaInPositionRole,@RequestHeader("userId") String userId) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
         String msg = "成功";
@@ -84,10 +85,11 @@ public class PositionRoleResource {
         u.setRootOrgCode("HT");
         if(htBoaInPositionRole.getId()!=null && htBoaInPositionRole.getId()>0) {
         	u.setId(htBoaInPositionRole.getId());
+        	u.setUpdateOperator(userId);
         	u = htBoaInPositionRoleService.update(u);
         } else {
         	u.setCreatedDatetime(new Date());
-        	u.setCreateOperator("10001");
+        	u.setCreateOperator(userId);
             u = htBoaInPositionRoleService.add(u);
         }
         el = System.currentTimeMillis();
@@ -99,7 +101,7 @@ public class PositionRoleResource {
     @SuppressWarnings({ "rawtypes", "unused" })
 	@ApiOperation(value = "对内：禁用/启用岗位角色", notes = "禁用/启用岗位角色")
     @PostMapping(value = { "/stop" }, produces = {"application/json"})
-    public Result stop(  Long id,  String status) {
+    public Result stop(  Long id,  String status,@RequestHeader("userId") String userId) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
         String msg = "成功";
@@ -118,6 +120,7 @@ public class PositionRoleResource {
     	}
         u.setLastModifiedDatetime(new Date());
         u.setDelFlag(Integer.parseInt(status));
+        u.setUpdateOperator(userId);
         u = htBoaInPositionRoleService .update(u);
         
         el = System.currentTimeMillis();

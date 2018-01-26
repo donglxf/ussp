@@ -85,33 +85,5 @@
 		</div>
 	</div>
     <!--新增表单-->
-    <div id="user_add_data_div" class="hide">
-        <form method="post" class="layui-form" lay-filter="filter_add_user_form">
-            <div class="layui-form-item">
-                <label class="layui-form-label">岗位编号<b>*</b></label>
-                <div class="layui-input-block">
-                    <input type="text" name="positionCode" lay-verify="required" maxlength="20" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">岗位名称<b>*</b></label>
-                <div class="layui-input-block">
-                    <input type="text" name="positionName" lay-verify="required" maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">所属机构<b>*</b></label>
-                <div class="layui-input-block">
-                    <input type="text" id="user_org_tree_select" name="orgName" autocomplete="off"  lay-verType="tips" class="layui-input layui-input-sm">
-                    <input type="hidden" name="orgCode" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
-                    <input type="hidden" name="orgPath" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
-                    <input type="hidden" name="rootOrgCode" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
-                    <input type="hidden" name="pOrgCode" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
-                    <input type="hidden" name="rOrgCode" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <button class="layui-btn hide" lay-submit="" lay-filter="filter_add_user_form"></button>
-        </form>
-    </div>
     <script src="/js/userposition/userposition.js"></script>
 </div>

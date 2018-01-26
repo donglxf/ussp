@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -72,7 +73,7 @@ public class PositionResource {
 	@SuppressWarnings({ "unused", "rawtypes" })
 	@ApiOperation(value = "对内：新增/编辑岗位记录", notes = "提交岗位基础信息新增/编辑岗位")
 	@PostMapping(value = { "/in/add" }, produces = { "application/json" })
-	public Result add(@RequestBody BoaInPositionInfo boaInPositionInfo) {
+	public Result add(@RequestBody BoaInPositionInfo boaInPositionInfo,@RequestHeader("userId") String userId) {
 		long sl = System.currentTimeMillis(), el = 0L;
 		ResponseModal r = null;
 		String msg = "成功";
@@ -93,18 +94,18 @@ public class PositionResource {
 		u.setOrgPath(boaInPositionInfo.getOrgPath());
 		u.setParentOrgCode(boaInPositionInfo.getPOrgCode());
 		u.setPositionName(boaInPositionInfo.getPositionName());
-		u.setPositionNameCn(boaInPositionInfo.getPositionNameCn() == null ? boaInPositionInfo.getPositionName()
-				: boaInPositionInfo.getPositionNameCn());
+		u.setPositionNameCn(boaInPositionInfo.getPositionNameCn() == null ? boaInPositionInfo.getPositionName() : boaInPositionInfo.getPositionNameCn());
 		u.setRootOrgCode(boaInPositionInfo.getROrgCode());
 		u.setSequence(boaInPositionInfo.getSequence() == null ? 0 : boaInPositionInfo.getSequence());
 		u.setPositionCode(boaInPositionInfo.getPositionCode());
 		u.setStatus("0");
 		if (boaInPositionInfo.getId() > 0) {
 			u.setId(boaInPositionInfo.getId());
+			u.setUpdateOperator(userId);
 			u = htBoaInPositionService.update(u);
 		} else {
 			u.setCreatedDatetime(new Date());
-			u.setCreateOperator("1000");
+			u.setCreateOperator(userId);
 			u = htBoaInPositionService.add(u);
 		}
 
@@ -132,7 +133,7 @@ public class PositionResource {
 	@SuppressWarnings("rawtypes")
 	@ApiOperation(value = "对内：删除标记岗位记录", notes = "提交岗位编号，可批量删除")
 	@PostMapping(value = { "/in/delete" }, produces = { "application/json" })
-	public Result delete(long id) {
+	public Result delete(long id,@RequestHeader("userId") String userId) {
 		long sl = System.currentTimeMillis(), el = 0L;
 		String msg = "成功";
 		String logHead = "岗位记录删除：position/in/delete param-> {}";
@@ -141,7 +142,7 @@ public class PositionResource {
 		log.info(logStart, "codes: " + id, sl);
 		HtBoaInPosition u = htBoaInPositionService.findById(id);
 		u.setDelFlag(1);
-		u.setUpdateOperator("del");
+		u.setUpdateOperator(userId);
 		u.setLastModifiedDatetime(new Date());
 		htBoaInPositionService.update(u);
 		el = System.currentTimeMillis();
@@ -152,7 +153,7 @@ public class PositionResource {
 	@SuppressWarnings("rawtypes")
 	@ApiOperation(value = "对内：禁用/启用岗位")
 	@PostMapping(value = { "/in/stop" }, produces = { "application/json" })
-	public Result stop(long id, String status) {
+	public Result stop(long id, String status,@RequestHeader("userId") String userId) {
 		long sl = System.currentTimeMillis(), el = 0L;
 		String msg = "成功";
 		String logHead = "岗位记录删除：position/in/delete param-> {}";
@@ -162,6 +163,7 @@ public class PositionResource {
 		HtBoaInPosition u = htBoaInPositionService.findById(id);
 		u.setStatus(status);
 		u.setLastModifiedDatetime(new Date());
+		u.setUpdateOperator(userId);
 		htBoaInPositionService.update(u);
 		el = System.currentTimeMillis();
 		log.info(logEnd, "codes: " + id, msg, el, el - sl);

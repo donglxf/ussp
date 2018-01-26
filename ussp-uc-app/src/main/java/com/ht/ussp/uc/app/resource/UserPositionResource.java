@@ -5,6 +5,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -57,7 +58,7 @@ public class UserPositionResource {
 
     @ApiOperation(value = "对内：新增/编辑用户岗位记录", notes = "提交用户岗位信息新增/编辑角色")
     @PostMapping(value = { "/add" }, produces = {"application/json"})
-    public Result add(@RequestBody HtBoaInPositionUser htBoaInPositionUser) {
+    public Result add(@RequestBody HtBoaInPositionUser htBoaInPositionUser,@RequestHeader("userId") String userId) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
         String msg = "成功";
@@ -82,10 +83,11 @@ public class UserPositionResource {
         u.setPositionCode(htBoaInPositionUser.getPositionCode());
         if(htBoaInPositionUser.getId()!=null && htBoaInPositionUser.getId()>0) {
         	u.setId(htBoaInPositionUser.getId());
+        	u.setUpdateOperator(userId);
         	u = htBoaInPositionUserService.update(u);
         } else {
         	u.setCreatedDatetime(new Date());
-        	u.setCreateOperator("10001");
+        	u.setCreateOperator(userId);
             u = htBoaInPositionUserService.add(u);
         }
         el = System.currentTimeMillis();
