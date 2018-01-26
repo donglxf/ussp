@@ -108,6 +108,6 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>ussp-registry-app</finalName>
+		<finalName>ussp-uc-app</finalName>
 	</build>
 </project>

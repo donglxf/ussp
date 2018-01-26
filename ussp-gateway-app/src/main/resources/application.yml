@@ -48,7 +48,7 @@ eureka:
   client:
     serviceUrl:
 #      defaultZone: http://localhost:30101/eureka/
-      defaultZone: ${ADDITIONAL_EUREKA_SERVER_LIST}
+      defaultZone: ${EUREKA_SERVER_ADDRESS}
       
 gateway:
   security: 
