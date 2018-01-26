@@ -15,7 +15,6 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
 import com.ht.ussp.uc.app.domain.HtBoaInOrg;
-import com.ht.ussp.uc.app.domain.HtBoaInPosition;
 import com.ht.ussp.uc.app.model.BoaInOrgInfo;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.repository.HtBoaInOrgRepository;
