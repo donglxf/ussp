@@ -1,13 +1,8 @@
-var appListByPageUrl=basepath +"system/list"; //列出所有系统记录列表信息  
-var addappUrl=basepath +"system/add"; //添加系统信息
-var delappUrl=basepath +"system/delete"; //删除系统信息
-var statusappUrl=basepath +"system/stop"; //禁用
-var checkAppCodeExistUrl = basepath +"system/isExistAppCode"; //校验岗位编码是否已经存在
-
-layui.use(['form',   'table', 'ht_auth' ], function () {
+layui.use(['form',   'table', 'ht_config','ht_auth' ], function () {
     var $ = layui.jquery
         , form = layui.form
         , table = layui.table
+        , config = layui.ht_config
         , ht_auth = layui.ht_auth
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
@@ -71,6 +66,11 @@ layui.use(['form',   'table', 'ht_auth' ], function () {
         }
     };
     
+    var appListByPageUrl=config.basePath +"system/list"; //列出所有系统记录列表信息  
+    var addappUrl=config.basePath +"system/add"; //添加系统信息
+    var delappUrl=config.basePath +"system/delete"; //删除系统信息
+    var statusappUrl=config.basePath +"system/stop"; //禁用
+    var checkAppCodeExistUrl = config.basePath +"system/isExistAppCode"; //校验岗位编码是否已经存在
 
     //自定义验证规则
 	form.verify({

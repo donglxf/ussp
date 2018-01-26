@@ -1,8 +1,4 @@
-var roleListByPageUrl=basepath +"role/in/list"; //列出所有角色记录列表信息  
-var addRoleUrl=basepath +"role/in/add"; //添加角色信息
-var delRoleUrl=basepath +"role/in/delete"; //删除角色信息
-var statusRoleUrl=basepath +"role/in/stop"; //禁用
-var checkRoleCodeExist = basepath +"role/isExistRoleCode"; //校验角色编码是否已经存在
+
 
 layui.use(['form', 'laytpl' , 'table','ht_config', 'ht_auth' ], function () {
 
@@ -82,6 +78,13 @@ layui.use(['form', 'laytpl' , 'table','ht_config', 'ht_auth' ], function () {
         	refreshTable($("#role_search_keyword").val());
         }
     };
+    
+    var roleListByPageUrl=config.basePath +"role/in/list"; //列出所有角色记录列表信息  
+    var addRoleUrl=config.basePath +"role/in/add"; //添加角色信息
+    var delRoleUrl=config.basePath +"role/in/delete"; //删除角色信息
+    var statusRoleUrl=config.basePath +"role/in/stop"; //禁用
+    var checkRoleCodeExist = config.basePath +"role/isExistRoleCode"; //校验角色编码是否已经存在
+    
     var appListByPageUrl=config.basePath +"userapp/listAppByPage"; //列出所有角色记录列表信息
     //自定义验证规则
 	form.verify({
