@@ -1,8 +1,5 @@
 /**
- * add by  2018/1/22
- */
-/**
- *
+ * add by 谭荣巧  2018/1/22
  */
 layui.define(['jquery', 'tab', 'ht_config'], function (exports) {
     "use strict";

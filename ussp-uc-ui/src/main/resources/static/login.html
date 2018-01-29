@@ -148,7 +148,7 @@
                         <!--</div>-->
                         <div class="layui-form-item">
                             <div class="kit-pull-left kit-login-remember">
-                                <input type="checkbox" name="rememberMe" value="true" lay-skin="primary" checked
+                                <input type="checkbox" name="rememberMe" value="true" lay-skin="primary"
                                        title="记住帐号?">
                             </div>
                             <div class="kit-pull-right">
@@ -174,7 +174,7 @@
 
 <script>
     layui.config({
-        base: '/js/modules/',
+        base: '/plugins/layui/extend/modules/',
         version: false
     }).use(['layer', 'form', 'ht_cookie', 'ht_config'], function () {
         var $ = layui.jquery, form = layui.form, cookie = layui.ht_cookie, ht_config = layui.ht_config;
@@ -193,7 +193,6 @@
         var index = layer.load(2, {shade: [0.3, '#333']});
         layer.close(index);
         form.on('submit(login)', function (data) {
-            console.info(ht_config.loginUrl, data.field)
             $.ajax({
                 type: "POST",
                 url: ht_config.loginUrl,
@@ -206,7 +205,6 @@
                     xhr.setRequestHeader("app", ht_config.app);
                 },
                 success: function (data) {
-                    console.info(data);
                     if (data && data["token"] != null & data["token"] != "") {
                         cookie.setToken(data["token"]);
                         cookie.setRefreshToken(data["refreshToken"]);

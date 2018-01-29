@@ -69,8 +69,8 @@
             </li>
             <li class="layui-nav-item">
                 <a href="javascript:;">
-                    <img src="http://m.zhengjinfan.cn/images/0.jpg" class="layui-nav-img">
-                    Van
+                   <!-- <img src="http://m.zhengjinfan.cn/images/0.jpg" class="layui-nav-img">-->
+                    test
                 </a>
                 <dl class="layui-nav-child">
                     <dd>
@@ -136,7 +136,7 @@
 
     var message;
     layui.config({
-        base: '/js/modules/',
+        base: '/plugins/layui/extend/modules/',
         version: false
     }).use(['layer', 'ht_cookie'], function () {
         var layer = layui.layer, cookie = layui.ht_cookie;
@@ -150,7 +150,7 @@
             return false;
         }
         layui.config({
-            base: '/js/modules/',
+            base: '/plugins/layui/extend/modules/',
             version: false
         }).use(['app', 'message', 'ht_ajax', 'ht_cookie', 'ht_auth'], function () {
             var app = layui.app,

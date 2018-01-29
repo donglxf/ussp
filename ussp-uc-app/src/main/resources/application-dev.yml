@@ -11,10 +11,10 @@ spring:
         username: root
         password: tuandai_bm2015
     redis:
-        database : 1
-        host : 10.100.5.193
+        database : 0
+        host : 10.110.1.240
         port : 6379
-#        password : 123456
+        password : tuandai
 eureka:
   client:
     serviceUrl:

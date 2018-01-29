@@ -19,7 +19,7 @@ layui.define(['jquery', 'element', 'nprogress', 'utils'], function (exports) {
     var Tab = function () {
         this.config = {
             elem: undefined,
-            mainUrl: '/main.html',
+            mainUrl: '/html/role/roleResource.html',//'/main.html',//TODO 提交代码时不提交，需要还原
             renderType: 'page',
             openWait: false
         };
