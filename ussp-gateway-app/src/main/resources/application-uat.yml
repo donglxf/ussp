@@ -1,11 +1,11 @@
 spring:
-    profiles.active: dev
+    profiles.active: uat
 
 ---
 server:
-  port: 30111
+  port: ${SERVER_PORT}
 spring:
-    profiles: dev
+    profiles: uat
     application:
       name: ussp-gateway-app
     cloud: 
@@ -27,13 +27,15 @@ zuul:
     cisp-car-service:
       path: /car/**
       serviceId: cisp-car-service
+    
+      
       
 eureka:
   instance:
     prefer-ip-address: true
   client:
     serviceUrl:
-      defaultZone: http://localhost:30101/eureka/
+      defaultZone: ${EUREKA_SERVER_ADDRESS}
       
 gateway:
   security: 
@@ -47,3 +49,4 @@ ht:
   ignoreUrl: #不验证的url(可以使用通配符（*）)
      web: uc/echo,/admin/*,/car/* #不需要验证token
      http: /auth/loadBtnAndTab,/auth/loadMenu #需要验证token
+     

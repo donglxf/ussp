@@ -71,11 +71,12 @@ public class AccessFilter extends ZuulFilter {
         HttpServletRequest request = ctx.getRequest();
         String uri = request.getRequestURI().toString();
         String validateUrl = uri.substring(uri.indexOf("/", uri.indexOf("/") + 1));
+        
         //排除不验证的请求，支持通配符“*”
         if (!StringUtils.isEmpty(htIgnoreUrlWeb)) {
             String[] ignoreUrlWebs = htIgnoreUrlWeb.split(",");
             for (String ignoreUrlWeb : ignoreUrlWebs) {
-                if (PatternUtil.compile(ignoreUrlWeb).match(validateUrl)) {
+                if (PatternUtil.compile(ignoreUrlWeb).match(uri)) {
                     ctx.setSendZuulResponse(true);
                     ctx.setResponseStatusCode(200);
                     return null;
