@@ -2,8 +2,6 @@ spring:
     profiles.active: dev
     
 ---
-server:
-  port: ${SERVER_PORT}
 spring:
     profiles: dev
     application:
@@ -13,10 +11,6 @@ spring:
         preferred-networks: 10.200.1
     #指定使用sping的数据源
     datasource:
-        url: jdbc:mysql://10.100.5.193:3306/BOA?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
-        username: root
-#        password: tuandai_bm2015
-        password: tuandai888
         dbcp2:
           validation-query: SELECT 1
           test-while-idle: true
@@ -45,9 +39,6 @@ spring:
 eureka:
   instance:
     prefer-ip-address: true
-  client:
-    serviceUrl:
-      defaultZone: ${EUREKA_SERVER_ADDRESS}
 ht.config.uc.api:
   synch: false #是否同步API资源到用户权限中心
   packages: com.ht.ussp.uc.app #API资源扫描的包，可用多个，多个使用“,”分隔
