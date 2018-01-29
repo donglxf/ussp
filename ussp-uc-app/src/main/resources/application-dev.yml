@@ -12,7 +12,8 @@ spring:
         password: tuandai_bm2015
     redis:
         database : 1
-        host : 10.100.5.193
+        host : 192.168.15.100
+        password: 123456
         port : 6379
 #        password : 123456
 eureka:
