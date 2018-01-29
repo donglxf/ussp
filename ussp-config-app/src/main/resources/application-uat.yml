@@ -1,0 +1,47 @@
+server:
+  port: ${SERVER_PORT}
+spring:
+  application:
+#    hostname: 10.110.1.240
+    name: ussp-config-app
+  profiles:
+    active: UAT
+  rabbitmq:
+#    host: 10.110.1.240
+    host: 120.79.47.252
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: /
+  cloud:
+    inetutils: 
+      preferred-networks: 10.200.1
+    config:
+      bus:
+        trace:
+          enabled: true
+      server:
+        git:
+          uri: http://10.100.5.193:8000/root/config.git
+          search-paths: /*
+          username: root
+          password: tuandai888
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    #instance-id: ${spring.application.name}:${random.int}
+  client:
+    serviceUrl:
+#      defaultZone: http://localhost:10001/eureka/,http://localhost:10002/eureka/,http://localhost:10003/eureka/
+      defaultZone:  ${EUREKA_SERVER_ADDRESS}
+
+security:
+  user:
+    name: root
+    password: 123456
+
+management:
+  security:
+    enabled: false
+
