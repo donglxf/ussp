@@ -68,10 +68,6 @@ public class HtBoaInResourceService {
         return htBoaInResourceRepository.findByResParent(resParent);
     }
 
-    public List<HtBoaInResource> getByApp(String app) {
-        return htBoaInResourceRepository.findByApp(app);
-    }
-
     /**
      * 资源管理分页查询<br>
      *
@@ -164,7 +160,15 @@ public class HtBoaInResourceService {
         return resVoList;
     }
 
-    public List<HtBoaInResource> getByAppAndStatusAndDelFlag(String app, String status, int delFlag) {
-        return htBoaInResourceRepository.findByAppAndStatusAndDelFlag(app, status, delFlag);
+    /**
+     * 加载系统所有资源<br>
+     *
+     * @param app 系统编码
+     * @return 资源列表
+     * @author 谭荣巧
+     * @Date 2018/1/29 21:37
+     */
+    public List<HtBoaInResource> getByApp(String app) {
+        return htBoaInResourceRepository.findByAppAndStatusAndDelFlag(app, "0", 0);
     }
 }

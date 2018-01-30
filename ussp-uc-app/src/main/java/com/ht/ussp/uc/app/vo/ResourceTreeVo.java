@@ -31,7 +31,7 @@ public class ResourceTreeVo {
     private String name;
     private String nameCn;
     private String parentCode;
-    private String ischecked;//是否勾选
+    private boolean ischecked;//是否勾选
     private String app;
     private List<ResourceTreeItemVo> btns;//按钮权限资源
     private List<ResourceTreeItemVo> tabs;//tab权限资源

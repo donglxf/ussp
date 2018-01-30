@@ -2,55 +2,61 @@ layui.use(['element', 'form', 'ztree', 'laytpl', 'table', 'ht_config', 'ht_auth'
     var $ = layui.jquery
         , laytpl = layui.laytpl
         , element = layui.element
-        , form = layui.form
         , table = layui.table
         , treegrid = layui.treegrid
         , config = layui.ht_config
         , ht_auth = layui.ht_auth
-        , menuTableLoad = false//菜单数据表格是否已加载
-        , btnTableLoad = false//按钮数据表格是否已加载
-        , tabTableLoad = false//tab数据表格是否已加载
-        , apiTableLoad = false//api数据表格是否已加载
-        , moduleTableLoad = false//module数据表格是否已加载
         , appAndResourceTree //组织机构树控件
+        , savePath = config.basePath + "role/res/save"
         , active = {
-        search: function (type) {
+        save: function () {
+            var selectNodes = appAndResourceTree.getSelectedNodes();
+            if (selectNodes && selectNodes.length == 1 && selectNodes[0]["app"] != selectNodes[0]["code"]) {
+                var $checkeds = $("#roleRes_grid input:checkbox:checked")
+                    , app = selectNodes[0]["app"]
+                    , roleCode = selectNodes[0]["code"]
+                    , resCodes = [];
+                layui.each($checkeds, function (index, item) {
+                    resCodes.push($(item).val());
+                });
+                console.info(resCodes, app, roleCode);
+                $.ajax({
+                    type: "POST",
+                    url: savePath,
+                    data: JSON.stringify({
+                        app: app
+                        , roleCode: roleCode
+                        , resCodes: resCodes
+                    }),
+                    contentType: "application/json;charset=utf-8",
+                    success: function (message) {
+                        if (message["returnCode"] == '0000') {
+                            layer.alert("保存成功");
+                        }
+                    },
+                    error: function (message) {
+                        layer.msg("保存发生异常，请联系管理员。");
+                        console.error(message);
+                    }
+                });
+            } else {
+                layer.alert("您未选择您要保存的角色与资源，无法保存。");
+            }
+        },
+        reset: function () {
+            var selectNodes = appAndResourceTree.getSelectedNodes();
+            if (selectNodes && selectNodes.length == 1 && selectNodes[0]["app"] != selectNodes[0]["code"]) {
+                refresh(selectNodes[0]["app"], selectNodes[0]["code"]);
+            }
+        },
+        search: function () {
             var selectNodes = appAndResourceTree.getSelectedNodes();
             if (selectNodes && selectNodes.length == 1) {
-                var keyword = $("#resource_" + type + "_search_keyword").val();
-                var resType = selectNodes[0]["type"];
-                if (type == 'module') {
-                    moduleTableLoad = false;
-                } else {
-                    menuTableLoad = false;
-                    btnTableLoad = false;
-                    tabTableLoad = false;
-                    apiTableLoad = false;
-                }
-                if (resType != "view" && resType != "group" && resType != "module") {
-                    renderTable(type, null, keyword);
-                } else {
-                    renderTable(type, undefined, keyword);
-                }
-            }
-        }
-    };
-    var refreshDalogAPIDataTable = function (app, keyword) {
-        if (!keyword) {
-            keyword = null;
-        }
-        table.reload('resource_api_dalog_datatable', {
-            page: {
-                curr: 1 //重新从第 1 页开始
-            }
-            , where: {
-                keyWord: keyword,
-                app: app,
-                resType: "api"
-            }
-        });
-    };
+                //var keyword = $("#resource_" + type + "_search_keyword").val();
 
+            }
+        }
+    };
     //渲染组织机构树
     appAndResourceTree = $.fn.zTree.init($('#roleRes_app_auth_ztree_left'), {
             async: {
@@ -76,36 +82,7 @@ layui.use(['element', 'form', 'ztree', 'laytpl', 'table', 'ht_config', 'ht_auth'
             }
             , callback: {
                 onClick: function (event, treeId, treeNode) {
-                    var resType = treeNode["type"];
-                    switch (resType) {
-                        case "view":
-                        case "group":
-                        case "app":
-                        case "menuType":
-                            menuTableLoad = false;
-                            btnTableLoad = false;
-                            tabTableLoad = false;
-                            apiTableLoad = false;
-                            if (resType != "view" && resType != "group") {
-                                renderTable('menu', null);
-                            } else {
-                                renderTable('menu');
-                            }
-                            renderTable('btn', treeNode["code"]);
-                            element.tabChange("resource_top_tab", "resMenuType");
-                            element.tabChange("resource_bottom_tab", "resBtnType");
-                            break;
-                        case "moduleType":
-                        case "module":
-                            moduleTableLoad = false;
-                            if (resType != "module") {
-                                renderTable('module', null);
-                            } else {
-                                renderTable('module');
-                            }
-                            element.tabChange("resource_top_tab", "resModuleType");
-                            break;
-                    }
+                    refresh(treeNode["app"], treeNode["code"]);
                 },
                 onAsyncSuccess: function (event, treeId, treeNode) {
                     var node = appAndResourceTree.getNodeByParam("level ", "0");
@@ -123,43 +100,40 @@ layui.use(['element', 'form', 'ztree', 'laytpl', 'table', 'ht_config', 'ht_auth'
             }
         }
     );
-    treegrid.config.render = function (viewid, data) {
-        var view = document.getElementById(viewid).innerHTML;
-        return laytpl(view).render(data) || '';
-    };
-    var id = 1;
-    treegrid.createNew({
-        elem: 'roleRes_grid',
-        view: 'roleRes_table_laytpl',
-        url: config.basePath + "role/res/auth/load",
-        id: 'code',
-        height: "full-270",
-        parentid: 'parentCode',
-        root: null,
-        loadRow: function (data) {
-            var rows = [];
-            for (var i = 1; i <= 3; i++) {
-                rows.push({
-                    id: id,
-                    pid: data.parentCode,
-                    title: 'load' + id,
-                    name: '-1',
-                    code: 'loading' + id,
-                    tel: '',
-                    _children: i == 3 ? false : true
-                });
-                id++;
-            }
-            setTimeout(function () {
-                data.children(rows);
-            }, 2000);
-        },
-        success: function () {
-            //form.render("checkbox", "roleRes_grid");
-        }
-    }).build();
 
-    // treeGrid.render($("#myTruee"));
+    var refresh = function (app, role) {
+        if (app == null || role == null || app == role) {
+            treegrid.createNew({
+                elem: 'roleRes_grid',
+                view: 'roleRes_table_laytpl',
+                data: {rows: []},
+                searchData: {
+                    app: app,
+                    role: role
+                },
+                id: 'code',
+                height: "full-270",
+                parentid: 'parentCode',
+                root: null
+            }).build();
+        } else {
+            treegrid.createNew({
+                elem: 'roleRes_grid',
+                view: 'roleRes_table_laytpl',
+                url: config.basePath + "role/res/auth/load",
+                searchData: {
+                    app: app,
+                    role: role
+                },
+                id: 'code',
+                height: "full-270",
+                parentid: 'parentCode',
+                root: null
+            }).build();
+        }
+    };
+
+    refresh(null, null);
 
     //菜单和模块tab页切换事件
     element.on('tab(resource_top_tab)', function (data) {

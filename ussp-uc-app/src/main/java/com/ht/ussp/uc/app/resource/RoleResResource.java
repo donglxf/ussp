@@ -9,17 +9,17 @@
  */
 package com.ht.ussp.uc.app.resource;
 
+import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInResource;
 import com.ht.ussp.uc.app.service.HtBoaInAppService;
 import com.ht.ussp.uc.app.service.HtBoaInResourceService;
+import com.ht.ussp.uc.app.service.HtBoaInRoleResService;
 import com.ht.ussp.uc.app.vo.*;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +39,8 @@ public class RoleResResource {
     @Autowired
     private HtBoaInResourceService htBoaInResourceService;
     @Autowired
+    private HtBoaInRoleResService htBoaInRoleResService;
+    @Autowired
     private HtBoaInAppService htBoaInAppService;
 
     /**
@@ -55,10 +57,15 @@ public class RoleResResource {
 
     @ApiOperation(value = "加载资源树数据")
     @RequestMapping("/auth/load")
-    public ResourceTreePageVo loadByRole() {
+    public ResourceTreePageVo loadByRole(String app, String role) {
         ResourceTreePageVo page = new ResourceTreePageVo();
+        if (StringUtils.isEmpty(app) || StringUtils.isEmpty(role)) {
+            return page;
+        }
         List<ResourceTreeVo> rtvList = new ArrayList<>();
-        List<HtBoaInResource> allList = htBoaInResourceService.getByAppAndStatusAndDelFlag("UC", "0", 0);
+        List<HtBoaInResource> allList = htBoaInResourceService.getByApp(app);
+        List<String> resList = htBoaInRoleResService.queryResByCode(role);
+        log.debug("共计资源：" + resList.size());
         List<HtBoaInResource> menuList = allList.stream().filter(res -> "group".equals(res.getResType()) || "view".equals(res.getResType())).collect(Collectors.toList());
         ResourceTreeVo rtv;
         List<ResourceTreeItemVo> btnRtv;
@@ -76,12 +83,13 @@ public class RoleResResource {
                 List<HtBoaInResource> btnResourceList = allList.stream().filter(btn -> "btn".equals(btn.getResType()) && menu.getResCode().equals(btn.getResParent())).collect(Collectors.toList());
                 List<HtBoaInResource> tabResourceList = allList.stream().filter(tab -> "tab".equals(tab.getResType()) && menu.getResCode().equals(tab.getResParent())).collect(Collectors.toList());
                 for (HtBoaInResource btn : btnResourceList) {
-                    btnRtv.add(new ResourceTreeItemVo(btn.getResCode(), btn.getResName(), btn.getResNameCn(), false));
+                    btnRtv.add(new ResourceTreeItemVo(btn.getResCode(), btn.getResName(), btn.getResNameCn(), resList.contains(btn.getResCode())));
                 }
                 for (HtBoaInResource tab : tabResourceList) {
-                    tabRtv.add(new ResourceTreeItemVo(tab.getResCode(), tab.getResName(), tab.getResNameCn(), false));
+                    tabRtv.add(new ResourceTreeItemVo(tab.getResCode(), tab.getResName(), tab.getResNameCn(), resList.contains(tab.getResCode())));
                 }
             }
+            rtv.setIschecked(resList.contains(menu.getResCode()));
             rtv.setBtns(btnRtv);
             rtv.setTabs(tabRtv);
             rtvList.add(rtv);
@@ -90,5 +98,20 @@ public class RoleResResource {
         page.setRows(rtvList);
         page.setFlag(true);
         return page;
+    }
+
+    /**
+     * 保存角色与资源的关系<br>
+     *
+     * @param roleAndResVo 角色与资源的关系数据对象
+     * @return
+     * @author 谭荣巧
+     * @Date 2018/1/30 15:08
+     */
+    @ApiOperation(value = "保存角色与资源的关系")
+    @PostMapping(value = "/save")
+    public Result saveRoleAndRes(@RequestBody RoleAndResVo roleAndResVo, @RequestHeader("userId") String userid) {
+        htBoaInRoleResService.saveRoleAndRes(roleAndResVo,userid);
+        return Result.buildSuccess();
     }
 }

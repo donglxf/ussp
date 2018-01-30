@@ -1,11 +1,13 @@
-﻿layui.define(['form', 'laypage'], function (exports) {
+﻿layui.define(['form', 'laypage', 'laytpl'], function (exports) {
     var $ = layui.jquery
         , form = layui.form
+        , laytpl = layui.laytpl
         , _WIN = $(window)
         , Grid = {
         config: {
             render: function (view, data) {
-                return '未配置渲染函数';
+                var view = document.getElementById(view).innerHTML;
+                return laytpl(view).render(data) || '';
             }, //渲染函数
             token: ''
         }
@@ -17,7 +19,6 @@
                 that.fullHeightGap = option.height.split('-')[1];
                 option.height = _WIN.height() - that.fullHeightGap;
             }
-            console.log("grid index：" + that.index);
             var GRIDORDER = [], RESIZE = {left: 0, top: 0}, CONFIG = this.config;
 
             //样式
@@ -738,7 +739,6 @@
                 head.css('width', body.width());
                 tbhs.each(function (i, th) {
                     var w = $(th).find('.grid-coll').width();
-                    console.info(w);
                     $(ths[i]).find('.grid-coll').css('width', w);
                 });
                 if (grid.elem.hasClass('grid')) {

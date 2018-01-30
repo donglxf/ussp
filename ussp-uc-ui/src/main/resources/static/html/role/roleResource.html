@@ -30,16 +30,16 @@
                             </button>
                         </div>
                         <!--<div class="pull-right col-xs-4">-->
-                            <!--<div class="input-group input-group-sm row">-->
-                                <!--<input type="text" class="form-control" id="resource_menu_search_keyword"-->
-                                       <!--placeholder="请输入菜单编号/菜单名称/菜单链接"/>-->
-                                <!--<div class="input-group-btn">-->
-                                    <!--<button type="button" class="layui-btn layui-btn-sm" data-type="search"-->
-                                            <!--data-res-type="menu">-->
-                                        <!--<i class="fa fa-search"></i>-->
-                                    <!--</button>-->
-                                <!--</div>-->
-                            <!--</div>-->
+                        <!--<div class="input-group input-group-sm row">-->
+                        <!--<input type="text" class="form-control" id="resource_menu_search_keyword"-->
+                        <!--placeholder="请输入菜单编号/菜单名称/菜单链接"/>-->
+                        <!--<div class="input-group-btn">-->
+                        <!--<button type="button" class="layui-btn layui-btn-sm" data-type="search"-->
+                        <!--data-res-type="menu">-->
+                        <!--<i class="fa fa-search"></i>-->
+                        <!--</button>-->
+                        <!--</div>-->
+                        <!--</div>-->
                         <!--</div>-->
                     </div>
                     <div class="row-lg">
@@ -58,17 +58,15 @@
                             <tbody>
                             {{# layui.each(d.rows,function(index,r){ }}
                             <tr>
-                                <td><input type="checkbox" lay-skin="primary" data-code="{{r.code}}"/> {{r.nameCn}}</td>
+                                <td><input type="checkbox" lay-skin="primary" value="{{r.code}}" {{#  if(r.ischecked){ }}checked{{#  } }} /> {{r.nameCn}}</td>
                                 <td>
                                     {{# layui.each(r.btns,function(index,b){ }}
-                                    <span><input type="checkbox" lay-skin="primary" data-code="{{b.code}}"/> {{b.nameCn}}</span>
-
+                                    <span><input type="checkbox" lay-skin="primary" value="{{b.code}}" {{#  if(b.ischecked){ }}checked{{#  } }}/> {{b.nameCn}}</span>
                                     {{# }); }}
                                 </td>
                                 <td>
                                     {{# layui.each(r.tabs,function(index,t){ }}
-                                    <span><input type="checkbox" lay-skin="primary" data-code="{{t.code}}"/> {{t.nameCn}}</span>
-
+                                    <span><input type="checkbox" lay-skin="primary" value="{{t.code}}" {{#  if(t.ischecked){ }}checked{{#  } }}/> {{t.nameCn}}</span>
                                     {{# }); }}
                                 </td>
                             </tr>

@@ -152,7 +152,9 @@
                 },
 
                 treeDom: function (trs, rows) {
-
+                    if (rows == null || rows.length == 0) {
+                        return false;
+                    }
                     if (Object.prototype.toString.call(rows) != '[object Array]')
                         rows = [rows];
                     $.each(trs, function (i, tr) {
