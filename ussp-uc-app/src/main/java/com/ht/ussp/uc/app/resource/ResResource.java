@@ -14,10 +14,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
@@ -120,15 +117,14 @@ public class ResResource {
     }
 
     @PostMapping("/update")
-    public Result updateAsync(@RequestBody HtBoaInResource resource) {
+    public Result updateAsync(@RequestBody HtBoaInResource resource,@RequestHeader("userId") String userId) {
         if (resource != null) {
             if ("menu".equals(resource.getResType()) && StringUtils.isEmpty(resource.getResContent())) {
                 resource.setResType("group");
             } else if ("menu".equals(resource.getResType())) {
                 resource.setResType("view");
             }
-            // TODO 需要获取登录信息，设置修改人
-            resource.setUpdateOperator("测试人");
+            resource.setUpdateOperator(userId);
             resource = htBoaInResourceService.save(resource);
             if (resource != null) {
                 return Result.buildSuccess();

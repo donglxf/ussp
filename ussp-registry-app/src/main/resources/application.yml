@@ -5,7 +5,7 @@ spring:
 #    inetutils: 
 #      preferred-networks: 192.169.0
 server:
-  port: ${SERVER_PORT}
+  port: 30101
 eureka:
   instance:
     prefer-ip-address: true
@@ -18,6 +18,6 @@ eureka:
     registerWithEureka: false
     fetchRegistry: false
     serviceUrl:
-      defaultZone: ${ADDITIONAL_EUREKA_SERVER_LIST}
-#       defaultZone: http://localhost:30101/eureka
+#      defaultZone: ${ADDITIONAL_EUREKA_SERVER_LIST}
+       defaultZone: http://localhost:30101/eureka
    

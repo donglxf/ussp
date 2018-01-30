@@ -76,6 +76,10 @@ public class ResourceApiSynch {
 
         @Override
         public void run() {
+            try {
+                Thread.sleep(5000L);
+            } catch (InterruptedException e) {
+            }
             initHandler();
         }
 

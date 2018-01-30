@@ -13,13 +13,11 @@ spring:
     datasource:
         url: jdbc:mysql://10.100.5.193:3306/BOA?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
         username: root
-#        password: tuandai_bm2015
         password: tuandai888
     redis:
         database : 1
         host : 10.100.5.193
         port : 6379
-#        password : 123456
 eureka:
   client:
     serviceUrl:

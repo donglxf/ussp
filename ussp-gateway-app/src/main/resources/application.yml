@@ -3,29 +3,14 @@ spring:
 
 ---
 server:
-  port: ${SERVER_PORT}
+  port: 30111
 spring:
     profiles: dev
     application:
       name: ussp-gateway-app
-#    cloud: 
-#      inetutils: 
-#        preferred-networks: 192.169.0
-#    redis:
-#        database : 5
-#        host : 192.168.15.100
-#        port : 6379
-#        password : 123456
-#        #毫秒
-#        timeout : 3000  
-#        pool : 
-#            max-active : 1000
-#            #等待可用连接的最大时间，超过该时间，将抛出异常，-1表示永不超时，单位毫秒
-#            max-wait : 10000  
-#            #最大空闲连接，默认8
-#            max-idle : 20 
-#            #最小空闲连接，默认0 
-#            min-idle : 5   
+    cloud: 
+      inetutils: 
+        preferred-networks: 10.200.1
  
 zuul:
   routes:
@@ -35,20 +20,20 @@ zuul:
     ussp-risk:
       path: /risk/**
       serviceId: ussp-risk
-    ussp-cisp:
+    cisp-web-service:
+      path: /admin/**
+      serviceId: cisp-web-service
+      sensitiveHeaders: "*"
+    cisp-car-service:
       path: /car/**
-      serviceId: ussp-cisp
-    ussp-cams:
-      path: /cams/**
-      serviceId: ussp-cams
+      serviceId: cisp-car-service
       
 eureka:
   instance:
     prefer-ip-address: true
   client:
     serviceUrl:
-#      defaultZone: http://localhost:30101/eureka/
-      defaultZone: ${EUREKA_SERVER_ADDRESS}
+      defaultZone: http://localhost:30101/eureka/
       
 gateway:
   security: 
@@ -60,5 +45,5 @@ gateway:
  
 ht:
   ignoreUrl: #不验证的url(可以使用通配符（*）)
-     web: uc/echo #不需要验证token
+     web: uc/echo,/admin/*,/car/* #不需要验证token
      http: /auth/loadBtnAndTab,/auth/loadMenu #需要验证token

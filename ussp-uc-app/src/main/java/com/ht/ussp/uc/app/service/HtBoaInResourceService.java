@@ -72,10 +72,6 @@ public class HtBoaInResourceService {
         return htBoaInResourceRepository.findByApp(app);
     }
 
-    public List<HtBoaInResource> getByAppAndResTypeAndStatus(String app, String resType, String status) {
-        return htBoaInResourceRepository.findByAppAndResTypeAndStatus(app, resType, status);
-    }
-
     /**
      * 资源管理分页查询<br>
      *
@@ -168,7 +164,7 @@ public class HtBoaInResourceService {
         return resVoList;
     }
 
-    public List<HtBoaInResource> getByResParentAndResTypeIn(String resParent, String[] resType) {
-        return htBoaInResourceRepository.findByResParentAndResTypeIn(resParent, resType);
+    public List<HtBoaInResource> getByAppAndStatusAndDelFlag(String app, String status, int delFlag) {
+        return htBoaInResourceRepository.findByAppAndStatusAndDelFlag(app, status, delFlag);
     }
 }
