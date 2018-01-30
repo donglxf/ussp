@@ -1,1 +1,86 @@
 from: dev
+
+---
+spring:
+  data:
+    mongodb:
+      password: 123456
+      database: EIP-DEV
+      authentication-database: admin
+      port: 27017
+      host: 10.110.1.240
+      username: root
+  http:
+    multipart:
+      max-request-size: 20MB
+      max-file-size: 10MB
+      enabled: true
+    encoding:
+      charset: UTF-8
+      force: true
+      enabled: true
+  messages:
+    basename: i18n/messages
+  redis:
+    password: tuandai
+    database: 1
+    port: 6379
+    host: 10.110.1.240
+    timeout: 1000
+server:
+  context-path: /eip
+  port: 30406
+  tomcat:
+    uri-encoding: UTF-8
+context: out-service
+
+eip:
+  td:
+    tdUserName: td_xiaodai
+    zcfz:
+      ivParameter: f5d2e2g5y2d1s1r6
+      userPwd: e9435314d362b0bba672be73634766ff
+      sKey: 4s5d7r1h2q6o1h3l
+      userName: fangdai
+      url: http4://10.100.12.155:8080/
+    url: http4://121.13.249.210:19301/
+    key: MJNdwerlobvURRJHitgYTEYKopI
+  camel:
+    http:
+      normal:
+        timeout: 1000
+      middle:
+        timeout: 3000
+      large:
+        timeout: 7000
+      huge:
+        timeout: 15000
+  sms:
+    password: fQ8i461Q
+    uri: 211.147.239.62:9051/api/v1.0.0/message/mass/send
+    username: cqqc@dgtdw
+  mongodb:
+    socketKeepAlive: false
+    maxWaitTime: 3500
+    socketTimeout: 2500
+    connectTimeout: 1000
+    connectionsPerHost: 8
+    threadsAllowedToBlockForConnectionMultiplier: 20
+  redis:
+    hostName: 10.110.1.240
+    password: tuandai
+    database: 4
+    port: 6379
+    pool:
+      testOnBorrow: true
+      maxIdle: 200
+      minEvictableIdleTimeMillis: 60000
+      timeBetweenEvictionRunsMillis: 30000
+      maxTotal: 1024
+      max-active: 200
+    timeout: 1000
+  email:
+    password: 171717Xia
+    port: 465
+    host: smtp.exmail.qq.com
+    username: xiayutai@hongte.info
