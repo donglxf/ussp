@@ -137,7 +137,7 @@
     var message;
     layui.config({
         base: '/plugins/layui/extend/modules/',
-        version: false
+        version: true
     }).use(['layer', 'ht_cookie'], function () {
         var layer = layui.layer, cookie = layui.ht_cookie;
         var refreshToken = cookie.getRefreshToken();
@@ -151,7 +151,7 @@
         }
         layui.config({
             base: '/plugins/layui/extend/modules/',
-            version: false
+            version: true
         }).use(['app', 'message', 'ht_ajax', 'ht_cookie', 'ht_auth'], function () {
             var app = layui.app,
                 $ = layui.jquery,
