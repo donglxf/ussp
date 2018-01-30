@@ -45,5 +45,5 @@ gateway:
  
 ht:
   ignoreUrl: #不验证的url(可以使用通配符（*）)
-     web: uc/echo,/admin/*,/car/* #不需要验证token
+     web: /uc/echo,/admin/*,/car/* #不需要验证token
      http: /auth/loadBtnAndTab,/auth/loadMenu #需要验证token
