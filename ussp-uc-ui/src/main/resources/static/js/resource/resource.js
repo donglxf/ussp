@@ -401,7 +401,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                 page = true;
                 limit = 5;
                 limits = [5, 10, 20, 30, 40, 50];
-                initSort = {field: 'resParent,sequence', type: 'asc'};
+                initSort = {field: 'resParent', type: 'asc'};
                 clos = [[
                     {type: 'numbers'}
                     , {type: 'checkbox'}

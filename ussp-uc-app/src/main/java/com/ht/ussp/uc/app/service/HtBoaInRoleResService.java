@@ -1,8 +1,12 @@
 package com.ht.ussp.uc.app.service;
 
+import com.ht.ussp.uc.app.domain.HtBoaInResource;
 import com.ht.ussp.uc.app.domain.HtBoaInRoleRes;
+import com.ht.ussp.uc.app.repository.HtBoaInResourceRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInRoleResRepository;
 import com.ht.ussp.uc.app.vo.RoleAndResVo;
+import com.netflix.discovery.converters.Auto;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author wim qiuwenwu@hongte.info
@@ -22,6 +27,8 @@ public class HtBoaInRoleResService {
 
     @Autowired
     private HtBoaInRoleResRepository htBoaInRoleResRepository;
+    @Autowired
+    private HtBoaInResourceRepository htBoaInResourceRepository;
 
     /**
      * @return List<String>
@@ -49,9 +56,13 @@ public class HtBoaInRoleResService {
         //先删除已有的角色与资源的关系
         htBoaInRoleResRepository.deleteByRoleCode(roleCode);
         //重新保存角色与资源的关系
+        List<HtBoaInResource> allList = htBoaInResourceRepository.findByAppAndStatusAndDelFlag(roleAndResVo.getApp(), "0", 0);
         List<HtBoaInRoleRes> htBoaInRoleRess = new ArrayList<>();
         HtBoaInRoleRes rr;
         for (String resCode : resCodes) {
+            if (StringUtils.isEmpty(resCode)) {
+                continue;
+            }
             rr = new HtBoaInRoleRes();
             rr.setResCode(resCode);
             rr.setRoleCode(roleCode);
@@ -59,6 +70,17 @@ public class HtBoaInRoleResService {
             rr.setCreateOperator(userId);
             rr.setUpdateOperator(userId);
             htBoaInRoleRess.add(rr);
+            //
+            List<HtBoaInResource> apiList = allList.stream().filter(res -> "api".equals(res.getResType()) && resCode.equals(res.getResParent())).collect(Collectors.toList());
+            for (HtBoaInResource resource : apiList) {
+                rr = new HtBoaInRoleRes();
+                rr.setResCode(resource.getResCode());
+                rr.setRoleCode(roleCode);
+                rr.setDelFlag(0);
+                rr.setCreateOperator(userId);
+                rr.setUpdateOperator(userId);
+                htBoaInRoleRess.add(rr);
+            }
         }
         htBoaInRoleResRepository.save(htBoaInRoleRess);
         return true;

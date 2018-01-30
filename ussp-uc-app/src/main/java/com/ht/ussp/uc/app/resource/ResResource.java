@@ -136,7 +136,6 @@ public class ResResource {
                     resource.setResCode(String.format("%s_B%02d", resource.getResParent(), (count + 1)));
                     break;
             }
-
             resource.setStatus("0");
             resource.setCreateOperator(userId);
             resource.setUpdateOperator(userId);

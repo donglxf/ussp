@@ -65,7 +65,6 @@ public class RoleResResource {
         List<ResourceTreeVo> rtvList = new ArrayList<>();
         List<HtBoaInResource> allList = htBoaInResourceService.getByApp(app);
         List<String> resList = htBoaInRoleResService.queryResByCode(role);
-        log.debug("共计资源：" + resList.size());
         List<HtBoaInResource> menuList = allList.stream().filter(res -> "group".equals(res.getResType()) || "view".equals(res.getResType())).collect(Collectors.toList());
         ResourceTreeVo rtv;
         List<ResourceTreeItemVo> btnRtv;
