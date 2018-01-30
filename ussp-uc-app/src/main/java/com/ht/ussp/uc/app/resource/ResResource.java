@@ -66,6 +66,53 @@ public class ResResource {
     }
 
     /**
+     * 获取资源编码<br>
+     *
+     * @param parent 父资源编码
+     * @param type   资源类型
+     * @return
+     * @author 谭荣巧
+     * @Date 2018/1/30 20:26
+     */
+    @GetMapping(value = "/rescode/load")
+    public String loadResCode(@RequestParam("app") String app, @RequestParam("parent") String parent, @RequestParam("type") String type) {
+        String[] resType = null;
+        String shortType = null;
+        switch (type) {
+            case "menu":
+                resType = new String[]{"view", "group"};
+                shortType = "M";
+                break;
+            case "tab":
+                resType = new String[]{"tab"};
+                shortType = "T";
+                break;
+            case "api":
+                resType = new String[]{"api"};
+                shortType = "A";
+                break;
+            case "module":
+                resType = new String[]{"module"};
+                shortType = "MD";
+                break;
+            case "btn":
+                resType = new String[]{"btn"};
+                shortType = "B";
+                break;
+        }
+        if (resType != null && shortType != null) {
+            int count = htBoaInResourceService.getItemCountByResParentAndResType(app, "".equals(parent) ? null : parent, resType);
+            if (StringUtils.isEmpty(parent)) {
+                return String.format("%s%02d", shortType, (count + 1));
+            } else {
+                return String.format("%s_%s%02d", parent, shortType, (count + 1));
+            }
+
+        }
+        return "";
+    }
+
+    /**
      * 新增资源信息<br>
      *
      * @param resource 资源信息
@@ -74,17 +121,25 @@ public class ResResource {
      * @Date 2018/1/14 12:08
      */
     @PostMapping(value = "/add")
-    public Result addAsync(@RequestBody HtBoaInResource resource) {
+    public Result addAsync(@RequestBody HtBoaInResource resource, @RequestHeader("userId") String userId) {
         if (resource != null) {
-            if ("menu".equals(resource.getResType()) && StringUtils.isEmpty(resource.getResContent())) {
-                resource.setResType("group");
-            } else if ("menu".equals(resource.getResType())) {
-                resource.setResType("view");
+            switch (resource.getResType()) {
+                case "menu":
+                    if (StringUtils.isEmpty(resource.getResContent())) {
+                        resource.setResType("group");
+                    } else {
+                        resource.setResType("view");
+                    }
+                    break;
+                case "btn":
+                    int count = htBoaInResourceService.getItemCountByResParentAndResType(resource.getResParent(), "btn");
+                    resource.setResCode(String.format("%s_B%02d", resource.getResParent(), (count + 1)));
+                    break;
             }
+
             resource.setStatus("0");
-            // TODO 需要获取登录信息，设置创建人，修改人
-            resource.setCreateOperator("10003");
-            resource.setUpdateOperator("10003");
+            resource.setCreateOperator(userId);
+            resource.setUpdateOperator(userId);
             resource.setDelFlag(0);
             resource = htBoaInResourceService.save(resource);
             if (resource != null && !StringUtils.isEmpty(resource.getId())) {
@@ -117,7 +172,7 @@ public class ResResource {
     }
 
     @PostMapping("/update")
-    public Result updateAsync(@RequestBody HtBoaInResource resource,@RequestHeader("userId") String userId) {
+    public Result updateAsync(@RequestBody HtBoaInResource resource, @RequestHeader("userId") String userId) {
         if (resource != null) {
             if ("menu".equals(resource.getResType()) && StringUtils.isEmpty(resource.getResContent())) {
                 resource.setResType("group");

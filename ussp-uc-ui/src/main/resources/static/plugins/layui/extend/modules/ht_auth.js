@@ -29,7 +29,7 @@ layui.define(['jquery', 'tab', 'ht_config'], function (exports) {
             var isAuth = false;
             layui.each(AllAuth, function (index, item) {
                 //验证菜单编码和权限编码
-                if (menuCode == item.resParent && layAuth == item.resCode) {
+                if (menuCode == item.resParent && layAuth == item.resContent) {
                     isAuth = true;
                 }
             });

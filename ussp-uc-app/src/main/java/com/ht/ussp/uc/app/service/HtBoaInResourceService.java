@@ -171,4 +171,19 @@ public class HtBoaInResourceService {
     public List<HtBoaInResource> getByApp(String app) {
         return htBoaInResourceRepository.findByAppAndStatusAndDelFlag(app, "0", 0);
     }
+
+    /**
+     * 通过父编码获取资源个数，用于构造资源编号<br>
+     *
+     * @param app        系统编号
+     * @param resPanrent 父资源编码
+     * @param resTypes   资源类型
+     * @return
+     * @author 谭荣巧
+     * @Date 2018/1/30 20:02
+     */
+    public int getItemCountByResParentAndResType(String app, String resPanrent, String... resTypes) {
+        List<HtBoaInResource> list = htBoaInResourceRepository.findByAppAndResParentAndResTypeIn(app, resPanrent, Arrays.asList(resTypes));
+        return list == null ? 0 : list.size();
+    }
 }

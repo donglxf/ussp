@@ -15,6 +15,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
         , moduleTableLoad = false//module数据表格是否已加载
         , selectBottomTabIndex = 0//当前选中的tab标签页
         , appAndResourceTree //组织机构树控件
+        , getNewResCodeUrl = config.basePath + 'resource/rescode/load'
         , active = {
         add: function (type) { //弹出用户新增弹出框
             var nodes = appAndResourceTree.getSelectedNodes();
@@ -77,33 +78,47 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                     layer.closeAll('tips');
                 },
                 success: function (layero, index) {
-                    var app = nodes[0]["app"];
-                    var appName = appAndResourceTree.getNodesByParam("code", app)[0]["name"];
+                    var app = nodes[0]["app"]
+                        , appName = appAndResourceTree.getNodesByParam("code", app)[0]["name"]
+                        , resParent = ""
+                        , resParentName = "";
                     //初始弹出框表单数据
                     switch (type) {
                         case "menu":
                             if (nodes[0]["type"] == "group") {
-                                $("input[name=resParent]", layero).val(nodes[0]["code"]);
-                                $("input[name=resParentName]", layero).val(nodes[0]["name"]);
+                                resParent = nodes[0]["code"];
+                                resParentName = nodes[0]["name"];
                             }
                         case "module":
                             if (nodes[0]["type"] == "module") {
-                                $("input[name=resParent]", layero).val(nodes[0]["code"]);
-                                $("input[name=resParentName]", layero).val(nodes[0]["name"]);
+                                resParent = nodes[0]["code"];
+                                resParentName = nodes[0]["name"];
                             }
-                            $("input[name=app]", layero).val(app);
-                            $("input[name=appName]", layero).val(appName);
                             break;
                         case "api":
                         case "tab":
                         case "btn":
-                            $("input[name=app]", layero).val(app);
-                            $("input[name=appName]", layero).val(appName);
                             var selectData = checkStatus.data[0];
-                            $("input[name=resParent]", layero).val(selectData["resCode"]);
-                            $("input[name=resParentName]", layero).val(selectData["resNameCn"]);
+                            resParent = selectData["resCode"];
+                            resParentName = selectData["resNameCn"];
                             break;
                     }
+                    $("input[name=app]", layero).val(app);
+                    $("input[name=appName]", layero).val(appName);
+                    $("input[name=resParent]", layero).val(resParent);
+                    $("input[name=resParentName]", layero).val(resParentName);
+                    $.ajax({
+                        type: "GET",
+                        url: getNewResCodeUrl,
+                        data: {
+                            app: app,
+                            parent: resParent,
+                            type: type
+                        },
+                        success: function (result) {
+                            $("input[name=resCode]", layero).val(result);
+                        }
+                    })
                     form.render(null, "resource_" + type + "_add_data_form");
                     form.on("submit(resource_" + type + "_add_data_form)", function (data) {
                         data.field.resType = type;
@@ -123,7 +138,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                                         tabTableLoad = false;
                                         apiTableLoad = false;
                                     }
-                                    renderTable(type);
+                                    renderTable(type, resParent);
                                     layer.alert(title + "成功。");
                                 }
                             },
@@ -182,7 +197,6 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                             console.error(result);
                         }
                     })
-                    ;
                 },
                 btn2: function () {
                     layer.closeAll('tips');
@@ -410,12 +424,13 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                 btnTableLoad = true;
                 resType = 'btn';
                 height = 'full-601';
-                initSort = {field: 'resCode', type: 'asc'};
+                initSort = {field: 'resContent', type: 'asc'};
                 clos = [[
                     {type: 'numbers'}
-                    , {field: 'resCode', width: 120, title: '按钮权限标识'}
+                    , {field: 'resCode', width: 120, title: '按钮编码'}
+                    , {field: 'resContent', width: 120, title: '按钮权限标识'}
                     , {field: 'resNameCn', title: '按钮名称'}
-                    , {field: 'fontIcon', width: 60, title: '图标'}
+                    // , {field: 'fontIcon', width: 60, title: '图标'}
                     // , {field: 'sequence', width: 60, title: '顺序'}
                     , {field: 'resParent', width: 120, title: '父菜单编号'}
                     , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl"}
@@ -434,7 +449,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                 initSort = {field: 'resCode', type: 'asc'};
                 clos = [[
                     {type: 'numbers'}
-                    , {field: 'resCode', width: 120, title: 'TAB权限标识'}
+                    , {field: 'resCode', width: 120, title: 'TAB编码'}
                     , {field: 'resNameCn', width: 150, title: 'TAB名称'}
                     , {field: 'resContent', title: 'TAB链接'}
                     // , {field: 'sequence', width: 60, title: '顺序'}
