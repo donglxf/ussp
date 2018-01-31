@@ -177,13 +177,59 @@ public class HtBoaInResourceService {
      *
      * @param app        系统编号
      * @param resPanrent 父资源编码
-     * @param resTypes   资源类型
+     * @param type       资源类型(menu,tab,api,module,btn)
      * @return
      * @author 谭荣巧
      * @Date 2018/1/30 20:02
      */
-    public int getItemCountByResParentAndResType(String app, String resPanrent, String... resTypes) {
-        List<HtBoaInResource> list = htBoaInResourceRepository.findByAppAndResParentAndResTypeIn(app, resPanrent, Arrays.asList(resTypes));
-        return list == null ? 0 : list.size();
+    public String createResourceCode(String app, String resPanrent, String type) {
+        String[] resType = null;
+        String shortType = "";
+        switch (type) {
+            case "menu":
+                resType = new String[]{"view", "group"};
+                if (StringUtils.isEmpty(resPanrent)) {
+                    shortType = "M";
+                }
+                break;
+            case "tab":
+                resType = new String[]{"tab"};
+                shortType = "T";
+                break;
+            case "api":
+                resType = new String[]{"api"};
+                shortType = "A";
+                break;
+            case "module":
+                resType = new String[]{"module"};
+                shortType = "MD";
+                break;
+            case "btn":
+                resType = new String[]{"btn"};
+                shortType = "B";
+                break;
+        }
+        if (resType != null) {
+            String maxResCode = htBoaInResourceRepository.queryMaxResCodeByAppAndParentAndType(app, ("".equals(resPanrent) ? "NULL" : resPanrent), Arrays.asList(resType));
+            if (StringUtils.isEmpty(resPanrent) && StringUtils.isEmpty(maxResCode)) {
+                return String.format("%s_%s%02d", app, shortType, 1);
+            } else {
+                try {
+                    int index = Integer.parseInt(maxResCode.substring(maxResCode.length() - 2, maxResCode.length()));
+                    if (StringUtils.isEmpty(resPanrent)) {
+                        return String.format("%s_%s%02d", app, shortType, (index + 1));
+                    }
+                    return String.format("%s_%s%02d", resPanrent, shortType, (index + 1));
+                } catch (Exception e) {
+                    List<HtBoaInResource> list = htBoaInResourceRepository.findByAppAndResParentAndResTypeIn(app, "".equals(resPanrent) ? null : resPanrent, Arrays.asList(resType));
+                    int count = list == null ? 0 : list.size();
+                    if (StringUtils.isEmpty(resPanrent)) {
+                        return String.format("%s_%s%02d", app, shortType, (count + 1));
+                    }
+                    return String.format("%s_%s%02d", resPanrent, shortType, (count + 1));
+                }
+            }
+        }
+        return "";
     }
 }
