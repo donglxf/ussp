@@ -190,8 +190,7 @@ public class AccessFilter extends ZuulFilter {
      */
     private String getUrl(String uri) {
         for (Map.Entry<String, ZuulProperties.ZuulRoute> entry : zuulProperties.getRoutes().entrySet()) {
-            ZuulProperties.ZuulRoute route = entry.getValue();
-            String path = route.getPath();
+            String path = entry.getValue().getPath();
             if (PatternUtil.compile(path).match(uri)) {
                 path = path.replace("**", "");
                 return uri.replace(path, "/");
