@@ -69,7 +69,7 @@
             </li>
             <li class="layui-nav-item">
                 <a href="javascript:;">
-                   <!-- <img src="http://m.zhengjinfan.cn/images/0.jpg" class="layui-nav-img">-->
+                    <!-- <img src="http://m.zhengjinfan.cn/images/0.jpg" class="layui-nav-img">-->
                     test
                 </a>
                 <dl class="layui-nav-child">
@@ -138,13 +138,13 @@
     layui.config({
         base: '/plugins/layui/extend/modules/',
         version: true
-    }).use(['layer', 'ht_cookie'], function () {
-        var layer = layui.layer, cookie = layui.ht_cookie;
+    }).use(['layer', 'ht_cookie', "ht_config"], function () {
+        var layer = layui.layer, cookie = layui.ht_cookie, config = layui.ht_config;
         var refreshToken = cookie.getRefreshToken();
         // 如果refreshToken失效，则直接跳转到登录页面
         if (refreshToken == null || refreshToken == "") {
             layer.confirm("登录超时，请重新登录。", function (index) {
-                top.location.href = "/login.html";
+                top.location.href = config.loginPath;
                 layer.close(index);
             });
             return false;
@@ -152,7 +152,7 @@
         layui.config({
             base: '/plugins/layui/extend/modules/',
             version: true
-        }).use(['app', 'message', 'ht_ajax', 'ht_cookie', 'ht_auth'], function () {
+        }).use(['app', 'message', 'ht_ajax', 'ht_cookie', 'ht_auth', "ht_config"], function () {
             var app = layui.app,
                 $ = layui.jquery,
                 cookie = layui.ht_cookie,
@@ -190,7 +190,7 @@
             $("#login_out").on("click", function () {
                 cookie.deleteToken();
                 cookie.deleteRefreshToken();
-                window.location.href = "/login.html";
+                top.location.href = config.loginPath;
             });
             //初始化权限资源
             ht_auth.load();

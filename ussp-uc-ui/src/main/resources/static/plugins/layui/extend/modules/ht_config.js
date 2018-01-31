@@ -7,6 +7,8 @@ layui.define(function (exports) {
     exports('ht_config', {
         app: "UC"
         , basePath: basePath + rule + "/"
+        , loginPath: "/login.html"
+        , indexPath: "/"
         , loadMenuUrl: basePath + rule + "/auth/loadMenu"
         , loadBtnAndTabUrl: basePath + rule + "/auth/loadBtnAndTab"
         , loginUrl: basePath + "uaa/auth/login"

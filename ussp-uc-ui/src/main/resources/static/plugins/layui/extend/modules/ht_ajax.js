@@ -2,7 +2,7 @@
  * add by tanrq 2018/1/20
  */
 layui.define(["ht_cookie", "ht_config"], function (exports) {
-        var $ = layui.jquery, cookie = layui.ht_cookie, ht_config = layui.ht_config;
+        var $ = layui.jquery, cookie = layui.ht_cookie, config = layui.ht_config;
 
         var ht_ajax = {
                 config: {},
@@ -26,7 +26,7 @@ layui.define(["ht_cookie", "ht_config"], function (exports) {
                     // 如果refreshToken失效，则直接跳转到登录页面
                     if (refreshToken == null || refreshToken == "") {
                         layer.confirm('登录超时，请重新登录。', function (index) {
-                            top.location.href = "/login.html";
+                            top.location.href = config.loginPath;
                             layer.close(index);
                         });
                         return false;
@@ -40,7 +40,7 @@ layui.define(["ht_cookie", "ht_config"], function (exports) {
                         $.ajax({
                             type: 'GET',
                             async: false,
-                            url: ht_config.refreshTokenUrl,
+                            url: config.refreshTokenUrl,
                             headers: {
                                 Authorization: "Bearer " + refreshToken
                             },
@@ -48,7 +48,7 @@ layui.define(["ht_cookie", "ht_config"], function (exports) {
                             success: function (data) {
                                 if (data == null || data["token"] == null || data["token"] == "") {
                                     layer.confirm('登录超时，请重新登录。', function (index) {
-                                        top.location.href = "/login.html";
+                                        top.location.href = config.loginPath;
                                         layer.close(index);
                                     });
                                     return false;
@@ -59,7 +59,7 @@ layui.define(["ht_cookie", "ht_config"], function (exports) {
                             },
                             error: function () {
                                 layer.confirm('登录超时，请重新登录。', function (index) {
-                                    top.location.href = "/login.html";
+                                    top.location.href = config.loginPath;
                                     layer.close(index);
                                 });
                                 return false;
@@ -119,7 +119,7 @@ layui.define(["ht_cookie", "ht_config"], function (exports) {
                                             case "9924"://授权失败
                                             case "9925"://TOKEN不能为空
                                                 layer.confirm(data['result_msg'] + '，请重新登录。', function (index) {
-                                                    top.location.href = "/login.html";
+                                                    top.location.href = config.loginPath;
                                                     layer.close(index);
                                                 });
                                                 return false;
@@ -137,7 +137,7 @@ layui.define(["ht_cookie", "ht_config"], function (exports) {
                         );
 
                         var headers = {
-                            app: ht_config.app /*系统编码统一通过http headers进行传输*/
+                            app: config.app /*系统编码统一通过http headers进行传输*/
                         }
                         //noToken 默认为false，当为true时，则不传输token
                         if (opt.noToken == false || !opt.noToken) {

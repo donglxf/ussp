@@ -20,4 +20,4 @@ eureka:
     serviceUrl:
       defaultZone: http://10.110.1.240:10001/eureka/
 ht.config.uc.api:
-  synch: false #是否同步API资源到用户权限中心
+  synch: true #是否同步API资源到用户权限中心

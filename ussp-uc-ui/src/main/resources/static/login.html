@@ -147,10 +147,10 @@
                         <!--</span>-->
                         <!--</div>-->
                         <div class="layui-form-item">
-                            <div class="kit-pull-left kit-login-remember">
-                                <input type="checkbox" name="rememberMe" value="true" lay-skin="primary"
-                                       title="记住帐号?">
-                            </div>
+                            <!--<div class="kit-pull-left kit-login-remember">-->
+                                <!--<input type="checkbox" name="rememberMe" value="true" lay-skin="primary"-->
+                                       <!--title="记住帐号?">-->
+                            <!--</div>-->
                             <div class="kit-pull-right">
                                 <button class="layui-btn layui-btn-primary" lay-submit lay-filter="login">
                                     <i class="fa fa-sign-in" aria-hidden="true"></i> 登录
@@ -177,7 +177,7 @@
         base: '/plugins/layui/extend/modules/',
         version: false
     }).use(['layer', 'form', 'ht_cookie', 'ht_config'], function () {
-        var $ = layui.jquery, form = layui.form, cookie = layui.ht_cookie, ht_config = layui.ht_config;
+        var $ = layui.jquery, form = layui.form, cookie = layui.ht_cookie, config = layui.ht_config;
 
         //判断是否已登录，如果已登录，则直接进入主页
         if (cookie.getToken() != null && cookie.getToken() != "") {
@@ -195,20 +195,20 @@
         form.on('submit(login)', function (data) {
             $.ajax({
                 type: "POST",
-                url: ht_config.loginUrl,
+                url: config.loginUrl,
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(data.field),
                 async: false,
                 dataType: "json",
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-                    xhr.setRequestHeader("app", ht_config.app);
+                    xhr.setRequestHeader("app", config.app);
                 },
                 success: function (data) {
                     if (data && data["token"] != null & data["token"] != "") {
                         cookie.setToken(data["token"]);
                         cookie.setRefreshToken(data["refreshToken"]);
-                        top.location.href = '/';
+                        top.location.href = config.indexPath;
                     } else {
                         layer.alert("登录失败，请联系管理员");
                     }
