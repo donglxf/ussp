@@ -9,7 +9,7 @@
  */
 package com.ht.ussp.init;
 
-import com.ht.ussp.client.UcResourceClient;
+import com.ht.ussp.client.UCClient;
 import com.ht.ussp.client.dto.ApiResourceDto;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * API资源同步类<br>
@@ -40,7 +41,7 @@ import java.util.*;
 public class ResourceApiSynch {
 
     @Autowired(required = false)
-    private UcResourceClient ucResourceClient;
+    private UCClient ucClient;
 
     @Autowired
     public ResourceApiSynch(ApplicationContext applicationContext, @Value("${ht.config.uc.api.synch:false}") boolean synch_api, @Value("${ht.config.uc.api.packages:com.ht}") String packages, @Value("${ht.config.uc.api.app:}") String app) {
@@ -171,12 +172,12 @@ public class ResourceApiSynch {
                 }
             }
             if (apiDto != null && apiDto.getApiInfoList().size() > 0) {
-                if (ucResourceClient == null) {
+                if (ucClient == null) {
                     log.warn("无法同步API资源到用户权限中心，可能没有启用Fegin组件，请启用后，加入basePackages = {\"com.ht.ussp.client\"}");
                 } else {
                     apiDto.setApp(app);
                     try {
-                        ucResourceClient.resourceApiAynch(apiDto);
+                        ucClient.resourceApiAynch(apiDto);
                     } catch (Exception e) {
                         log.warn("同步API资源发生异常，请尝试重启服务。异常：" + e.getMessage());
                     }

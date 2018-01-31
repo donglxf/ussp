@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import com.ht.ussp.base.UsspController;
+import com.ht.ussp.client.dto.LoginInfoDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,7 +56,7 @@ import lombok.extern.log4j.Log4j2;
 @RestController
 @RequestMapping(value = "/user")
 @Log4j2
-public class UserResource {
+public class UserResource extends UsspController {
 
     @Autowired
     private HtBoaInUserService htBoaInUserService;
@@ -135,7 +137,7 @@ public class UserResource {
 
     @ApiOperation(value = "对内：修改密码", notes = "修改密码")
     @RequestMapping(value = {"/in/changePwd"}, method = RequestMethod.POST)
-    public ResponseModal changePwd(@RequestBody ChangePwd changePwd,@RequestHeader("userId") String userId) {
+    public ResponseModal changePwd(@RequestBody ChangePwd changePwd, @RequestHeader("userId") String userId) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
         String msg = "成功";
@@ -365,11 +367,10 @@ public class UserResource {
         return Result.buildFail();
     }
 
-    @GetMapping(value = "/queryUserInfo")
-    @ApiOperation(value = "查找用户信息")
-    public LoginInfoVo queryUserInfo(String userId) {
-        LoginInfoVo loginInfoVo = htBoaInUserService.queryUserInfo(userId);
-        return loginInfoVo;
+    @ApiOperation(value = "对内，获取用户登录信息")
+    @GetMapping(value = "/getLoginUserInfo")
+    public LoginInfoVo getLoginUserInfo(@RequestParam("userId") String userId) {
+        return htBoaInUserService.queryUserInfo(userId);
     }
 
 }
