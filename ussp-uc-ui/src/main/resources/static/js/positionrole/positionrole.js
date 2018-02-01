@@ -62,6 +62,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                     }
                  }
              });
+        	 positionCode = "";
         }
     };
     var refreshpositionroleTable = function (keyword) {

@@ -62,6 +62,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                      orgCode: selectNodes[0]["orgCode"]
                  }
              });
+        	 userId = "";
         }
     };
     var refreshUserRoleTable = function (keyword) {
