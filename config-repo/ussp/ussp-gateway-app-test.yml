@@ -23,7 +23,7 @@ zuul:
     cisp-car-service:
       path: /car/**
       serviceId: cisp-car-service
-#风控系统
+    #风控系统
     risk-ui:
       path: /rule/ui/**
       serviceId: risk-ui
@@ -36,6 +36,8 @@ zuul:
     risk-drools:
       path: /drools/**
       serviceId: risk-drools
+    #核心账务
+
 gateway:
   security: 
     jwt: 
