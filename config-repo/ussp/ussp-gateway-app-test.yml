@@ -45,6 +45,9 @@ gateway:
       refreshTokenExpTime: 720
       tokenIssuer: qiuwenwu@hongte.info
       tokenSigningKey: xm8EV6Hy5RMFK4EEACIDAwQus
+ribbon:
+  ConnectTimeout: 100
+  ribbon.ReadTimeout: 100
 ht:
   ignoreUrl: #不验证的url(可以使用通配符（*）)
      web: /uc/echo,/admin/*,/car/*,/rule/ui/* #不需要验证token
