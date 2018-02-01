@@ -17,7 +17,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
             },
             searchuserposition: function () { 
             	//执行重载
-            	refreshuserpositionTable($("#userposition_role_search_keyword").val());
+            	refreshuserpositionTable($("#userposition_position_search_keyword").val());
             },
             loadPositionList:function(){
             	if(userpositionUserId==""){
@@ -25,7 +25,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
             		return;
             	}
             	 layer.close(addDialog);
-            	 roleDialog = layer.open({
+            	 positionDialog = layer.open({
                      type: 2,
                      area: ['70%', '80%'],
                      maxmin: true,
@@ -63,6 +63,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                      orgCode: selectNodes[0]["orgCode"]
                  }
              });
+        	 userpositionUserId="";
         }
     };
     var refreshuserpositionTable = function (keyword) {
@@ -71,7 +72,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         }
         var selectNodes = orgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
-        	 table.reload('userposition_role_datatable', {
+        	 table.reload('userposition_position_datatable', {
         	        page: {
         	            curr: 1 //重新从第 1 页开始
         	        }
@@ -94,7 +95,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         }
         var selectNodes = orgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
-        	 table.reload('userposition_role_datatable', {
+        	 table.reload('userposition_position_datatable', {
         	        page: {
         	            curr: 1 //重新从第 1 页开始
         	        }
@@ -171,20 +172,20 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
         , cols: [[
             {type: 'numbers'}
-            , {field: 'jobNumber', width: 100, title: '工号',event:'getRole'}
-            , {field: 'userName', width: 180,   title: '用户名',event:'getRole'}
-            , {field: 'mobile', width: 120, title: '手机',event:'getRole'}
-            , {field: 'email', width: 180, title: '邮箱',event:'getRole'}
-            , {field: 'idNo', width: 180, title: '身份证',event:'getRole'}
-            , {field: 'orgName', width: 130, title: '所属机构',event:'getRole'}
-            , {field: 'status', width: 60, title: '状态', templet: "#userposition_user_status_laytpl",event:'getRole'}
-            , {field: 'updateOperator', width: 100, title: '更新人',event:'getRole'}
-            , {field: 'lastModifiedDatetime', width: 150, title: '更新时间',event:'getRole'}
+            , {field: 'jobNumber', width: 100, title: '工号',event:'getposition'}
+            , {field: 'userName', width: 180,   title: '用户名',event:'getposition'}
+            , {field: 'mobile', width: 120, title: '手机',event:'getposition'}
+            , {field: 'email', width: 180, title: '邮箱',event:'getposition'}
+            , {field: 'idNo', width: 180, title: '身份证',event:'getposition'}
+            , {field: 'orgName', width: 130, title: '所属机构',event:'getposition'}
+            , {field: 'status', width: 60, title: '状态', templet: "#userposition_user_status_laytpl",event:'getposition'}
+            , {field: 'updateOperator', width: 100, title: '更新人',event:'getposition'}
+            , {field: 'lastModifiedDatetime', width: 150, title: '更新时间',event:'getposition'}
         ]]
     });
     table.render({
-        id: 'userposition_role_datatable'
-        , elem: '#userposition_role_datatable'
+        id: 'userposition_position_datatable'
+        , elem: '#userposition_position_datatable'
         , url: loadUserPositionListUrl
         , method: 'post' //如果无需自定义HTTP类型，可不加该参数
         , response: {
@@ -205,7 +206,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
             , {field: 'delFlag', width: 100, title: '状态' ,templet: '#userposition_statusTpl'}
             , {field: 'createOperator', width: 100, title: '创建人'}
             , {field: 'createdDatetime', width: 200,templet: '#createTimeTpl', title: '创建时间'}
-            , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#userposition_role_datatable_bar'}
+            , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#userposition_position_datatable_bar'}
         ]]
     });
     
@@ -213,11 +214,11 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     table.on('tool(filter_userposition_user_datatable)', function (obj) {
         var data = obj.data;
         userpositionUserId = data.userId;
-        if (obj.event === 'getRole') {
+        if (obj.event === 'getposition') {
         	refreshuserpositionTable();
         }  
     });
-    table.on('tool(filter_userposition_role_datatable)', function (obj) {
+    table.on('tool(filter_userposition_position_datatable)', function (obj) {
         var data = obj.data;
         if (obj.event === 'startOrStop') {
         	if(data.delFlag==0){//启用状态，是否需要禁用
@@ -264,7 +265,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     table.on('renderComplete(filter_userposition_user_datatable)', function (obj) {
     	ht_auth.render("userposition_auth");
     });
-    table.on('renderComplete(filter_userposition_role_datatable)', function (obj) {
+    table.on('renderComplete(filter_userposition_position_datatable)', function (obj) {
     	ht_auth.render("userposition_auth");
     });
     
@@ -274,7 +275,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         active[type] ? active[type].call(this) : '';
     });
     
-    $('#userposition_role_table_tools .layui-btn').on('click', function () {
+    $('#userposition_position_table_tools .layui-btn').on('click', function () {
         var type = $(this).data('type');
         active[type] ? active[type].call(this) : '';
     });

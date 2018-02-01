@@ -180,9 +180,9 @@
         var $ = layui.jquery, form = layui.form, cookie = layui.ht_cookie, config = layui.ht_config;
 
         //判断是否已登录，如果已登录，则直接进入主页
-        if (cookie.getToken() != null && cookie.getToken() != "") {
-            top.location.href = '/';
-        }
+        // if (cookie.getToken() != null && cookie.getToken() != "") {
+        //     top.location.href = '/';
+        // }
 
         $('#changeCode').on('click', function () {
             $('#changeCode > img')[0].src = './build/images/GetVerfiyCode.png';

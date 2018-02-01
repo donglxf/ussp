@@ -1,0 +1,78 @@
+spring:
+    profiles.active: test
+
+---
+server:
+  port: 30111
+
+eureka:
+  instance:
+    prefer-ip-address: true
+
+zuul:
+  max:
+    host:
+      connections: 500
+  host:
+    socket-timeout-millis: 60000
+    connect-timeout-millis: 60000
+  routes:
+    #用户权限管理中心
+    ussp-uc:
+      path: /uc/**
+      serviceId: ussp-uc-app
+    #车全系统
+    cisp-web-service:
+      path: /admin/**
+      serviceId: cisp-web-service
+      sensitiveHeaders: "*"
+    cisp-car-service:
+      path: /car/**
+      serviceId: cisp-car-service
+    #风控系统
+    risk-ui:
+      path: /rule/ui/**
+      serviceId: risk-ui
+    rule-service:
+      path: /rule/service/**
+      serviceId: rule-service
+    risk-activiti:
+      path: /activiti/**
+      serviceId: risk-activiti-service
+    risk-drools:
+      path: /drools/**
+      serviceId: risk-drools
+    #核心账务
+
+gateway:
+  security: 
+    jwt: 
+      tokenExpirationTime: 29  #分钟
+      refreshTokenExpTime: 720
+      tokenIssuer: qiuwenwu@hongte.info
+      tokenSigningKey: xm8EV6Hy5RMFK4EEACIDAwQus
+ribbon:
+  ConnectTimeout: 100000
+  ribbon.ReadTimeout: 100000
+
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000
+ribbon:
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
+  MaxAutoRetries: 0
+  MaxAutoRetriesNextServer: 1
+  eureka:
+    enabled: false
+
+ht:
+  ignoreUrl: #不验证的url(可以使用通配符（*）)
+     web: /uc/echo,/admin/*,/car/*,/rule/ui/* #不需要验证token
+     http: /auth/loadBtnAndTab,/auth/loadMenu,/check/key #需要验证token

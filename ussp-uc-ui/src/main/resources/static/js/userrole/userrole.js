@@ -62,6 +62,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                      orgCode: selectNodes[0]["orgCode"]
                  }
              });
+        	 userId = "";
         }
     };
     var refreshUserRoleTable = function (keyword) {
@@ -93,6 +94,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         var selectNodes = orgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
         	 table.reload('userrole_role_datatable', {
+        		  height: 'full-200',
         	        page: {
         	            curr: 1 //重新从第 1 页开始
         	        }
