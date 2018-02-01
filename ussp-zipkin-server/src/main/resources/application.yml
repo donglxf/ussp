@@ -18,14 +18,14 @@ spring:
 #    continue-on-error: true
 #    initialize: true
 server:
-  port: 0
+  port: 30116
 eureka:
   instance:
     prefer-ip-address: true
     #instance-id: ${spring.application.name}:${random.int}
   client:
     serviceUrl:
-      defaultZone: http://localhost:10001/eureka/,http://localhost:10002/eureka/,http://localhost:10003/eureka/
+      defaultZone: http://localhost:30101/eureka/,http://localhost:30102/eureka/,http://localhost:30103/eureka/
 zipkin:
   storage:
     type: elasticsearch

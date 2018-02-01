@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: ussp-uc-ui
+server:
+  port: 30131
