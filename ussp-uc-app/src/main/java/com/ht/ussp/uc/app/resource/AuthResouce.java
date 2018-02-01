@@ -124,7 +124,7 @@ public class AuthResouce {
                 rm.setSysStatus(SysStatus.NO_ROLE);
                 return rm;
             }
-            List<String> res_code = htBoaInRoleResService.queryResByCode(roleCodes);
+            List<String> res_code = htBoaInRoleResService.queryResByCode(roleCodes.toArray(new String[]{}));
 
             if (res_code.size() > 0) {
                 List<ResVo> res = htBoaInResourceService.queryResForN(res_code, res_types, app);
@@ -187,7 +187,7 @@ public class AuthResouce {
                 for (int i = 0; i < json.size(); i++) {
                     JSONObject job = json.getJSONObject(i);
                     if (url.equals(job.get("resContent"))) {
-                        log.info("isHasAuth:" + url.equals(job.get("resContent")));
+                        //log.info("isHasAuth:" + url.equals(job.get("resContent")));
                         flag = true;
                         return flag;
                     }
@@ -293,7 +293,7 @@ public class AuthResouce {
                     }
                     List<String> allRoleCodes = htBoaInUserRoleService.getAllRoleCodes(userId);
 
-                    List<String> res_code = htBoaInRoleResService.queryResByCode(allRoleCodes);
+                    List<String> res_code = htBoaInRoleResService.queryResByCode(allRoleCodes.toArray(new String[]{}));
 
 
                     if (res_code.size() > 0) {

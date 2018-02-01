@@ -68,14 +68,6 @@ public class HtBoaInResourceService {
         return htBoaInResourceRepository.findByResParent(resParent);
     }
 
-    public List<HtBoaInResource> getByApp(String app) {
-        return htBoaInResourceRepository.findByApp(app);
-    }
-
-    public List<HtBoaInResource> getByAppAndResTypeAndStatus(String app, String resType, String status) {
-        return htBoaInResourceRepository.findByAppAndResTypeAndStatus(app, resType, status);
-    }
-
     /**
      * 资源管理分页查询<br>
      *
@@ -168,7 +160,76 @@ public class HtBoaInResourceService {
         return resVoList;
     }
 
-    public List<HtBoaInResource> getByResParentAndResTypeIn(String resParent, String[] resType) {
-        return htBoaInResourceRepository.findByResParentAndResTypeIn(resParent, resType);
+    /**
+     * 加载系统所有资源<br>
+     *
+     * @param app 系统编码
+     * @return 资源列表
+     * @author 谭荣巧
+     * @Date 2018/1/29 21:37
+     */
+    public List<HtBoaInResource> getByApp(String app) {
+        return htBoaInResourceRepository.findByAppAndStatusAndDelFlag(app, "0", 0);
+    }
+
+    /**
+     * 通过父编码获取资源个数，用于构造资源编号<br>
+     *
+     * @param app        系统编号
+     * @param resPanrent 父资源编码
+     * @param type       资源类型(menu,tab,api,module,btn)
+     * @return
+     * @author 谭荣巧
+     * @Date 2018/1/30 20:02
+     */
+    public String createResourceCode(String app, String resPanrent, String type) {
+        String[] resType = null;
+        String shortType = "";
+        switch (type) {
+            case "menu":
+                resType = new String[]{"view", "group"};
+                if (StringUtils.isEmpty(resPanrent)) {
+                    shortType = "M";
+                }
+                break;
+            case "tab":
+                resType = new String[]{"tab"};
+                shortType = "T";
+                break;
+            case "api":
+                resType = new String[]{"api"};
+                shortType = "A";
+                break;
+            case "module":
+                resType = new String[]{"module"};
+                shortType = "MD";
+                break;
+            case "btn":
+                resType = new String[]{"btn"};
+                shortType = "B";
+                break;
+        }
+        if (resType != null) {
+            String maxResCode = htBoaInResourceRepository.queryMaxResCodeByAppAndParentAndType(app, ("".equals(resPanrent) ? "NULL" : resPanrent), Arrays.asList(resType));
+            if (StringUtils.isEmpty(resPanrent) && StringUtils.isEmpty(maxResCode)) {
+                return String.format("%s_%s%02d", app, shortType, 1);
+            } else {
+                try {
+                    int index = Integer.parseInt(maxResCode.substring(maxResCode.length() - 2, maxResCode.length()));
+                    if (StringUtils.isEmpty(resPanrent)) {
+                        return String.format("%s_%s%02d", app, shortType, (index + 1));
+                    }
+                    return String.format("%s_%s%02d", resPanrent, shortType, (index + 1));
+                } catch (Exception e) {
+                    List<HtBoaInResource> list = htBoaInResourceRepository.findByAppAndResParentAndResTypeIn(app, "".equals(resPanrent) ? null : resPanrent, Arrays.asList(resType));
+                    int count = list == null ? 0 : list.size();
+                    if (StringUtils.isEmpty(resPanrent)) {
+                        return String.format("%s_%s%02d", app, shortType, (count + 1));
+                    }
+                    return String.format("%s_%s%02d", resPanrent, shortType, (count + 1));
+                }
+            }
+        }
+        return "";
     }
 }

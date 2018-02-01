@@ -262,9 +262,9 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
             }
         }
     );
-    // table.on('renderComplete(filter_user_datatable)', function (obj) {
-    //     ht_auth.render();
-    // });
+    table.on('renderComplete(filter_user_datatable)', function (obj) {
+        ht_auth.render("user_auth");
+    });
     //监听工具栏
     $('#user_table_tools .layui-btn').on('click', function () {
         var type = $(this).data('type');

@@ -10,9 +10,12 @@
 package com.ht.ussp.client;
 
 import com.ht.ussp.client.dto.ApiResourceDto;
+import com.ht.ussp.client.dto.LoginInfoDto;
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 用户权限中心服务接口<br>
@@ -22,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @Date 2018/1/18 14:22
  */
 @FeignClient("ussp-uc-app")
-public interface UcResourceClient {
+public interface UCClient {
 
     /**
      * 同步API资源到用户权限中心<br>
@@ -33,4 +36,15 @@ public interface UcResourceClient {
      */
     @PostMapping("/auth/api/aynch")
     void resourceApiAynch(@RequestBody ApiResourceDto apiResourceDto);
+
+    /**
+     * 获取登录信息<br>
+     *
+     * @param userId 用户编码
+     * @return 用户登录信息
+     * @author 谭荣巧
+     * @Date 2018/1/31 10:26
+     */
+    @GetMapping(value = "/user/getLoginUserInfo")
+    LoginInfoDto getLoginUserInfo(@RequestParam("userId") String userId);
 }

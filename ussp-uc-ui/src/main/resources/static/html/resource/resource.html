@@ -55,31 +55,64 @@
                             </ul>
                             <div class="layui-tab-content">
                                 <div class="layui-tab-item layui-show">
-                                    <div class="row-lg">
-                                        <div class="toolbarBtn btn-group">
-                                            <button class="layui-btn layui-btn-sm" title="新增" data-type="add"
-                                                    data-res-type="btn">
-                                                新增
-                                            </button>
-                                        </div>
-                                        <div class="pull-right col-xs-4">
-                                            <div class="input-group input-group-sm row">
-                                                <input type="text" class="form-control"
-                                                       id="resource_btn_search_keyword"
-                                                       placeholder="请输入按钮编号/按钮名称"/>
-                                                <div class="input-group-btn">
-                                                    <button type="button" class="layui-btn layui-btn-sm"
-                                                            data-type="search" data-res-type="btn">
-                                                        <i class="fa fa-search"></i>
-                                                    </button>
+                                    <!--<div class="col-xs-6">-->
+                                        <div class="row-lg">
+                                            <div class="toolbarBtn btn-group">
+                                                <button class="layui-btn layui-btn-sm" title="新增" data-type="add"
+                                                        data-res-type="btn">
+                                                    新增
+                                                </button>
+                                            </div>
+                                            <div class="pull-right col-xs-4">
+                                                <div class="input-group input-group-sm row">
+                                                    <input type="text" class="form-control"
+                                                           id="resource_btn_search_keyword"
+                                                           placeholder="请输入按钮编号/按钮名称"/>
+                                                    <div class="input-group-btn">
+                                                        <button type="button" class="layui-btn layui-btn-sm"
+                                                                data-type="search" data-res-type="btn">
+                                                            <i class="fa fa-search"></i>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row-lg">
-                                        <table id="resource_btn_datatable" lay-filter="resource_btn_datatable">
-                                        </table>
-                                    </div>
+                                        <div class="row-lg">
+                                            <table id="resource_btn_datatable" lay-filter="resource_btn_datatable">
+                                            </table>
+                                        </div>
+                                    <!--</div>-->
+                                    <!--<div class="col-xs-6">-->
+                                        <!--<div class="row-lg">-->
+                                            <!--<div class="toolbarBtn btn-group">-->
+                                                <!--<button class="layui-btn layui-btn-sm" title="新增" data-type="add"-->
+                                                        <!--data-res-type="api">-->
+                                                    <!--新增-->
+                                                <!--</button>-->
+                                                <!--<button class="layui-btn layui-btn-sm" title="关联API资源"-->
+                                                        <!--data-type="relevance">-->
+                                                    <!--关联API资源-->
+                                                <!--</button>-->
+                                            <!--</div>-->
+                                            <!--<div class="pull-right col-xs-4">-->
+                                                <!--<div class="input-group input-group-sm row">-->
+                                                    <!--<input type="text" class="form-control"-->
+                                                           <!--id="resource_btn_api_search_keyword"-->
+                                                           <!--placeholder="请输入API编号/API名称"/>-->
+                                                    <!--<div class="input-group-btn">-->
+                                                        <!--<button type="button" class="layui-btn layui-btn-sm"-->
+                                                                <!--data-type="search" data-res-type="api">-->
+                                                            <!--<i class="fa fa-search"></i>-->
+                                                        <!--</button>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                        <!--<div class="row-lg">-->
+                                            <!--<table id="resource_btn_api_datatable" lay-filter="resource_btn_api_datatable">-->
+                                            <!--</table>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
                                 </div>
                                 <div class="layui-tab-item">
                                     <div class="row-lg">
@@ -115,8 +148,9 @@
                                                     data-res-type="api">
                                                 新增
                                             </button>
-                                            <button class="layui-btn layui-btn-sm" title="关联APP" data-type="relevance">
-                                                关联APP
+                                            <button class="layui-btn layui-btn-sm" title="关联API资源"
+                                                    data-type="relevance">
+                                                关联API资源
                                             </button>
                                         </div>
                                         <div class="pull-right col-xs-4">
@@ -247,9 +281,16 @@
     <div id="resource_btn_add_data_div" class="hide">
         <form method="post" class="layui-form" lay-filter="resource_btn_add_data_form">
             <div class="layui-form-item">
-                <label class="layui-form-label">按钮权限标识<b>*</b></label>
+                <label class="layui-form-label">按钮编码<b>*</b></label>
                 <div class="layui-input-block">
                     <input type="text" name="resCode" lay-verify="required" autocomplete="off" lay-verType="tips"
+                           class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">按钮权限标识<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="resContent" lay-verify="required" autocomplete="off" lay-verType="tips"
                            class="layui-input layui-input-sm">
                 </div>
             </div>
@@ -260,18 +301,18 @@
                            class="layui-input layui-input-sm">
                 </div>
             </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">按钮图标</label>
-                <div class="layui-input-block">
-                    <input type="tel" name="fontIcon" autocomplete="off" class="layui-input layui-input-sm">
-                </div>
-            </div>
             <!--<div class="layui-form-item">-->
-                <!--<label class="layui-form-label">按钮顺序<b>*</b></label>-->
-                <!--<div class="layui-input-block">-->
-                    <!--<input type="text" name="sequence" lay-verify="required|number" autocomplete="off"-->
-                           <!--lay-verType="tips" class="layui-input layui-input-sm">-->
-                <!--</div>-->
+            <!--<label class="layui-form-label">按钮图标</label>-->
+            <!--<div class="layui-input-block">-->
+            <!--<input type="tel" name="fontIcon" autocomplete="off" class="layui-input layui-input-sm">-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div class="layui-form-item">-->
+            <!--<label class="layui-form-label">按钮顺序<b>*</b></label>-->
+            <!--<div class="layui-input-block">-->
+            <!--<input type="text" name="sequence" lay-verify="required|number" autocomplete="off"-->
+            <!--lay-verType="tips" class="layui-input layui-input-sm">-->
+            <!--</div>-->
             <!--</div>-->
             <div class="layui-form-item">
                 <label class="layui-form-label">所属菜单编码</label>
@@ -299,7 +340,7 @@
     <div id="resource_tab_add_data_div" class="hide">
         <form method="post" class="layui-form" lay-filter="resource_tab_add_data_form">
             <div class="layui-form-item">
-                <label class="layui-form-label">TAB权限标识<b>*</b></label>
+                <label class="layui-form-label">TAB编码<b>*</b></label>
                 <div class="layui-input-block">
                     <input type="text" name="resCode" lay-verify="required" autocomplete="off" lay-verType="tips"
                            class="layui-input layui-input-sm">
@@ -319,11 +360,11 @@
                 </div>
             </div>
             <!--<div class="layui-form-item">-->
-                <!--<label class="layui-form-label">TAB顺序<b>*</b></label>-->
-                <!--<div class="layui-input-block">-->
-                    <!--<input type="text" name="sequence" lay-verify="required|number" autocomplete="off"-->
-                           <!--lay-verType="tips" class="layui-input layui-input-sm">-->
-                <!--</div>-->
+            <!--<label class="layui-form-label">TAB顺序<b>*</b></label>-->
+            <!--<div class="layui-input-block">-->
+            <!--<input type="text" name="sequence" lay-verify="required|number" autocomplete="off"-->
+            <!--lay-verType="tips" class="layui-input layui-input-sm">-->
+            <!--</div>-->
             <!--</div>-->
             <div class="layui-form-item">
                 <label class="layui-form-label">所属菜单编码</label>
@@ -505,6 +546,9 @@
         {{#  } else { }}
         已关联
         {{#  } }}
+    </script>
+    <script type="text/html" id="resource_menu_font_icon_laytpl">
+        <i class="fa {{d.fontIcon}}" aria-hidden="true"></i>
     </script>
     <script src="/js/resource/resource.js"></script>
 </div>

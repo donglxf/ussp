@@ -1,6 +1,7 @@
 package com.ht.ussp.gateway.app.filter;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.netflix.zuul.filters.ZuulProperties;
 import org.springframework.security.authentication.BadCredentialsException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -54,6 +56,8 @@ public class AccessFilter extends ZuulFilter {
     private String htIgnoreUrlWeb;
     @Value("${ht.ignoreUrl.http}")
     private String htIgnoreUrlHttp;
+    @Autowired
+    protected ZuulProperties zuulProperties;
 
     /**
      * 定义该过滤器是否要执行
@@ -70,12 +74,12 @@ public class AccessFilter extends ZuulFilter {
         ctx.getResponse().setCharacterEncoding("UTF-8");
         HttpServletRequest request = ctx.getRequest();
         String uri = request.getRequestURI().toString();
-        String validateUrl = uri.substring(uri.indexOf("/", uri.indexOf("/") + 1));
+        String validateUrl = getUrl(uri);//uri.substring(uri.indexOf("/", uri.indexOf("/") + 1));
         //排除不验证的请求，支持通配符“*”
         if (!StringUtils.isEmpty(htIgnoreUrlWeb)) {
             String[] ignoreUrlWebs = htIgnoreUrlWeb.split(",");
             for (String ignoreUrlWeb : ignoreUrlWebs) {
-                if (PatternUtil.compile(ignoreUrlWeb).match(validateUrl)) {
+                if (PatternUtil.compile(ignoreUrlWeb).match(uri)) {
                     ctx.setSendZuulResponse(true);
                     ctx.setResponseStatusCode(200);
                     return null;
@@ -176,4 +180,22 @@ public class AccessFilter extends ZuulFilter {
         return 0;
     }
 
+    /**
+     * 根据网关路由配置获取真实路径映射地址<br>
+     *
+     * @param uri 请求的url
+     * @return 真实的url
+     * @author 谭荣巧
+     * @Date 2018/1/31 14:00
+     */
+    private String getUrl(String uri) {
+        for (Map.Entry<String, ZuulProperties.ZuulRoute> entry : zuulProperties.getRoutes().entrySet()) {
+            String path = entry.getValue().getPath();
+            if (PatternUtil.compile(path).match(uri)) {
+                path = path.replace("**", "");
+                return uri.replace(path, "/");
+            }
+        }
+        return uri;
+    }
 }

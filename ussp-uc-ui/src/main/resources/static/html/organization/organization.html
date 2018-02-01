@@ -15,7 +15,7 @@
     <div class="col-xs-9">
         <div class="row row-lg" id="organization_table_tools">
             <div class="toolbarBtn btn-group">
-                <button class="layui-btn layui-btn-sm" title="新增" data-type="add" ht-atuh="add">
+                <button class="layui-btn layui-btn-sm" title="新增" data-type="add" ht-auth="add">
                     新增
                 </button>
             </div>
@@ -53,9 +53,9 @@
             <table id="organization_datatable" lay-filter="filter_organization_datatable">
             </table>
             <script type="text/html" id="organization_datatable_bar">
-                <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" ht-atuh="detail">查看</a>
-                <a class="layui-btn layui-btn-xs" lay-event="edit" ht-atuh="edit">编辑</a>
-                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" ht-atuh="del">删除</a>
+                <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" ht-auth="detail">查看</a>
+                <a class="layui-btn layui-btn-xs" lay-event="edit" ht-auth="edit">编辑</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" ht-auth="del">删除</a>
             </script>
             <script type="text/html" id="createTimeTpl">
               {{new Date( d.createdDatetime ).Format('yyyy-MM-dd HH:mm:ss')}} 

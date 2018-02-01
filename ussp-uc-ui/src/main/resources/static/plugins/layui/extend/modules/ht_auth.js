@@ -1,9 +1,7 @@
 /**
  * add by  2018/1/22
  */
-/**
- *
- */
+var AllAuth = [];
 layui.define(['jquery', 'tab', 'ht_config'], function (exports) {
     "use strict";
 
@@ -11,7 +9,6 @@ layui.define(['jquery', 'tab', 'ht_config'], function (exports) {
         , tab = layui.tab
         , config = layui.ht_config
         , ELEM = '.layui-tab-item '
-        , AllAuth = []
         , HtAuth = function () {
         this.config = {}
     };
@@ -21,18 +18,21 @@ layui.define(['jquery', 'tab', 'ht_config'], function (exports) {
         return that;
     };
     HtAuth.prototype.render = function (filter) {
-        var elemTab = $(ELEM + function () {
-            return filter ? ('[lay-filter="' + filter + '"]') : '';
-        }())
-            , elemButton = elemTab.find("[ht-atuh]")
-            , menuCode = elemTab.parent("[lay-item-id]").attr("lay-item-id");
-        menuCode = menuCode ? menuCode : tab.getId();
+        var ELEM = $(ELEM).length == 0 ? "body" : ELEM,
+            elemTab = $(ELEM + function () {
+                return filter ? ('[lay-filter="' + filter + '"]') : '';
+            }())
+            , elemButton = elemTab.find("[ht-auth]")
+            , menuCode = elemTab.parent("[lay-item-id]").attr("lay-item-id")
+            , frameMenuCode = $(self.frameElement).parent().attr("lay-item-id");
+        menuCode = menuCode ? menuCode : (frameMenuCode ? frameMenuCode : tab.getId());
+        AllAuth = AllAuth.length == 0 ? parent.AllAuth : AllAuth;
         layui.each(elemButton, function (index, btn) {
-            var layAuth = $(btn).attr("ht-atuh");
+            var layAuth = $(btn).attr("ht-auth");
             var isAuth = false;
             layui.each(AllAuth, function (index, item) {
                 //验证菜单编码和权限编码
-                if (menuCode == item.resParent && layAuth == item.resCode) {
+                if (menuCode == item.resParent && layAuth == item.resContent) {
                     isAuth = true;
                 }
             });
@@ -56,8 +56,6 @@ layui.define(['jquery', 'tab', 'ht_config'], function (exports) {
 
     //自动完成渲染
     var ht_auth = new HtAuth();
-
-    // ht_auth.render();
 
     exports('ht_auth', ht_auth);
 })

@@ -26,11 +26,12 @@ public interface HtBoaInResourceRepository extends JpaSpecificationExecutor<HtBo
     @Query(value = "select new com.ht.ussp.uc.app.vo.ResVo(resCode,resNameCn,sequence,resType,resParent,resContent,fontIcon) from  HtBoaInResource  where status=0 and app= :app and resType in(:res_type) and resCode in(:res_code) order by resParent,sequence")
     public List<ResVo> queryResForN(@Param("res_code") List<String> res_code, @Param("res_type") List<String> res_type, @Param("app") String app);
 
-    List<HtBoaInResource> findByApp(String app);
-
     List<HtBoaInResource> findByResParent(String resPanrent);
 
-    List<HtBoaInResource> findByResParentAndResTypeIn(String resPanrent,String[] resType);
+    List<HtBoaInResource> findByAppAndStatusAndDelFlag(String app, String status, int delFlag);
 
-    List<HtBoaInResource> findByAppAndResTypeAndStatus(String app, String resType, String status);
+    List<HtBoaInResource> findByAppAndResParentAndResTypeIn(String app, String resPanrent, List<String> resTypes);
+
+    @Query(value = "SELECT MAX(res_code) FROM HT_BOA_IN_RESOURCE WHERE APP=?1  AND ((?2='NULL' AND RES_PARENT IS NULL) OR (RES_PARENT=?2)) AND RES_TYPE in(?3) ", nativeQuery = true)
+    String queryMaxResCodeByAppAndParentAndType(String app, String resPanrent, List<String> resTypes);
 }
