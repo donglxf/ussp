@@ -3,7 +3,7 @@ spring:
 
 ---
 server:
-  port: 33333
+  port: 30111
 
 eureka:
   instance:
