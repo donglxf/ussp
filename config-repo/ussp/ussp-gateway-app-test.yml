@@ -8,10 +8,6 @@ server:
 eureka:
   instance:
     prefer-ip-address: true
-    instance-id: tanrongqiao
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:30101/eureka/
 
 zuul:
   routes:
