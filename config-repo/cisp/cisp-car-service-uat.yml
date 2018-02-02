@@ -1,0 +1,88 @@
+---
+spring:
+  cloud:
+    config:
+      overrideNone: true
+  datasource:
+    minIdle: 1
+    validationQuery: select 'x'
+    initialSize: 1
+    maxWait: 60000
+    poolPreparedStatements: true
+    filters: stat
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://10.100.5.193:3306/cisp?useUnicode=true&characterEncoding=UTF8
+    password: tuandai888
+    testOnBorrow: false
+    maxOpenPreparedStatements: 20
+    testWhileIdle: true
+    minEvictableIdleTimeMillis: 300000
+    timeBetweenEvictionRunsMillis: 60000
+    testOnReturn: false
+    name: test
+    driver-class-name: com.mysql.jdbc.Driver
+    maxActive: 10
+    username: root
+  redis:
+    password: tuandai888
+    database: 0
+    port: 6379
+    pool:
+      max-idle: 8
+      min-idle: 0
+      max-active: 8
+      max-wait: -1
+    host: 10.100.5.193
+    timeout: 0
+sms:
+  password: fQ8i461Q
+  smsflag: 0
+  url: http://122.13.18.210:9051/api/v1.0.0/message/mass/send
+  username: cqqc@dgtdw
+logging:
+  level:
+    com:
+      tdw:
+        cams:
+          account:
+            mapper: debug
+sys:
+  user:
+    pwd: 123456
+feign:
+  hystrix:
+    enabled: false
+mybatis-plus:
+  type-enums-package: com.ht.cisp.car.entity.enums
+  configuration:
+    cache-enabled: false
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:/mapper/**/*.xml
+  global-config:
+    logic-not-delete-value: 1
+    field-strategy: 2
+    logic-delete-value: 0
+    db-column-underline: true
+    refresh-mapper: true
+    id-type: 3
+  type-aliases-package: com.ht.cisp.car.entity
+aliyun:
+  oss:
+    accessKeyId: LTAI2grpA67RRX1J
+    bucketName: chequanapp
+    endpoint: http://oss-cn-shenzhen.aliyuncs.com
+    accessKeySecret: NvxGeQq65AuqiZHAShZRL76kW2hbD2
+    roleArn: acs:ram::1689682061422563:role/aliyunosstokengeneratorrole
+    expTime: 1000
+    roleSessionName: cisp_001
+    policy: /{"/Statement"/:/[{"/Action"/:["oss:*" ],"/Effect"/:"Allow","/Resource"/:["acs:oss:*:*:*"]}],"/Version"/:"1"}/
+swagger:
+  service:
+    name: cisp-car-service
+    description: cisp-car-service后端服务接口
+    developer: F1
+  basepackage: com.ht.cisp.car
+push:
+  model: true
+  appKey: 7e2cde212dacf4c8cac4ff6b
+  secret: bf3d735c0b4f41997c66f2b7
