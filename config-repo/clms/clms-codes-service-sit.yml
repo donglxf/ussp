@@ -1,0 +1,29 @@
+server:
+  port: 40311
+  tomcat:
+    uri-encoding: UTF-8
+spring:
+  mvc:
+    favicon:
+      enabled: false
+  datasource:
+    url: jdbc:mysql://10.110.1.240:3306/clms-dev?characterEncoding=utf8&useSSL=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: tuandai_bm2015
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  application:
+    name: clms-codes-service
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://10.110.1.240:30101/eureka/
