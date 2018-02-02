@@ -54,10 +54,6 @@ gateway:
 ribbon:
   ReadTimeout: 60000
   ConnectTimeout: 60000
-  MaxAutoRetries: 0
-  MaxAutoRetriesNextServer: 1
-  eureka:
-    enabled: false
 
 ht:
   ignoreUrl: #不验证的url(可以使用通配符（*）)
