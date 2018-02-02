@@ -1,7 +1,7 @@
 
 
 layui.config({
-    base: '/js/modules/',
+    base: '/plugins/layui/extend/modules/',
     version: false
 }).use(['app', 'message', 'ht_ajax', 'ht_cookie', 'ht_auth'],function () {
     var $ = layui.jquery
