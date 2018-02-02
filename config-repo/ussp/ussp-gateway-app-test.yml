@@ -59,16 +59,6 @@ ribbon:
   eureka:
     enabled: false
 
-hystrix:
-  command:
-    default:
-      execution:
-        timeout:
-          enabled: true
-        isolation:
-          thread:
-            timeoutInMilliseconds: 60000
-
 ht:
   ignoreUrl: #不验证的url(可以使用通配符（*）)
      web: /uc/echo,/admin/*,/car/*,/rule/ui/* #不需要验证token
