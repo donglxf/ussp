@@ -5,6 +5,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,7 +34,7 @@ public class UserRoleResource {
     @Autowired
     private HtBoaInUserRoleService htBoaInUserRoleService;
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
    	@ApiOperation(value = "对内：根据UserId查询用户角色", notes = "根据UserId查询用户角色")
     @RequestMapping(value = { "/listUserRoleByPage"}, produces = {"application/json"})
     public PageResult<HtBoaInUserRole> listUserRoleByPage(PageVo page) {
@@ -55,11 +56,11 @@ public class UserRoleResource {
            return result;
      }
 
-    @ApiOperation(value = "对内：新增/编辑用户角色记录", notes = "提交用户角色信息新增/编辑角色")
+    @SuppressWarnings("rawtypes")
+	@ApiOperation(value = "对内：新增/编辑用户角色记录", notes = "提交用户角色信息新增/编辑角色")
     @PostMapping(value = { "/add" }, produces = {"application/json"})
-    public Result add(@RequestBody HtBoaInUserRole htBoaInUserRole) {
+    public Result add(@RequestBody HtBoaInUserRole htBoaInUserRole,@RequestHeader("userId") String userId) {
         long sl = System.currentTimeMillis(), el = 0L;
-        ResponseModal r = null;
         String msg = "成功";
         String logHead = "角色记录查询：role/in/add param-> {}";
         String logStart = logHead + " | START:{}";
@@ -83,10 +84,11 @@ public class UserRoleResource {
         
         if(htBoaInUserRole.getId() !=null && htBoaInUserRole.getId()>0) {
         	u.setId(htBoaInUserRole.getId());
+        	u.setUpdateOperator(userId);
         	u = htBoaInUserRoleService.update(u);
         } else {
         	u.setCreatedDatetime(new Date());
-        	u.setCreateOperator("10001");
+        	u.setCreateOperator(userId);
             u = htBoaInUserRoleService.add(u);
         }
         el = System.currentTimeMillis();
@@ -98,7 +100,7 @@ public class UserRoleResource {
     @SuppressWarnings({ "rawtypes", "unused" })
 	@ApiOperation(value = "对内：禁用/启用用户角色", notes = "禁用/启用用户角色")
     @PostMapping(value = { "/stop" }, produces = {"application/json"})
-    public Result stop( Long id, String status) {
+    public Result stop( Long id, String status,@RequestHeader("userId") String userId) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
         String msg = "成功";
@@ -117,6 +119,7 @@ public class UserRoleResource {
     	}
         u.setLastModifiedDatetime(new Date());
         u.setDelFlag(Integer.parseInt(status));
+        u.setUpdateOperator(userId);
         u = htBoaInUserRoleService .update(u);
         
         el = System.currentTimeMillis();
@@ -124,7 +127,8 @@ public class UserRoleResource {
         return Result.buildSuccess();
     }
     
-    @ApiOperation(value = "对内：删除用户角色记录", notes = "提交角色编号，可批量删除")
+    @SuppressWarnings("rawtypes")
+	@ApiOperation(value = "对内：删除用户角色记录", notes = "提交角色编号，可批量删除")
     @ApiImplicitParam(name = "codes", value = "角色编号集", required = true, dataType = "Codes")
     @PostMapping(value = {"/delete" }, produces = {"application/json"})
     public Result delete(int id) {

@@ -48,7 +48,7 @@
 			<div class="layui-field-box">
 					<div class="row row-lg" id="userapp_app_table_tools">
 					   <div class="toolbarBtn btn-group"  >
-                             <button class="layui-btn layui-btn-sm" title="关联系统" data-type="loadAppList" ht-atuh="loadAppList"> 关联系统 </button>
+                             <button class="layui-btn layui-btn-sm" title="关联系统" data-type="loadAppList" ht-auth="loadAppList"> 关联系统 </button>
                         </div>
 						<div class="pull-right col-xs-4 row">
 							<div class="input-group input-group-sm">
@@ -80,6 +80,9 @@
                    <script type="text/html" id="createTimeTpl">
                        {{new Date( d.createdDatetime ).Format('yyyy-MM-dd HH:mm:ss')}} 
 	               </script>
+	               <script type="text/html" id="isControllerTpl">
+                     <input type="checkbox" name="controller" value="{{d.id}}" title="管理员" lay-filter="isController" {{ d.controller == 'Y' ? 'checked' : '' }}>
+                 </script>
 				</div>
 		</div>
 	</div>

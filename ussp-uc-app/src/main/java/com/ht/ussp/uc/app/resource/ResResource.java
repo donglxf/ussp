@@ -76,40 +76,7 @@ public class ResResource {
      */
     @GetMapping(value = "/rescode/load")
     public String loadResCode(@RequestParam("app") String app, @RequestParam("parent") String parent, @RequestParam("type") String type) {
-        String[] resType = null;
-        String shortType = null;
-        switch (type) {
-            case "menu":
-                resType = new String[]{"view", "group"};
-                shortType = "M";
-                break;
-            case "tab":
-                resType = new String[]{"tab"};
-                shortType = "T";
-                break;
-            case "api":
-                resType = new String[]{"api"};
-                shortType = "A";
-                break;
-            case "module":
-                resType = new String[]{"module"};
-                shortType = "MD";
-                break;
-            case "btn":
-                resType = new String[]{"btn"};
-                shortType = "B";
-                break;
-        }
-        if (resType != null && shortType != null) {
-            int count = htBoaInResourceService.getItemCountByResParentAndResType(app, "".equals(parent) ? null : parent, resType);
-            if (StringUtils.isEmpty(parent)) {
-                return String.format("%s%02d", shortType, (count + 1));
-            } else {
-                return String.format("%s_%s%02d", parent, shortType, (count + 1));
-            }
-
-        }
-        return "";
+        return htBoaInResourceService.createResourceCode(app, parent, type);
     }
 
     /**
@@ -132,8 +99,9 @@ public class ResResource {
                     }
                     break;
                 case "btn":
-                    int count = htBoaInResourceService.getItemCountByResParentAndResType(resource.getResParent(), "btn");
-                    resource.setResCode(String.format("%s_B%02d", resource.getResParent(), (count + 1)));
+                    if (StringUtils.isEmpty(resource.getResCode())) {
+                        resource.setResCode(htBoaInResourceService.createResourceCode(resource.getApp(), resource.getResParent(), "btn"));
+                    }
                     break;
             }
             resource.setStatus("0");

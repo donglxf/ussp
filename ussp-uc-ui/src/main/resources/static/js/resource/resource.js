@@ -408,8 +408,14 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                     , {field: 'resCode', width: 120, title: '菜单编号'}
                     , {field: 'resNameCn', width: 150, title: '菜单名称'}
                     , {field: 'resContent', title: '菜单链接'}
-                    , {field: 'fontIcon',align: 'center', width: 60, title: '图标', templet: "#resource_menu_font_icon_laytpl"}
-                    , {field: 'sequence',align: 'center', width: 60, title: '顺序'}
+                    , {
+                        field: 'fontIcon',
+                        align: 'center',
+                        width: 60,
+                        title: '图标',
+                        templet: "#resource_menu_font_icon_laytpl"
+                    }
+                    , {field: 'sequence', align: 'center', width: 60, title: '顺序'}
                     , {field: 'resParent', width: 100, title: '父菜单编号'}
                     , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl"}
                     , {field: 'updateOperator', width: 100, title: '更新人'}
@@ -427,8 +433,8 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                 initSort = {field: 'resContent', type: 'asc'};
                 clos = [[
                     {type: 'numbers'}
-                    , {field: 'resCode', width: 120, title: '按钮编码'}
-                    , {field: 'resContent', width: 120, title: '按钮权限标识'}
+                    , {field: 'resCode', width: 150, title: '按钮编码'}
+                    , {field: 'resContent', width: 100, title: '权限标识'}
                     , {field: 'resNameCn', title: '按钮名称'}
                     // , {field: 'fontIcon', width: 60, title: '图标'}
                     // , {field: 'sequence', width: 60, title: '顺序'}
@@ -449,8 +455,8 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                 initSort = {field: 'resCode', type: 'asc'};
                 clos = [[
                     {type: 'numbers'}
-                    , {field: 'resCode', width: 120, title: 'TAB编码'}
-                    , {field: 'resNameCn', width: 150, title: 'TAB名称'}
+                    , {field: 'resCode', width: 150, title: 'TAB编码'}
+                    , {field: 'resNameCn', width: 100, title: 'TAB名称'}
                     , {field: 'resContent', title: 'TAB链接'}
                     // , {field: 'sequence', width: 60, title: '顺序'}
                     , {field: 'resParent', width: 120, title: '父菜单编号'}
@@ -469,7 +475,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                 height = 'full-601';
                 clos = [[
                     {type: 'numbers'}
-                    , {field: 'resCode', width: 120, title: 'API编号'}
+                    , {field: 'resCode', width: 150, title: 'API编码'}
                     , {field: 'resNameCn', width: 150, title: 'API名称'}
                     , {field: 'resContent', title: 'API链接'}
                     , {field: 'remark', width: 200, title: '方法名'}

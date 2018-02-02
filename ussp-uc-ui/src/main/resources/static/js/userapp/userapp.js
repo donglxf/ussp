@@ -45,6 +45,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     var loadUserAppListUrl=config.basePath + 'userapp/listUserAppByPage'; //列出用户所有系统
     var delUserAppListUrl=config.basePath + 'userapp/delete'; //删除用户角色 /delete/{id}
     var stopUserAppListUrl=config.basePath + 'userapp/stop'; //禁用/启用用户角色 /stop/{id}/{status}
+    var isControllerUrl=config.basePath + 'userapp/isController';  
     var orgTreeUrl = config.basePath +"org/tree"; //机构列表 
     var refreshUserTable = function (keyword) {
         if (!keyword) {
@@ -61,6 +62,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                      orgCode: selectNodes[0]["orgCode"]
                  }
              });
+        	 userId = "";
         }
     };
     var refreshUserAppTable = function (keyword) {
@@ -92,6 +94,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         var selectNodes = orgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
         	 table.reload('userapp_app_datatable', {
+        		 height: 'full-200',
         	        page: {
         	            curr: 1 //重新从第 1 页开始
         	        }
@@ -199,6 +202,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
             {type: 'numbers'}
             , {field: 'app',   title: '系统编号'}
             , {field: 'nameCn',   title: '系统名称'}
+            , {field: 'controller', templet: '#isController',  title: '管理员'}
             , {field: 'status', width: 100, title: '状态' ,templet: '#userapp_statusTpl'}
             , {field: 'createOperator', width: 100, title: '创建人'}
             , {field: 'createdDatetime', width: 200,templet: '#createTimeTpl', title: '创建时间'}
@@ -267,6 +271,13 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     $('#userapp_user_table_tools .layui-btn').on('click', function () {
         var type = $(this).data('type');
         active[type] ? active[type].call(this) : '';
+    });
+    
+    //监听锁定操作
+    form.on('checkbox(isController)', function(obj){
+		 $.post(isControllerUrl+"?id=" + this.value+"&isController="+obj.elem.checked, null, function (result) {
+              
+         });
     });
     
     $('#userapp_app_table_tools .layui-btn').on('click', function () {

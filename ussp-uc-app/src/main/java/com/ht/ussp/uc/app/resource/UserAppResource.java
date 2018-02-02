@@ -35,7 +35,7 @@ public class UserAppResource {
     @Autowired
     private HtBoaInUserAppService htBoaInUserAppService;
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
    	@ApiOperation(value = "对内：根据UserId查询用户系统", notes = "根据UserId查询用户系统")
     @PostMapping(value = {"/listUserAppByPage" }, produces = { "application/json" })
        public PageResult<HtBoaInUserApp> listUserAppByPage(PageVo page) {
@@ -62,7 +62,8 @@ public class UserAppResource {
      * @param page
      * @return
      */
-    @ApiOperation(value = "对内：查询用户系统" )
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	@ApiOperation(value = "对内：查询用户系统" )
     @RequestMapping(value = { "/listAppByPage"}, method = RequestMethod.POST)
     public PageResult<HtBoaInUserApp> listAppByPage(PageVo page) {
     	PageResult result = new PageResult();
@@ -83,11 +84,11 @@ public class UserAppResource {
         return result;
     }
     
-    @ApiOperation(value = "对内：新增/编辑用户系统记录", notes = "提交用户系统信息新增/编辑角色")
+    @SuppressWarnings("rawtypes")
+	@ApiOperation(value = "对内：新增/编辑用户系统记录", notes = "提交用户系统信息新增/编辑角色")
     @RequestMapping(value = { "/add" }, method = RequestMethod.POST)
     public Result add(@RequestBody HtBoaInUserApp htBoaInUserApp,@RequestHeader("userId") String userId) {
         long sl = System.currentTimeMillis(), el = 0L;
-        ResponseModal r = null;
         String msg = "成功";
         String logHead = "角色记录查询：role/in/add param-> {}";
         String logStart = logHead + " | START:{}";
@@ -152,6 +153,27 @@ public class UserAppResource {
         log.info(logEnd, "boaInRoleInfo: " + u, msg, el, el - sl);
         return Result.buildSuccess();
     }
+    @SuppressWarnings({ "rawtypes", "unused" })
+   	@ApiOperation(value = "设置用户系统管理员")
+	@RequestMapping(value = { "/isController" }, method = RequestMethod.POST)
+	public Result isController(Long id, String isController, @RequestHeader("userId") String userId) {
+		long sl = System.currentTimeMillis(), el = 0L;
+		ResponseModal r = null;
+		HtBoaInUserApp u = null;
+		if (id > 0) {
+			u = htBoaInUserAppService.findById(id);
+		} else {
+			return Result.buildFail();
+		}
+		if (u == null) {
+			return Result.buildFail();
+		}
+		u.setLastModifiedDatetime(new Date());
+		u.setController("true".equals(isController)?"Y":"N");
+		u.setUpdateOperator(userId);
+		u = htBoaInUserAppService.update(u);
+		return Result.buildSuccess();
+	}
     
     @ApiOperation(value = "对内：删除用户系统记录", notes = "提交角色编号，可批量删除")
     @ApiImplicitParam(name = "codes", value = "角色编号集", required = true, dataType = "Codes")

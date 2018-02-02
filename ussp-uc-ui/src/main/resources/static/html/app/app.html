@@ -2,7 +2,7 @@
 	<div class="layui-form-item"  style="padding-left: 15px;padding-right: 15px;">
 		<div class="row row-lg" id="app_table_tools">
 		     <div class="toolbarBtn btn-group">
-                <button class="layui-btn layui-btn-sm" title="新增" data-type="add" ht-atuh="add">
+                <button class="layui-btn layui-btn-sm" title="新增" data-type="add" ht-auth="add">
                     新增
                 </button>
             </div>
@@ -23,7 +23,7 @@
 				</div>
 			</div>
 			<div class="toolbarBtn btn-group">
-				<button class="layui-btn layui-btn-sm" title="新增" data-type="add" ht-atuh="add"> 新增</button>
+				<button class="layui-btn layui-btn-sm" title="新增" data-type="add" ht-auth="add"> 新增</button>
 				<button type="button" class="layui-btn layui-btn-sm" data-type="search">查询</button>
 				<button type="button" class="layui-btn layui-btn-sm" onclick="document.getElementById('app_search_keyword').value=''">重置</button>
 			</div> -->
@@ -32,12 +32,12 @@
 			<table id="app_datatable" lay-filter="filter_app_datatable"> </table>
 			<script type="text/html" id="app_datatable_bar">
  {{#  if(d.status == '0'){ }}
-                <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="stopOrStart" ht-atuh="stopOrStart">禁用</a>
+                <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="stopOrStart" ht-auth="stopOrStart">禁用</a>
 {{#  } else { }}
- <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="stopOrStart" ht-atuh="stopOrStart">启用</a>
+ <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="stopOrStart" ht-auth="stopOrStart">启用</a>
 {{#  } }}
-                <a class="layui-btn layui-btn-xs" lay-event="edit" ht-atuh="edit">修改</a>
-                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" ht-atuh="del">删除</a>
+                <a class="layui-btn layui-btn-xs" lay-event="edit" ht-auth="edit">修改</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" ht-auth="del">删除</a>
             </script>
 		</div>
 	</div>

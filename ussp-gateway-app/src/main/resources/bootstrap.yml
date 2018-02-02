@@ -5,15 +5,20 @@ spring:
 server:
   port: 30111
 spring:
-    profiles: dev
-    application:
-      name: ussp-gateway-app
-    cloud: 
-      inetutils: 
-        preferred-networks: 10.200.1
- 
+  profiles: dev
+  application:
+    name: ussp-gateway-app
+  cloud:
+    config:
+      discovery:
+        enabled: false
+        service-id: ussp-config-app
+    bus:
+      trace:
+        enabled: false
 zuul:
   routes:
+    #用户权限管理中心
     ussp-uc:
       path: /uc/**
       serviceId: ussp-uc-app
@@ -33,7 +38,7 @@ eureka:
     prefer-ip-address: true
   client:
     serviceUrl:
-      defaultZone: http://localhost:30101/eureka/
+      defaultZone: http://10.110.1.240:30101/eureka/
       
 gateway:
   security: 

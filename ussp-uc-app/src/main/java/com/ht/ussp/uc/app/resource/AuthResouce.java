@@ -187,7 +187,7 @@ public class AuthResouce {
                 for (int i = 0; i < json.size(); i++) {
                     JSONObject job = json.getJSONObject(i);
                     if (url.equals(job.get("resContent"))) {
-                        log.info("isHasAuth:" + url.equals(job.get("resContent")));
+                        //log.info("isHasAuth:" + url.equals(job.get("resContent")));
                         flag = true;
                         return flag;
                     }

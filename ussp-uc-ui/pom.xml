@@ -27,5 +27,6 @@
     </dependencies>
 
     <build>
+        <finalName>ussp-uc-ui</finalName>
     </build>
 </project>

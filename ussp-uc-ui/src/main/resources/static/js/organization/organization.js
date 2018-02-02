@@ -129,6 +129,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         }
         
         table.reload('organization_datatable', {
+        	  height: 'full-200',
             page: {
                 curr: 1 //重新从第 1 页开始
             }

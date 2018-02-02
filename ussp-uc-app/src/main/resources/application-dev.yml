@@ -2,7 +2,7 @@ spring:
     profiles.active: dev
 ---
 server:
-  port: 9999
+  port: 30126
 spring:
     profiles: dev
     #指定使用sping的数据源
@@ -18,6 +18,6 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://10.110.1.240:10001/eureka/
+      defaultZone: http://10.110.1.240:30101/eureka/
 ht.config.uc.api:
   synch: true #是否同步API资源到用户权限中心

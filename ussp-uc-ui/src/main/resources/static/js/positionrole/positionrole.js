@@ -62,6 +62,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                     }
                  }
              });
+        	 positionCode = "";
         }
     };
     var refreshpositionroleTable = function (keyword) {
@@ -71,6 +72,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         var selectNodes = orgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
         	 table.reload('positionrole_role_datatable', {
+        		  height: 'full-200',
         	        page: {
         	            curr: 1 //重新从第 1 页开始
         	        }
