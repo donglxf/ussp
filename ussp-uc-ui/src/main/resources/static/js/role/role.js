@@ -136,13 +136,13 @@ layui.use(['form', 'laytpl' , 'table','ht_config', 'ht_auth' ], function () {
         , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
         , cols: [[
             {type: 'numbers'}
-            , {field: 'roleCode', width: 150, title: '角色编号'}
-            , {field: 'roleNameCn',   title: '角色名称'}
-            , {field: 'app',   title: '所属系统'}
-            , {field: 'status', width: 100,templet: '#statusTpl', title: '状态'}
-            , {field: 'createOperator',   title: '创建人'}
-            , {field: 'createdDatetime', width: 200,templet: '#createTimeTpl', title: '创建时间'}
-            , {fixed: 'right', width: 300,  title: '操作',   toolbar: '#role_datatable_bar'}
+            , {field: 'roleCode', width: 220, title: '角色编号'}
+            , {field: 'roleNameCn', width: 350,  title: '角色名称'}
+            , {field: 'app',  width: 200, title: '所属系统'}
+            , {field: 'status', width: 150,templet: '#statusTpl', title: '状态'}
+            , {field: 'createOperator', width: 230,  title: '创建人'}
+            , {field: 'createdDatetime', width: 250,templet: '#createTimeTpl', title: '创建时间'}
+            , {fixed: 'right', width: 229,  title: '操作',   toolbar: '#role_datatable_bar'}
         ]]
     });
     //监听操作栏

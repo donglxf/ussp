@@ -72,6 +72,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         var selectNodes = orgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
         	 table.reload('userapp_app_datatable', {
+        		 height: 'full-600' ,
         	        page: {
         	            curr: 1 //重新从第 1 页开始
         	        }
@@ -94,7 +95,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         var selectNodes = orgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
         	 table.reload('userapp_app_datatable', {
-        		 height: 'full-200',
+        		 height: 'full-600' ,
         	        page: {
         	            curr: 1 //重新从第 1 页开始
         	        }
@@ -196,13 +197,13 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
             , dataName: 'data' //数据列表的字段名称，默认：data
         } //如果无需自定义数据响应名称，可不加该参数
         , page: true
-        , height: '300'
+        , height: 'full-600'
         , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
         , cols: [[
             {type: 'numbers'}
-            , {field: 'app',   title: '系统编号'}
+            , {field: 'app',  width: 100, title: '系统编号'}
             , {field: 'nameCn',   title: '系统名称'}
-            , {field: 'controller', templet: '#isController',  title: '管理员'}
+            , {field: 'controller', templet: '#isControllerTpl',  title: '管理员'}
             , {field: 'status', width: 100, title: '状态' ,templet: '#userapp_statusTpl'}
             , {field: 'createOperator', width: 100, title: '创建人'}
             , {field: 'createdDatetime', width: 200,templet: '#createTimeTpl', title: '创建时间'}
@@ -274,11 +275,23 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     });
     
     //监听锁定操作
-    form.on('checkbox(isController)', function(obj){
+    form.on('switch(isController)', function(obj){
 		 $.post(isControllerUrl+"?id=" + this.value+"&isController="+obj.elem.checked, null, function (result) {
-              
+			 if (result["returnCode"] == "0000") {
+                 if(obj.elem.checked){
+                	 layer.msg("设置管理员成功");
+                 }else{
+                	 layer.msg("取消管理员成功");
+                 }
+                 
+             } else {
+                 layer.msg(result.codeDesc);
+             }
+			 refreshUserAppTable();
          });
     });
+    
+   
     
     $('#userapp_app_table_tools .layui-btn').on('click', function () {
         var type = $(this).data('type');
