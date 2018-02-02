@@ -346,7 +346,7 @@ public class AuthResouce {
             int mxResCodeNum = 0;
             try {
                 //最大资源编码（去除编码前缀）
-                mxResCodeNum = (maxResCode == null || StringUtils.isEmpty(maxResCode.get())) ? 0 : Integer.valueOf(maxResCode.get().replace(apiResCodePrefix, ""));
+                mxResCodeNum = (maxResCode == null || StringUtils.isEmpty(maxResCode.get())) ? 0 : Integer.valueOf(maxResCode.get().replace(apiResCodePrefix, "").replaceAll("[^0-9]", ""));
             } catch (Exception e) {
                 //发生异常无需处理
             }
