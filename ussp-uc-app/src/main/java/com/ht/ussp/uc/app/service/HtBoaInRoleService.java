@@ -53,9 +53,11 @@ public class HtBoaInRoleService {
         if (null != pageConf.getPage() && null != pageConf.getSize())
             pageable = new PageRequest(pageConf.getPage(), pageConf.getSize(), sort);
         
-        String orgPath = "";
-        if (query != null && query.size() > 0 && query.get("orgCode") != null) {
-        	orgPath = "%" +query.get("orgCode")+ "%";
+        String app = "";
+        if (query != null && query.size() > 0 && query.get("app") != null) {
+        	app = "%" +query.get("app")+ "%";
+        }else {
+        	app = "%%";
         }
         
         String search = pageConf.getSearch();
@@ -64,11 +66,7 @@ public class HtBoaInRoleService {
         else
             search = "%" + search + "%";
         if (null != pageable) {
-            Page<BoaInRoleInfo> p = this.htBoaInRoleRepository.listRoleInfoByPageWeb(pageable, search );
-            for (BoaInRoleInfo u : p.getContent()) {
-               // u.setUsers(this.htBoaInRoleRepository.listHtBoaInUser(u.getRoleCode()));
-                //u.setPositions(this.htBoaInRoleRepository.listHtBoaInPosition(u.getRoleCode()));
-            }
+            Page<BoaInRoleInfo> p = this.htBoaInRoleRepository.listRoleInfoByPageWeb(pageable, search ,app);
             return p;
         } else {
             List<BoaInRoleInfo> p = this.htBoaInRoleRepository.listRoleInfo(search);
@@ -93,10 +91,12 @@ public class HtBoaInRoleService {
         if (null != pageConf.getPage() && null != pageConf.getSize())
             pageable = new PageRequest(pageConf.getPage(), pageConf.getSize(), sort);
         
-        String userId = "";
-        if (query != null && query.size() > 0 && query.get("userId") != null &&(!"".equals(query.get("userId")))) {
-        	userId = "%" +query.get("orgCode")+ "%";
-        } 
+        String app = "";
+        if (query != null && query.size() > 0 && query.get("app") != null &&(!"".equals(query.get("app")))) {
+        	app = "%" +query.get("app")+ "%";
+        } else {
+        	app = "%%";
+        }
         
         String search = pageConf.getSearch();
         if (null == search || 0 == search.trim().length())
@@ -104,7 +104,7 @@ public class HtBoaInRoleService {
         else
             search = "%" + search + "%";
         if (null != pageable) {
-            Page<BoaInRoleInfo> p = this.htBoaInRoleRepository.listRoleInfoByPageWeb(pageable, search );
+            Page<BoaInRoleInfo> p = this.htBoaInRoleRepository.listRoleInfoByPageWeb(pageable, search ,app);
             for (BoaInRoleInfo u : p.getContent()) {
                 u.setUsers(this.htBoaInRoleRepository.listHtBoaInUser(u.getRoleCode()));
                 u.setPositions(this.htBoaInRoleRepository.listHtBoaInPosition(u.getRoleCode()));

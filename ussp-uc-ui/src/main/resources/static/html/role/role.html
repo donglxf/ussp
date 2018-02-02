@@ -1,4 +1,18 @@
 <div class="layui-fluid" lay-filter="role_auth">
+    <div class="tree col-xs-3" style="">
+        <div>
+            <div class="tree_search">
+                <div class="input-group input-group-sm">
+                    <input type="text" id="role_app_search_tree" maxlength="60" class="form-control" placeholder="请输入系统名称"/>
+                    <div id="role_app_refresh_tree" class="input-group-addon btn" title="刷新">
+                        <i class="fa fa-refresh"></i>
+                    </div>
+                </div>
+            </div>
+            <div id="role_app_ztree_left" class="ztree"></div>
+        </div>
+    </div>
+    <div class="col-xs-9">
 	<div class="layui-form-item" style="padding-left: 15px;padding-right: 15px;">
 		<div class="row row-lg" id="role_table_tools">
 		    <div class="toolbarBtn btn-group">
@@ -59,8 +73,10 @@
 			<div class="layui-form-item">
 				<label class="layui-form-label">所属系统<b>*</b></label>
 				<div class="layui-input-block">
-					<select name="app" id="app"     lay-verify="required" > 
-					</select>
+					<!-- <select name="app" id="app"     lay-verify="required" > 
+					</select> -->
+					<input type="text"  name="appNameCn" readonly autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="app" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
 				</div>
 			</div>
 			<button class="layui-btn hide" lay-submit="" lay-filter="filter_add_role_form"></button>
@@ -120,4 +136,5 @@
 	<script type="text/html" id="createTimeTpl">
  {{new Date( d.createdDatetime ).Format('yyyy-MM-dd HH:mm:ss')}} 
 </script>
+</div>
 </div>

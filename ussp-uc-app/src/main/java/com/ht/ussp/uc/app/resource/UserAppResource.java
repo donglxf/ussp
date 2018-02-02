@@ -38,24 +38,24 @@ public class UserAppResource {
     @SuppressWarnings({ "rawtypes", "unchecked" })
    	@ApiOperation(value = "对内：根据UserId查询用户系统", notes = "根据UserId查询用户系统")
     @PostMapping(value = {"/listUserAppByPage" }, produces = { "application/json" })
-       public PageResult<HtBoaInUserApp> listUserAppByPage(PageVo page) {
-       	PageResult result = new PageResult();
-       	PageConf pageConf = new PageConf();
-       	pageConf.setPage(page.getPage());
-       	pageConf.setSize(page.getLimit());
-       	pageConf.setSearch(page.getKeyWord());
-           long sl = System.currentTimeMillis(), el = 0L;
-           String msg = "成功";
-           String logHead = "根据UserId查询用户系统：user/listUserAppByPage param-> {}";
-           String logStart = logHead + " | START:{}";
-           String logEnd = logHead + " {} | END:{}, COST:{}";
-           log.info(logStart, "page: " + page, sl);
-           
-           result =  htBoaInUserAppService.listUserAppByPage(pageConf,page.getQuery()); 
-           el = System.currentTimeMillis();
-           log.info(logEnd, "page: " + page, msg, el, el - sl);
-           return result;
-       }
+	public PageResult<HtBoaInUserApp> listUserAppByPage(PageVo page) {
+		PageResult result = new PageResult();
+		PageConf pageConf = new PageConf();
+		pageConf.setPage(page.getPage());
+		pageConf.setSize(page.getLimit());
+		pageConf.setSearch(page.getKeyWord());
+		long sl = System.currentTimeMillis(), el = 0L;
+		String msg = "成功";
+		String logHead = "根据UserId查询用户系统：user/listUserAppByPage param-> {}";
+		String logStart = logHead + " | START:{}";
+		String logEnd = logHead + " {} | END:{}, COST:{}";
+		log.info(logStart, "page: " + page, sl);
+
+		result = htBoaInUserAppService.listUserAppByPage(pageConf, page.getQuery());
+		el = System.currentTimeMillis();
+		log.info(logEnd, "page: " + page, msg, el, el - sl);
+		return result;
+	}
 
     /**
      * 查询所有系统
