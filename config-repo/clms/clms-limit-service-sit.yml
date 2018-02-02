@@ -55,6 +55,6 @@ clms:
   microser:
     codeser: clms-codes-service
 ht.config.uc.api:
-  synch: true
+  synch: false
   package: com.ht.clms.limit.resource;
   app: CL
