@@ -129,9 +129,16 @@
             <version>0.0.3</version>
         </dependency>
 
+		<dependency>
+			<groupId>com.ht.ussp</groupId>
+			<artifactId>ussp-common</artifactId>
+			<version>0.0.3</version>
+		</dependency>
     </dependencies>
+
 
     <build>
         <finalName>ussp-gateway-app</finalName>
     </build>
+
 </project>
