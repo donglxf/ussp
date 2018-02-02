@@ -27,6 +27,15 @@ zuul:
     cisp-car-service:
       path: /car/**
       serviceId: cisp-car-service
+    clms-codes-service:
+      path: /clms-codes/**
+      serviceId: clms-codes-service
+    clms-limit-service:
+      path: /clms-limit/**
+      serviceId: clms-limit-service
+    clms-product-service:
+      path: /clms-product/**
+      serviceId: clms-product-service
     
       
       
