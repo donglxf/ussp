@@ -80,6 +80,9 @@
                    <script type="text/html" id="createTimeTpl">
                        {{new Date( d.createdDatetime ).Format('yyyy-MM-dd HH:mm:ss')}} 
 	               </script>
+	               <script type="text/html" id="isControllerTpl">
+                     <input type="checkbox" name="controller" value="{{d.id}}" title="管理员" lay-filter="isController" {{ d.controller == 'Y' ? 'checked' : '' }}>
+                 </script>
 				</div>
 		</div>
 	</div>
