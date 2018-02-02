@@ -54,3 +54,7 @@ logging:
 clms:
   microser:
     codeser: clms-codes-service
+ht.config.uc.api:
+  synch: true
+  package: com.ht.clms.product.resource;
+  app: CL
