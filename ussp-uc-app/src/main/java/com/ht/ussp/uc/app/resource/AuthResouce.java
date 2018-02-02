@@ -2,9 +2,11 @@ package com.ht.ussp.uc.app.resource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.ht.ussp.uc.app.vo.MenuVo;
+import com.netflix.discovery.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
@@ -334,17 +336,30 @@ public class AuthResouce {
     @PostMapping("/api/aynch")
     @Transactional
     public void resourceApiAynch(@RequestBody ApiResourceDto apiResourceDto) {
-        if (apiResourceDto != null && apiResourceDto.getApiInfoList() != null && apiResourceDto.getApiInfoList().size() > 0) {
-            int num = 0;
+        if (apiResourceDto != null && !StringUtils.isEmpty(apiResourceDto.getApp()) && apiResourceDto.getApiInfoList() != null && apiResourceDto.getApiInfoList().size() > 0) {
+            String apiResCodePrefix = String.format("%s_A", apiResourceDto.getApp());//API资源编码前缀（系统编码_A）
             List<HtBoaInResource> oldResList = htBoaInResourceService.getByApp(apiResourceDto.getApp());
-            List<HtBoaInResource> tempList;
+            Optional<String> maxResCode = oldResList.stream()
+                    .filter(res -> apiResourceDto.getApp().equals(res.getApp()) && "api".equals(res.getResType()) && res.getResCode().contains(apiResCodePrefix))
+                    .map(HtBoaInResource::getResCode)
+                    .max((o1, o2) -> o1.compareTo(o2));
+            int mxResCodeNum = 0;
+            try {
+                //最大资源编码（去除编码前缀）
+                mxResCodeNum = (maxResCode == null || StringUtils.isEmpty(maxResCode.get())) ? 0 : Integer.valueOf(maxResCode.get().replace(apiResCodePrefix, ""));
+            } catch (Exception e) {
+                //发生异常无需处理
+            }
+            List<HtBoaInResource> tempList = null;
             HtBoaInResource oldRes;
             List<ApiInfoDto> apiDtoList = apiResourceDto.getApiInfoList();
             List<HtBoaInResource> newResList = new ArrayList<>();
             int insertCount = 0;
             int updateCount = 0;
             for (ApiInfoDto api : apiDtoList) {
-                tempList = oldResList.stream().filter(demo -> api.getMethod().equals(demo.getRemark())).distinct().collect(Collectors.toList());
+                if (oldResList != null && oldResList.size() > 0) {
+                    tempList = oldResList.stream().filter(res -> api.getMethod().equals(res.getRemark())).distinct().collect(Collectors.toList());
+                }
                 if (tempList != null && tempList.size() > 0) {
                     oldRes = tempList.get(0);
                     if ((oldRes.getResNameCn() != null && !oldRes.getResNameCn().equals(api.getApiDescribe()))
@@ -356,7 +371,7 @@ public class AuthResouce {
                     }
                 } else {
                     HtBoaInResource re = new HtBoaInResource();
-                    re.setResCode("api_" + System.currentTimeMillis() + (num++));
+                    re.setResCode(String.format("%s_A%03d", apiResourceDto.getApp(), (++mxResCodeNum)));
                     re.setResType("api");
                     re.setResContent(api.getMapping());
                     re.setRemark(api.getMethod());
