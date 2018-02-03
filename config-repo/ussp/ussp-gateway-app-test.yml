@@ -29,6 +29,16 @@ zuul:
     cisp-car-service:
       path: /car/**
       serviceId: cisp-car-service
+    #额度系统
+    clms-limit-service:
+      path: /clms-limit-service/**
+      serviceId: clms-limit-service
+    clms-product-service:
+      path: /clms-product-service/**
+      serviceId: clms-product-service
+    clms-codes-service:
+      path: /clms-codes-service/**
+      serviceId: clms-codes-service
     #风控系统
     risk-ui:
       path: /rule/ui/**
