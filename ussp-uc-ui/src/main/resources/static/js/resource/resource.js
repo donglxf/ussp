@@ -167,7 +167,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
             var parentName = parentMenuCheckStatus.data[0]["resNameCn"];
             addDialog = layer.open({
                 type: 1,
-                area: ['1000px', '600px'],
+                area: ['1000px', '645px'],
                 shadeClose: true,
                 title: "选择关联的API",
                 content: $("#resource_api_data_div").html(),
@@ -212,9 +212,9 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                             app: app,
                             resType: "api"
                         }
-                        , initSort: {field: 'resNameCn', type: 'desc'}
+                        , initSort: {field: 'resCode', type: 'asc'}
                         , page: true
-                        , height: "425"
+                        , height: "471"
                         , cols: [[
                             {type: 'numbers'}
                             , {type: 'checkbox'}
@@ -353,11 +353,12 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
     //渲染用户数据表格
     renderTable("menu");
     renderTable("btn");
+    renderTable("btn_api");
 
     /**
      * 刷新数据表
      * @param type 表格标识类型
-     * @param parentCode 过滤的父资源编码（为空，则获取左边树选中的资源编码）
+     * @param parentCode 过滤的父资源编号（为空，则获取左边树选中的资源编号）
      * @param keyword 过滤的关键字
      */
     function renderTable(type, parentCode, keyword) {
@@ -408,13 +409,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                     , {field: 'resCode', width: 120, title: '菜单编号'}
                     , {field: 'resNameCn', width: 150, title: '菜单名称'}
                     , {field: 'resContent', title: '菜单链接'}
-                    , {
-                        field: 'fontIcon',
-                        align: 'center',
-                        width: 60,
-                        title: '图标',
-                        templet: "#resource_menu_font_icon_laytpl"
-                    }
+                    , {field: 'fontIcon', align: 'center', width: 60, title: '图标', templet: "#resource_menu_font_icon_laytpl"}
                     , {field: 'sequence', align: 'center', width: 60, title: '顺序'}
                     , {field: 'resParent', width: 100, title: '父菜单编号'}
                     , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl"}
@@ -430,19 +425,20 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                 btnTableLoad = true;
                 resType = 'btn';
                 height = 'full-601';
-                initSort = {field: 'resContent', type: 'asc'};
+                initSort = {field: 'resCode', type: 'asc'};
                 clos = [[
-                    {type: 'numbers'}
-                    , {field: 'resCode', width: 150, title: '按钮编码'}
-                    , {field: 'resContent', width: 100, title: '权限标识'}
-                    , {field: 'resNameCn', title: '按钮名称'}
+                    {type: 'numbers', event: 'rowClick'}
+                    , {type: 'checkbox', event: 'rowClick'}
+                    , {field: 'resCode', width: 150, title: '按钮编号', event: 'rowClick'}
+                    , {field: 'resContent', width: 110, title: '权限标识', event: 'rowClick'}
+                    , {field: 'resNameCn', cellMinWidth: 110, minWidth: 110, title: '按钮名称', event: 'rowClick'}
                     // , {field: 'fontIcon', width: 60, title: '图标'}
                     // , {field: 'sequence', width: 60, title: '顺序'}
-                    , {field: 'resParent', width: 120, title: '父菜单编号'}
-                    , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl"}
-                    , {field: 'updateOperator', width: 100, title: '更新人'}
-                    , {field: 'lastModifiedDatetime', width: 150, title: '更新时间'}
-                    , {width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn'}
+                    , {field: 'resParent', width: 120, title: '父菜单编号', event: 'rowClick'}
+                    , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl", event: 'rowClick'}
+                    , {field: 'updateOperator', width: 100, title: '更新人', event: 'rowClick'}
+                    , {field: 'lastModifiedDatetime', width: 150, title: '更新时间', event: 'rowClick'}
+                    , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn', event: 'rowClick'}
                 ]];
                 break;
             case 'tab':
@@ -455,7 +451,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                 initSort = {field: 'resCode', type: 'asc'};
                 clos = [[
                     {type: 'numbers'}
-                    , {field: 'resCode', width: 150, title: 'TAB编码'}
+                    , {field: 'resCode', width: 150, title: 'TAB编号'}
                     , {field: 'resNameCn', width: 100, title: 'TAB名称'}
                     , {field: 'resContent', title: 'TAB链接'}
                     // , {field: 'sequence', width: 60, title: '顺序'}
@@ -466,6 +462,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                     , {width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn'}
                 ]];
                 break;
+            case 'btn_api':
             case 'api':
                 if (apiTableLoad) {
                     return false;
@@ -473,9 +470,10 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                 apiTableLoad = true;
                 resType = 'api';
                 height = 'full-601';
+                initSort = {field: 'resCode', type: 'asc'};
                 clos = [[
                     {type: 'numbers'}
-                    , {field: 'resCode', width: 150, title: 'API编码'}
+                    , {field: 'resCode', width: 150, title: 'API编号'}
                     , {field: 'resNameCn', width: 150, title: 'API名称'}
                     , {field: 'resContent', title: 'API链接'}
                     , {field: 'remark', width: 200, title: '方法名'}
@@ -483,7 +481,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                     , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl"}
                     , {field: 'updateOperator', width: 100, title: '更新人'}
                     , {field: 'lastModifiedDatetime', width: 150, title: '更新时间'}
-                    , {width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn'}
+                    , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn'}
                 ]];
                 break;
             case 'module':
@@ -533,7 +531,12 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
 
     var tableToolEvent = function (obj, type) {
         var data = obj.data;
-        if (obj.event === 'detail') {
+        if (obj.event === 'rowClick') {
+            var $checkbox = obj.tr.find('input[name="layTableCheckbox"]+');
+            $checkbox.prop("checked", true).attr("xxx","xxx");
+            var layFilter = obj.tr.parents("[lay-filter]").attr("lay-filter");
+            form.render("checkbox", layFilter);
+        } else if (obj.event === 'detail') {
             $.post(config.basePath + 'resource/view?id=' + data.id, null, function (result) {
                 if (result["returnCode"] == "0000") {
                     viewDialog = layer.open({

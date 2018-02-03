@@ -73,6 +73,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         var selectNodes = orgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
         	 table.reload('userposition_position_datatable', {
+        		 height: 'full-600',
         	        page: {
         	            curr: 1 //重新从第 1 页开始
         	        }
@@ -96,6 +97,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         var selectNodes = orgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
         	 table.reload('userposition_position_datatable', {
+        		 height: 'full-600',
         	        page: {
         	            curr: 1 //重新从第 1 页开始
         	        }
@@ -196,7 +198,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
             , dataName: 'data' //数据列表的字段名称，默认：data
         } //如果无需自定义数据响应名称，可不加该参数
         , page: true
-        , height: '300'
+        ,  height: 'full-600'
         , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
         , cols: [[
             {type: 'numbers'}

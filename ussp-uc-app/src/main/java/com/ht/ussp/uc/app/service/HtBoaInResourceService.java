@@ -210,25 +210,30 @@ public class HtBoaInResourceService {
                 break;
         }
         if (resType != null) {
-            String maxResCode = htBoaInResourceRepository.queryMaxResCodeByAppAndParentAndType(app, ("".equals(resPanrent) ? "NULL" : resPanrent), Arrays.asList(resType));
-            if (StringUtils.isEmpty(resPanrent) && StringUtils.isEmpty(maxResCode)) {
-                return String.format("%s_%s%02d", app, shortType, 1);
+            //资源编码前缀
+            String resCodePrefix = "";
+            if (StringUtils.isEmpty(resPanrent)) {
+                //资源编码前缀
+                resCodePrefix = String.format("%s_%s", app, shortType);
             } else {
-                try {
-                    int index = Integer.parseInt(maxResCode.substring(maxResCode.length() - 2, maxResCode.length()));
-                    if (StringUtils.isEmpty(resPanrent)) {
-                        return String.format("%s_%s%02d", app, shortType, (index + 1));
-                    }
-                    return String.format("%s_%s%02d", resPanrent, shortType, (index + 1));
-                } catch (Exception e) {
-                    List<HtBoaInResource> list = htBoaInResourceRepository.findByAppAndResParentAndResTypeIn(app, "".equals(resPanrent) ? null : resPanrent, Arrays.asList(resType));
-                    int count = list == null ? 0 : list.size();
-                    if (StringUtils.isEmpty(resPanrent)) {
-                        return String.format("%s_%s%02d", app, shortType, (count + 1));
-                    }
-                    return String.format("%s_%s%02d", resPanrent, shortType, (count + 1));
+                if ("menu".equals(type)) {
+                    resCodePrefix = String.format("%s%s", resPanrent, shortType);
+                } else {
+                    resCodePrefix = String.format("%s_%s", resPanrent, shortType);
                 }
             }
+            String maxResCode = htBoaInResourceRepository.queryMaxResCodeByAppAndParentAndType(app, ("".equals(resPanrent) ? "NULL" : resPanrent), Arrays.asList(resType), resCodePrefix + "%");
+            int index = 0;
+            if (!StringUtils.isEmpty(maxResCode)) {
+                System.out.println("maxResCode：" + maxResCode + "\tresCodePrefix：" + resCodePrefix + "\tapp：" + app + "\tresPanrent：" + resPanrent + "\tshortType：" + shortType);
+                //最大资源编码（去除资源编码前缀）
+                try {
+                    index = Integer.parseInt(maxResCode.replace(resCodePrefix, "").replaceAll("[^0-9]", ""));
+                } catch (Exception e) {
+                    return "";
+                }
+            }
+            return String.format("%s%02d", resCodePrefix, (index + 1));
         }
         return "";
     }

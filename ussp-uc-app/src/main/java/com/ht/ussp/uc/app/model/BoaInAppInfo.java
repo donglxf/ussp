@@ -43,6 +43,9 @@ public class BoaInAppInfo {
     
     @ApiModelProperty(value = "状态", dataType = "int")
     int delFlag;
+    
+    @ApiModelProperty(value = "是否管理员", dataType = "string")
+    private String controller;
 
     
     public BoaInAppInfo(String app, String name, String nameCn,
@@ -59,6 +62,23 @@ public class BoaInAppInfo {
         this.lastModifiedDatetime = lastModifiedDatetime;
         this.delFlag = delFlag;
         this.id = id;
+    }
+    
+    public BoaInAppInfo(String app, String name, String nameCn,
+            String status, String createOperator,
+            Date createdDatetime, String updateOperator,
+            Date lastModifiedDatetime,int delFlag,Long id,String controller) {
+        this.app = app;
+        this.name = name;
+        this.nameCn = nameCn;
+        this.status = status;
+        this.createOperator = createOperator;
+        this.createdDatetime = createdDatetime;
+        this.updateOperator = updateOperator;
+        this.lastModifiedDatetime = lastModifiedDatetime;
+        this.delFlag = delFlag;
+        this.id = id;
+        this.controller=controller;
     }
 
 }

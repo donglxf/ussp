@@ -30,7 +30,7 @@ public interface HtBoaInUserAppRepository extends JpaRepository<HtBoaInUserApp,L
 
 	HtBoaInUserApp findById(Long id);
 	
-	@Query("SELECT new com.ht.ussp.uc.app.model.BoaInAppInfo(u.app, u.name, u.nameCn,  u.status, u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,ur.delFlag,ur.id) "
+	@Query("SELECT new com.ht.ussp.uc.app.model.BoaInAppInfo(u.app, u.name, u.nameCn,  u.status, ur.createOperator, ur.createdDatetime, ur.updateOperator, ur.lastModifiedDatetime,ur.delFlag,ur.id,ur.controller) "
 			+ "FROM HtBoaInUserApp ur ,HtBoaInApp u    WHERE  ur.app = u.app AND  (u.app LIKE ?1 OR u.name LIKE ?1 OR u.nameCn LIKE ?1 ) and ur.userId=?2 GROUP BY u")
 	Page<BoaInAppInfo> listUserAppByPageWeb(Pageable arg0, String search,String userId);
 	

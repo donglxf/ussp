@@ -1,6 +1,6 @@
 
 
-layui.use(['form', 'laytpl' , 'table','ht_config', 'ht_auth' ], function () {
+layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth' ], function () {
 
     var $ = layui.jquery
         , form = layui.form
@@ -11,8 +11,14 @@ layui.use(['form', 'laytpl' , 'table','ht_config', 'ht_auth' ], function () {
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
+        , appTree //组织机构树控件
         , active = {
         add: function () { //弹出用户新增弹出框
+        	 var nodes = appTree.getSelectedNodes();
+             if (nodes.length == 0) {
+                 layer.alert("请先选择一个系统");
+                 return false;
+             }
             layer.close(addDialog);
             addDialog = layer.open({
                 type: 1,
@@ -35,14 +41,8 @@ layui.use(['form', 'laytpl' , 'table','ht_config', 'ht_auth' ], function () {
                 },
                 success: function (layero, index) {
                 	//初始化
-                	 $.post(appListByPageUrl,{"page":1,"limit":100},function(data){
-                     	var optionHtml="<option value=''>请选择系统</option>";
-                     	 $.each(data.data, function (name, value) {
-                     		 optionHtml += "<option value='"+value.app+"'>"+value.nameCn+"</option>"
-                          });
-                         var getTpl = $("#app",layero).html(optionHtml);
-                         form.render('select','filter_add_role_form');
-                     },'json');
+                	$("input[name=appNameCn]", layero).val(nodes[0]["name"]);
+                    $("input[name=app]", layero).val(nodes[0]["id"]);
                 	
                     //填充选中的组织机构
                     form.render(null, "filter_add_role_form");
@@ -84,7 +84,6 @@ layui.use(['form', 'laytpl' , 'table','ht_config', 'ht_auth' ], function () {
     var delRoleUrl=config.basePath +"role/in/delete"; //删除角色信息
     var statusRoleUrl=config.basePath +"role/in/stop"; //禁用
     var checkRoleCodeExist = config.basePath +"role/isExistRoleCode"; //校验角色编码是否已经存在
-    
     var appListByPageUrl=config.basePath +"userapp/listAppByPage"; //列出所有角色记录列表信息
     //自定义验证规则
 	form.verify({
@@ -115,16 +114,81 @@ layui.use(['form', 'laytpl' , 'table','ht_config', 'ht_auth' ], function () {
         if (!keyword) {
             keyword = null;
         }
-        table.reload('role_datatable', {
-        	height: 'full-200'
-            , page: {
-                curr: 1 //重新从第 1 页开始
-            }
-            , where: {
-                keyWord: keyword
-            }
-        });
+        
+        var selectNodes = appTree.getSelectedNodes();
+        if (selectNodes && selectNodes.length == 1) {
+        	table.reload('role_datatable', {
+            	height: 'full-200'
+                , page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+                , where: {
+                    keyWord: keyword,
+                    query: {
+                    	app: selectNodes[0]["app"]
+                    }
+                }
+            });
+        }else{
+        	table.reload('role_datatable', {
+            	height: 'full-200'
+                , page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+                , where: {
+                    keyWord: keyword,
+                }
+            });
+        }
     };
+    
+  //渲染组织机构树
+    appTree = $.fn.zTree.init($('#role_app_ztree_left'), {
+            view: {
+                showIcon: false
+                , selectedMulti: false
+                , fontCss: function (treeId, treeNode) {
+                    return (!!treeNode.highlight) ? {color: "#A60000", "font-weight": "bold"} : {
+                        color: "#333",
+                        "font-weight": "normal"
+                    };
+                }
+            }
+            , async: {
+                enable: true,
+                otherParam: ["page", "1", "limit", "100"],
+                url: appListByPageUrl,
+                dataFilter: function (treeId, parentNode, childNodes) {
+                    if (!childNodes) return null;
+                    var appData = childNodes.data;
+                	for (var i=0, l=appData.length; i<l; i++) {
+                		appData[i].name = appData[i].nameCn;
+                		appData[i].id = appData[i].app;
+                		appData[i].name = appData[i].name.replace(/\.n/g, '.');
+                	}
+                	
+                	return appData;
+                }
+            }
+            , callback: {
+            	onClick: function (event, treeId, treeNode, clickFlag) {
+            		console.log("ddddd");
+            		refreshTable();
+                },
+                onAsyncSuccess: function (event, treeId, treeNode, msgString) {
+                    var node = appTree.getNodeByParam("level ", "0");
+                    if (node) {
+                        appTree.selectNode(node);
+                    }
+                }
+            },
+            data: {
+                simpleData: {
+                    enable: true
+                }
+            }
+        }
+    );
     //渲染用户数据表格
     table.render({
         id: 'role_datatable'
@@ -136,13 +200,13 @@ layui.use(['form', 'laytpl' , 'table','ht_config', 'ht_auth' ], function () {
         , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
         , cols: [[
             {type: 'numbers'}
-            , {field: 'roleCode', width: 150, title: '角色编号'}
+            , {field: 'roleCode',   title: '角色编号'}
             , {field: 'roleNameCn',   title: '角色名称'}
-            , {field: 'app',   title: '所属系统'}
-            , {field: 'status', width: 100,templet: '#statusTpl', title: '状态'}
+            , {field: 'app',    title: '所属系统'}
+            , {field: 'status',  templet: '#statusTpl', title: '状态'}
             , {field: 'createOperator',   title: '创建人'}
-            , {field: 'createdDatetime', width: 200,templet: '#createTimeTpl', title: '创建时间'}
-            , {fixed: 'right', width: 300,  title: '操作',   toolbar: '#role_datatable_bar'}
+            , {field: 'createdDatetime',  templet: '#createTimeTpl', title: '创建时间'}
+            , {fixed: 'right',   title: '操作',   toolbar: '#role_datatable_bar'}
         ]]
     });
     //监听操作栏
@@ -265,15 +329,34 @@ layui.use(['form', 'laytpl' , 'table','ht_config', 'ht_auth' ], function () {
         active[type] ? active[type].call(this) : '';
     });
     
-    
-    /***
-     * 角色关联系统
-     * @param value
-     * @param list
-     */
-    function appSelect(){
-      
+    //刷新树的数据
+    $('#role_app_btn_refresh_tree').on('click', function (e) {
+        if (appTree) {
+            appTree.reAsyncChildNodes(null, "refresh");
+        }
+    });
+    var nodeList = [];
+    //搜索树的数据
+    $('#role_app_search_tree').bind('input', function (e) {
+        if (appTree && $(this).val() != "") {
+            nodeList = appTree.getNodesByParamFuzzy("name", $(this).val());
+            updateNodes(true);
+        } else {
+            updateNodes(false);
+        }
+    });
+
+    //刷新树节点
+    function updateNodes(highlight) {
+        for (var i = 0, l = nodeList.length; i < l; i++) {
+            nodeList[i].highlight = highlight;
+            appTree.updateNode(nodeList[i]);
+            if (highlight) {
+                appTree.expandNode(appTree.getNodeByParam("app", nodeList[i]["parentOrgCode"]), true, false, null, null);
+            }
+        }
     }
+    
     ht_auth.render("role_auth");
 
 })

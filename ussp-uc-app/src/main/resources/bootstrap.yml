@@ -1,0 +1,126 @@
+spring:
+  profiles.active: native
+
+---
+spring:
+  profiles: native
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration,org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration.RabbitAnnotationDrivenConfiguration,org.springframework.cloud.config.client.ConfigClientAutoConfiguration
+management:
+  security:
+    enabled: false
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      defaultZone: http://10.110.1.240:30101/eureka/  # 配置注册中心url
+
+---
+spring:
+  profiles: dev
+  rabbitmq:
+    host: 10.110.1.240
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: /
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: ussp-config-app
+      profile: sit
+      username: root
+      password: 123456
+    bus:
+      trace:
+        enabled: true
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      defaultZone: http://10.110.1.240:30101/eureka/  # 配置注册中心url
+
+---
+spring:
+  profiles: sit
+  rabbitmq:
+    host: 10.110.1.240
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: /
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: ussp-config-app
+      profile: sit
+      username: root
+      password: 123456
+    bus:
+      trace:
+        enabled: true
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      defaultZone: http://10.110.1.240:30101/eureka/  # 配置注册中心url
+
+---
+spring:
+  profiles: uat
+  rabbitmq:
+    host: 10.100.5.193
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: /
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: ussp-config-app
+      profile: uat
+      username: root
+      password: 123456
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      defaultZone: http://120.79.47.252:30101/eureka/,http://120.79.47.252:30102/eureka/,http://120.79.47.252:30103/eureka/ # 配置注册中心url
+
+---
+spring:
+  profiles: prd
+  rabbitmq:
+    host: 10.110.1.240
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: /
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: ussp-config-app
+      profile: prd
+      username: root
+      password: 123456
+    bus:
+      trace:
+        enabled: true
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      defaultZone: http://eureka.didispace.com/eureka/ # 配置注册中心url
+
+

@@ -9,7 +9,7 @@ Configuration:
       - name: log.level.file
         value: INFO
       - name: LOG_HOME
-        value: logs
+        value: /data/cloud_log/logs
       - name: PROJECT_NAME
         value: ussp-uc-app
       - name: CONAOLE_LOG_PATTERN

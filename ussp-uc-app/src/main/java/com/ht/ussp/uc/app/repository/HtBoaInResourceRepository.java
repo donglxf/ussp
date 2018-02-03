@@ -32,6 +32,6 @@ public interface HtBoaInResourceRepository extends JpaSpecificationExecutor<HtBo
 
     List<HtBoaInResource> findByAppAndResParentAndResTypeIn(String app, String resPanrent, List<String> resTypes);
 
-    @Query(value = "SELECT MAX(res_code) FROM HT_BOA_IN_RESOURCE WHERE APP=?1  AND ((?2='NULL' AND RES_PARENT IS NULL) OR (RES_PARENT=?2)) AND RES_TYPE in(?3) ", nativeQuery = true)
-    String queryMaxResCodeByAppAndParentAndType(String app, String resPanrent, List<String> resTypes);
+    @Query(value = "SELECT MAX(res_code) FROM HT_BOA_IN_RESOURCE WHERE APP=?1  AND ((?2='NULL' AND RES_PARENT IS NULL) OR (RES_PARENT=?2)) AND RES_TYPE in(?3) AND RES_CODE like ?4", nativeQuery = true)
+    String queryMaxResCodeByAppAndParentAndType(String app, String resPanrent, List<String> resTypes, String resCodePrefix);
 }
