@@ -1,23 +1,25 @@
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8870/eureka/  # 配置注册中心url
+      defaultZone: http://10.110.1.240:30101/eureka/  # 配置注册中心url
 
 spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration,org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration.RabbitAnnotationDrivenConfiguration
   application:
       name: ht-config-client # 根据该值,去config-center中查找service0.yml
-  rabbitmq:
-      host: 10.110.1.240
-      port: 5672
-      username: admin
-      password: admin
-      virtual-host: /
+#  rabbitmq:
+#      host: 10.110.1.240
+#      port: 5672
+#      username: admin
+#      password: admin
+#      virtual-host: /
   cloud:
     config:
       discovery:
         enabled: true
         service-id: ussp-config-app
-      profile: dev
+      profile: sit
       username: root
       password: 123456
     bus:
