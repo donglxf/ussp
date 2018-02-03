@@ -45,7 +45,7 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://10.110.1.240:30101/eureka/
+      defaultZone: http://localhost:30101/eureka/
 logging:
   config: classpath:log4j2.xml
   level:
@@ -55,6 +55,6 @@ clms:
   microser:
     codeser: clms-codes-service
 ht.config.uc.api:
-  synch: false
+  synch: true
   package: com.ht.clms.product.resource;
   app: CL
