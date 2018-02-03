@@ -24,7 +24,6 @@ spring:
     maxActive: 10
     username: root
   redis:
-    password: tuandai888
     database: 0
     port: 6379
     pool:
