@@ -89,6 +89,7 @@ public class UserRoleResource {
         } else {
         	u.setCreatedDatetime(new Date());
         	u.setCreateOperator(userId);
+        	htBoaInUserRoleService.delete(u);
             u = htBoaInUserRoleService.add(u);
         }
         el = System.currentTimeMillis();
