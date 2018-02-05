@@ -71,10 +71,10 @@ eureka:
 spring: 
   profiles: uat
   rabbitmq: 
-      host: 120.79.47.252
+      host: 10.100.8.57
       port: 5672
-      username: admin
-      password: admin
+      username: guest
+      password: guest
       virtual-host: /
   cloud:
     config:
