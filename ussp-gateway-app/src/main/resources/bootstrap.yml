@@ -71,7 +71,7 @@ eureka:
 spring: 
   profiles: uat
   rabbitmq: 
-      host: 10.110.1.240
+      host: 120.79.47.252
       port: 5672
       username: admin
       password: admin
