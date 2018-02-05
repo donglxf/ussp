@@ -53,6 +53,12 @@ zuul:
       path: /drools/**
       serviceId: risk-drools
     #核心账务
+    cams-account-service:
+      path: /cams/account/**
+      serviceId: cams-account-service
+    cams-ui:
+      path: /cams/ui/**
+      serviceId: cams-ui
 
 gateway:
   security: 
@@ -67,5 +73,5 @@ ribbon:
 
 ht:
   ignoreUrl: #不验证的url(可以使用通配符（*）)
-     web: /uc/echo,/admin/*,/car/*,/rule/ui/* #不需要验证token
+     web: /uc/echo,/admin/*,/car/*,/rule/ui/*,/cams/ui/* #不需要验证token
      http: /auth/loadBtnAndTab,/auth/loadMenu,/check/key #需要验证token
