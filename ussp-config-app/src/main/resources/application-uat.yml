@@ -13,9 +13,9 @@ spring:
     username: admin
     password: admin
     virtual-host: /
-  cloud:
-    inetutils: 
-      preferred-networks: 10.200.1
+#  cloud:
+#    inetutils: 
+#      preferred-networks: 10.200.1
     config:
       bus:
         trace:

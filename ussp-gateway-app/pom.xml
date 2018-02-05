@@ -50,18 +50,6 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
-        <!-- mysql -->
-        <!-- 		<dependency> -->
-        <!-- 			<groupId>mysql</groupId> -->
-        <!-- 			<artifactId>mysql-connector-java</artifactId> -->
-        <!-- 		</dependency> -->
-
-        <!-- redis -->
-        <!-- 		<dependency> -->
-        <!-- 			<groupId>org.springframework.boot</groupId> -->
-        <!-- 			<artifactId>spring-boot-starter-data-redis</artifactId> -->
-        <!-- 		</dependency> -->
-
         <!-- jwt依赖 -->
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -123,11 +111,6 @@
             <artifactId>jackson-dataformat-yaml</artifactId>
         </dependency>
 
-        <dependency>
-            <artifactId>ussp-common</artifactId>
-            <groupId>com.ht.ussp</groupId>
-            <version>0.0.3</version>
-        </dependency>
 
 		<dependency>
 			<groupId>com.ht.ussp</groupId>
