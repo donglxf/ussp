@@ -3,21 +3,20 @@ server:
 spring:
   application:
     name: ussp-config-app
-  profiles:
-    active: UAT
   rabbitmq:
-    host: ${RABBITMQ_IP}
-    port: ${RABBITMQ_PORT}
-    username: ${RABBITMQ_USERNAME}
-    password: ${RABBITMQ_PASSWORD}
+    host: 10.100.8.57
+    port: 5672
+    username: guest
+    password: guest
     virtual-host: /
+  cloud: 
     config:
       bus:
         trace:
           enabled: true
       server:
         git:
-          uri: http://10.100.5.193:8000/root/config.git
+          uri: http://10.100.5.194:8000/root/config.git
           search-paths: /*
           username: root
           password: tuandai888
