@@ -88,6 +88,7 @@ public class UserPositionResource {
         } else {
         	u.setCreatedDatetime(new Date());
         	u.setCreateOperator(userId);
+        	htBoaInPositionUserService.delete(u);
             u = htBoaInPositionUserService.add(u);
         }
         el = System.currentTimeMillis();

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
@@ -95,29 +96,24 @@ public class UserAppResource {
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.info(logStart, "boaInRoleInfo: " + htBoaInUserApp, sl);
         HtBoaInUserApp u = null;
-        if(htBoaInUserApp.getId()!=null && htBoaInUserApp.getId()>0) {
-        	u = htBoaInUserAppService.findById(htBoaInUserApp.getId());
-        	if(u==null) {
-        		u = new HtBoaInUserApp();
-        	}
-        }else {
+        
+        //验证是否已经关联系统
+        String isUserApp = htBoaInUserAppService.findUserAndAppInfo(userId, htBoaInUserApp.getApp());
+        
+        if(isUserApp ==null ) {
         	u = new HtBoaInUserApp();
-        }
+        } 
        
         u.setCreatedDatetime(new Date());
         u.setLastModifiedDatetime(new Date());
-        u.setDelFlag(0);
+        u.setDelFlag(Constants.DEL_0);
         u.setUserId(htBoaInUserApp.getUserId());
         u.setApp(htBoaInUserApp.getApp());
-        if(htBoaInUserApp.getId()!=null && htBoaInUserApp.getId()>0) {
-        	u.setId(htBoaInUserApp.getId());
-        	u.setUpdateOperator(userId);
-        	u = htBoaInUserAppService.update(u);
-        } else {
+        if(isUserApp ==null ) {
         	u.setCreatedDatetime(new Date());
         	u.setCreateOperator(userId);
             u = htBoaInUserAppService.add(u);
-        }
+        } 
         el = System.currentTimeMillis();
         log.info(logEnd, "boaInRoleInfo: " + htBoaInUserApp, msg, el, el - sl);
         return Result.buildSuccess();

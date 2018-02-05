@@ -90,6 +90,7 @@ public class PositionRoleResource {
         } else {
         	u.setCreatedDatetime(new Date());
         	u.setCreateOperator(userId);
+        	htBoaInPositionRoleService.delete(u);
             u = htBoaInPositionRoleService.add(u);
         }
         el = System.currentTimeMillis();
