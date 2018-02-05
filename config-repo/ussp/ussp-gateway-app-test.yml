@@ -55,6 +55,20 @@ zuul:
     cams-ui:
       path: /cams/ui/**
       serviceId: cams-ui
+    #诉讼系统
+    litigation-service:
+      path: /lawService/**
+      serviceId: litigation-service
+    litigation-ui:
+      path: /LawUi/**
+      serviceId: litigation-ui
+    #贷后系统
+    alms-core-service:
+      path: /alms/**
+      serviceId: alms-core-service
+    alms-web-ui:
+      path: /alms/ui/**
+      serviceId: alms-web-ui
 
 gateway:
   security: 
@@ -69,5 +83,5 @@ ribbon:
 
 ht:
   ignoreUrl: #不验证的url(可以使用通配符（*）)
-     web: /uc/echo,/admin/*,/car/*,/rule/ui/*,/cams/ui/* #不需要验证token
+     web: /uc/echo,/admin/*,/car/*,/rule/ui/*,/cams/ui/*,/LawUi/*,/alms/ui/* #不需要验证token
      http: /auth/loadBtnAndTab,/auth/loadMenu,/check/key #需要验证token
