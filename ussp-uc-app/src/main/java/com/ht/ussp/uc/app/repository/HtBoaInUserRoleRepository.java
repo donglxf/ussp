@@ -35,6 +35,10 @@ public interface HtBoaInUserRoleRepository extends JpaRepository<HtBoaInUserRole
 	@Query("SELECT new com.ht.ussp.uc.app.model.BoaInRoleInfo(u.roleCode, u.roleName, u.roleNameCn,  u.status, u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,ur.delFlag,ur.id,u.app) "
 			+ "FROM HtBoaInUserRole ur ,HtBoaInRole u    WHERE  ur.roleCode = u.roleCode AND  (u.roleCode LIKE ?1 OR u.roleName LIKE ?1 OR u.roleNameCn LIKE ?1 ) and ur.userId=?2 GROUP BY u")
 	public Page<BoaInRoleInfo> listUserRoleByPageWeb(Pageable arg0, String search,String userId);
+
+	@Query("SELECT new com.ht.ussp.uc.app.model.BoaInRoleInfo(u.roleCode, u.roleName, u.roleNameCn,  u.status, u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,ur.delFlag,ur.id,u.app) "
+			+ "FROM HtBoaInUserRole ur ,HtBoaInRole u    WHERE  ur.roleCode = u.roleCode AND  u.roleCode =?1 and ur.userId=?2 GROUP BY u")
+	public List<BoaInRoleInfo> getUserRoleList(String roleCode, String userId);
 	
 	
 	/*@Query(value="select  r.id,r.role_code, r.role_Name, r.role_Name_Cn,  r.status, r.create_Operator, r.created_Datetime, r.update_Operator, r.last_Modified_Datetime,r.del_Flag"

@@ -102,5 +102,9 @@ public class HtBoaInPositionRoleService {
         result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
 		return result;
 	}
+
+	public List<HtBoaInPositionRole> getPositionRoleList(String roleCode, String positionCode) {
+		return this.htBoaInPositionRoleRepository.getPositionRoleList(roleCode,positionCode);
+	}
 	
 }

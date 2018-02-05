@@ -102,4 +102,8 @@ public class HtBoaInPositionUserService {
         result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
 		return result;
 	}
+
+	public List<BoaInPositionInfo> getPositionUser(String positionCode, String userId) {
+		return this.htBoaInPositionUserRepository.getPositionUser(positionCode,userId);
+	}
 }

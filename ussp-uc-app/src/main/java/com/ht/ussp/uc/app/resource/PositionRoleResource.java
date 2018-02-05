@@ -1,6 +1,7 @@
 package com.ht.ussp.uc.app.resource;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,10 +10,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInPositionRole;
 import com.ht.ussp.uc.app.domain.HtBoaInUserRole;
+import com.ht.ussp.uc.app.model.BoaInRoleInfo;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.service.HtBoaInPositionRoleService;
@@ -67,32 +70,24 @@ public class PositionRoleResource {
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.info(logStart, "boaInRoleInfo: " + htBoaInPositionRole, sl);
-        HtBoaInPositionRole u = null;
-        if(htBoaInPositionRole.getId()!=null && htBoaInPositionRole.getId()>0) {
-        	u = htBoaInPositionRoleService.findById(htBoaInPositionRole.getId());
-        	if(u==null) {
-        		u = new HtBoaInPositionRole();
-        	}
-        }else {
-        	u = new HtBoaInPositionRole();
-        }
+        HtBoaInPositionRole u = new HtBoaInPositionRole();
        
-        u.setCreatedDatetime(new Date());
-        u.setLastModifiedDatetime(new Date());
-        u.setDelFlag(0);
-        u.setRoleCode(htBoaInPositionRole.getRoleCode());
-        u.setPositionCode(htBoaInPositionRole.getPositionCode());
-        u.setRootOrgCode("HT");
-        if(htBoaInPositionRole.getId()!=null && htBoaInPositionRole.getId()>0) {
-        	u.setId(htBoaInPositionRole.getId());
-        	u.setUpdateOperator(userId);
-        	u = htBoaInPositionRoleService.update(u);
-        } else {
-        	u.setCreatedDatetime(new Date());
-        	u.setCreateOperator(userId);
-        	htBoaInPositionRoleService.delete(u);
-            u = htBoaInPositionRoleService.add(u);
-        }
+        
+        //验证是否已经分配角色
+        List<HtBoaInPositionRole> listHtBoaInPositionRole = htBoaInPositionRoleService.getPositionRoleList(htBoaInPositionRole.getRoleCode(),htBoaInPositionRole.getPositionCode());
+        
+		if (listHtBoaInPositionRole.isEmpty()) {
+			u.setRoleCode(htBoaInPositionRole.getRoleCode());
+			u.setPositionCode(htBoaInPositionRole.getPositionCode());
+			u.setCreatedDatetime(new Date());
+			u.setLastModifiedDatetime(new Date());
+			u.setDelFlag(Constants.DEL_0);
+			u.setRootOrgCode("HT");
+			u.setCreatedDatetime(new Date());
+			u.setCreateOperator(userId);
+			u = htBoaInPositionRoleService.add(u);
+		}
+        
         el = System.currentTimeMillis();
         log.info(logEnd, "boaInRoleInfo: " + htBoaInPositionRole, msg, el, el - sl);
         return Result.buildSuccess();

@@ -151,4 +151,7 @@ public class HtBoaInUserRoleService {
         result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
 		return result;
 	}
+	public List<BoaInRoleInfo> getUserRoleList(String roleCode, String userId) {
+		return htBoaInUserRoleRepository.getUserRoleList(roleCode,userId);
+	}
 }

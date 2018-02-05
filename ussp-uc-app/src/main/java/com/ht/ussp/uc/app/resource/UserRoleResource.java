@@ -1,6 +1,7 @@
 package com.ht.ussp.uc.app.resource;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,9 +10,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInUserRole;
+import com.ht.ussp.uc.app.model.BoaInRoleInfo;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
@@ -66,32 +69,22 @@ public class UserRoleResource {
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.info(logStart, "boaInRoleInfo: " + htBoaInUserRole, sl);
-        HtBoaInUserRole u = null;
-        if(htBoaInUserRole.getId() !=null && htBoaInUserRole.getId()>0) {
-        	u = htBoaInUserRoleService.findById(htBoaInUserRole.getId());
-        	if(u==null) {
-        		u = new HtBoaInUserRole();
-        	}
-        }else {
-        	u = new HtBoaInUserRole();
-        }
-       
-        u.setCreatedDatetime(new Date());
-        u.setLastModifiedDatetime(new Date());
-        u.setDelFlag(0);
-        u.setRoleCode(htBoaInUserRole.getRoleCode());
-        u.setUserId(htBoaInUserRole.getUserId());
+        HtBoaInUserRole u = new HtBoaInUserRole();
         
-        if(htBoaInUserRole.getId() !=null && htBoaInUserRole.getId()>0) {
-        	u.setId(htBoaInUserRole.getId());
-        	u.setUpdateOperator(userId);
-        	u = htBoaInUserRoleService.update(u);
-        } else {
-        	u.setCreatedDatetime(new Date());
-        	u.setCreateOperator(userId);
-        	htBoaInUserRoleService.delete(u);
-            u = htBoaInUserRoleService.add(u);
-        }
+        //验证是否已经分配角色
+        List<BoaInRoleInfo> listHtBoaInUserRole = htBoaInUserRoleService.getUserRoleList(htBoaInUserRole.getRoleCode(),htBoaInUserRole.getUserId());
+        
+		if (listHtBoaInUserRole.isEmpty()) {
+			u.setRoleCode(htBoaInUserRole.getRoleCode());
+			u.setUserId(htBoaInUserRole.getUserId());
+			u.setCreatedDatetime(new Date());
+			u.setLastModifiedDatetime(new Date());
+			u.setDelFlag(Constants.DEL_0);
+			u.setCreatedDatetime(new Date());
+			u.setCreateOperator(userId);
+			u = htBoaInUserRoleService.add(u);
+		}
+        
         el = System.currentTimeMillis();
         log.info(logEnd, "boaInRoleInfo: " + htBoaInUserRole, msg, el, el - sl);
         return Result.buildSuccess();

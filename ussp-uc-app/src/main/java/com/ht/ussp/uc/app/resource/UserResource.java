@@ -5,8 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import com.ht.ussp.base.UsspController;
-import com.ht.ussp.client.dto.LoginInfoDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ht.ussp.base.UsspController;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
@@ -155,15 +154,19 @@ public class UserResource extends UsspController {
 
         HtBoaInLogin u = htBoaInLoginService.findByUserId(userId);
         //验证原密码是否正确
-        if (!u.getPassword().equals(changePwd.getOldPwd())) {
+        /*if (!u.getPassword().equals(EncryptUtil.passwordEncrypt(changePwd.getOldPwd()))) {
             return new ResponseModal("500", "原密码输入不正确");
+        }*/
+        if(!EncryptUtil.matches(changePwd.getOldPwd(),u.getPassword())) {
+        	return new ResponseModal("500", "原密码输入不正确");
         }
+        
         u.setPassword(changePwd.getNewPwd());
 
         //记录历史密码
         HtBoaInPwdHist htBoaInPwdHist = new HtBoaInPwdHist();
         htBoaInPwdHist.setUserId(u.getUserId());
-        htBoaInPwdHist.setPassword(changePwd.getNewPwd());
+        htBoaInPwdHist.setPassword(EncryptUtil.passwordEncrypt(changePwd.getNewPwd()));
         htBoaInPwdHist.setPwdCreTime(new Timestamp(System.currentTimeMillis()));
         htBoaInPwdHist.setLastModifiedDatetime(new Date());
         htBoaInLoginService.update(u);

@@ -1,6 +1,7 @@
 package com.ht.ussp.uc.app.resource;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -98,22 +99,20 @@ public class UserAppResource {
         HtBoaInUserApp u = null;
         
         //验证是否已经关联系统
-        String isUserApp = htBoaInUserAppService.findUserAndAppInfo(userId, htBoaInUserApp.getApp());
+        List<HtBoaInUserApp> listHtBoaInUserApp = htBoaInUserAppService.getUserAppList(htBoaInUserApp.getApp(),htBoaInUserApp.getUserId());
         
-        if(isUserApp ==null ) {
-        	u = new HtBoaInUserApp();
-        } 
+		if (listHtBoaInUserApp.isEmpty()) {
+			u = new HtBoaInUserApp();
+			u.setCreatedDatetime(new Date());
+			u.setLastModifiedDatetime(new Date());
+			u.setDelFlag(Constants.DEL_0);
+			u.setUserId(htBoaInUserApp.getUserId());
+			u.setApp(htBoaInUserApp.getApp());
+			u.setCreatedDatetime(new Date());
+			u.setCreateOperator(userId);
+			u = htBoaInUserAppService.add(u);
+		}
        
-        u.setCreatedDatetime(new Date());
-        u.setLastModifiedDatetime(new Date());
-        u.setDelFlag(Constants.DEL_0);
-        u.setUserId(htBoaInUserApp.getUserId());
-        u.setApp(htBoaInUserApp.getApp());
-        if(isUserApp ==null ) {
-        	u.setCreatedDatetime(new Date());
-        	u.setCreateOperator(userId);
-            u = htBoaInUserAppService.add(u);
-        } 
         el = System.currentTimeMillis();
         log.info(logEnd, "boaInRoleInfo: " + htBoaInUserApp, msg, el, el - sl);
         return Result.buildSuccess();

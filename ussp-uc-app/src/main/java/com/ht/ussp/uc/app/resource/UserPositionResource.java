@@ -1,6 +1,7 @@
 package com.ht.ussp.uc.app.resource;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,9 +10,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInPositionUser;
+import com.ht.ussp.uc.app.model.BoaInPositionInfo;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.service.HtBoaInPositionUserService;
@@ -66,31 +69,21 @@ public class UserPositionResource {
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.info(logStart, "boaInRoleInfo: " + htBoaInPositionUser, sl);
-        HtBoaInPositionUser u = null;
-        if(htBoaInPositionUser.getId()!=null && htBoaInPositionUser.getId()>0) {
-        	u = htBoaInPositionUserService.findById(htBoaInPositionUser.getId());
-        	if(u==null) {
-        		u = new HtBoaInPositionUser();
-        	}
-        }else {
-        	u = new HtBoaInPositionUser();
-        }
-       
-        u.setCreatedDatetime(new Date());
-        u.setLastModifiedDatetime(new Date());
-        u.setDelFlag(0);
-        u.setUserId(htBoaInPositionUser.getUserId());
-        u.setPositionCode(htBoaInPositionUser.getPositionCode());
-        if(htBoaInPositionUser.getId()!=null && htBoaInPositionUser.getId()>0) {
-        	u.setId(htBoaInPositionUser.getId());
-        	u.setUpdateOperator(userId);
-        	u = htBoaInPositionUserService.update(u);
-        } else {
-        	u.setCreatedDatetime(new Date());
-        	u.setCreateOperator(userId);
-        	htBoaInPositionUserService.delete(u);
-            u = htBoaInPositionUserService.add(u);
-        }
+        HtBoaInPositionUser u = new HtBoaInPositionUser();
+        
+        //验证是否已经分配角色
+        List<BoaInPositionInfo> listBoaInPositionUser = htBoaInPositionUserService.getPositionUser(htBoaInPositionUser.getPositionCode(),htBoaInPositionUser.getUserId());
+        
+		if (listBoaInPositionUser.isEmpty()) {
+			u.setUserId(htBoaInPositionUser.getUserId());
+			u.setPositionCode(htBoaInPositionUser.getPositionCode());
+			u.setCreatedDatetime(new Date());
+			u.setLastModifiedDatetime(new Date());
+			u.setDelFlag(Constants.DEL_0);
+			u.setCreatedDatetime(new Date());
+			u.setCreateOperator(userId);
+			u = htBoaInPositionUserService.add(u);
+		}
         el = System.currentTimeMillis();
         log.info(logEnd, "boaInRoleInfo: " + htBoaInPositionUser, msg, el, el - sl);
         return Result.buildSuccess();
