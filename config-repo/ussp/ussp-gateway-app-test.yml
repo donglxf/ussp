@@ -67,8 +67,11 @@ zuul:
       path: /alms/**
       serviceId: alms-core-service
     alms-web-ui:
-      path: /alms/ui/**
+      path: /alms/core/**
       serviceId: alms-web-ui
+    alms-timer-service:
+      path: /alms/timer/**
+      serviceId: alms-timer-service
 
 gateway:
   security: 
