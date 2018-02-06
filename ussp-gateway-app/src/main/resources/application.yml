@@ -1,16 +1,90 @@
 server:
   port: 30111
 
+eureka:
+  instance:
+    prefer-ip-address: true
+
+zuul:
+  max:
+    host:
+      connections: 500
+  host:
+    socket-timeout-millis: 60000
+    connect-timeout-millis: 60000
+  routes:
+    #用户权限管理中心
+    ussp-uc:
+      path: /uc/**
+      serviceId: ussp-uc-app
+    #车全系统
+    cisp-web-service:
+      path: /admin/**
+      serviceId: cisp-web-service
+      sensitiveHeaders: "*"
+    cisp-car-service:
+      path: /car/**
+      serviceId: cisp-car-service
+    #额度系统
+    clms-limit-service:
+      path: /clms-limit-service/**
+      serviceId: clms-limit-service
+    clms-product-service:
+      path: /clms-product-service/**
+      serviceId: clms-product-service
+    clms-codes-service:
+      path: /clms-codes-service/**
+      serviceId: clms-codes-service
+    #风控系统
+    risk-ui:
+      path: /rule/ui/**
+      serviceId: risk-ui
+    rule-service:
+      path: /rule/service/**
+      serviceId: rule-service
+    risk-activiti:
+      path: /activiti/**
+      serviceId: risk-activiti-service
+    risk-drools:
+      path: /drools/**
+      serviceId: risk-drools
+    #核心账务
+    cams-account-service:
+      path: /cams/account/**
+      serviceId: cams-account-service
+    cams-ui:
+      path: /cams/ui/**
+      serviceId: cams-ui
+    #诉讼系统
+    litigation-service:
+      path: /lawService/**
+      serviceId: litigation-service
+    litigation-ui:
+      path: /lawUi/**
+      serviceId: litigation-ui
+   #贷后系统
+    alms-web-ui:
+      path: /alms/**
+      serviceId: alms-web-ui
+    alms-core-service:
+      path: /alms/core/**
+      serviceId: alms-core-service
+    alms-timer-service:
+      path: /alms/timer/**
+      serviceId: alms-timer-service
+
 gateway:
-  security: 
-    jwt: 
+  security:
+    jwt:
       tokenExpirationTime: 29  #分钟
       refreshTokenExpTime: 720
       tokenIssuer: qiuwenwu@hongte.info
       tokenSigningKey: xm8EV6Hy5RMFK4EEACIDAwQus
- 
+ribbon:
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
+
 ht:
   ignoreUrl: #不验证的url(可以使用通配符（*）)
-     web: uc/echo,/admin/*,/car/* #不需要验证token
-     http: /auth/loadBtnAndTab,/auth/loadMenu #需要验证token
- 
+     web: /uc/echo,/admin/*,/car/*,/rule/ui/*,/cams/ui/*,/LawUi/*,/alms/ui/* #不需要验证token
+     http: /auth/loadBtnAndTab,/auth/loadMenu,/check/key #需要验证token

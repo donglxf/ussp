@@ -2,11 +2,11 @@ spring:
   application:
     name: ussp-registry-app
   profiles:
-    active: native
+    active: local
  
 ---
 spring:
-  profiles: native
+  profiles: local
 server:
   port: 30101
 eureka:
@@ -15,11 +15,12 @@ eureka:
     lease-expiration-duration-in-seconds: 30
     lease-renewal-interval-in-seconds: 10
   server:
-    enable-self-preservation: false
+    enable-self-preservation: false  #关闭保护机制，以确保注册中心将不可用的实例正确剔除
   client:
-    registerWithEureka: false
-    fetchRegistry: false
-
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+        defaultZone: http://localhost:${server.port}/eureka/
 ---
 spring:
   profiles: dev
