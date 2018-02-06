@@ -1,6 +1,9 @@
 server:
   port: 30106
 spring:
+  application:
+    name: ussp-config-app
+  profiles: local
   cloud:
     config:
       server:
@@ -13,7 +16,6 @@ spring:
 eureka:
   instance:
     prefer-ip-address: true
-    #instance-id: ${spring.application.name}:${random.int}
 security:
   user:
     name: root
