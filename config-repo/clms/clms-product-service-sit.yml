@@ -42,10 +42,6 @@ spring:
       max-request-size: 10MB
   application:
     name: clms-product-service
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://10.110.1.240:30101/eureka/
 logging:
   config: classpath:log4j2.xml
   level:
