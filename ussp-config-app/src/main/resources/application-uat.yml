@@ -16,7 +16,7 @@ spring:
           enabled: true
       server:
         git:
-          uri: http://10.100.5.194:8000/root/config.git
+          uri: http://120.79.193.248/root/config.git
           search-paths: /*
           username: root
           password: tuandai888
