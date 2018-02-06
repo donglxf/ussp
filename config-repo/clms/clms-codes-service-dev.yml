@@ -3,6 +3,14 @@ server:
   tomcat:
     uri-encoding: UTF-8
 spring:
+  application:
+    name: clms-codes-service
+  rabbitmq:
+    host: 10.100.8.57
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
   mvc:
     favicon:
       enabled: false
@@ -21,9 +29,3 @@ spring:
       charset: UTF-8
       enabled: true
       force: true
-  application:
-    name: clms-codes-service
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://10.110.1.240:30101/eureka/
