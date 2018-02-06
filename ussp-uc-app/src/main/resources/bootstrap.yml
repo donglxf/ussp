@@ -1,5 +1,5 @@
 spring:
-  profiles.active: native
+  profiles.active: dev
 
 ---
 spring:
@@ -30,7 +30,6 @@ spring:
       discovery:
         enabled: true
         service-id: ussp-config-app
-      profile: sit
       username: root
       password: 123456
     bus:
@@ -58,7 +57,6 @@ spring:
       discovery:
         enabled: true
         service-id: ussp-config-app
-      profile: sit
       username: root
       password: 123456
     bus:
@@ -75,18 +73,11 @@ eureka:
 ---
 spring:
   profiles: uat
-  rabbitmq:
-    host: 10.100.5.193
-    port: 5672
-    username: admin
-    password: admin
-    virtual-host: /
   cloud:
     config:
       discovery:
         enabled: true
         service-id: ussp-config-app
-      profile: uat
       username: root
       password: 123456
     bus:
@@ -113,7 +104,6 @@ spring:
       discovery:
         enabled: true
         service-id: ussp-config-app
-      profile: prd
       username: root
       password: 123456
     bus:

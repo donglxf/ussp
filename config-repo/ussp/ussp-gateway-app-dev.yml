@@ -1,6 +1,14 @@
 server:
   port: 30111
 
+spring:
+  rabbitmq:
+    host: 10.110.1.240
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: /
+
 eureka:
   instance:
     prefer-ip-address: true
@@ -60,15 +68,15 @@ zuul:
       path: /lawService/**
       serviceId: litigation-service
     litigation-ui:
-      path: /lawUi/**
+      path: /LawUi/**
       serviceId: litigation-ui
-   #贷后系统
-    alms-web-ui:
-      path: /alms/**
-      serviceId: alms-web-ui
+    #贷后系统
     alms-core-service:
-      path: /alms/core/**
+      path: /alms/**
       serviceId: alms-core-service
+    alms-web-ui:
+      path: /alms/core/**
+      serviceId: alms-web-ui
     alms-timer-service:
       path: /alms/timer/**
       serviceId: alms-timer-service
