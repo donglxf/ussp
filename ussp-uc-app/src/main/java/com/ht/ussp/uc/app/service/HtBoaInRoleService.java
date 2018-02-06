@@ -35,11 +35,7 @@ public class HtBoaInRoleService {
         Example<HtBoaInRole> ex = Example.of(u, matcher);
         return this.htBoaInRoleRepository.findAll(ex);
     }
-    
-    public List<HtBoaInRole> findByRoleCodeIn(Set<String> roleCodes) {
-        return this.htBoaInRoleRepository.findByRoleCodeIn(roleCodes);
-    }
-    
+
     public Object findAllByPage(PageConf pageConf,Map<String, String> query) {
         Sort sort = null;
         Pageable pageable = null;

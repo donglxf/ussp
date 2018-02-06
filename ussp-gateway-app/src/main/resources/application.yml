@@ -1,48 +1,6 @@
 server:
   port: 30111
-spring:
-    application:
-      name: ussp-gateway-app
- 
-zuul:
-  routes:
-    #用户权限管理中心
-    ussp-uc:
-      path: /uc/**
-      serviceId: ussp-uc-app
-    #车全系统
-    cisp-web-service:
-      path: /admin/**
-      serviceId: cisp-web-service
-      sensitiveHeaders: "*"
-    cisp-car-service:
-      path: /car/**
-      serviceId: cisp-car-service
-    #风控系统
-    risk-ui:
-      path: /rule/ui/**
-      serviceId: risk-ui
-    rule-service:
-      path: /rule/service/**
-      serviceId: rule-service
-    risk-activiti:
-      path: /activiti/**
-      serviceId: risk-activiti-service
-    risk-drools:
-      path: /drools/**
-      serviceId: risk-drools
-    #额度系统
-    clms-codes-service:
-      path: /clms-codes/**
-      serviceId: clms-codes-service
-    clms-limit-service:
-      path: /clms-limit/**
-      serviceId: clms-limit-service
-    clms-product-service:
-      path: /clms-product/**
-      serviceId: clms-product-service
-    
-      
+
 gateway:
   security: 
     jwt: 
