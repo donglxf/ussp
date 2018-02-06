@@ -8,7 +8,6 @@ layui.define(['jquery', 'tab', 'ht_config'], function (exports) {
     var $ = layui.jquery
         , tab = layui.tab
         , config = layui.ht_config
-        , ELEM = '.layui-tab-item '
         , HtAuth = function () {
         this.config = {}
     };
@@ -18,15 +17,18 @@ layui.define(['jquery', 'tab', 'ht_config'], function (exports) {
         return that;
     };
     HtAuth.prototype.render = function (filter) {
-        var ELEM = $(ELEM).length == 0 ? "body" : ELEM,
+        var ELEM = $('.layui-tab-item ').length == 0 ? "body" : '.layui-tab-item ',
             elemTab = $(ELEM + function () {
-                return filter ? ('[lay-filter="' + filter + '"]') : '';
+                return filter ? (' [lay-filter="' + filter + '"]') : '';
             }())
             , elemButton = elemTab.find("[ht-auth]")
             , menuCode = elemTab.parent("[lay-item-id]").attr("lay-item-id")
             , frameMenuCode = $(self.frameElement).parent().attr("lay-item-id");
         menuCode = menuCode ? menuCode : (frameMenuCode ? frameMenuCode : tab.getId());
         AllAuth = AllAuth.length == 0 ? parent.AllAuth : AllAuth;
+        if (AllAuth == null || AllAuth.length == 0) {
+            this.load();
+        }
         layui.each(elemButton, function (index, btn) {
             var layAuth = $(btn).attr("ht-auth");
             var isAuth = false;
@@ -44,6 +46,7 @@ layui.define(['jquery', 'tab', 'ht_config'], function (exports) {
     HtAuth.prototype.load = function () {
         $.ajax({
             url: config.loadBtnAndTabUrl
+            , async: false
             , type: "GET"
             , error: function (xhr, status, thrown) {
                 layui.hint().error('Navbar error:AJAX请求出错.' + thrown);
