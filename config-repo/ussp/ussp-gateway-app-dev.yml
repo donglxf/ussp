@@ -1,6 +1,14 @@
 server:
   port: 30111
 
+spring:
+  rabbitmq:
+    host: 10.110.1.240
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: /
+
 eureka:
   instance:
     prefer-ip-address: true
