@@ -1,27 +1,26 @@
 package com.ht.ussp.uc.app.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInResource;
+import com.ht.ussp.uc.app.domain.HtBoaInRole;
 import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
+import com.ht.ussp.uc.app.repository.HtBoaInResourceRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInRoleRepository;
+import com.ht.ussp.uc.app.repository.HtBoaInRoleResRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInUserAppRepository;
+import com.ht.ussp.uc.app.vo.ResVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
-import com.ht.ussp.uc.app.repository.HtBoaInResourceRepository;
-import com.ht.ussp.uc.app.vo.ResVo;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author wim qiuwenwu@hongte.info
@@ -37,6 +36,8 @@ public class HtBoaInResourceService {
     private HtBoaInUserAppRepository htBoaInUserAppRepository;
     @Autowired
     private HtBoaInRoleRepository htBoaInRoleRepository;
+    @Autowired
+    private HtBoaInRoleResRepository htBoaInRoleResRepository;
 
     public List<ResVo> queryResForY(List<String> res_type, String app) {
 
@@ -143,19 +144,30 @@ public class HtBoaInResourceService {
      * @Date 2018/1/22 21:11
      */
     public List<ResVo> loadByUserIdAndApp(String userId, String app, String[] resTypes) {
-        List<ResVo> resVoList = null;
+        List<ResVo> resVoList;
         HtBoaInUserApp userApp = htBoaInUserAppRepository.findByUserIdAndApp(userId, app);
         //判断是否有系统访问权限
-        if (userApp != null) {
-            //判断是否是管理员
-            if ("Y".equals(userApp.getController())) {//是管理员，则获取该系统的所有资源
-                resVoList = htBoaInResourceRepository.queryResForY(Arrays.asList(resTypes), app);
-            } else {//不是管理员，则通过岗位、角色获取资源
-                //整合所有角色
-                List<String> roleList = htBoaInRoleRepository.findRoleCodeByUserId(userId);
-                //通过角色查询资源
-                resVoList = htBoaInResourceRepository.queryResForN(roleList, Arrays.asList(resTypes), app);
+        if (userApp == null) {
+            return null;
+        }
+        //判断是否是管理员
+        if ("Y".equals(userApp.getController())) {//是管理员，则获取该系统的所有资源
+            resVoList = htBoaInResourceRepository.queryResForY(Arrays.asList(resTypes), app);
+        } else {//不是管理员，则通过岗位、角色获取资源
+            //整合所有角色
+            List<String> roleCodeList = htBoaInRoleRepository.findRoleCodeByUserId(userId);
+            //如果没有角色，则返回空，说明资源为空
+            if (roleCodeList == null || roleCodeList.size() == 0) {
+                return null;
             }
+            //通过角色代码获取资源代码
+            List<String> resCodeList = htBoaInRoleResRepository.queryResByCode(roleCodeList);
+            //如果没有资源，则返回空
+            if (resCodeList == null || resCodeList.size() == 0) {
+                return null;
+            }
+            //通过角色查询资源
+            resVoList = htBoaInResourceRepository.queryResForN(resCodeList, Arrays.asList(resTypes), app);
         }
         return resVoList;
     }

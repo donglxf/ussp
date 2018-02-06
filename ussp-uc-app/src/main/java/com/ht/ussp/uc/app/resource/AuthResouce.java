@@ -86,26 +86,8 @@ public class AuthResouce {
         }
         String userId = userVo.getUserId();
         String app = userVo.getApp();
-        String controller = userVo.getController();
 
-        List<String> res_types = new ArrayList<String>();
-
-        // 定义权限分组名称LIST
-        List<ResVo> module_res = new ArrayList<ResVo>();
-        List<ResVo> menu_res = new ArrayList<ResVo>();
-        List<ResVo> button_res = new ArrayList<ResVo>();
-        List<ResVo> api_res = new ArrayList<ResVo>();
-
-        // 定义存储到LIST中的资源KEY值
-        StringBuffer module_key = new StringBuffer();
-        StringBuffer menu_key = new StringBuffer();
-        StringBuffer button_key = new StringBuffer();
-        StringBuffer api_key = new StringBuffer();
-        module_key.append(userId).append(":").append(app).append(":").append("module");
-        menu_key.append(userId).append(":").append(app).append(":").append("menu");
-        button_key.append(userId).append(":").append(app).append(":").append("btn");
-        api_key.append(userId).append(":").append(app).append(":").append("api");
-
+        List<String> res_types = new ArrayList<>();
         // 所有资源类型
         res_types.add(Constants.RES_TYPE_BUTTON);
         res_types.add(Constants.RES_TYPE_GROUP);
@@ -113,26 +95,43 @@ public class AuthResouce {
         res_types.add(Constants.RES_TYPE_MODULE);
         res_types.add(Constants.RES_TYPE_TAB);
         res_types.add(Constants.RES_TYPE_API);
+
+        // 定义权限分组名称LIST
+        List<ResVo> module_res = new ArrayList<>();
+        List<ResVo> menu_res = new ArrayList<>();
+        List<ResVo> button_res = new ArrayList<>();
+        List<ResVo> api_res = new ArrayList<>();
+
+        // 定义存储到LIST中的资源KEY值
+        String module_key = String.format("%s:%s:%s", userId, app, "module");
+        String menu_key = String.format("%s:%s:%s", userId, app, "menu");
+        String button_key = String.format("%s:%s:%s", userId, app, "btn");
+        String api_key = String.format("%s:%s:%s", userId, app, "api");
+
         // 管理员资源权限操作
-        if ("Y".equals(controller)) {
-            List<ResVo> res = htBoaInResourceService.queryResForY(res_types, app);
+//        if ("Y".equals(controller)) {
+//            List<ResVo> res = htBoaInResourceService.queryResForY(res_types, app);
+//            addToList(res, module_res, menu_res, button_res, api_res);
+//        }
+//
+//        // 非管理员权限操作
+//        if ("N".equals(controller)) {
+//            List<String> roleCodes = htBoaInUserRoleService.getAllRoleCodes(userId);
+//            if (roleCodes.isEmpty()) {
+//                rm.setSysStatus(SysStatus.NO_ROLE);
+//                return rm;
+//            }
+//            List<String> res_code = htBoaInRoleResService.queryResByCode(roleCodes.toArray(new String[]{}));
+//
+//            if (res_code.size() > 0) {
+//                List<ResVo> res = htBoaInResourceService.queryResForN(res_code, res_types, app);
+//
+//                addToList(res, module_res, menu_res, button_res, api_res);
+//            }
+//        }
+        List<ResVo> res = htBoaInResourceService.loadByUserIdAndApp(userId, app, res_types.toArray(new String[res_types.size()]));
+        if (res != null && res.size() > 0) {
             addToList(res, module_res, menu_res, button_res, api_res);
-        }
-
-        // 非管理员权限操作
-        if ("N".equals(controller)) {
-            List<String> roleCodes = htBoaInUserRoleService.getAllRoleCodes(userId);
-            if (roleCodes.isEmpty()) {
-                rm.setSysStatus(SysStatus.NO_ROLE);
-                return rm;
-            }
-            List<String> res_code = htBoaInRoleResService.queryResByCode(roleCodes.toArray(new String[]{}));
-
-            if (res_code.size() > 0) {
-                List<ResVo> res = htBoaInResourceService.queryResForN(res_code, res_types, app);
-
-                addToList(res, module_res, menu_res, button_res, api_res);
-            }
         }
         // api权限不能为空
 //		if (api_res.isEmpty()) {
@@ -140,24 +139,25 @@ public class AuthResouce {
 //			return rm;
 //		}
         // 登录需要重新获取资源，保存到REDIS
+        redis.delete(module_key);
+        redis.delete(menu_key);
+        redis.delete(button_key);
+        redis.delete(api_key);
+
         if (module_res != null && module_res.size() > 0) {
-            redis.delete(module_key.toString());
-            redis.opsForList().leftPushAll(module_key.toString(), FastJsonUtil.objectToJson(module_res));
+            redis.opsForList().leftPushAll(module_key, FastJsonUtil.objectToJson(module_res));
         }
 
         if (menu_res != null && menu_res.size() > 0) {
-            redis.delete(menu_key.toString());
-            redis.opsForList().leftPushAll(menu_key.toString(), FastJsonUtil.objectToJson(menu_res));
+            redis.opsForList().leftPushAll(menu_key, FastJsonUtil.objectToJson(menu_res));
         }
 
         if (button_res != null && button_res.size() > 0) {
-            redis.delete(button_key.toString());
-            redis.opsForList().leftPushAll(button_key.toString(), FastJsonUtil.objectToJson(button_res));
+            redis.opsForList().leftPushAll(button_key, FastJsonUtil.objectToJson(button_res));
         }
 
         if (api_res != null && api_res.size() > 0) {
-            redis.delete(api_key.toString());
-            redis.opsForList().leftPushAll(api_key.toString(), FastJsonUtil.objectToJson(api_res));
+            redis.opsForList().leftPushAll(api_key, FastJsonUtil.objectToJson(api_res));
         }
 
         rm.setSysStatus(SysStatus.SUCCESS);
