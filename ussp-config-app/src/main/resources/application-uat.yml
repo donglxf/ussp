@@ -1,19 +1,19 @@
 server:
-  port: ${SERVER_PORT}
+  port: 30106
 spring:
-  application:
-    name: ussp-config-app
   rabbitmq:
-    host: 10.100.8.57
+    host: 10.110.1.240
     port: 5672
-    username: guest
-    password: guest
+    username: admin
+    password: admin
     virtual-host: /
-  cloud: 
+  cloud:
+    inetutils:
+      preferred-networks: 10.200.1
+    bus:
+      trace:
+        enabled: true
     config:
-      bus:
-        trace:
-          enabled: true
       server:
         git:
           uri: http://120.79.193.248/root/config.git
@@ -24,9 +24,10 @@ spring:
 eureka:
   instance:
     prefer-ip-address: true
+    #instance-id: ${spring.application.name}:${random.int}
   client:
     serviceUrl:
-      defaultZone:  ${EUREKA_SERVER_ADDRESS}
+      defaultZone: http://120.79.47.252:30101/eureka/,http://120.79.47.252:30102/eureka/,http://120.79.47.252:30103/eureka/ # ����ע������url
 
 security:
   user:
