@@ -1,0 +1,41 @@
+server:
+  port: 30106
+spring:
+  profiles: dev
+  rabbitmq:
+    host: 10.110.1.240
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: /
+  cloud:
+    inetutils:
+      preferred-networks: 10.200.1
+    bus:
+      trace:
+        enabled: true
+    config:
+      server:
+        git:
+          uri: http://10.110.1.240/dev2/ussp.git
+          search-paths: config-repo/*
+          username: config
+          password: ht_config
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    #instance-id: ${spring.application.name}:${random.int}
+  client:
+    serviceUrl:
+      defaultZone: http://120.79.47.252:30101/eureka/,http://120.79.47.252:30102/eureka/,http://120.79.47.252:30103/eureka/ # ÅäÖÃ×¢²áÖĞĞÄurl
+
+security:
+  user:
+    name: root
+    password: 123456
+
+management:
+  security:
+    enabled: false
+
