@@ -1,7 +1,6 @@
 server:
   port: 30106
 spring:
-  profiles: dev
   rabbitmq:
     host: 10.110.1.240
     port: 5672

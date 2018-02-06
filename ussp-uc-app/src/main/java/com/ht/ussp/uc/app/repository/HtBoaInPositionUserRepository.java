@@ -32,4 +32,7 @@ public interface HtBoaInPositionUserRepository extends JpaRepository<HtBoaInPosi
 	 @Query("SELECT new com.ht.ussp.uc.app.model.BoaInPositionInfo (pu.id,u.positionCode, u.positionName, u.positionNameCn,  u.orgPath, u.sequence, u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,pu.delFlag,u.status) FROM HtBoaInPosition u,   HtBoaInPositionUser pu WHERE u.positionCode = pu.positionCode   AND ( u.positionCode LIKE ?1 OR u.positionName LIKE ?1 OR u.positionNameCn LIKE ?1 ) AND pu.userId = ?2  GROUP BY u")
 	 public Page<BoaInPositionInfo> listPositionUserByPage(Pageable arg0, String search,String userId);
 
+	 @Query("SELECT new com.ht.ussp.uc.app.model.BoaInPositionInfo (pu.id,u.positionCode, u.positionName, u.positionNameCn,  u.orgPath, u.sequence, u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,pu.delFlag,u.status) FROM HtBoaInPosition u,   HtBoaInPositionUser pu WHERE u.positionCode = pu.positionCode   AND u.positionCode = ?1 AND pu.userId = ?2  GROUP BY u")
+	 public List<BoaInPositionInfo> getPositionUser(String positionCode, String userId);
+
 }

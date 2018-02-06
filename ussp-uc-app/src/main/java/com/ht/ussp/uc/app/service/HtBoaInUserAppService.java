@@ -165,4 +165,9 @@ public class HtBoaInUserAppService {
     public void delete(HtBoaInUserApp u) {
         this.htBoaInUserAppRepository.delete(u);
     }
+    
+    public List<HtBoaInUserApp> getUserAppList(String app, String userId) {
+    	List<HtBoaInUserApp> listHtBoaInUserApp = htBoaInUserAppRepository.getUserAppList(app,userId);
+        return listHtBoaInUserApp;
+    }
 }
