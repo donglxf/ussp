@@ -3,6 +3,14 @@ server:
   tomcat:
     uri-encoding: UTF-8
 spring:
+  application:
+    name: clms-limit-service
+  rabbitmq:
+    host: 10.100.8.57
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
   mvc:
     favicon:
       enabled: false
@@ -40,12 +48,6 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
-  application:
-    name: clms-limit-service
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://10.110.1.240:30101/eureka/
 logging:
   config: classpath:log4j2.xml
   level:
@@ -54,3 +56,7 @@ logging:
 clms:
   microser:
     codeser: clms-codes-service
+ht.config.uc.api:
+  synch: true
+  package: com.ht.clms.limit.resource;
+  app: CL

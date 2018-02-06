@@ -7,7 +7,7 @@
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间         版本号             描述
  */
-package com.ht.ussp.init;
+package com.ht.ussp.bean;
 
 import com.ht.ussp.client.UCClient;
 import com.ht.ussp.client.dto.ApiResourceDto;
@@ -38,13 +38,13 @@ import java.util.Map;
  */
 @Log4j2
 @Component
-public class ResourceApiSynch {
+public class ResourceApiSynchHelper {
 
     @Autowired(required = false)
     private UCClient ucClient;
 
     @Autowired
-    public ResourceApiSynch(ApplicationContext applicationContext, @Value("${ht.config.uc.api.synch:false}") boolean synch_api, @Value("${ht.config.uc.api.packages:com.ht}") String packages, @Value("${ht.config.uc.api.app:}") String app) {
+    public ResourceApiSynchHelper(ApplicationContext applicationContext, @Value("${ht.config.uc.api.synch:false}") boolean synch_api, @Value("${ht.config.uc.api.packages:com.ht}") String packages, @Value("${ht.config.uc.api.app:}") String app) {
         System.out.println("是否同步：" + synch_api + "\t" + packages + "\t" + app);
         if (synch_api) {
             if (StringUtils.isEmpty(app)) {
