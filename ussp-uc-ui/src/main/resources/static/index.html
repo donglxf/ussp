@@ -68,9 +68,8 @@
                 </dl>
             </li>
             <li class="layui-nav-item">
-                <a href="javascript:;">
+                <a href="javascript:;" id="userName">
                     <!-- <img src="http://m.zhengjinfan.cn/images/0.jpg" class="layui-nav-img">-->
-                    test
                 </a>
                 <dl class="layui-nav-child">
                     <dd>
@@ -195,6 +194,14 @@
             });
             //初始化权限资源
            // ht_auth.load();
+            $.get(config.basePath +"user/in/selfinfo" , null, function (result) {
+          		 //表单数据填充
+                   $.each(result.result, function (name, value) {
+                   	if("userName"==name){
+                   		 $("#userName").html(value);
+                   	}
+                   });
+          	    });
         });
     });
 </script>
