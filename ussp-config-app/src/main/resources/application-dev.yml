@@ -1,7 +1,19 @@
 server:
   port: 30106
 spring:
+  profiles: dev
+  rabbitmq:
+    host: 10.110.1.240
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: /
   cloud:
+    inetutils:
+      preferred-networks: 10.200.1
+    bus:
+      trace:
+        enabled: true
     config:
       server:
         git:
@@ -14,6 +26,9 @@ eureka:
   instance:
     prefer-ip-address: true
     #instance-id: ${spring.application.name}:${random.int}
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:30101/eureka/  # 闁板秶鐤嗗▔銊ュ斀娑擃厼绺緐rl
 security:
   user:
     name: root

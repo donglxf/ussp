@@ -1,56 +1,52 @@
 spring:
   application:
-    name: ussp-uc-app
-  cloud:
-    config:
-      discovery:
-        enabled: true
-        service-id: ussp-config-app
-    bus:
-      enabled: true
+    name: ussp-config-app
   profiles:
     active: local
-eureka:
-  instance:
-    prefer-ip-address: true
-
 ---
 spring:
   profiles: local
   cloud:
-    config:
-      enabled: false
     bus:
       enabled: false
-
 eureka:
+  instance:
+    prefer-ip-address: true
   client:
     serviceUrl:
       defaultZone: http://localhost:30101/eureka/
-
+      
 ---
 spring:
   profiles: dev
-
+  port: ${SERVER_PORT}
 eureka:
+  instance:
+    prefer-ip-address: true
   client:
     serviceUrl:
       defaultZone: http://10.110.1.240:30101/eureka/
-
+      
 ---
 spring:
   profiles: sit
+  port: ${SERVER_PORT}
 
 eureka:
+  instance:
+    prefer-ip-address: true
   client:
     serviceUrl:
       defaultZone: ${EUREKA_SERVER_ADDRESS}
 
 ---
-spring:
+spring: 
   profiles: uat
+  port: ${SERVER_PORT}
 
 eureka:
+  instance:
+    prefer-ip-address: true
   client:
     serviceUrl:
       defaultZone: ${EUREKA_SERVER_ADDRESS}
@@ -58,8 +54,11 @@ eureka:
 ---
 spring:
   profiles: prd
+  port: ${SERVER_PORT}
 
 eureka:
+  instance:
+    prefer-ip-address: true
   client:
     serviceUrl:
       defaultZone: ${EUREKA_SERVER_ADDRESS}
