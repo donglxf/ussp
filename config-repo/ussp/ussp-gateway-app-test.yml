@@ -60,15 +60,15 @@ zuul:
       path: /lawService/**
       serviceId: litigation-service
     litigation-ui:
-      path: /LawUi/**
+      path: /lawUi/**
       serviceId: litigation-ui
-    #贷后系统
-    alms-core-service:
-      path: /alms/**
-      serviceId: alms-core-service
+   #贷后系统
     alms-web-ui:
-      path: /alms/core/**
+      path: /alms/**
       serviceId: alms-web-ui
+    alms-core-service:
+      path: /alms/core/**
+      serviceId: alms-core-service
     alms-timer-service:
       path: /alms/timer/**
       serviceId: alms-timer-service
