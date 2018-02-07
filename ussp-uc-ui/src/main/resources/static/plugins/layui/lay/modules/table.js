@@ -1003,14 +1003,10 @@ layui.define(['laytpl', 'laypage', 'layer', 'form'], function (exports) {
                 that.setCheckData(index, checked);
                 that.syncCheckAll();
             }
-            //modify by tanrq 2018/1/20 增加返回参数allCheckbox，checkbox，that
             layui.event.call(this, MOD_NAME, 'checkbox(' + filter + ')', {
                 checked: checked
                 , data: table.cache[that.key] ? (table.cache[that.key][index] || {}) : {}
                 , type: isAll ? 'all' : 'one'
-                , allCheckbox: childs
-                , checkbox: checkbox
-                , that: that
             });
         });
 
@@ -1113,16 +1109,6 @@ layui.define(['laytpl', 'laypage', 'layer', 'form'], function (exports) {
                     }
                 });
             }
-            //add by tanrq 2018/1/19 新增行选中事件
-            var checkbox = othis.parents("tr").find('input[name="layTableCheckbox"]+');
-            var index = othis.parents("tr").eq(0).data('index');
-            layui.event.call(this, MOD_NAME, 'rowClick(' + filter + ')', {
-                that: that
-                , data: table.cache[that.key] ? (table.cache[that.key][index] || {}) : {}
-                , checkbox: checkbox
-                , allCheckbox: othis.parents("table").find('input[name="layTableCheckbox"]+')
-                , index: index
-            });
         });
 
         //工具条操作事件

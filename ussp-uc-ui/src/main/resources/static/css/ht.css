@@ -1,7 +1,16 @@
 .layui-fluid {
     background: white;
     padding: 15px;
+    ccoverflow: hidden
 }
+
+/*.layui-fluid:after,.layui-tab-content:after,.layui-tab-item:after,.layui-tab:after {*/
+    /*content: '.';*/
+    /*display: block;*/
+    /*height: 0px;*/
+    /*clear: both;*/
+    /*visibility: hidden;*/
+/*}*/
 
 /*输入框样式*/
 .layui-input-sm {

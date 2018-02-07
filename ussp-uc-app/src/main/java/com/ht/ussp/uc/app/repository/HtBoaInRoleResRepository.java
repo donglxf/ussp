@@ -1,14 +1,12 @@
 package com.ht.ussp.uc.app.repository;
 
-import java.util.List;
-
 import com.ht.ussp.uc.app.domain.HtBoaInRoleRes;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.ht.ussp.uc.app.domain.HtBoaInResource;
+import java.util.List;
 
 /**
  * @author wim qiuwenwu@hongte.info
@@ -21,4 +19,6 @@ public interface HtBoaInRoleResRepository extends JpaSpecificationExecutor<HtBoa
     List<String> queryResByCode(@Param("role_code") List<String> role_code);
 
     int deleteByRoleCode(String roleCode);
+
+    List<HtBoaInRoleRes> findByResCode(String resCode);
 }

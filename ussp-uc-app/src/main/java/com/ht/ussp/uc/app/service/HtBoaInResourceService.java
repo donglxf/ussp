@@ -3,7 +3,7 @@ package com.ht.ussp.uc.app.service;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInResource;
-import com.ht.ussp.uc.app.domain.HtBoaInRole;
+import com.ht.ussp.uc.app.domain.HtBoaInRoleRes;
 import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
 import com.ht.ussp.uc.app.repository.HtBoaInResourceRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInRoleRepository;
@@ -15,10 +15,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -248,5 +250,48 @@ public class HtBoaInResourceService {
             return String.format("%s%02d", resCodePrefix, (index + 1));
         }
         return "";
+    }
+
+    /**
+     * API资源绑定父资源，同时绑定父资源对应的角色<br>
+     *
+     * @param parentCode   父资源代码
+     * @param resourceList api资源集合
+     * @param userName     操作的用户
+     * @return true 绑定成功，false 绑定失败
+     * @author 谭荣巧
+     * @Date 2018/2/7 21:19
+     */
+    @Transactional
+    public boolean relevance(String parentCode, List<HtBoaInResource> resourceList, String userName) {
+        //API资源绑定父资源
+        List<HtBoaInResource> newList = new ArrayList<>();
+        for (HtBoaInResource resource : resourceList) {
+            if (!StringUtils.isEmpty(resource.getResParent())) {
+                resource.setId(null);
+            }
+            //需要重置资源编码
+            resource.setResCode(createResourceCode(resource.getApp(), parentCode, "api"));
+            resource.setResParent(parentCode);
+            newList.add(resource);
+        }
+        save(newList);
+        //API资源绑定父资源对应的角色
+        List<HtBoaInRoleRes> roleResList = htBoaInRoleResRepository.findByResCode(parentCode);
+        List<HtBoaInRoleRes> newHtBoaInRoleResList = new ArrayList<>();
+        HtBoaInRoleRes newHtBoaInRoleRes;
+        for (HtBoaInRoleRes htBoaInRoleRes : roleResList) {
+            for (HtBoaInResource resource : newList) {
+                newHtBoaInRoleRes = new HtBoaInRoleRes();
+                newHtBoaInRoleRes.setResCode(resource.getResCode());
+                newHtBoaInRoleRes.setRoleCode(htBoaInRoleRes.getRoleCode());
+                newHtBoaInRoleRes.setUpdateOperator(userName);
+                newHtBoaInRoleRes.setCreateOperator(userName);
+                newHtBoaInRoleRes.setDelFlag(0);
+                newHtBoaInRoleResList.add(newHtBoaInRoleRes);
+            }
+        }
+        htBoaInRoleResRepository.save(newHtBoaInRoleResList);
+        return true;
     }
 }

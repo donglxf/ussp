@@ -9,13 +9,8 @@
  */
 package com.ht.ussp.uc.app.resource;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
-
+import com.ht.ussp.bean.LoginUserInfoHelper;
+import com.ht.ussp.client.dto.LoginInfoDto;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInResource;
@@ -25,9 +20,13 @@ import com.ht.ussp.uc.app.vo.AppAndResourceVo;
 import com.ht.ussp.uc.app.vo.RelevanceApiVo;
 import com.ht.ussp.uc.app.vo.ResourcePageVo;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
-
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 资源操作类<br>
@@ -40,6 +39,10 @@ import lombok.extern.log4j.Log4j2;
 @RequestMapping(value = "/resource")
 @Log4j2
 public class ResResource {
+
+
+    @Autowired
+    private LoginUserInfoHelper loginUserInfoHelper;
     @Autowired
     private HtBoaInResourceService htBoaInResourceService;
     @Autowired
@@ -165,17 +168,9 @@ public class ResResource {
      */
     @PostMapping("/relevance")
     public Result relevance(@RequestBody RelevanceApiVo relevanceApiVo) {
-        List<HtBoaInResource> newList = new ArrayList<>();
-        List<HtBoaInResource> resourceList = relevanceApiVo.getResourceList();
-        for (HtBoaInResource resource : resourceList) {
-            if (!StringUtils.isEmpty(resource.getResParent())) {
-                resource.setId(null);
-            }
-            resource.setResParent(relevanceApiVo.getParentCode());
-            newList.add(resource);
-        }
-        List<HtBoaInResource> resultList = htBoaInResourceService.save(newList);
-        if (resultList != null && resultList.size() > 0) {
+        LoginInfoDto loginInfoDto = loginUserInfoHelper.getLoginInfo();
+        boolean isRelevance = htBoaInResourceService.relevance(relevanceApiVo.getParentCode(), relevanceApiVo.getResourceList(), loginInfoDto.getUserName());
+        if (isRelevance) {
             return Result.buildSuccess();
         }
         return Result.buildFail();

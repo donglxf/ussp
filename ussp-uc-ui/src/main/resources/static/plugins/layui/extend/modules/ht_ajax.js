@@ -77,10 +77,12 @@ layui.define(["ht_cookie", "ht_config"], function (exports) {
 
                     // 重写jquery的ajax方法
                     $.ajax = function (opt) {
-                        //所有ajax请求前先验证token是否存在
-                        var isValidation = ht_ajax.validationAndRefreshToken(opt.noToken);
-                        if (!isValidation) {
-                            return false;
+                        if (!config.isLocal) {
+                            //所有ajax请求前先验证token是否存在
+                            var isValidation = ht_ajax.validationAndRefreshToken(opt.noToken);
+                            if (!isValidation) {
+                                return false;
+                            }
                         }
                         //因为可能存在同域名下的不同异步请求，所有不能通过地址过滤的方式来判断是否需要拼接basePath
                         // var ignoreUrl = ['.js', '.css', '.html', '.htm', '.png', '.gif', '.jpg', '.icon'];
@@ -112,7 +114,7 @@ layui.define(["ht_cookie", "ht_config"], function (exports) {
                                     fn.error(XMLHttpRequest, textStatus, errorThrown);
                                 },
                                 success: function (data, textStatus) {
-                                    if (data != null) {
+                                    if (!config.isLocal && data != null) {
                                         switch (data["status_code"]) {
                                             case "9921"://TOKEN过期
                                             case "9922"://验签失败
@@ -135,19 +137,19 @@ layui.define(["ht_cookie", "ht_config"], function (exports) {
                                 }
                             }
                         );
-
-                        var headers = {
-                            app: config.app /*系统编码统一通过http headers进行传输*/
+                        if (!config.isLocal) {
+                            var headers = {
+                                app: config.app /*系统编码统一通过http headers进行传输*/
+                            }
+                            //noToken 默认为false，当为true时，则不传输token
+                            if (opt.noToken == false || !opt.noToken) {
+                                headers.Authorization = "Bearer " + cookie.getToken();
+                            }
+                            headers = $.extend({}, opt.headers, headers);
+                            $.extend(opt, {
+                                headers: $.extend({}, opt.headers, headers)
+                            });
                         }
-                        //noToken 默认为false，当为true时，则不传输token
-                        if (opt.noToken == false || !opt.noToken) {
-                            headers.Authorization = "Bearer " + cookie.getToken();
-                        }
-                        headers = $.extend({}, opt.headers, headers);
-                        $.extend(opt, {
-                            headers: $.extend({}, opt.headers, headers)
-                        });
-
                         return _ajax(opt);
                     }
                     ;
