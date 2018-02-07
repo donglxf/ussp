@@ -20,6 +20,6 @@ logging:
 
     
 ht.config.uc.api:
-  synch: true #ÊÇ·ñÍ¬²½API×ÊÔ´µ½ÓÃ»§È¨ÏŞÖĞĞÄ
-  packages: com.ht.cams.account.controller #API×ÊÔ´É¨ÃèµÄ°ü£¬¿ÉÓÃ¶à¸ö£¬¶à¸öÊ¹ÓÃ¡°,¡±·Ö¸ô
+  synch: true #æ˜¯å¦åŒæ­¥APIèµ„æºåˆ°ç”¨æˆ·æƒé™ä¸­å¿ƒ
+  packages: com.ht.cams.account.controller #APIèµ„æºæ‰«æçš„åŒ…ï¼Œå¯ç”¨å¤šä¸ªï¼Œå¤šä¸ªä½¿ç”¨â€œ,â€åˆ†éš”
   app: CAMS
