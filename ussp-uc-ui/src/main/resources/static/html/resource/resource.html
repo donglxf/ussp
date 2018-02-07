@@ -2,9 +2,15 @@
     <div class="tree col-xs-3" style="">
         <div>
             <div class="tree_search">
-                <div class="input-group input-group-sm">
-                    <input type="text" id="user_search_tree_org" class="form-control" placeholder="请输入机构名"/>
-                    <div id="user_btn_refresh_tree" class="input-group-addon btn" title="刷新">
+                <div class="input-group input-group-sm" id="resource_tree">
+                    <input type="text" id="user_search_tree_org" class="form-control" placeholder="请输入资源名称"/>
+                    <div data-type="expandAll" class="input-group-addon btn" title="展开所有">
+                        <i class="fa fa-plus-square"></i>
+                    </div>
+                    <div data-type="collapseAll" class="input-group-addon btn" title="收起所有">
+                        <i class="fa fa-minus-square"></i>
+                    </div>
+                    <div data-type="refresh" class="input-group-addon btn" title="刷新">
                         <i class="fa fa-refresh"></i>
                     </div>
                 </div>
@@ -23,8 +29,9 @@
                     <div class="row-lg">
                         <div class="row-lg">
                             <div class="toolbarBtn btn-group">
-                                <button class="layui-btn layui-btn-sm" title="新增" data-type="add" data-res-type="menu">
-                                    新增
+                                <button class="layui-btn layui-btn-sm" title="新增菜单" data-type="add"
+                                        data-res-type="menu">
+                                    新增菜单
                                 </button>
                             </div>
                             <div class="pull-right col-xs-4">
@@ -55,12 +62,12 @@
                             </ul>
                             <div class="layui-tab-content">
                                 <div class="layui-tab-item layui-show">
-                                    <!--<div class="col-xs-6">-->
+                                    <!--<div class="col-xs-6" style="padding: 0;">-->
                                         <div class="row-lg">
                                             <div class="toolbarBtn btn-group">
                                                 <button class="layui-btn layui-btn-sm" title="新增" data-type="add"
                                                         data-res-type="btn">
-                                                    新增
+                                                    新增按钮
                                                 </button>
                                             </div>
                                             <div class="pull-right col-xs-4">
@@ -78,20 +85,21 @@
                                             </div>
                                         </div>
                                         <div class="row-lg">
-                                            <table id="resource_btn_datatable" lay-filter="resource_btn_datatable">
+                                            <table id="resource_btn_datatable" lay-filter="resource_btn_datatable"
+                                                   class="disableCheckAll">
                                             </table>
                                         </div>
                                     <!--</div>-->
-                                    <!--<div class="col-xs-6">-->
+                                    <!--<div class="col-xs-6" style="padding: 0 0 0 15px;">-->
                                         <!--<div class="row-lg">-->
                                             <!--<div class="toolbarBtn btn-group">-->
                                                 <!--<button class="layui-btn layui-btn-sm" title="新增" data-type="add"-->
                                                         <!--data-res-type="api">-->
-                                                    <!--新增-->
+                                                    <!--新增API-->
                                                 <!--</button>-->
                                                 <!--<button class="layui-btn layui-btn-sm" title="关联API资源"-->
                                                         <!--data-type="relevance">-->
-                                                    <!--关联API资源-->
+                                                    <!--关联API-->
                                                 <!--</button>-->
                                             <!--</div>-->
                                             <!--<div class="pull-right col-xs-4">-->
@@ -109,7 +117,8 @@
                                             <!--</div>-->
                                         <!--</div>-->
                                         <!--<div class="row-lg">-->
-                                            <!--<table id="resource_btn_api_datatable" lay-filter="resource_btn_api_datatable">-->
+                                            <!--<table id="resource_btn_api_datatable"-->
+                                                   <!--lay-filter="resource_btn_api_datatable">-->
                                             <!--</table>-->
                                         <!--</div>-->
                                     <!--</div>-->
@@ -256,7 +265,7 @@
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">父菜单编码</label>
+                <label class="layui-form-label">父菜单编号</label>
                 <div class="layui-input-block">
                     <input type="text" name="resParent" readonly class="layui-input layui-input-sm">
                 </div>
@@ -281,7 +290,7 @@
     <div id="resource_btn_add_data_div" class="hide">
         <form method="post" class="layui-form" lay-filter="resource_btn_add_data_form">
             <div class="layui-form-item">
-                <label class="layui-form-label">按钮编码<b>*</b></label>
+                <label class="layui-form-label">按钮编号<b>*</b></label>
                 <div class="layui-input-block">
                     <input type="text" name="resCode" lay-verify="required" autocomplete="off" lay-verType="tips"
                            class="layui-input layui-input-sm">
@@ -315,7 +324,7 @@
             <!--</div>-->
             <!--</div>-->
             <div class="layui-form-item">
-                <label class="layui-form-label">所属菜单编码</label>
+                <label class="layui-form-label">所属菜单编号</label>
                 <div class="layui-input-block">
                     <input type="text" name="resParent" readonly class="layui-input layui-input-sm">
                 </div>
@@ -340,7 +349,7 @@
     <div id="resource_tab_add_data_div" class="hide">
         <form method="post" class="layui-form" lay-filter="resource_tab_add_data_form">
             <div class="layui-form-item">
-                <label class="layui-form-label">TAB编码<b>*</b></label>
+                <label class="layui-form-label">TAB编号<b>*</b></label>
                 <div class="layui-input-block">
                     <input type="text" name="resCode" lay-verify="required" autocomplete="off" lay-verType="tips"
                            class="layui-input layui-input-sm">
@@ -367,7 +376,7 @@
             <!--</div>-->
             <!--</div>-->
             <div class="layui-form-item">
-                <label class="layui-form-label">所属菜单编码</label>
+                <label class="layui-form-label">所属菜单编号</label>
                 <div class="layui-input-block">
                     <input type="text" name="resParent" readonly class="layui-input layui-input-sm">
                 </div>
@@ -420,7 +429,7 @@
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">所属菜单编码</label>
+                <label class="layui-form-label">所属菜单编号</label>
                 <div class="layui-input-block">
                     <input type="text" name="resParent" readonly class="layui-input layui-input-sm">
                 </div>
@@ -479,7 +488,7 @@
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">所属模块编码</label>
+                <label class="layui-form-label">所属模块编号</label>
                 <div class="layui-input-block">
                     <input type="text" name="resParent" readonly class="layui-input layui-input-sm">
                 </div>
