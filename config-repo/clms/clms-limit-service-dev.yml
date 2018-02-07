@@ -5,6 +5,7 @@ server:
 spring:
   application:
     name: clms-limit-service
+    version: 1.0.0
   rabbitmq:
     host: 10.100.8.57
     port: 5672
