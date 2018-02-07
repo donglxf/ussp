@@ -74,10 +74,7 @@ zuul:
     litigation-ui:
       path: /lawUi/**
       serviceId: litigation-ui
-   #贷后系统
-    alms-web-ui:
-      path: /alms/**
-      serviceId: alms-web-ui
+    #贷后系统
     alms-core-service:
       path: /alms/core/**
       serviceId: alms-core-service
@@ -101,6 +98,6 @@ ribbon:
 
 ht:
   ignoreUrl: #不验证的url(可以使用通配符（*）)
-     web: /uc/echo,/ht/nologin/*,/admin/*,/car/*,/rule/ui/*,/cams/ui/*,/LawUi/*,/alms/ui/* #不需要验证token
+     web: /uc/echo,/ht/nologin/*,/admin/*,/car/*,/rule/ui/*,/cams/ui/*,/lawUi/*,/alms/ui/* #不需要验证token
      http: /uc/auth/loadBtnAndTab,/uc/auth/loadMenu,/rule/service/check/key #需要验证token
 

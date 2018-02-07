@@ -68,7 +68,7 @@ layui.config({
     	 if(roledata.length>0){
     			 $.each(roledata, function (name, value) {
                      $("#app").val(value.app);
-            		 $("#userId").val(parent.userId);
+            		 $("#userId").val(parent.userapp_userId);
             		 form.render(null, "filter_add_app_form");
             		 form.on('submit(filter_add_app_form)', function (data) {
                          $.ajax({

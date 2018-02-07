@@ -1,5 +1,5 @@
 
-var userId = "";
+var userapp_userId = "";
 var refreshAppTable = "";
 layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     var $ = layui.jquery
@@ -21,7 +21,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
             	refreshUserAppTable($("#userapp_app_search_keyword").val());
             },
             loadAppList:function(){
-            	if(userId==""){
+            	if(userapp_userId==""){
             		layer.msg("请先选择用户！");
             		return;
             	}
@@ -62,7 +62,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                      orgCode: selectNodes[0]["orgCode"]
                  }
              });
-        	 userId = "";
+        	 userapp_userId = "";
         }
     };
     var refreshUserAppTable = function (keyword) {
@@ -80,7 +80,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         	        	query: {
                   		     keyWord: keyword,
                             orgCode: selectNodes[0]["orgCode"],
-                            userId:userId
+                            userId:userapp_userId
                        }
         	        }
         	   });
@@ -102,7 +102,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         	        , where: {
         	        	query: {
                             orgCode: selectNodes[0]["orgCode"],
-                            userId:userId
+                            userId:userapp_userId
                        }
         	        }
         	   });
@@ -213,7 +213,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     //监听操作栏
     table.on('tool(filter_userapp_user_datatable)', function (obj) {
         var data = obj.data;
-        userId = data.userId;
+        userapp_userId = data.userId;
         if (obj.event === 'getRole') {
         	refreshUserAppTable();
         }  
