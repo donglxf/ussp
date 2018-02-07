@@ -52,7 +52,7 @@ public class AppResource {
         HtBoaInApp htBoaInApp = htBoaInAppService.findById(id);
         rm.setStatus_code("200");
         rm.setResult(htBoaInApp);
-        log.info("====htBoaInApp====" + htBoaInApp);
+        log.debug("====htBoaInApp====" + htBoaInApp);
         return rm;
     }
     
@@ -70,10 +70,10 @@ public class AppResource {
         String logHead = "角色记录查询：role/in/list param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "pageConf: " + pageConf, sl);
+        log.debug(logStart, "pageConf: " + pageConf, sl);
         Page<BoaInAppInfo> pageData = (Page<BoaInAppInfo>) htBoaInAppService.findAllByPage(pageConf,page.getQuery());
         el = System.currentTimeMillis();
-        log.info(logEnd, "pageConf: " + pageConf, msg, el, el - sl);
+        log.debug(logEnd, "pageConf: " + pageConf, msg, el, el - sl);
         if (pageData != null) {
             result.count(pageData.getTotalElements()).data(pageData.getContent());
         }
@@ -91,7 +91,7 @@ public class AppResource {
         String logHead = "角色记录查询：role/in/add param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "boaInAppInfo: " + boaInAppInfo, sl);
+        log.debug(logStart, "boaInAppInfo: " + boaInAppInfo, sl);
         HtBoaInApp u = null;
         if(boaInAppInfo.getId()>0) {
         	u = htBoaInAppService.findById(boaInAppInfo.getId());
@@ -116,7 +116,7 @@ public class AppResource {
             u = htBoaInAppService.add(u);
         }
         el = System.currentTimeMillis();
-        log.info(logEnd, "boaInAppInfo: " + boaInAppInfo, msg, el, el - sl);
+        log.debug(logEnd, "boaInAppInfo: " + boaInAppInfo, msg, el, el - sl);
         return Result.buildSuccess();
        // return new ResponseModal(200, msg, u);
     }
@@ -130,7 +130,7 @@ public class AppResource {
         String logHead = "角色记录查询：role/in/add param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        //log.info(logStart, "boaInAppInfo: " + boaInAppInfo, sl);
+        //log.debug(logStart, "boaInAppInfo: " + boaInAppInfo, sl);
         HtBoaInApp u = null;
         if(id>0) {
         	u = htBoaInAppService.findById(id);
@@ -146,7 +146,7 @@ public class AppResource {
         u = htBoaInAppService.update(u);
         
         el = System.currentTimeMillis();
-        log.info(logEnd, "boaInAppInfo: " + u, msg, el, el - sl);
+        log.debug(logEnd, "boaInAppInfo: " + u, msg, el, el - sl);
         return Result.buildSuccess();
        // return new ResponseModal(200, msg, u);
     }
@@ -161,10 +161,10 @@ public class AppResource {
         String logHead = "角色记录删除：role/in/delete param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "codes: " + id, sl);
+        log.debug(logStart, "codes: " + id, sl);
         htBoaInAppService.delete(id);
         el = System.currentTimeMillis();
-        log.info(logEnd, "codes: " + id, msg, el, el - sl);
+        log.debug(logEnd, "codes: " + id, msg, el, el - sl);
         return Result.buildSuccess();
         //return new ResponseModal(200, msg);
     }
@@ -180,7 +180,7 @@ public class AppResource {
           String logHead = "岗位记录删除：position/in/delete param-> {}";
           String logStart = logHead + " | START:{}";
           String logEnd = logHead + " {} | END:{}, COST:{}";
-          log.info(logStart, "codes: " + id, sl);
+          log.debug(logStart, "codes: " + id, sl);
           HtBoaInApp u = htBoaInAppService.findById(id);
           u.setDelFlag(Constants.DEL_1);
           u.setStatus(Constants.STATUS_1);
@@ -188,7 +188,7 @@ public class AppResource {
           u.setLastModifiedDatetime(new Date());
           htBoaInAppService.update(u);
           el = System.currentTimeMillis();
-          log.info(logEnd, "codes: " + id, msg, el, el - sl);
+          log.debug(logEnd, "codes: " + id, msg, el, el - sl);
           return Result.buildSuccess();
           
        }

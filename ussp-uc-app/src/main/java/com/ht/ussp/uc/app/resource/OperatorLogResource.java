@@ -43,10 +43,10 @@ public class OperatorLogResource {
         String logHead = "操作日志查询：operator_log/in/list param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "pageConf: " + pageConf, sl);
+        log.debug(logStart, "pageConf: " + pageConf, sl);
         Object o = htBoaInOperatorLogService.findAllByPage(pageConf);
         el = System.currentTimeMillis();
-        log.info(logEnd, "pageConf: " + pageConf, msg, el, el - sl);
+        log.debug(logEnd, "pageConf: " + pageConf, msg, el, el - sl);
         return new ResponseModal("200", msg, o);
     }
 

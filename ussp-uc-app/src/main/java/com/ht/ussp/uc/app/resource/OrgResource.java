@@ -76,11 +76,11 @@ public class OrgResource {
         String logHead = "机构记录查询：org/list param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "page: " + page, sl);
+        log.debug(logStart, "page: " + page, sl);
         // Object o = htBoaInOrgService.findAllByPage(pageConf);
         Page<BoaInOrgInfo> pageData = (Page<BoaInOrgInfo>) htBoaInOrgService.findAllByPage(pageConf, page.getQuery());
         el = System.currentTimeMillis();
-        log.info(logEnd, "page: " + page, msg, el, el - sl);
+        log.debug(logEnd, "page: " + page, msg, el, el - sl);
         // return new ResponseModal(200, msg, o);
         if (pageData != null) {
             result.count(pageData.getTotalElements()).data(pageData.getContent());
@@ -100,7 +100,7 @@ public class OrgResource {
         String logHead = "机构记录查询：org/add param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "boaInOrgInfo: " + boaInOrgInfo, sl);
+        log.debug(logStart, "boaInOrgInfo: " + boaInOrgInfo, sl);
         HtBoaInOrg u = null;
         if (boaInOrgInfo.getId() > 0) {
             u = htBoaInOrgService.findById(boaInOrgInfo.getId());
@@ -129,7 +129,7 @@ public class OrgResource {
         }
 
         el = System.currentTimeMillis();
-        log.info(logEnd, "boaInOrgInfo: " + boaInOrgInfo, msg, el, el - sl);
+        log.debug(logEnd, "boaInOrgInfo: " + boaInOrgInfo, msg, el, el - sl);
         return Result.buildSuccess();
     }
 
@@ -143,14 +143,14 @@ public class OrgResource {
         String logHead = "机构记录删除：org/delete param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "codes: " + id, sl);
+        log.debug(logStart, "codes: " + id, sl);
         HtBoaInOrg u = htBoaInOrgService.findById(id);
         u.setDelFlag(Constants.DEL_1);
         u.setUpdateOperator(userId);
         u.setLastModifiedDatetime(new Date());
         htBoaInOrgService.update(u);
         el = System.currentTimeMillis();
-        log.info(logEnd, "codes: " + id, msg, el, el - sl);
+        log.debug(logEnd, "codes: " + id, msg, el, el - sl);
         return Result.buildSuccess();
     }
 
@@ -163,13 +163,13 @@ public class OrgResource {
         String logHead = "机构记录删除：org/delete param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "codes: " + id, sl);
+        log.debug(logStart, "codes: " + id, sl);
         HtBoaInOrg u = htBoaInOrgService.findById(id);
         u.setLastModifiedDatetime(new Date());
         u.setUpdateOperator(userId);
         htBoaInOrgService.update(u);
         el = System.currentTimeMillis();
-        log.info(logEnd, "codes: " + id, msg, el, el - sl);
+        log.debug(logEnd, "codes: " + id, msg, el, el - sl);
         return Result.buildSuccess();
     }
     

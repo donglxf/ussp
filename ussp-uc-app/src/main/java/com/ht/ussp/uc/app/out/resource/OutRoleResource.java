@@ -51,10 +51,10 @@ public class OutRoleResource {
         String logHead = "角色记录查询：role/out/list param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "pageConf: " + pageConf, sl);
+        log.debug(logStart, "pageConf: " + pageConf, sl);
         Object o = htBoaOutRoleService.findAllByPage(pageConf);
         el = System.currentTimeMillis();
-        log.info(logEnd, "pageConf: " + pageConf, msg, el, el - sl);
+        log.debug(logEnd, "pageConf: " + pageConf, msg, el, el - sl);
         return new ResponseModal("200", msg, o);
     }
     
@@ -69,7 +69,7 @@ public class OutRoleResource {
         String logHead = "角色记录查询：role/out/add param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "BoaOutRoleInfo: " + BoaOutRoleInfo, sl);
+        log.debug(logStart, "BoaOutRoleInfo: " + BoaOutRoleInfo, sl);
         HtBoaOutRole u = null;
         if (null != BoaOutRoleInfo.getRoleCode()
                 && 0 < BoaOutRoleInfo.getRoleCode().trim().length()) {
@@ -96,7 +96,7 @@ public class OutRoleResource {
         else
             u = htBoaOutRoleService.update(u);
         el = System.currentTimeMillis();
-        log.info(logEnd, "BoaOutRoleInfo: " + BoaOutRoleInfo, msg, el, el - sl);
+        log.debug(logEnd, "BoaOutRoleInfo: " + BoaOutRoleInfo, msg, el, el - sl);
         return new ResponseModal("200", msg, u);
     }
     
@@ -110,10 +110,10 @@ public class OutRoleResource {
         String logHead = "角色记录删除：role/out/delete param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "codes: " + codes, sl);
+        log.debug(logStart, "codes: " + codes, sl);
         htBoaOutRoleService.delete(codes.getCodes());
         el = System.currentTimeMillis();
-        log.info(logEnd, "codes: " + codes, msg, el, el - sl);
+        log.debug(logEnd, "codes: " + codes, msg, el, el - sl);
         return new ResponseModal("200", msg);
     }
 

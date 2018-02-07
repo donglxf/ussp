@@ -61,7 +61,7 @@ public class OutLoginResource {
         String logHead = "忘记密码/重置密码：login/in/resetpwd param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, resetPwd.toString(), sl);
+        log.debug(logStart, resetPwd.toString(), sl);
         HtBoaOutUser htBoaOutUser = new HtBoaOutUser();
         htBoaOutUser.setMobile(resetPwd.getMobile());
         htBoaOutUser.setEmail(resetPwd.getEmail());
@@ -103,7 +103,7 @@ public class OutLoginResource {
         htBoaOutLoginService.update(u);
         htBoaOutPwdHistService.add(htBoaOutPwdHist);
         el = System.currentTimeMillis();
-        log.info(logEnd, "resetPwd: " + resetPwd, msg, el, el - sl);
+        log.debug(logEnd, "resetPwd: " + resetPwd, msg, el, el - sl);
         return new ResponseModal("200", "成功");
     }
 

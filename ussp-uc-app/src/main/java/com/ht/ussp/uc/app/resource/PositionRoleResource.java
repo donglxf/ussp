@@ -51,11 +51,11 @@ public class PositionRoleResource {
            String logHead = "根据UserId查询岗位角色：user/listPositionRoleByPage param-> {}";
            String logStart = logHead + " | START:{}";
            String logEnd = logHead + " {} | END:{}, COST:{}";
-           log.info(logStart, "page: " + page, sl);
+           log.debug(logStart, "page: " + page, sl);
            
            result =  htBoaInPositionRoleService.listPositionRoleByPage(pageConf,page.getQuery()); 
            el = System.currentTimeMillis();
-           log.info(logEnd, "page: " + page, msg, el, el - sl);
+           log.debug(logEnd, "page: " + page, msg, el, el - sl);
            return result;
      }
 
@@ -69,7 +69,7 @@ public class PositionRoleResource {
         String logHead = "角色记录查询：role/in/add param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "boaInRoleInfo: " + htBoaInPositionRole, sl);
+        log.debug(logStart, "boaInRoleInfo: " + htBoaInPositionRole, sl);
         HtBoaInPositionRole u = new HtBoaInPositionRole();
        
         
@@ -89,7 +89,7 @@ public class PositionRoleResource {
 		}
         
         el = System.currentTimeMillis();
-        log.info(logEnd, "boaInRoleInfo: " + htBoaInPositionRole, msg, el, el - sl);
+        log.debug(logEnd, "boaInRoleInfo: " + htBoaInPositionRole, msg, el, el - sl);
         return Result.buildSuccess();
        // return new ResponseModal(200, msg, u);
     }
@@ -104,7 +104,7 @@ public class PositionRoleResource {
         String logHead = "角色记录查询：role/in/add param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        //log.info(logStart, "boaInRoleInfo: " + boaInRoleInfo, sl);
+        //log.debug(logStart, "boaInRoleInfo: " + boaInRoleInfo, sl);
         HtBoaInPositionRole u = null;
         if(id>0) {
         	u = htBoaInPositionRoleService.findById(id);
@@ -120,7 +120,7 @@ public class PositionRoleResource {
         u = htBoaInPositionRoleService .update(u);
         
         el = System.currentTimeMillis();
-        log.info(logEnd, "boaInRoleInfo: " + u, msg, el, el - sl);
+        log.debug(logEnd, "boaInRoleInfo: " + u, msg, el, el - sl);
         return Result.buildSuccess();
     }
     

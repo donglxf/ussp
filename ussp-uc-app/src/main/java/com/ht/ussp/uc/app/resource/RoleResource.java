@@ -59,11 +59,11 @@ public class RoleResource {
         String logHead = "角色记录查询：role/in/list param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "pageConf: " + pageConf, sl);
+        log.debug(logStart, "pageConf: " + pageConf, sl);
         /*Object o = htBoaInRoleService.findAllByPage(pageConf);*/
         Page<BoaInRoleInfo> pageData = (Page<BoaInRoleInfo>) htBoaInRoleService.findAllByPage(pageConf,page.getQuery());
         el = System.currentTimeMillis();
-        log.info(logEnd, "pageConf: " + pageConf, msg, el, el - sl);
+        log.debug(logEnd, "pageConf: " + pageConf, msg, el, el - sl);
         if (pageData != null) {
             result.count(pageData.getTotalElements()).data(pageData.getContent());
         }
@@ -82,7 +82,7 @@ public class RoleResource {
         String logHead = "角色记录查询：role/in/add param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "boaInRoleInfo: " + boaInRoleInfo, sl);
+        log.debug(logStart, "boaInRoleInfo: " + boaInRoleInfo, sl);
         HtBoaInRole u = null;
         if(boaInRoleInfo.getId()>0) {
         	u = htBoaInRoleService.findById(boaInRoleInfo.getId());
@@ -110,7 +110,7 @@ public class RoleResource {
             u = htBoaInRoleService.add(u);
         }
         el = System.currentTimeMillis();
-        log.info(logEnd, "boaInRoleInfo: " + boaInRoleInfo, msg, el, el - sl);
+        log.debug(logEnd, "boaInRoleInfo: " + boaInRoleInfo, msg, el, el - sl);
         return Result.buildSuccess();
        // return new ResponseModal(200, msg, u);
     }
@@ -124,7 +124,7 @@ public class RoleResource {
         String logHead = "角色记录查询：role/in/add param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        //log.info(logStart, "boaInRoleInfo: " + boaInRoleInfo, sl);
+        //log.debug(logStart, "boaInRoleInfo: " + boaInRoleInfo, sl);
         HtBoaInRole u = null;
         if(id>0) {
         	u = htBoaInRoleService.findById(id);
@@ -140,7 +140,7 @@ public class RoleResource {
         u = htBoaInRoleService.update(u);
         
         el = System.currentTimeMillis();
-        log.info(logEnd, "boaInRoleInfo: " + u, msg, el, el - sl);
+        log.debug(logEnd, "boaInRoleInfo: " + u, msg, el, el - sl);
         return Result.buildSuccess();
        // return new ResponseModal(200, msg, u);
     }
@@ -155,10 +155,10 @@ public class RoleResource {
         String logHead = "角色记录删除：role/in/delete param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "codes: " + id, sl);
+        log.debug(logStart, "codes: " + id, sl);
         htBoaInRoleService.delete(id);
         el = System.currentTimeMillis();
-        log.info(logEnd, "codes: " + id, msg, el, el - sl);
+        log.debug(logEnd, "codes: " + id, msg, el, el - sl);
         return Result.buildSuccess();
         //return new ResponseModal(200, msg);
     }
@@ -174,7 +174,7 @@ public class RoleResource {
           String logHead = "岗位记录删除：position/in/delete param-> {}";
           String logStart = logHead + " | START:{}";
           String logEnd = logHead + " {} | END:{}, COST:{}";
-          log.info(logStart, "codes: " + id, sl);
+          log.debug(logStart, "codes: " + id, sl);
           HtBoaInRole u = htBoaInRoleService.findById(id);
           u.setDelFlag(Constants.DEL_1);
           u.setStatus(Constants.STATUS_1);
@@ -182,7 +182,7 @@ public class RoleResource {
           u.setLastModifiedDatetime(new Date());
           htBoaInRoleService.update(u);
           el = System.currentTimeMillis();
-          log.info(logEnd, "codes: " + id, msg, el, el - sl);
+          log.debug(logEnd, "codes: " + id, msg, el, el - sl);
           return Result.buildSuccess();
           
        }
