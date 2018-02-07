@@ -148,7 +148,6 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
         },
         relevance: function (resType, relevanceType) {
             layer.close(relevanceDialog);
-            console.info(relevanceType, resType);
             var selectData = selectTableData[relevanceType ? relevanceType : resType];
             if (!selectData) {
                 layer.alert("请先在上面的表格中选择一个父菜单。");
