@@ -1,2 +1,14 @@
 server:
   port: {SERVER_PORT}
+
+spring: 
+  rabbitmq:
+      host: 10.100.8.57
+      port: 5672
+      username: guest
+      password: guest
+      virtual-host: /
+  datasource:
+    url: jdbc:mysql://10.110.1.240:3306/hongte_cams_production?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: root
+    password: tuandai_bm2015
