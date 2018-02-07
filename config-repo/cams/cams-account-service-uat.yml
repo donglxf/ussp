@@ -1,0 +1,20 @@
+server:
+  port: {SERVER_PORT}
+spring: 
+  rabbitmq:
+      host: 10.100.8.57
+      port: 5672
+      username: guest
+      password: guest
+      virtual-host: /
+  datasource:
+    url: jdbc:mysql://10.100.5.193:3306/ht_cams?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: root
+    password: tuandai888   
+logging:
+  level:
+    - com.ht.cams.account.mapper: INFO  
+ht.config.uc.api:
+  synch: true
+  packages: com.ht.cams.account.controller
+  app: CAMS
