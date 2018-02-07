@@ -15,8 +15,8 @@ spring:
     favicon:
       enabled: false
   datasource:
-    url: jdbc:mysql://10.100.5.193:3306/clms?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://10.100.5.193:3306/clms?characterEncoding=utf8&useSSL=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    driver-class-name: com.mysql.jdbc.Driver
     username: root
     password: tuandai888
     tomcat:
