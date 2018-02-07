@@ -8,7 +8,7 @@ spring:
     bus:
       enabled: false
   profiles:
-    active: dev
+    active: local
 eureka:
   instance:
     prefer-ip-address: true
