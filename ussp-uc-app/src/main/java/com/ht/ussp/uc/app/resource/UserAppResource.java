@@ -51,11 +51,11 @@ public class UserAppResource {
 		String logHead = "根据UserId查询用户系统：user/listUserAppByPage param-> {}";
 		String logStart = logHead + " | START:{}";
 		String logEnd = logHead + " {} | END:{}, COST:{}";
-		log.info(logStart, "page: " + page, sl);
+		log.debug(logStart, "page: " + page, sl);
 
 		result = htBoaInUserAppService.listUserAppByPage(pageConf, page.getQuery());
 		el = System.currentTimeMillis();
-		log.info(logEnd, "page: " + page, msg, el, el - sl);
+		log.debug(logEnd, "page: " + page, msg, el, el - sl);
 		return result;
 	}
 
@@ -78,11 +78,11 @@ public class UserAppResource {
         String logHead = "查询用户系统：user/listAppByPage param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "page: " + page, sl);
+        log.debug(logStart, "page: " + page, sl);
         
         result =  htBoaInUserAppService.listAllUserAppByPage(pageConf,page.getQuery()); 
         el = System.currentTimeMillis();
-        log.info(logEnd, "page: " + page, msg, el, el - sl);
+        log.debug(logEnd, "page: " + page, msg, el, el - sl);
         return result;
     }
     
@@ -95,7 +95,7 @@ public class UserAppResource {
         String logHead = "角色记录查询：role/in/add param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "boaInRoleInfo: " + htBoaInUserApp, sl);
+        log.debug(logStart, "boaInRoleInfo: " + htBoaInUserApp, sl);
         HtBoaInUserApp u = null;
         
         //验证是否已经关联系统
@@ -114,7 +114,7 @@ public class UserAppResource {
 		}
        
         el = System.currentTimeMillis();
-        log.info(logEnd, "boaInRoleInfo: " + htBoaInUserApp, msg, el, el - sl);
+        log.debug(logEnd, "boaInRoleInfo: " + htBoaInUserApp, msg, el, el - sl);
         return Result.buildSuccess();
        // return new ResponseModal(200, msg, u);
     }
@@ -129,7 +129,7 @@ public class UserAppResource {
         String logHead = "角色记录查询：role/in/add param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        //log.info(logStart, "boaInRoleInfo: " + boaInRoleInfo, sl);
+        //log.debug(logStart, "boaInRoleInfo: " + boaInRoleInfo, sl);
         HtBoaInUserApp u = null;
         if(id>0) {
         	u = htBoaInUserAppService.findById(id);
@@ -145,7 +145,7 @@ public class UserAppResource {
         u = htBoaInUserAppService .update(u);
         
         el = System.currentTimeMillis();
-        log.info(logEnd, "boaInRoleInfo: " + u, msg, el, el - sl);
+        log.debug(logEnd, "boaInRoleInfo: " + u, msg, el, el - sl);
         return Result.buildSuccess();
     }
     @SuppressWarnings({ "rawtypes", "unused" })
@@ -179,12 +179,12 @@ public class UserAppResource {
         String logHead = "角色记录删除：role/in/delete param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "codes: " + id, sl);
+        log.debug(logStart, "codes: " + id, sl);
         HtBoaInUserApp u = new HtBoaInUserApp();
         u.setId((long) id);
         htBoaInUserAppService.delete(u);
         el = System.currentTimeMillis();
-        log.info(logEnd, "codes: " + id, msg, el, el - sl);
+        log.debug(logEnd, "codes: " + id, msg, el, el - sl);
         return Result.buildSuccess();
     }
 }

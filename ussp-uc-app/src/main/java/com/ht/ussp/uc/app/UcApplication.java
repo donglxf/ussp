@@ -23,7 +23,7 @@ public class UcApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(UcApplication.class, args);
-        log.info("用户中心启动成功！");
+        log.debug("用户中心启动成功！");
 
     }
 }

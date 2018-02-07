@@ -56,12 +56,12 @@ public class PositionResource {
 		String logHead = "岗位记录查询：position/in/list param-> {}";
 		String logStart = logHead + " | START:{}";
 		String logEnd = logHead + " {} | END:{}, COST:{}";
-		log.info(logStart, "page: " + page, sl);
+		log.debug(logStart, "page: " + page, sl);
 		// Object o = htBoaInPositionService.findAllByPage(pageConf);
 		Page<BoaInPositionInfo> pageData = (Page<BoaInPositionInfo>) htBoaInPositionService.findAllByPage(pageConf,
 				page.getQuery());
 		el = System.currentTimeMillis();
-		log.info(logEnd, "page: " + page, msg, el, el - sl);
+		log.debug(logEnd, "page: " + page, msg, el, el - sl);
 		// return new ResponseModal(200, msg, o);
 		if (pageData != null) {
 			result.count(pageData.getTotalElements()).data(pageData.getContent());
@@ -80,7 +80,7 @@ public class PositionResource {
 		String logHead = "岗位记录查询：position/in/add param-> {}";
 		String logStart = logHead + " | START:{}";
 		String logEnd = logHead + " {} | END:{}, COST:{}";
-		log.info(logStart, "boaInPositionInfo: " + boaInPositionInfo, sl);
+		log.debug(logStart, "boaInPositionInfo: " + boaInPositionInfo, sl);
 		HtBoaInPosition u = null;
 		if (boaInPositionInfo.getId() > 0) {
 			u = htBoaInPositionService.findById(boaInPositionInfo.getId());
@@ -110,7 +110,7 @@ public class PositionResource {
 		}
 
 		el = System.currentTimeMillis();
-		log.info(logEnd, "boaInPositionInfo: " + boaInPositionInfo, msg, el, el - sl);
+		log.debug(logEnd, "boaInPositionInfo: " + boaInPositionInfo, msg, el, el - sl);
 		return Result.buildSuccess();
 	}
 
@@ -123,10 +123,10 @@ public class PositionResource {
 		String logHead = "岗位记录删除：position/in/delete param-> {}";
 		String logStart = logHead + " | START:{}";
 		String logEnd = logHead + " {} | END:{}, COST:{}";
-		log.info(logStart, "codes: " + id, sl);
+		log.debug(logStart, "codes: " + id, sl);
 		htBoaInPositionService.delete(id);
 		el = System.currentTimeMillis();
-		log.info(logEnd, "codes: " + id, msg, el, el - sl);
+		log.debug(logEnd, "codes: " + id, msg, el, el - sl);
 		return Result.buildSuccess();
 	}
 
@@ -139,14 +139,14 @@ public class PositionResource {
 		String logHead = "岗位记录删除：position/in/delete param-> {}";
 		String logStart = logHead + " | START:{}";
 		String logEnd = logHead + " {} | END:{}, COST:{}";
-		log.info(logStart, "codes: " + id, sl);
+		log.debug(logStart, "codes: " + id, sl);
 		HtBoaInPosition u = htBoaInPositionService.findById(id);
 		u.setDelFlag(1);
 		u.setUpdateOperator(userId);
 		u.setLastModifiedDatetime(new Date());
 		htBoaInPositionService.update(u);
 		el = System.currentTimeMillis();
-		log.info(logEnd, "codes: " + id, msg, el, el - sl);
+		log.debug(logEnd, "codes: " + id, msg, el, el - sl);
 		return Result.buildSuccess();
 	}
 
@@ -159,14 +159,14 @@ public class PositionResource {
 		String logHead = "岗位记录删除：position/in/delete param-> {}";
 		String logStart = logHead + " | START:{}";
 		String logEnd = logHead + " {} | END:{}, COST:{}";
-		log.info(logStart, "codes: " + id, sl);
+		log.debug(logStart, "codes: " + id, sl);
 		HtBoaInPosition u = htBoaInPositionService.findById(id);
 		u.setStatus(status);
 		u.setLastModifiedDatetime(new Date());
 		u.setUpdateOperator(userId);
 		htBoaInPositionService.update(u);
 		el = System.currentTimeMillis();
-		log.info(logEnd, "codes: " + id, msg, el, el - sl);
+		log.debug(logEnd, "codes: " + id, msg, el, el - sl);
 		return Result.buildSuccess();
 	}
 

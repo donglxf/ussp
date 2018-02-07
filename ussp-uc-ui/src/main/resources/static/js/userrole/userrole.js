@@ -1,5 +1,5 @@
 
-var userId = "";
+var userrole_userId = "";
 var refreshRoleTable;
 layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     var $ = layui.jquery
@@ -21,7 +21,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
             	refreshUserRoleTable($("#userrole_role_search_keyword").val());
             },
             loadRoleList:function(){
-            	if(userId==""){
+            	if(userrole_userId==""){
             		layer.msg("请先选择用户！");
             		return;
             	}
@@ -62,7 +62,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                      orgCode: selectNodes[0]["orgCode"]
                  }
              });
-        	 userId = "";
+        	 userrole_userId = "";
         }
     };
     var refreshUserRoleTable = function (keyword) {
@@ -80,7 +80,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         	        	query: {
                   		     keyWord: keyword,
                             orgCode: selectNodes[0]["orgCode"],
-                            userId:userId
+                            userId:userrole_userId
                        }
         	        }
         	   });
@@ -102,7 +102,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         	        , where: {
         	        	query: {
                             orgCode: selectNodes[0]["orgCode"],
-                            userId:userId
+                            userId:userrole_userId
                        }
         	        }
         	   });
@@ -200,7 +200,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         , height: 'full-600'
         	 , where: {
  	        	query: {
-                     userId:userId
+                     userId:userrole_userId
                 }
  	        }
         , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
@@ -218,7 +218,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     //监听操作栏
     table.on('tool(filter_userrole_user_datatable)', function (obj) {
         var data = obj.data;
-        userId = data.userId;
+        userrole_userId = data.userId;
         if (obj.event === 'getRole') {
         	refreshUserRoleTable();
         }  
