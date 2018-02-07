@@ -9,17 +9,16 @@ spring:
       password: guest
       virtual-host: /
   datasource:
-    url: jdbc:mysql://10.110.1.240:3306/hongte_cams_production?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    url: jdbc:mysql://10.100.5.193:3306/ht_cams?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
     username: root
-    password: tuandai_bm2015
- 
+    password: tuandai888
     
-ht.config.uc.api:
-  synch: true #æ˜¯å¦åŒæ­¥APIèµ„æºåˆ°ç”¨æˆ·æƒé™ä¸­å¿ƒ
-  packages: com.ht.cams.account.controller #APIèµ„æºæ‰«æçš„åŒ…ï¼Œå¯ç”¨å¤šä¸ªï¼Œå¤šä¸ªä½¿ç”¨â€œ,â€åˆ†éš”
-  app: CAMS
- 
+
 logging:
   level:
     - com.ht.cams.account.mapper: info
- 
+    
+ht.config.uc.api:
+  synch: true #ÊÇ·ñÍ¬²½API×ÊÔ´µ½ÓÃ»§È¨ÏŞÖĞĞÄ
+  packages: com.ht.cams.account.controller #API×ÊÔ´É¨ÃèµÄ°ü£¬¿ÉÓÃ¶à¸ö£¬¶à¸öÊ¹ÓÃ¡°,¡±·Ö¸ô
+  app: CAMS
