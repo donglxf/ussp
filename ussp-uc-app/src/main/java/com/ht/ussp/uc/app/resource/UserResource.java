@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ht.ussp.base.UsspController;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
@@ -55,7 +54,7 @@ import lombok.extern.log4j.Log4j2;
 @RestController
 @RequestMapping(value = "/user")
 @Log4j2
-public class UserResource extends UsspController {
+public class UserResource{
 
     @Autowired
     private HtBoaInUserService htBoaInUserService;
