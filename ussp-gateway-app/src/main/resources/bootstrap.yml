@@ -4,10 +4,9 @@ spring:
   cloud:
     config:
       discovery:
-        enabled: true
         service-id: ussp-config-app
     bus:
-      enabled: true
+      enabled: false
   profiles:
     active: local
 eureka:
@@ -31,6 +30,12 @@ eureka:
 ---
 spring:
   profiles: dev
+  cloud:
+    config:
+      discovery:
+        enabled: true
+    bus:
+      enabled: true
 
 eureka:
   client:
@@ -40,6 +45,12 @@ eureka:
 ---
 spring:
   profiles: sit
+  cloud:
+    config:
+      discovery:
+        enabled: true
+    bus:
+      enabled: true
 
 eureka:
   client:
@@ -49,6 +60,12 @@ eureka:
 ---
 spring:
   profiles: uat
+  cloud:
+    config:
+      discovery:
+        enabled: true
+    bus:
+      enabled: true
 
 eureka:
   client:
@@ -58,6 +75,12 @@ eureka:
 ---
 spring:
   profiles: prd
+  cloud:
+    config:
+      discovery:
+        enabled: true
+    bus:
+      enabled: true
 
 eureka:
   client:

@@ -17,7 +17,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableFeignClients(basePackages = {"com.ht.ussp.client"})
 @EnableDiscoveryClient
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.ht.ussp.init", "com.ht.ussp.uc.app"})
+@ComponentScan(basePackages = {"com.ht.ussp.bean", "com.ht.ussp.uc.app"})
 public class UcApplication {
     private static final Logger log = LoggerFactory.getLogger(UcApplication.class);
 

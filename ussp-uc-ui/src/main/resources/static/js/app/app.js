@@ -132,9 +132,9 @@ layui.use(['form',   'table', 'ht_config','ht_auth' ], function () {
             , {field: 'app', width: 150, title: '系统编号'}
             , {field: 'nameCn', width: 400,   title: '系统名称'}
             , {field: 'status', width: 100,templet: '#statusTpl', title: '状态'}
-            , {field: 'createOperator', width: 400,   title: '创建人'}
+            , {field: 'createOperator', width: 350,   title: '创建人'}
             , {field: 'createdDatetime', width: 300,templet: '#createTimeTpl', title: '创建时间'}
-            , {fixed: 'right', width: 300,  title: '操作',   toolbar: '#app_datatable_bar'}
+            , {fixed: 'right', width: 330,  title: '操作',   toolbar: '#app_datatable_bar'}
         ]]
     });
     //监听操作栏
