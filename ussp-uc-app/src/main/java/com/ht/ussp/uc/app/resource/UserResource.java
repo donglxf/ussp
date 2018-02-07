@@ -1,38 +1,13 @@
 package com.ht.ussp.uc.app.resource;
 
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.ht.ussp.base.UsspController;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.domain.HtBoaInUserRole;
-import com.ht.ussp.uc.app.model.ChangePwd;
-import com.ht.ussp.uc.app.model.PageConf;
-import com.ht.ussp.uc.app.model.ResponseModal;
-import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
-import com.ht.ussp.uc.app.model.SysStatus;
-import com.ht.ussp.uc.app.service.HtBoaInLoginService;
-import com.ht.ussp.uc.app.service.HtBoaInPwdHistService;
-import com.ht.ussp.uc.app.service.HtBoaInUserAppService;
-import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
-import com.ht.ussp.uc.app.service.HtBoaInUserService;
+import com.ht.ussp.uc.app.model.*;
+import com.ht.ussp.uc.app.service.*;
 import com.ht.ussp.uc.app.vo.LoginInfoVo;
 import com.ht.ussp.uc.app.vo.PageVo;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
@@ -40,10 +15,17 @@ import com.ht.ussp.uc.app.vo.UserVo;
 import com.ht.ussp.util.BeanUtils;
 import com.ht.ussp.util.EncryptUtil;
 import com.ht.ussp.util.LogicUtil;
-
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.web.bind.annotation.*;
+
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @author adol yaojiehong@hongte.info
@@ -55,7 +37,7 @@ import lombok.extern.log4j.Log4j2;
 @RestController
 @RequestMapping(value = "/user")
 @Log4j2
-public class UserResource extends UsspController {
+public class UserResource{
 
     @Autowired
     private HtBoaInUserService htBoaInUserService;
