@@ -283,16 +283,18 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                 dataFilter: function (treeId, parentNode, childNodes) {
                     if (!childNodes) return null;
                     for (var i = 0, l = childNodes.length; i < l; i++) {
-                        if (childNodes[i].parentCode == '0') {
-                            childNodes[i].open = true;
-                        }
+                        //展开一级节点
+                        // if (childNodes[i].parentCode == '0') {
+                        //     childNodes[i].open = true;
+                        // }
                         childNodes[i].name = childNodes[i]["nameCn"];
                     }
                     return childNodes;
                 }
             }
             , view: {
-                showIcon: false
+                height: "full-183"
+                , showIcon: false
                 , selectedMulti: false
                 , fontCss: function (treeId, treeNode) {
                     return (!!treeNode.highlight) ? {color: "#A60000", "font-weight": "bold"} : {
@@ -533,7 +535,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
         var data = obj.data;
         if (obj.event === 'rowClick') {
             var $checkbox = obj.tr.find('input[name="layTableCheckbox"]+');
-            $checkbox.prop("checked", true).attr("xxx","xxx");
+            $checkbox.prop("checked", true).attr("xxx", "xxx");
             var layFilter = obj.tr.parents("[lay-filter]").attr("lay-filter");
             form.render("checkbox", layFilter);
         } else if (obj.event === 'detail') {
@@ -746,11 +748,31 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
         var resType = $(this).data('res-type');
         active[type] ? active[type].call(this, resType) : '';
     });
+    //监听树的工具栏
+    $('#resource_tree .btn').on('click', function () {
+        var type = $(this).data('type');
+        var resType = $(this).data('res-type');
+        switch (type) {
+            case "refresh":
+                if (appAndResourceTree) {
+                    appAndResourceTree.reAsyncChildNodes(null, "refresh");
+                }
+                break;
+            case "expandAll":
+                if (appAndResourceTree) {
+                    appAndResourceTree.expandAll(true);
+                }
+                break;
+            case "collapseAll":
+                if (appAndResourceTree) {
+                    appAndResourceTree.expandAll(false);
+                }
+                break;
+        }
+    });
     //刷新树的数据
     $('#user_btn_refresh_tree').on('click', function (e) {
-        if (appAndResourceTree) {
-            appAndResourceTree.reAsyncChildNodes(null, "refresh");
-        }
+
     });
     var nodeList = [];
     //搜索树的数据
