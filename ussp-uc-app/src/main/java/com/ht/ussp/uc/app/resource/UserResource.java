@@ -77,7 +77,7 @@ public class UserResource{
         String logHead = "用户个人信息查询：user/in/selfinfo param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "userId: " + userId, sl);
+        log.debug(logStart, "userId: " + userId, sl);
         SelfBoaInUserInfo u = new SelfBoaInUserInfo();
         u.setUserId(userId);
         List<SelfBoaInUserInfo> selfUserInfoList = htBoaInUserService.findAll(u);
@@ -85,7 +85,7 @@ public class UserResource{
         if (null != r)
             return r;
         el = System.currentTimeMillis();
-        log.info(logEnd, "userId: " + userId, msg, el, el - sl);
+        log.debug(logEnd, "userId: " + userId, msg, el, el - sl);
         return new ResponseModal("200", msg, selfUserInfoList.get(0));
     }
 
@@ -99,7 +99,7 @@ public class UserResource{
         String logHead = "用户个人信息修改：user/in/selfinfo/set param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "selfBoaInUserInfo: " + selfBoaInUserInfo, sl);
+        log.debug(logStart, "selfBoaInUserInfo: " + selfBoaInUserInfo, sl);
         HtBoaInUser u = new HtBoaInUser();
         BeanUtils.setObjectFieldsEmpty(u);
         u.setUserId(selfBoaInUserInfo.getUserId());
@@ -129,7 +129,7 @@ public class UserResource{
         if (null != r)
             return r;
         el = System.currentTimeMillis();
-        log.info(logEnd, "selfUserInfo: " + selfBoaInUserInfo, msg, el, el - sl);
+        log.debug(logEnd, "selfUserInfo: " + selfBoaInUserInfo, msg, el, el - sl);
         return new ResponseModal("200", msg, selfUserInfoList.get(0));
     }
 
@@ -142,7 +142,7 @@ public class UserResource{
         String logHead = "修改密码：login/in/changePwd param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, changePwd.toString(), sl);
+        log.debug(logStart, changePwd.toString(), sl);
         HtBoaInUser htBoaInUser = new HtBoaInUser();
         htBoaInUser.setUserId(userId);
         List<HtBoaInUser> htBoaInUserList = htBoaInUserService.findAll(htBoaInUser);
@@ -171,7 +171,7 @@ public class UserResource{
         htBoaInLoginService.update(u);
         htBoaInPwdHistService.add(htBoaInPwdHist);
         el = System.currentTimeMillis();
-        log.info(logEnd, "resetPwd: " + changePwd, msg, el, el - sl);
+        log.debug(logEnd, "resetPwd: " + changePwd, msg, el, el - sl);
         return new ResponseModal("200", "成功");
     }
 
@@ -189,10 +189,10 @@ public class UserResource{
         String logHead = "根据UserId查询用户角色：user/listUserRoleByPage param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "page: " + page, sl);
+        log.debug(logStart, "page: " + page, sl);
         result = htBoaInUserRoleService.listUserRoleByPage(pageConf, page.getQuery());
         el = System.currentTimeMillis();
-        log.info(logEnd, "page: " + page, msg, el, el - sl);
+        log.debug(logEnd, "page: " + page, msg, el, el - sl);
         return result;
     }
 
@@ -235,7 +235,7 @@ public class UserResource{
             rm.setSysStatus((SysStatus.USER_NOT_FOUND));
             return rm;
         } else if (htBoaInUser.getDelFlag() == 1) {
-            log.info("该用户已被删除！");
+            log.debug("该用户已被删除！");
             rm.setSysStatus(SysStatus.USER_HAS_DELETED);
         } else {
             BeanUtils.deepCopy(htBoaInUser, userVo);
@@ -246,7 +246,7 @@ public class UserResource{
         if (!LogicUtil.isNullOrEmpty(controller)) {
             userVo.setController(controller);
         } else {
-            log.info("用户来源不正确！");
+            log.debug("用户来源不正确！");
             rm.setSysStatus(SysStatus.USER_NOT_MATCH_APP);
             return rm;
 

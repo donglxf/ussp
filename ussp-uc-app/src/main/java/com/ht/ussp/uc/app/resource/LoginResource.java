@@ -62,7 +62,7 @@ public class LoginResource {
         String logHead = "忘记密码/重置密码：login/in/resetpwd param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, resetPwd.toString(), sl);
+        log.debug(logStart, resetPwd.toString(), sl);
         HtBoaInUser htBoaInUser = new HtBoaInUser();
         htBoaInUser.setMobile(resetPwd.getMobile());
         htBoaInUser.setEmail(resetPwd.getEmail());
@@ -103,7 +103,7 @@ public class LoginResource {
         htBoaInLoginService.update(u);
         htBoaInPwdHistService.add(htBoaInPwdHist);
         el = System.currentTimeMillis();
-        log.info(logEnd, "resetPwd: " + resetPwd, msg, el, el - sl);
+        log.debug(logEnd, "resetPwd: " + resetPwd, msg, el, el - sl);
         return new ResponseModal("200", "成功");
     }
 

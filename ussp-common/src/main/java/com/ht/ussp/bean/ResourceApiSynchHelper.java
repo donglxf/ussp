@@ -168,7 +168,11 @@ public class ResourceApiSynchHelper {
                         log.debug("方法映射：\t\t" + mapping + methodMapping);
                         log.debug("方法名：\t\t" + method);
                     }
-                    apiDto.add(mapping.concat("/").concat(methodMapping).replace("//","/"), method, apiDescribe);
+                    if (StringUtils.isEmpty(methodMapping)) {
+                        apiDto.add(mapping, method, apiDescribe);
+                    } else {
+                        apiDto.add(mapping.concat("/").concat(methodMapping).replace("//", "/"), method, apiDescribe);
+                    }
                 }
             }
             if (apiDto != null && apiDto.getApiInfoList().size() > 0) {

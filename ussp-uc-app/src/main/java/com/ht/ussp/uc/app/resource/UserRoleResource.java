@@ -51,11 +51,11 @@ public class UserRoleResource {
            String logHead = "根据UserId查询用户角色：user/listUserRoleByPage param-> {}";
            String logStart = logHead + " | START:{}";
            String logEnd = logHead + " {} | END:{}, COST:{}";
-           log.info(logStart, "page: " + page, sl);
+           log.debug(logStart, "page: " + page, sl);
            
            result =  htBoaInUserRoleService.listUserRoleByPage(pageConf,page.getQuery()); 
            el = System.currentTimeMillis();
-           log.info(logEnd, "page: " + page, msg, el, el - sl);
+           log.debug(logEnd, "page: " + page, msg, el, el - sl);
            return result;
      }
 
@@ -68,7 +68,7 @@ public class UserRoleResource {
         String logHead = "角色记录查询：role/in/add param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "boaInRoleInfo: " + htBoaInUserRole, sl);
+        log.debug(logStart, "boaInRoleInfo: " + htBoaInUserRole, sl);
         HtBoaInUserRole u = new HtBoaInUserRole();
         
         //验证是否已经分配角色
@@ -86,7 +86,7 @@ public class UserRoleResource {
 		}
         
         el = System.currentTimeMillis();
-        log.info(logEnd, "boaInRoleInfo: " + htBoaInUserRole, msg, el, el - sl);
+        log.debug(logEnd, "boaInRoleInfo: " + htBoaInUserRole, msg, el, el - sl);
         return Result.buildSuccess();
        // return new ResponseModal(200, msg, u);
     }
@@ -101,7 +101,7 @@ public class UserRoleResource {
         String logHead = "角色记录查询：role/in/add param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        //log.info(logStart, "boaInRoleInfo: " + boaInRoleInfo, sl);
+        //log.debug(logStart, "boaInRoleInfo: " + boaInRoleInfo, sl);
         HtBoaInUserRole u = null;
         if(id>0) {
         	u = htBoaInUserRoleService.findById(id);
@@ -117,7 +117,7 @@ public class UserRoleResource {
         u = htBoaInUserRoleService .update(u);
         
         el = System.currentTimeMillis();
-        log.info(logEnd, "boaInRoleInfo: " + u, msg, el, el - sl);
+        log.debug(logEnd, "boaInRoleInfo: " + u, msg, el, el - sl);
         return Result.buildSuccess();
     }
     
@@ -131,12 +131,12 @@ public class UserRoleResource {
         String logHead = "角色记录删除：role/in/delete param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "codes: " + id, sl);
+        log.debug(logStart, "codes: " + id, sl);
         HtBoaInUserRole u = new HtBoaInUserRole();
         u.setId((long) id);
         htBoaInUserRoleService.delete(u);
         el = System.currentTimeMillis();
-        log.info(logEnd, "codes: " + id, msg, el, el - sl);
+        log.debug(logEnd, "codes: " + id, msg, el, el - sl);
         return Result.buildSuccess();
         //return new ResponseModal(200, msg);
     }

@@ -58,7 +58,7 @@ public class OutUserResource {
         String logHead = "用户个人信息查询：user/out/selfinfo param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "userId: " + userId, sl);
+        log.debug(logStart, "userId: " + userId, sl);
         SelfBoaOutUserInfo u = new SelfBoaOutUserInfo();
         u.setUserId(userId);
         List<SelfBoaOutUserInfo> selfUserInfoList = htBoaOutUserService.findAll(u);
@@ -66,7 +66,7 @@ public class OutUserResource {
         if (null != r)
             return r;
         el = System.currentTimeMillis();
-        log.info(logEnd, "userId: " + userId, msg, el, el - sl);
+        log.debug(logEnd, "userId: " + userId, msg, el, el - sl);
         return new ResponseModal("200", msg, selfUserInfoList.get(0));
     }
 
@@ -80,7 +80,7 @@ public class OutUserResource {
         String logHead = "用户个人信息修改：user/out/selfinfo/set param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.info(logStart, "selfBoaOutUserInfo: " + selfBoaOutUserInfo, sl);
+        log.debug(logStart, "selfBoaOutUserInfo: " + selfBoaOutUserInfo, sl);
         HtBoaOutUser u = new HtBoaOutUser();
         BeanUtils.setObjectFieldsEmpty(u);
         u.setUserId(selfBoaOutUserInfo.getUserId());
@@ -120,7 +120,7 @@ public class OutUserResource {
         if (null != r)
             return r;
         el = System.currentTimeMillis();
-        log.info(logEnd, "selfUserInfo: " + selfBoaOutUserInfo, msg, el, el - sl);
+        log.debug(logEnd, "selfUserInfo: " + selfBoaOutUserInfo, msg, el, el - sl);
         return new ResponseModal("200", msg, selfUserInfoList.get(0));
     }
 
