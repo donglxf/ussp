@@ -8,18 +8,16 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
-        , menuTableLoad = false//菜单数据表格是否已加载
-        , btnTableLoad = false//按钮数据表格是否已加载
-        , tabTableLoad = false//tab数据表格是否已加载
-        , apiTableLoad = false//api数据表格是否已加载
-        , moduleTableLoad = false//module数据表格是否已加载
+        , relevanceDialog = 0
         , selectBottomTabIndex = 0//当前选中的tab标签页
+        , isCutModule = false, isCutBtn = false, isCutTab = false, isCutApi = false//是否切换了模块tab
         , appAndResourceTree //组织机构树控件
+        , selectTableData = {}//table选中的行数据
         , getNewResCodeUrl = config.basePath + 'resource/rescode/load'
         , active = {
-        add: function (type) { //弹出用户新增弹出框
-            var nodes = appAndResourceTree.getSelectedNodes();
-            var checkStatus = table.checkStatus('resource_menu_datatable');
+        add: function (type, relevanceType) { //弹出用户新增弹出框
+            var nodes = appAndResourceTree.getSelectedNodes(),
+                selectData;
             layer.close(addDialog);
             var title;
             switch (type) {
@@ -51,10 +49,19 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                     }
                     break;
                 case "api":
+                    if (relevanceType) {
+                        selectData = selectTableData[relevanceType];
+                        if (!selectData) {
+                            layer.alert("请先在左边选择父资源！");
+                            return false;
+                        }
+                        break;
+                    }
                 case "tab":
                 case "btn":
-                    if (!checkStatus || !checkStatus.data || checkStatus.data.length == 0) {
-                        layer.alert("请先在上面的表格中选择一个父菜单。");
+                    selectData = selectTableData["menu"];
+                    if (!selectData) {
+                        layer.alert("请先在上面选择父菜单！");
                         return false;
                     }
                     break;
@@ -85,12 +92,8 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                     //初始弹出框表单数据
                     switch (type) {
                         case "menu":
-                            if (nodes[0]["type"] == "group") {
-                                resParent = nodes[0]["code"];
-                                resParentName = nodes[0]["name"];
-                            }
                         case "module":
-                            if (nodes[0]["type"] == "module") {
+                            if (nodes[0]["type"] == "module" || nodes[0]["type"] == "group") {
                                 resParent = nodes[0]["code"];
                                 resParentName = nodes[0]["name"];
                             }
@@ -98,7 +101,6 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                         case "api":
                         case "tab":
                         case "btn":
-                            var selectData = checkStatus.data[0];
                             resParent = selectData["resCode"];
                             resParentName = selectData["resNameCn"];
                             break;
@@ -130,15 +132,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                             success: function (result) {
                                 layer.close(index);
                                 if (result["returnCode"] == '0000') {
-                                    if (type == 'module') {
-                                        moduleTableLoad = false;
-                                    } else {
-                                        menuTableLoad = false;
-                                        btnTableLoad = false;
-                                        tabTableLoad = false;
-                                        apiTableLoad = false;
-                                    }
-                                    renderTable(type, resParent);
+                                    renderTable(relevanceType ? relevanceType : type, resParent);
                                     layer.alert(title + "成功。");
                                 }
                             },
@@ -152,20 +146,20 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                 }
             })
         },
-        relevance: function () {
-            layer.close(addDialog);
-            var parentMenuCheckStatus = table.checkStatus('resource_menu_datatable');
-            if (!parentMenuCheckStatus || !parentMenuCheckStatus.data || parentMenuCheckStatus.data.length == 0) {
+        relevance: function (resType, relevanceType) {
+            layer.close(relevanceDialog);
+            var selectData = selectTableData[relevanceType ? relevanceType : resType];
+            if (!selectData) {
                 layer.alert("请先在上面的表格中选择一个父菜单。");
                 return false;
-            } else if (parentMenuCheckStatus.data[0]["resType"] != "view") {
+            } else if (selectData["resType"] == "group") {
                 layer.alert("请选择一个带链接的页面菜单。");
                 return false;
             }
-            var app = parentMenuCheckStatus.data[0]["app"];
-            var parentCode = parentMenuCheckStatus.data[0]["resCode"];
-            var parentName = parentMenuCheckStatus.data[0]["resNameCn"];
-            addDialog = layer.open({
+            var app = selectData["app"];
+            var parentCode = selectData["resCode"];
+            var parentName = selectData["resNameCn"];
+            relevanceDialog = layer.open({
                 type: 1,
                 area: ['1000px', '645px'],
                 shadeClose: true,
@@ -185,13 +179,10 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                         success: function (result) {
                             layer.close(index);
                             if (result["returnCode"] == '0000') {
-                                apiTableLoad = false;
-                                renderTable("api", parentCode);
+                                renderTable(relevanceType ? relevanceType + "_api" : "api", parentCode);
                                 layer.alert("关联API成功。");
                             }
-                        }
-
-                        ,
+                        },
                         error: function (result) {
                             layer.msg("关联API发生异常，请联系管理员。");
                             console.error(result);
@@ -244,14 +235,6 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
             if (selectNodes && selectNodes.length == 1) {
                 var keyword = $("#resource_" + type + "_search_keyword").val();
                 var resType = selectNodes[0]["type"];
-                if (type == 'module') {
-                    moduleTableLoad = false;
-                } else {
-                    menuTableLoad = false;
-                    btnTableLoad = false;
-                    tabTableLoad = false;
-                    apiTableLoad = false;
-                }
                 if (resType != "view" && resType != "group" && resType != "module") {
                     renderTable(type, null, keyword);
                 } else {
@@ -260,7 +243,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
             }
         }
     };
-    var refreshDalogAPIDataTable = function (app, keyword) {
+    var refreshDalogAPIDataTable = function (app, keyword, relevanceType) {
         if (!keyword) {
             keyword = null;
         }
@@ -311,10 +294,6 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                         case "group":
                         case "app":
                         case "menuType":
-                            menuTableLoad = false;
-                            btnTableLoad = false;
-                            tabTableLoad = false;
-                            apiTableLoad = false;
                             if (resType != "view" && resType != "group") {
                                 renderTable('menu', null);
                             } else {
@@ -326,7 +305,6 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                             break;
                         case "moduleType":
                         case "module":
-                            moduleTableLoad = false;
                             if (resType != "module") {
                                 renderTable('module', null);
                             } else {
@@ -368,37 +346,43 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
         if (!keyword) {
             keyword = null;
         }
+        var selectData;
         switch (type) {
             case "module":
             case "menu":
                 var selectNodes = appAndResourceTree.getSelectedNodes();
                 if (selectNodes && selectNodes.length == 1) {
-                    app = selectNodes[0]["app"];
+                    selectData = selectNodes[0];
                     if (typeof(parentCode) == 'undefined' && parentCode == null) {
                         parentCode = selectNodes[0]["code"];
                     }
                 }
                 break;
+            case "btn_api":
+                selectData = selectTableData["btn"];
+                break;
+            case "tab_api":
+                selectData = selectTableData["tab"];
+                break;
+            case "module_api":
+                selectData = selectTableData["module"];
+                break;
             case "api":
             case "tab":
             case "btn":
-                var checkStatus = table.checkStatus('resource_menu_datatable');
-                if (checkStatus && checkStatus.data.length == 1) {
-                    if (!parentCode) {
-                        parentCode = checkStatus.data[0]["resCode"];
-                    }
-                    app = checkStatus.data[0]["app"];
-                }
+                selectData = selectTableData["menu"];
                 break;
+        }
+        if (selectData) {
+            app = selectData["app"];
+            if (!parentCode) {
+                parentCode = selectData["resCode"];
+            }
         }
         var clos = [[]], height = 'full', page = false, limit = 999, limits = [],
             initSort = {field: 'lastModifiedDatetime', type: 'desc'};
         switch (type) {
             case 'menu':
-                if (menuTableLoad) {
-                    return false;
-                }
-                menuTableLoad = true;
                 resType = "group,view";
                 height = '276';
                 page = true;
@@ -407,24 +391,20 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                 initSort = {field: 'resParent', type: 'asc'};
                 clos = [[
                     {type: 'numbers'}
-                    , {type: 'checkbox'}
-                    , {field: 'resCode', width: 120, title: '菜单编号'}
-                    , {field: 'resNameCn', width: 150, title: '菜单名称'}
-                    , {field: 'resContent', title: '菜单链接'}
-                    , {field: 'fontIcon', align: 'center', width: 60, title: '图标', templet: "#resource_menu_font_icon_laytpl"}
-                    , {field: 'sequence', align: 'center', width: 60, title: '顺序'}
-                    , {field: 'resParent', width: 100, title: '父菜单编号'}
-                    , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl"}
-                    , {field: 'updateOperator', width: 100, title: '更新人'}
-                    , {field: 'lastModifiedDatetime', width: 150, title: '更新时间'}
-                    , {width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn'}
+                    , {type: 'checkbox', event: 'rowClick'}
+                    , {field: 'resCode', width: 120, title: '菜单编号', event: 'rowClick'}
+                    , {field: 'resNameCn', width: 150, title: '菜单名称', event: 'rowClick'}
+                    , {field: 'resContent', title: '菜单链接', event: 'rowClick'}
+                    , {field: 'fontIcon', align: 'center', width: 60, title: '图标', templet: "#resource_menu_font_icon_laytpl", event: 'rowClick'}
+                    , {field: 'sequence', align: 'center', width: 60, title: '顺序', event: 'rowClick'}
+                    , {field: 'resParent', width: 100, title: '父菜单编号', event: 'rowClick'}
+                    , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl", event: 'rowClick'}
+                    , {field: 'updateOperator', width: 100, title: '更新人', event: 'rowClick'}
+                    , {field: 'lastModifiedDatetime', width: 150, title: '更新时间', event: 'rowClick'}
+                    , {width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn', event: 'rowClick'}
                 ]];
                 break;
             case 'btn':
-                if (btnTableLoad) {
-                    return false;
-                }
-                btnTableLoad = true;
                 resType = 'btn';
                 height = 'full-601';
                 initSort = {field: 'resCode', type: 'asc'};
@@ -444,40 +424,35 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                 ]];
                 break;
             case 'tab':
-                if (tabTableLoad) {
-                    return false;
-                }
-                tabTableLoad = true;
                 resType = 'tab';
                 height = 'full-601';
                 initSort = {field: 'resCode', type: 'asc'};
                 clos = [[
                     {type: 'numbers'}
-                    , {field: 'resCode', width: 150, title: 'TAB编号'}
-                    , {field: 'resNameCn', width: 100, title: 'TAB名称'}
-                    , {field: 'resContent', title: 'TAB链接'}
+                    , {type: 'checkbox', event: 'rowClick'}
+                    , {field: 'resCode', width: 150, title: 'TAB编号', event: 'rowClick'}
+                    , {field: 'resNameCn', width: 100, title: 'TAB名称', event: 'rowClick'}
+                    , {field: 'resContent', title: 'TAB链接', event: 'rowClick'}
                     // , {field: 'sequence', width: 60, title: '顺序'}
-                    , {field: 'resParent', width: 120, title: '父菜单编号'}
-                    , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl"}
-                    , {field: 'updateOperator', width: 100, title: '更新人'}
-                    , {field: 'lastModifiedDatetime', width: 150, title: '更新时间'}
-                    , {width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn'}
+                    , {field: 'resParent', width: 120, title: '父菜单编号', event: 'rowClick'}
+                    , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl", event: 'rowClick'}
+                    , {field: 'updateOperator', width: 100, title: '更新人', event: 'rowClick'}
+                    , {field: 'lastModifiedDatetime', width: 150, title: '更新时间', event: 'rowClick'}
+                    , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn', event: 'rowClick'}
                 ]];
                 break;
-            case 'btn_api':
             case 'api':
-                if (apiTableLoad) {
-                    return false;
-                }
-                apiTableLoad = true;
+            case "btn_api":
+            case "tab_api":
+            case "module_api":
                 resType = 'api';
                 height = 'full-601';
                 initSort = {field: 'resCode', type: 'asc'};
                 clos = [[
                     {type: 'numbers'}
                     , {field: 'resCode', width: 150, title: 'API编号'}
-                    , {field: 'resNameCn', width: 150, title: 'API名称'}
-                    , {field: 'resContent', title: 'API链接'}
+                    , {field: 'resContent', cellMinWidth: 125, minWidth: 125, title: 'API链接'}
+                    , {field: 'resNameCn', width: 120, title: 'API名称'}
                     , {field: 'remark', width: 200, title: '方法名'}
                     , {field: 'resParent', width: 120, title: '父菜单编号'}
                     , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl"}
@@ -487,10 +462,6 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                 ]];
                 break;
             case 'module':
-                if (moduleTableLoad) {
-                    return false;
-                }
-                moduleTableLoad = true;
                 resType = 'module';
                 height = 'full-234';
                 page = true;
@@ -499,16 +470,17 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                 initSort = {field: 'sequence', type: 'asc'};
                 clos = [[
                     {type: 'numbers'}
-                    , {field: 'resCode', width: 120, title: '模块编号'}
-                    , {field: 'resNameCn', width: 150, title: '模块名称'}
-                    , {field: 'resContent', title: '模块链接'}
-                    , {field: 'fontIcon', width: 60, title: '图标'}
-                    , {field: 'sequence', width: 60, title: '顺序'}
-                    , {field: 'resParent', width: 120, title: '父模块编号'}
-                    , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl"}
-                    , {field: 'updateOperator', width: 100, title: '更新人'}
-                    , {field: 'lastModifiedDatetime', width: 150, title: '更新时间'}
-                    , {width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn'}
+                    , {type: 'checkbox', event: 'rowClick'}
+                    , {field: 'resCode', width: 120, title: '模块编号', event: 'rowClick'}
+                    , {field: 'resNameCn', width: 150, title: '模块名称', event: 'rowClick'}
+                    , {field: 'resContent', title: '模块链接', event: 'rowClick'}
+                    , {field: 'fontIcon', width: 60, title: '图标', event: 'rowClick'}
+                    , {field: 'sequence', width: 60, title: '顺序', event: 'rowClick'}
+                    , {field: 'resParent', width: 120, title: '父模块编号', event: 'rowClick'}
+                    , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl", event: 'rowClick'}
+                    , {field: 'updateOperator', width: 100, title: '更新人', event: 'rowClick'}
+                    , {field: 'lastModifiedDatetime', width: 150, title: '更新时间', event: 'rowClick'}
+                    , {width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn', event: 'rowClick'}
                 ]];
                 break;
         }
@@ -524,7 +496,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
             }
             , initSort: initSort
             , page: page
-            , limit: 9999
+            , limit: limit
             , limits: limits
             , height: height
             , cols: clos
@@ -534,11 +506,48 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
     var tableToolEvent = function (obj, type) {
         var data = obj.data;
         if (obj.event === 'rowClick') {
-            var $checkbox = obj.tr.find('input[name="layTableCheckbox"]+');
-            $checkbox.prop("checked", true).attr("xxx", "xxx");
+            var $checkbox = obj.tr.find('input[name="layTableCheckbox"]'),
+                allCheckbox = obj.tr.parent().find('input[name="layTableCheckbox"]');
+            if (selectTableData && selectTableData[type] && selectTableData[type]["resCode"] == data["resCode"]) {
+                $checkbox.prop("checked", false);
+                selectTableData[type] = undefined;
+            } else {
+                //重置已选的数据
+                allCheckbox.prop('checked', false);
+                //重新设置当前checkbox为选中
+                $checkbox.prop("checked", true);
+                selectTableData[type] = data;
+                //刷新子项的数据
+                if (type == 'btn') {
+                    renderTable("btn_api", data.resCode);
+                }
+                if (type == "menu") {
+                    isCutBtn = false;
+                    isCutTab = false;
+                    isCutApi = false;
+                    switch (selectBottomTabIndex) {
+                        case 0:
+                            selectTableData["btn"] = undefined;
+                            renderTable("btn", data.resCode);
+                            renderTable("btn_api");
+                            break;
+                        case 1:
+                            selectTableData["tab"] = undefined;
+                            renderTable("tab", data.resCode);
+                            renderTable("tab_api");
+                            break;
+                        case 2:
+                            renderTable("api", data.resCode);
+                            break;
+                    }
+                }
+            }
             var layFilter = obj.tr.parents("[lay-filter]").attr("lay-filter");
             form.render("checkbox", layFilter);
         } else if (obj.event === 'detail') {
+            if (type == "btn_api" || type == 'tab_api' || type == 'module_api') {
+                type = "api";
+            }
             $.post(config.basePath + 'resource/view?id=' + data.id, null, function (result) {
                 if (result["returnCode"] == "0000") {
                     viewDialog = layer.open({
@@ -576,14 +585,6 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
             layer.confirm('是否删除资源' + data.resNameCn + "？", function (index) {
                 $.post(config.basePath + 'resource/delete?id=' + data.id, null, function (result) {
                     if (result["returnCode"] == "0000") {
-                        if (type == 'module') {
-                            moduleTableLoad = false;
-                        } else {
-                            menuTableLoad = false;
-                            btnTableLoad = false;
-                            tabTableLoad = false;
-                            apiTableLoad = false;
-                        }
                         renderTable(type);
                         layer.close(index);
                         layer.alert("删除成功。");
@@ -593,6 +594,9 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                 });
             });
         } else if (obj.event === 'edit') {
+            if (type == "btn_api" || type == 'tab_api' || type == 'module_api') {
+                type = "api";
+            }
             layer.close(editDialog);
             $.post(config.basePath + 'resource/view?id=' + data.id, null, function (result) {
                 if (result["returnCode"] == "0000") {
@@ -681,6 +685,15 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
     table.on('tool(resource_api_datatable)', function (obj) {
         tableToolEvent(obj, "api")
     });
+    table.on('tool(resource_btn_api_datatable)', function (obj) {
+        tableToolEvent(obj, "btn_api")
+    });
+    table.on('tool(resource_tab_api_datatable)', function (obj) {
+        tableToolEvent(obj, "tab_api")
+    });
+    table.on('tool(resource_module_api_datatable)', function (obj) {
+        tableToolEvent(obj, "module_api")
+    });
     table.on('tool(resource_module_datatable)', function (obj) {
         tableToolEvent(obj, "module")
     });
@@ -691,7 +704,10 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                 element.tabChange("resource_bottom_tab", "resBtnType");
                 break;
             case 1:
-                renderTable("module");
+                if (!isCutModule) {
+                    isCutModule = true;
+                    renderTable("module");
+                }
                 break;
         }
     });
@@ -699,59 +715,38 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
     element.on('tab(resource_bottom_tab)', function (data) {
         selectBottomTabIndex = data.index;
         switch (data.index) {
-            case 1:
-                renderTable("tab");
-                break;
-            case 2:
-                renderTable("api");
-                break;
-        }
-    });
-    //监控菜单datatable行选中事件
-    table.on("rowClick(resource_menu_datatable)", function (data) {
-        data.checkbox.click();
-    });
-    //监控菜单datatable复选框点击事件
-    table.on('checkbox(resource_menu_datatable)', function (data) { //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
-        var that = data.that, checkbox = data.checkbox, allCheckbox = data.allCheckbox;
-        if (checkbox[0].checked) {
-            //重置已选的数据
-            allCheckbox.prop('checked', false);
-            $.each(allCheckbox, function (i, cb) {
-                var index = $(cb).parents('tr').eq(0).data('index');
-                that.setCheckData(index, false);
-            })
-            //重新设置当前checkbox为选中
-            checkbox.prop("checked", true);
-            that.setCheckData(checkbox.parents('tr').eq(0).data('index'), true);
-            that.syncCheckAll();
-            that.renderForm('checkbox');
-        }
-        btnTableLoad = false;
-        tabTableLoad = false;
-        apiTableLoad = false;
-        switch (selectBottomTabIndex) {
             case 0:
-                renderTable("btn", data.data.resCode);
+                if (!isCutBtn) {
+                    isCutBtn = true;
+                    renderTable("btn");
+                    renderTable("btn_api");
+                }
                 break;
             case 1:
-                renderTable("tab", data.data.resCode);
+                if (!isCutTab) {
+                    isCutTab = true;
+                    renderTable("tab");
+                    renderTable("tab_api");
+                }
                 break;
             case 2:
-                renderTable("api", data.data.resCode);
+                if (!isCutApi) {
+                    isCutApi = true;
+                    renderTable("api");
+                }
                 break;
         }
     });
     //监听工具栏
     $('#resource_content .layui-btn').on('click', function () {
         var type = $(this).data('type');
-        var resType = $(this).data('res-type');
-        active[type] ? active[type].call(this, resType) : '';
+        var resType = $(this).data('res-type'),
+            relevanceType = $(this).data('relevance-type');
+        active[type] ? active[type].call(this, resType, relevanceType) : '';
     });
     //监听树的工具栏
     $('#resource_tree .btn').on('click', function () {
         var type = $(this).data('type');
-        var resType = $(this).data('res-type');
         switch (type) {
             case "refresh":
                 if (appAndResourceTree) {
@@ -769,10 +764,6 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                 }
                 break;
         }
-    });
-    //刷新树的数据
-    $('#user_btn_refresh_tree').on('click', function (e) {
-
     });
     var nodeList = [];
     //搜索树的数据
