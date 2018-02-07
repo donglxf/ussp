@@ -32,7 +32,8 @@ spring:
   profiles: dev
   cloud:
     config:
-      enabled: true
+      discovery:
+        enabled: true
     bus:
       enabled: true
 
@@ -46,7 +47,8 @@ spring:
   profiles: sit
   cloud:
     config:
-      enabled: true
+      discovery:
+        enabled: true
     bus:
       enabled: true
 
@@ -60,7 +62,8 @@ spring:
   profiles: uat
   cloud:
     config:
-      enabled: true
+      discovery:
+        enabled: true
     bus:
       enabled: true
 
@@ -74,7 +77,8 @@ spring:
   profiles: prd
   cloud:
     config:
-      enabled: true
+      discovery:
+        enabled: true
     bus:
       enabled: true
 

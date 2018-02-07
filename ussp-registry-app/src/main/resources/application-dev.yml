@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: ussp-registry-app
+#  cloud: 
+#    inetutils: 
+#      preferred-networks: 192.169.0
+server:
+  port: 30101
+eureka:
+  instance:
+    prefer-ip-address: true
+    lease-expiration-duration-in-seconds: 30
+    lease-renewal-interval-in-seconds: 10
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+  server:
+    enable-self-preservation: false
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+#      defaultZone: ${ADDITIONAL_EUREKA_SERVER_LIST}
+       defaultZone: http://localhost:30101/eureka
+   

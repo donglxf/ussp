@@ -17,6 +17,10 @@ zuul:
     ussp-uc:
       path: /uc/**
       serviceId: ussp-uc-app
+    #外联平台
+    eip:
+      path: /ht/**
+      serviceId: eip-in
     #车全系统
     cisp-web-service:
       path: /admin/**
@@ -86,5 +90,5 @@ ribbon:
 
 ht:
   ignoreUrl: #不验证的url(可以使用通配符（*）)
-     web: /uc/echo,/admin/*,/car/*,/rule/ui/*,/cams/ui/*,/LawUi/*,/alms/ui/* #不需要验证token
+     web: /uc/echo,/ht/nologin/*,/admin/*,/car/*,/rule/ui/*,/cams/ui/*,/LawUi/*,/alms/ui/* #不需要验证token
      http: /auth/loadBtnAndTab,/auth/loadMenu,/check/key #需要验证token
