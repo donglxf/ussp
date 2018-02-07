@@ -17,9 +17,9 @@ spring:
     config:
       server:
         git:
-          uri: http://10.110.1.240/dev2/ussp.git
-          search-paths: config-repo/*
-          username: config
+          uri: http://10.110.1.240/root/config.git
+          search-paths: /*
+          username: root
           password: ht_config
 
 eureka:
