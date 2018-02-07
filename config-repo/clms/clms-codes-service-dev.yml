@@ -5,6 +5,7 @@ server:
 spring:
   application:
     name: clms-codes-service
+    version: 1.0.0
   rabbitmq:
     host: 10.100.8.57
     port: 5672
@@ -15,8 +16,8 @@ spring:
     favicon:
       enabled: false
   datasource:
-    url: jdbc:mysql://10.110.1.240:3306/clms-dev?characterEncoding=utf8&useSSL=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
-    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://10.110.1.240:3306/clms-dev?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: tuandai_bm2015
   jackson:
