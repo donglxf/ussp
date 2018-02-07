@@ -17,6 +17,7 @@ spring:
 logging:
   level:
     - com.ht.cams.account.mapper: info
+
     
 ht.config.uc.api:
   synch: true #是否同步API资源到用户权限中心
