@@ -16,7 +16,7 @@ spring:
 
 logging:
   level:
-    - com.ht.cams.account.mapper: error
+    - com.ht.cams.account.mapper: INFO
 
     
 ht.config.uc.api:
