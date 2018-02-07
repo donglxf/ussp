@@ -1,8 +1,11 @@
 package com.ht.ussp.util;
 
+import com.alibaba.fastjson.JSONPath;
+
 import javax.crypto.Cipher;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESedeKeySpec;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -31,7 +34,7 @@ public class TdUtil {
 //        // ...
 //
         data.put("projectId", "e6643a70-d439-454a-bdeb-3f1519775d3e");
-        String invokeJsonString = TdUtil.toJsonString("td_zhulidai", TEST_KEY, data);
+        String invokeJsonString = TdUtil.toJsonString("td_xiaodai", TEST_KEY, data);
 
         // 打印调用接口所需数据
         System.out.println(invokeJsonString);
@@ -70,6 +73,22 @@ public class TdUtil {
         return map;
     }
 
+
+    /**
+     * 将加密的数据直接转换为普通的bean
+     * @param key
+     * @param data
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    public static <T> T stringToBean(String key, String data, Class<T> clazz) throws Exception {
+        String body = URLDecoder.decode(data, "UTF-8");
+        String decodeData = DESUtil.des3DecodeECB(key,body);
+        T bean = JsonUtil.json2Obj(decodeData,clazz);
+        return bean;
+    }
+
     /**
      * 生成签名串
      *
@@ -78,7 +97,7 @@ public class TdUtil {
      * @param encryptKey  秘钥
      * @return
      */
-    private static String sign(String encryptJson, String tdUserName, String encryptKey) {
+    public static String sign(String encryptJson, String tdUserName, String encryptKey) {
         // 标准MD5散列算法，可用自家工具类代替
         return HashUtil.md5(String.format("Json:%s_tdUserName:%s_Key:%s", encryptJson, tdUserName, encryptKey));
     }
@@ -95,7 +114,7 @@ public class TdUtil {
         return URLEncoder.encode(DESUtil.des3EncodeECB(key, data), CHARSET);
     }
 
-    private static class HashUtil {
+     static class HashUtil {
         private HashUtil() {
         }
 
@@ -120,7 +139,7 @@ public class TdUtil {
         }
     }
 
-    private static class DESUtil {
+     static class DESUtil {
         private static final String ALGORITHM = "DESede";
         private static final String CHARSET = "UTF-8";
         private static final String DEFAULT_CIPHER_ALGORITHM = "DESede/ECB/PKCS5Padding";

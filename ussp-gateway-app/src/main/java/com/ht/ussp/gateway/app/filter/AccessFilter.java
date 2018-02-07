@@ -76,15 +76,8 @@ public class AccessFilter extends ZuulFilter {
         String uri = request.getRequestURI().toString();
         String validateUrl = getUrl(uri);//uri.substring(uri.indexOf("/", uri.indexOf("/") + 1));
         //排除不验证的请求，支持通配符“*”
-        if (!StringUtils.isEmpty(htIgnoreUrlWeb)) {
-            String[] ignoreUrlWebs = htIgnoreUrlWeb.split(",");
-            for (String ignoreUrlWeb : ignoreUrlWebs) {
-                if (PatternUtil.compile(ignoreUrlWeb).match(uri)) {
-                    ctx.setSendZuulResponse(true);
-                    ctx.setResponseStatusCode(200);
-                    return null;
-                }
-            }
+        if (isIgnoreUrl(uri, htIgnoreUrlWeb)) {
+            return null;
         }
 
         // 必须带Authorization
@@ -118,7 +111,6 @@ public class AccessFilter extends ZuulFilter {
             try {
                 mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_EXPIRED));
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             return null;
@@ -136,17 +128,12 @@ public class AccessFilter extends ZuulFilter {
         ctx.setResponseStatusCode(200);
 
         //排除不验证的请求，支持通配符“*”
-        if (!StringUtils.isEmpty(htIgnoreUrlHttp)) {
-            String[] ignoreUrlHttps = htIgnoreUrlHttp.split(",");
-            for (String ignoreUrlHttp : ignoreUrlHttps) {
-                if (PatternUtil.compile(ignoreUrlHttp).match(validateUrl)) {
-                    return null;
-                }
-            }
+        if (isIgnoreUrl(uri, htIgnoreUrlHttp)) {
+            return null;
         }
 
         //验证api权限
-        log.info("------------validateUrl------" + validateUrl);
+        log.debug("------------validateUrl------" + validateUrl);
         String api_key = String.format("%s:%s:%s", userId, app, "api");
         if (!roleClient.IsHasAuth(api_key, validateUrl)) {
             ctx.setSendZuulResponse(false);
@@ -178,6 +165,27 @@ public class AccessFilter extends ZuulFilter {
     @Override
     public int filterOrder() {
         return 0;
+    }
+
+    /**
+     * 判断是否为过滤的url<br>
+     *
+     * @param url       待验证的url
+     * @param ignoreUrl 需要过滤的url
+     * @return true 为过滤的url，false 为不过滤的url
+     * @author 谭荣巧
+     * @Date 2018/2/7 14:07
+     */
+    private boolean isIgnoreUrl(String url, String ignoreUrl) {
+        if (!StringUtils.isEmpty(ignoreUrl)) {
+            String[] ignoreUrlHttps = ignoreUrl.split(",");
+            for (String ignoreUrlHttp : ignoreUrlHttps) {
+                if (PatternUtil.compile(ignoreUrlHttp).match(url)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
