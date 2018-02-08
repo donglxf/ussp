@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://10.110.1.240:3306/hongte_cams_production?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    url: jdbc:mysql://10.110.1.240:3306/tuandai_bm_core?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
     username: root
     password: tuandai_bm2015
    
