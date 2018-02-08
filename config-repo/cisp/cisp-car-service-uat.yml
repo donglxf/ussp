@@ -1,5 +1,8 @@
----
+server:
+  port: 30201
 spring:
+  application:
+    name: cisp-car-service
   cloud:
     config:
       overrideNone: true

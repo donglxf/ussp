@@ -1,7 +1,8 @@
----
 spring:
+  application:
+    name: cisp-web-service
   thymeleaf:
     mode: LEGACYHTML5
     cache: false
 server:
-  port: 9190
+  port: 30202
