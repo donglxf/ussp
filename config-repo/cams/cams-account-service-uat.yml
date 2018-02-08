@@ -1,6 +1,5 @@
 server:
   port: {SERVER_PORT}
-
 spring: 
   rabbitmq:
       host: 10.100.8.57
@@ -9,17 +8,13 @@ spring:
       password: guest
       virtual-host: /
   datasource:
-    url: jdbc:mysql://10.110.1.240:3306/hongte_cams_production?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    url: jdbc:mysql://10.100.5.193:3306/ht_cams?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
     username: root
-    password: tuandai_bm2015
- 
-    
-ht.config.uc.api:
-  synch: true #是否同步API资源到用户权限中心
-  packages: com.ht.cams.account.controller #API资源扫描的包，可用多个，多个使用“,”分隔
-  app: CAMS
- 
+    password: tuandai888   
 logging:
   level:
-    - com.ht.cams.account.mapper: info
- 
+    - com.ht.cams.account.mapper: INFO  
+ht.config.uc.api:
+  synch: true
+  packages: com.ht.cams.account.controller
+  app: CAMS
