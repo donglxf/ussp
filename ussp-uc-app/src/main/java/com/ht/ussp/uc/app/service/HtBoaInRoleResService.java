@@ -1,20 +1,20 @@
 package com.ht.ussp.uc.app.service;
 
-import com.ht.ussp.uc.app.domain.HtBoaInResource;
-import com.ht.ussp.uc.app.domain.HtBoaInRoleRes;
-import com.ht.ussp.uc.app.repository.HtBoaInResourceRepository;
-import com.ht.ussp.uc.app.repository.HtBoaInRoleResRepository;
-import com.ht.ussp.uc.app.vo.RoleAndResVo;
-import com.netflix.discovery.converters.Auto;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.ht.ussp.uc.app.domain.HtBoaInResource;
+import com.ht.ussp.uc.app.domain.HtBoaInRoleRes;
+import com.ht.ussp.uc.app.repository.HtBoaInResourceRepository;
+import com.ht.ussp.uc.app.repository.HtBoaInRoleResRepository;
+import com.ht.ussp.uc.app.vo.RoleAndResVo;
 
 /**
  * @author wim qiuwenwu@hongte.info
@@ -85,4 +85,12 @@ public class HtBoaInRoleResService {
         htBoaInRoleResRepository.save(htBoaInRoleRess);
         return true;
     }
+    
+    public void delete(HtBoaInRoleRes u) {
+		this.htBoaInRoleResRepository.delete(u);
+	}
+
+	public void deleteByRoleCode(String roleCode) {
+		this.htBoaInRoleResRepository.deleteByRoleCode(roleCode);
+	}
 }

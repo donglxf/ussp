@@ -109,7 +109,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
 					});
 			  }
 			  if(isExist=="1"){
-				  return "新增岗位编码不可用，请重新输入岗位编码";
+				  return "新增岗位编码已存在或不可用，请重新输入岗位编码";
 			  } 
 		  },
 		  
@@ -267,15 +267,15 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
              });
         } else if (obj.event === 'del') {
             layer.confirm('是否确认删除岗位？', function (index) {
-            	obj.del();
             	 $.post(delPositionUrl+"?id=" + data.id, null, function (result) {
                      if (result["returnCode"] == "0000") {
-                         refreshTable();
+                    	 obj.del();
                          layer.close(index);
                          layer.msg("删除岗位成功");
                      } else {
                          layer.msg(result.codeDesc);
                      }
+                     refreshTable();
                  });
             });
         } else if (obj.event === 'edit') {

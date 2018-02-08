@@ -168,9 +168,9 @@ layui.use(['form',   'table', 'ht_config','ht_auth' ], function () {
         	}
         } else if (obj.event === 'del') {
         	 layer.confirm('是否确认删除系统？', function (index) {
-             	obj.del();
              	 $.post(delappUrl+"?id=" + data.id, null, function (result) {
                       if (result["returnCode"] == "0000") {
+                    	  obj.del();
                           refreshTable();
                           layer.close(index);
                           layer.msg("删除系统成功");

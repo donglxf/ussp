@@ -248,9 +248,9 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         	}
         } else if (obj.event === 'del') {
         	 layer.confirm('是否确认删除用户系统？', function (index) {
-             	obj.del();
              	 $.post(delUserAppListUrl+"?id=" + data.id, null, function (result) {
                       if (result["returnCode"] == "0000") {
+                    	  obj.del();
                     	  refreshUserAppTable();
                           layer.close(index);
                           layer.msg("删除用户系统成功");

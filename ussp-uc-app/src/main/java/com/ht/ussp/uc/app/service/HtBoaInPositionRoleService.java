@@ -106,5 +106,9 @@ public class HtBoaInPositionRoleService {
 	public List<HtBoaInPositionRole> getPositionRoleList(String roleCode, String positionCode) {
 		return this.htBoaInPositionRoleRepository.getPositionRoleList(roleCode,positionCode);
 	}
+
+	public void deleteByRoleCode(String roleCode) {
+		this.htBoaInPositionRoleRepository.deleteByRoleCode(roleCode);
+	}
 	
 }

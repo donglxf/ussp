@@ -37,5 +37,7 @@ public interface HtBoaInPositionRoleRepository extends JpaRepository <HtBoaInPos
     @Query("SELECT new com.ht.ussp.uc.app.model.BoaInRoleInfo(u.roleCode, u.roleName, u.roleNameCn,  u.status, u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,ur.delFlag,ur.id,u.app) "
 			+ "FROM HtBoaInPositionRole ur ,HtBoaInRole u    WHERE  ur.roleCode = u.roleCode AND  u.roleCode = ?1 and ur.positionCode=?2 GROUP BY u")
 	public List<HtBoaInPositionRole> getPositionRoleList(String roleCode, String positionCode);
+
+	public void deleteByRoleCode(String roleCode);
     
 }

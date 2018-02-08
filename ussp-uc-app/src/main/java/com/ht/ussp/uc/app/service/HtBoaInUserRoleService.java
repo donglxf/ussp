@@ -154,4 +154,8 @@ public class HtBoaInUserRoleService {
 	public List<BoaInRoleInfo> getUserRoleList(String roleCode, String userId) {
 		return htBoaInUserRoleRepository.getUserRoleList(roleCode,userId);
 	}
+	
+	public void deleteByRoleCode(String roleCode) {
+		this.htBoaInUserRoleRepository.deleteByRoleCode(roleCode);
+	}
 }

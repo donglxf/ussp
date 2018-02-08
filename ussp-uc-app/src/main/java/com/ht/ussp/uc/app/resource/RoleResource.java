@@ -7,13 +7,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.core.ReturnCodeEnum;
@@ -21,7 +21,10 @@ import com.ht.ussp.uc.app.domain.HtBoaInRole;
 import com.ht.ussp.uc.app.model.BoaInRoleInfo;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
+import com.ht.ussp.uc.app.service.HtBoaInPositionRoleService;
+import com.ht.ussp.uc.app.service.HtBoaInRoleResService;
 import com.ht.ussp.uc.app.service.HtBoaInRoleService;
+import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
 import com.ht.ussp.uc.app.vo.PageVo;
 
 import io.swagger.annotations.ApiImplicitParam;
@@ -44,6 +47,15 @@ public class RoleResource {
     @Autowired
     private HtBoaInRoleService htBoaInRoleService;
     
+    @Autowired
+    private HtBoaInUserRoleService htBoaInUserRoleService;
+    
+    @Autowired
+    private HtBoaInPositionRoleService htBoaInPositionRoleService;
+    
+    @Autowired
+    private HtBoaInRoleResService htBoaInRoleResService;
+    
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @ApiOperation(value = "对内：角色记录查询", notes = "列出所有角色记录列表信息")
    /* @ApiImplicitParam(name = "pageConf", value = "分页信息实体", required = true, dataType = "PageConf")*/
@@ -60,7 +72,6 @@ public class RoleResource {
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.debug(logStart, "pageConf: " + pageConf, sl);
-        /*Object o = htBoaInRoleService.findAllByPage(pageConf);*/
         Page<BoaInRoleInfo> pageData = (Page<BoaInRoleInfo>) htBoaInRoleService.findAllByPage(pageConf,page.getQuery());
         el = System.currentTimeMillis();
         log.debug(logEnd, "pageConf: " + pageConf, msg, el, el - sl);
@@ -73,7 +84,6 @@ public class RoleResource {
     
     @SuppressWarnings({ "unused", "rawtypes" })
 	@ApiOperation(value = "对内：新增/编辑角色记录", notes = "提交角色基础信息新增/编辑角色")
-    @ApiImplicitParam(name = "boaInRoleInfo", value = "角色信息实体", required = true, dataType = "BoaInRoleInfo")
     @RequestMapping(value = { "/in/add" }, method = RequestMethod.POST)
     public Result add(@RequestBody BoaInRoleInfo boaInRoleInfo,@RequestHeader("userId") String userId) {
         long sl = System.currentTimeMillis(), el = 0L;
@@ -164,28 +174,36 @@ public class RoleResource {
     }
 
  
-      
-     @SuppressWarnings("rawtypes")
-     @ApiOperation(value = "对内：删除标记岗位记录", notes = "提交岗位编号，可批量删除")
-     @RequestMapping(value = {"/in/delete" }, method = RequestMethod.POST)
-     public Result delete(long id) {
-          long sl = System.currentTimeMillis(), el = 0L;
-          String msg = "成功";
-          String logHead = "岗位记录删除：position/in/delete param-> {}";
-          String logStart = logHead + " | START:{}";
-          String logEnd = logHead + " {} | END:{}, COST:{}";
-          log.debug(logStart, "codes: " + id, sl);
-          HtBoaInRole u = htBoaInRoleService.findById(id);
-          u.setDelFlag(Constants.DEL_1);
-          u.setStatus(Constants.STATUS_1);
-          u.setUpdateOperator("del");
-          u.setLastModifiedDatetime(new Date());
-          htBoaInRoleService.update(u);
-          el = System.currentTimeMillis();
-          log.debug(logEnd, "codes: " + id, msg, el, el - sl);
-          return Result.buildSuccess();
-          
-       }
+	@SuppressWarnings("rawtypes")
+	@ApiOperation(value = "删除角色记录")
+	@RequestMapping(value = { "/in/delete" }, method = RequestMethod.POST)
+	@Transactional
+	public Result delete(long id) {
+		long sl = System.currentTimeMillis(), el = 0L;
+		String msg = "成功";
+		String logHead = "删除角色记录：position/in/delete param-> {}";
+		String logStart = logHead + " | START:{}";
+		String logEnd = logHead + " {} | END:{}, COST:{}";
+		log.debug(logStart, "codes: " + id, sl);
+		HtBoaInRole u = htBoaInRoleService.findById(id);
+		// 删除角色对应的人员关系，岗位角色关系，角色资源关系
+		htBoaInUserRoleService.deleteByRoleCode(u.getRoleCode());
+
+		htBoaInPositionRoleService.deleteByRoleCode(u.getRoleCode());
+
+		htBoaInRoleResService.deleteByRoleCode(u.getRoleCode());
+
+		/*
+		 * u.setDelFlag(Constants.DEL_1); u.setStatus(Constants.STATUS_1);
+		 * u.setUpdateOperator("del"); u.setLastModifiedDatetime(new Date());
+		 * htBoaInRoleService.update(u);
+		 */
+		htBoaInRoleService.delete(id);
+		el = System.currentTimeMillis();
+		log.debug(logEnd, "codes: " + id, msg, el, el - sl);
+		return Result.buildSuccess();
+
+	}
      
     @SuppressWarnings("rawtypes")
     @ApiOperation(value = "对内：角色编码是否可用  true：可用  false：不可用")

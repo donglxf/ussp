@@ -69,6 +69,19 @@ public class Result<T> implements Serializable {
         result.returnCode(ReturnCodeEnum.FAIL.getReturnCode()).codeDesc(ReturnCodeEnum.FAIL.getCodeDesc());
         return result;
     }
+    
+    /**
+     * 构建失败报文
+     * @param <T>
+     * @return
+     */
+    public static <T> Result<T> buildFail(String codeDesc,String msg){
+        Result<T> result= new Result<T>();
+        result.returnCode(ReturnCodeEnum.FAIL.getReturnCode()).codeDesc(ReturnCodeEnum.FAIL.getCodeDesc());
+        result.codeDesc(codeDesc);
+        result.msg(msg);
+        return result;
+    }
 
     public static  Result build(ReturnCodeEnum codeEnum){
         Result result= new Result();
