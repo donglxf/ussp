@@ -24,6 +24,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <dependency>
+            <artifactId>ussp-common</artifactId>
+            <groupId>com.ht.ussp</groupId>
+            <version>0.0.6</version>
+        </dependency>
     </dependencies>
 
     <build>

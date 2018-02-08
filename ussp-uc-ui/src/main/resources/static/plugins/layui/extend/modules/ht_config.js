@@ -2,11 +2,12 @@
  * add by tanrq 2018/1/21
  */
 layui.define(function (exports) {
-    var base = "http://120.79.47.252:30111/";
+    var base = gatewayUrl ? gatewayUrl : "http://localhost:30111/";
     exports('ht_config', {
-        app: "UC"
+        isLocal: false
+        , app: "UC"
         , basePath: base + "uc/"
-        , basePath1: base + "xxx/"
+        , basePath1: base + "xxx/" //如果访问多个微服务，请自行扩展
         , loginPath: "/login.html"
         , indexPath: "/"
         , loadMenuUrl: base + "uc/auth/loadMenu"

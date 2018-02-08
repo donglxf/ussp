@@ -115,10 +115,11 @@
 </div>
 <!--<script src="/plugins/layui/layui.js"></script>-->
 <script src="/plugins/layui/layui.js"></script>
+<script src="/common/config.js"></script>
 
 <!--<script type="text/javascript" src="/plugins/bootstrap/js/bootstrap.min.js"></script>-->
 <script>
-    Date.prototype.Format = function (fmt) { //author: meizz
+    Date.prototype.Format = function (fmt) {
         var o = {
             "M+": this.getMonth() + 1, //月份   
             "d+": this.getDate(), //日   
@@ -137,7 +138,7 @@
     var message;
     layui.config({
         base: '/plugins/layui/extend/modules/',
-        version: true
+        version: 1.1
     }).use(['layer', 'ht_cookie', "ht_config"], function () {
         var layer = layui.layer, cookie = layui.ht_cookie, config = layui.ht_config;
         var refreshToken = cookie.getRefreshToken();
@@ -193,15 +194,15 @@
                 top.location.href = config.loginPath;
             });
             //初始化权限资源
-           // ht_auth.load();
-            $.get(config.basePath +"user/in/selfinfo" , null, function (result) {
-          		 //表单数据填充
-                   $.each(result.result, function (name, value) {
-                   	if("userName"==name){
-                   		 $("#userName").html(value);
-                   	}
-                   });
-          	    });
+            // ht_auth.load();
+            $.get(config.basePath + "user/in/selfinfo", null, function (result) {
+                //表单数据填充
+                $.each(result.result, function (name, value) {
+                    if ("userName" == name) {
+                        $("#userName").html(value);
+                    }
+                });
+            });
         });
     });
 </script>
