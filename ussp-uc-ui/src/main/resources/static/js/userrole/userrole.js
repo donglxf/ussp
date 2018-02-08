@@ -253,9 +253,9 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         	}
         } else if (obj.event === 'del') {
         	 layer.confirm('是否确认删除用户角色？', function (index) {
-             	obj.del();
              	 $.post(delUserRoleListUrl+"?id=" + data.id, null, function (result) {
                       if (result["returnCode"] == "0000") {
+                    	  obj.del();
                     	  refreshUserRoleTable();
                           layer.close(index);
                           layer.msg("删除用户角色成功");

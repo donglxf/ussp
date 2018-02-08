@@ -53,16 +53,6 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                                 layer.close(addDialog);
                                 if (message.returnCode == '0000') {
                                 	layer.msg("机构新增成功");
-                                   /* table.reload('organization_datatable', {
-                                        page: {
-                                            curr: 1 //重新从第 1 页开始
-                                        }
-                                        , where: {
-                                            query: {
-                                                orgCode: nodes[0]["orgCode"]
-                                            }
-                                        }
-                                    });*/
                                 	refreshOrgTable();
                                 }
                                 if (orgTree) {
@@ -113,7 +103,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
 					});
 			  }
 			  if(isExist=="1"){
-				  return "新增机构编码不可用，请重新输入机构编码";
+				  return "新增机构编码已存在或不可用，请重新输入机构编码";
 			  } 
 		  },
 		  
@@ -168,16 +158,6 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
             , callback: {
                 onClick: function (event, treeId, treeNode, clickFlag) {
                     //执行重载
-                    /*table.reload('organization_datatable', {
-                        page: {
-                            curr: 1 //重新从第 1 页开始
-                        }
-                        , where: {
-                            query: {
-                                orgCode: treeNode["orgCode"]
-                            }
-                        }
-                    });*/
                 	refreshOrgTable();
                 },
                 onAsyncSuccess: function (event, treeId, treeNode, msgString) {
@@ -249,15 +229,15 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
              });
         } else if (obj.event === 'del') {
             layer.confirm('是否确认删除机构？', function (index) {
-            	obj.del();
             	 $.post(delOrganizationUrl+"?id=" + data.id, null, function (result) {
                      if (result["returnCode"] == "0000") {
-                         refreshOrgTable();
+                    	 obj.del();
                          layer.close(index);
                          layer.msg("删除机构成功");
                      } else {
                          layer.msg(result.codeDesc);
                      }
+                     refreshOrgTable();
                      if (orgTree) {
                          orgTree.reAsyncChildNodes(null, "refresh");
                      }

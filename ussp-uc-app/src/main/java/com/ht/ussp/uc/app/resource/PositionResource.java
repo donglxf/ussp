@@ -1,5 +1,6 @@
 package com.ht.ussp.uc.app.resource;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,14 +14,18 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInPosition;
+import com.ht.ussp.uc.app.domain.HtBoaInPositionUser;
 import com.ht.ussp.uc.app.model.BoaInPositionInfo;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
+import com.ht.ussp.uc.app.service.HtBoaInPositionRoleService;
 import com.ht.ussp.uc.app.service.HtBoaInPositionService;
+import com.ht.ussp.uc.app.service.HtBoaInPositionUserService;
 import com.ht.ussp.uc.app.vo.PageVo;
 
 import io.swagger.annotations.ApiOperation;
@@ -41,6 +46,12 @@ public class PositionResource {
 
 	@Autowired
 	private HtBoaInPositionService htBoaInPositionService;
+	
+	@Autowired
+	private HtBoaInPositionRoleService htBoaInPositionRoleService;
+	
+	@Autowired
+	private HtBoaInPositionUserService htBoaInPositionUserService;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@ApiOperation(value = "对内：岗位记录查询", notes = "列出所有岗位记录列表信息")
@@ -57,12 +68,9 @@ public class PositionResource {
 		String logStart = logHead + " | START:{}";
 		String logEnd = logHead + " {} | END:{}, COST:{}";
 		log.debug(logStart, "page: " + page, sl);
-		// Object o = htBoaInPositionService.findAllByPage(pageConf);
-		Page<BoaInPositionInfo> pageData = (Page<BoaInPositionInfo>) htBoaInPositionService.findAllByPage(pageConf,
-				page.getQuery());
+		Page<BoaInPositionInfo> pageData = (Page<BoaInPositionInfo>) htBoaInPositionService.findAllByPage(pageConf, page.getQuery());
 		el = System.currentTimeMillis();
 		log.debug(logEnd, "page: " + page, msg, el, el - sl);
-		// return new ResponseModal(200, msg, o);
 		if (pageData != null) {
 			result.count(pageData.getTotalElements()).data(pageData.getContent());
 		}
@@ -98,7 +106,7 @@ public class PositionResource {
 		u.setRootOrgCode(boaInPositionInfo.getROrgCode());
 		u.setSequence(boaInPositionInfo.getSequence() == null ? 0 : boaInPositionInfo.getSequence());
 		u.setPositionCode(boaInPositionInfo.getPositionCode());
-		u.setStatus("0");
+		u.setStatus(Constants.STATUS_0);
 		if (boaInPositionInfo.getId() > 0) {
 			u.setId(boaInPositionInfo.getId());
 			u.setUpdateOperator(userId);
@@ -115,15 +123,29 @@ public class PositionResource {
 	}
 
 	@SuppressWarnings("rawtypes")
-	@ApiOperation(value = "对内：物理删除岗位记录", notes = "提交岗位编号，可批量删除")
+	@ApiOperation(value = "对内：物理删除岗位记录")
 	@PostMapping(value = { "/in/deleteTrunc" }, produces = { "application/json" })
-	public Result deleteTrunc(int id) {
+	public Result deleteTrunc(long id) {
 		long sl = System.currentTimeMillis(), el = 0L;
 		String msg = "成功";
 		String logHead = "岗位记录删除：position/in/delete param-> {}";
 		String logStart = logHead + " | START:{}";
 		String logEnd = logHead + " {} | END:{}, COST:{}";
 		log.debug(logStart, "codes: " + id, sl);
+		HtBoaInPosition u = htBoaInPositionService.findById(id);
+		// 1.岗位下有角色，有人员则不可以删除
+		List<String> listPositionCode = new ArrayList<String>();
+		listPositionCode.add(u.getPositionCode());
+		List<String> listRole = htBoaInPositionRoleService.queryRoleCodesByPosition(listPositionCode);
+		if (!listRole.isEmpty()) {
+			return Result.buildFail("该岗位已关联角色，不可删除！", "该岗位已关联角色，不可删除！");
+		}
+		HtBoaInPositionUser htBoaInPositionUser = new HtBoaInPositionUser();
+		htBoaInPositionUser.setPositionCode(u.getPositionCode());
+		List<HtBoaInPositionUser> listHtBoaInPositionUser = htBoaInPositionUserService.findAll(htBoaInPositionUser);
+		if (!listHtBoaInPositionUser.isEmpty()) {
+			return Result.buildFail("该岗位存在用户，不可删除！", "该岗位存在用户，不可删除！");
+		}
 		htBoaInPositionService.delete(id);
 		el = System.currentTimeMillis();
 		log.debug(logEnd, "codes: " + id, msg, el, el - sl);
@@ -131,7 +153,7 @@ public class PositionResource {
 	}
 
 	@SuppressWarnings("rawtypes")
-	@ApiOperation(value = "对内：删除标记岗位记录", notes = "提交岗位编号，可批量删除")
+	@ApiOperation(value = "对内：删除标记岗位记录")
 	@PostMapping(value = { "/in/delete" }, produces = { "application/json" })
 	public Result delete(long id,@RequestHeader("userId") String userId) {
 		long sl = System.currentTimeMillis(), el = 0L;
@@ -141,10 +163,23 @@ public class PositionResource {
 		String logEnd = logHead + " {} | END:{}, COST:{}";
 		log.debug(logStart, "codes: " + id, sl);
 		HtBoaInPosition u = htBoaInPositionService.findById(id);
-		u.setDelFlag(1);
+		//1.岗位下有角色，有人员则不可以删除
+		List<String> listPositionCode = new ArrayList<String>();
+		listPositionCode.add(u.getPositionCode());
+ 		List<String> listRole = htBoaInPositionRoleService.queryRoleCodesByPosition(listPositionCode);
+		if(!listRole.isEmpty()) {
+			return Result.buildFail("该岗位已关联角色，不可删除！", "该岗位已关联角色，不可删除！");
+		}
+		HtBoaInPositionUser htBoaInPositionUser= new HtBoaInPositionUser();
+		htBoaInPositionUser.setPositionCode(u.getPositionCode());
+		List<HtBoaInPositionUser> listHtBoaInPositionUser  = htBoaInPositionUserService.findAll(htBoaInPositionUser);
+		if(!listHtBoaInPositionUser.isEmpty()) {
+			return Result.buildFail("该岗位存在用户，不可删除！", "该岗位存在用户，不可删除！");
+		}
+		u.setDelFlag(Constants.DEL_1);
 		u.setUpdateOperator(userId);
 		u.setLastModifiedDatetime(new Date());
-		htBoaInPositionService.update(u);
+		//htBoaInPositionService.update(u);
 		el = System.currentTimeMillis();
 		log.debug(logEnd, "codes: " + id, msg, el, el - sl);
 		return Result.buildSuccess();
