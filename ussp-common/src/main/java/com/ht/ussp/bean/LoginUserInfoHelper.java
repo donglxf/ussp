@@ -12,6 +12,7 @@ package com.ht.ussp.bean;
 import com.ht.ussp.client.UCClient;
 import com.ht.ussp.client.dto.LoginInfoDto;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -31,7 +32,7 @@ import javax.annotation.Resource;
 public class LoginUserInfoHelper {
     private String userId;
 
-    @Resource
+    @Autowired(required = false)
     private UCClient ucClient;
 
     @ModelAttribute
@@ -48,6 +49,9 @@ public class LoginUserInfoHelper {
     public LoginInfoDto getLoginInfo() {
         if (StringUtils.isEmpty(userId)) {
             return null;
+        }
+        if (ucClient == null) {
+            log.warn("无法同步API资源到用户权限中心，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
         }
         try {
             return ucClient.getLoginUserInfo(userId);

@@ -45,7 +45,7 @@ public class ResourceApiSynchHelper {
 
     @Autowired
     public ResourceApiSynchHelper(ApplicationContext applicationContext, @Value("${ht.config.uc.api.synch:false}") boolean synch_api, @Value("${ht.config.uc.api.packages:com.ht}") String packages, @Value("${ht.config.uc.api.app:}") String app) {
-        System.out.println("是否同步：" + synch_api + "\t" + packages + "\t" + app);
+        log.debug("是否同步：" + synch_api + "\t" + packages + "\t" + app);
         if (synch_api) {
             if (StringUtils.isEmpty(app)) {
                 log.warn("同步API资源到用户权限中心，需要指定API资源所属系统，否则无法同步，请通过ht.config.uc.api.app配置。");
@@ -177,7 +177,7 @@ public class ResourceApiSynchHelper {
             }
             if (apiDto != null && apiDto.getApiInfoList().size() > 0) {
                 if (ucClient == null) {
-                    log.warn("无法同步API资源到用户权限中心，可能没有启用Fegin组件，请启用后，加入basePackages = {\"com.ht.ussp.client\"}");
+                    log.warn("无法同步API资源到用户权限中心，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
                 } else {
                     apiDto.setApp(app);
                     try {

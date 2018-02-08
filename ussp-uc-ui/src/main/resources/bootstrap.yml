@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: ussp-uc-ui
+  profiles:
+    active: local
+server:
+  port: 30131
+
+---
+spring:
+  profiles: local
+ht.config.ui:
+  gatewayUrl: http://localhost:30111/
+
+---
+spring:
+  profiles: dev
+
+ht.config.ui:
+  gatewayUrl: http://10.110.1.240:30111/
+
+---
+spring:
+  profiles: sit
+
+ht.config.ui:
+  gatewayUrl: /
+
+---
+spring:
+  profiles: uat
+
+ht.config.ui:
+  gatewayUrl: /
+
+---
+spring:
+  profiles: prd
+
+ht.config.ui:
+  gatewayUrl: /
