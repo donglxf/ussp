@@ -1,15 +1,6 @@
-server:
-  port: {SERVER_PORT}
-
-spring: 
-  rabbitmq:
-    host: 10.110.1.240
-    port: 5672
-    username: admin
-    password: admin
-    virtual-host: /  
+spring:
   datasource:
-    url: jdbc:mysql://10.110.1.240:3306/tuandai_bm_production?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    url: jdbc:mysql://10.110.1.240:3306/tuandai_bm?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
     username: root
     password: tuandai_bm2015
   
@@ -17,5 +8,5 @@ cams.account.service.root: http://120.79.47.252:30111/cams/accountmq
 
 logging:
   level:
-    com.ht.cams.messaging.logging: info
-    com.ht.cams.messaging.receiver: info
+    - com.ht.cams.messaging.logging: info
+    - com.ht.cams.messaging.receiver: info
