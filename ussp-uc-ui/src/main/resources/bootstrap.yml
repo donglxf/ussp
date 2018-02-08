@@ -22,6 +22,9 @@ ht.config.ui:
 ---
 spring:
   profiles: sit
+  
+server:
+  port: ${SERVER_PORT}
 
 ht.config.ui:
   gatewayUrl: /
@@ -29,6 +32,9 @@ ht.config.ui:
 ---
 spring:
   profiles: uat
+  
+server:
+  port: ${SERVER_PORT}
 
 ht.config.ui:
   gatewayUrl: /
@@ -36,6 +42,9 @@ ht.config.ui:
 ---
 spring:
   profiles: prd
+  
+server:
+  port: ${SERVER_PORT}
 
 ht.config.ui:
-  gatewayUrl: /
+  gatewayUrl: http://gateway.hongte.info/
