@@ -10,14 +10,14 @@ server:
 spring:
   profiles: local
 ht.config.ui:
-  gatewayUrl: htt://localhost:30111/
+  gatewayUrl: http://localhost:30111/
 
 ---
 spring:
   profiles: dev
 
 ht.config.ui:
-  gatewayUrl: htt://10.110.1.240:30111/
+  gatewayUrl: http://10.110.1.240:30111/
 
 ---
 spring:
