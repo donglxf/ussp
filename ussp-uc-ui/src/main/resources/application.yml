@@ -1,7 +1,0 @@
-spring:
-  application:
-    name: ussp-uc-ui
-server:
-  port: 30131
-ht.config.ui:
-  gatewayUrl: htt://10.110.1.240:30111

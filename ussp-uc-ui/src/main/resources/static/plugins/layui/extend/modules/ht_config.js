@@ -2,7 +2,11 @@
  * add by tanrq 2018/1/21
  */
 layui.define(function (exports) {
-    var base = gatewayUrl ? gatewayUrl : "http://localhost:30111/";
+    var base = "http://localhost:30111/";
+    try {
+        base = gatewayUrl ? gatewayUrl : base;
+    } catch (e) {
+    }
     exports('ht_config', {
         isLocal: false
         , app: "UC"
