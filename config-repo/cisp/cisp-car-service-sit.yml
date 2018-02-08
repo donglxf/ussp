@@ -14,7 +14,7 @@ spring:
     poolPreparedStatements: true
     filters: stat
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://10.110.1.240:3306/cisp-dev?useUnicode=true&characterEncoding=UTF8
+    url: jdbc:mysql://10.110.1.240:3306/cisp?useUnicode=true&characterEncoding=UTF8
     password: tuandai_bm2015
     testOnBorrow: false
     maxOpenPreparedStatements: 20
@@ -37,8 +37,6 @@ spring:
       max-wait: -1
     host: 10.110.1.240
     timeout: 0
-server:
-  port: 9192
 sms:
   password: fQ8i461Q
   smsflag: 0

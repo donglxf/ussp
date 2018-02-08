@@ -26,8 +26,6 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     maxActive: 20
     username: root
-server:
-  port: 9091
 sms:
   password: fQ8i461Q
   url: http://122.13.18.210:9051/api/v1.0.0/message/mass/send
