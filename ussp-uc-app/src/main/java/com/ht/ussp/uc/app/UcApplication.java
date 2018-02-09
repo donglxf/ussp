@@ -14,7 +14,7 @@ import org.springframework.context.annotation.ComponentScan;
  * @Description: 用户中心
  * @date 2018年1月4日 下午9:07:10
  */
-@EnableFeignClients(basePackages = {"com.ht.ussp.client"})
+@EnableFeignClients(basePackages = {"com.ht.ussp.client","com.ht.ussp.uc.app.feignClients"})
 @EnableDiscoveryClient
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.ht.ussp.bean", "com.ht.ussp.uc.app"})

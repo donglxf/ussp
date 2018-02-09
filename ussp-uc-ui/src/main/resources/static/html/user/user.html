@@ -18,6 +18,9 @@
                 <button class="layui-btn layui-btn-sm" title="新增" data-type="add" ht-auth="add">
                     新增
                 </button>
+                 <button class="layui-btn layui-btn-sm" title="新增" data-type="add" ht-auth="add">
+                    批量重置密码
+                </button>
             </div>
             <div class="pull-right col-xs-4 row">
                 <div class="input-group input-group-sm">
@@ -60,6 +63,7 @@
                 <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" ht-auth="detail">查看</a>
                 <a class="layui-btn layui-btn-xs" lay-event="edit" ht-auth="edit">编辑</a>
                 <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" ht-auth="del">删除</a>
+<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="resetpwd" ht-auth="resetpwd" >重置密码</a>
             </script>
             <script type="text/html" id="user_status_laytpl">
                 {{#  if(d.status === '0'){ }}
@@ -88,6 +92,13 @@
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">用户名<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="userId" lay-verify="required" autocomplete="off" lay-verType="tips"
+                           class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户姓名<b>*</b></label>
                 <div class="layui-input-block">
                     <input type="text" name="userName" lay-verify="required" autocomplete="off" lay-verType="tips"
                            class="layui-input layui-input-sm">
@@ -135,7 +146,6 @@
     <div id="user_modify_data_div" class=" hide" class="hide">
         <form method="post" class="layui-form" lay-filter="user_filter_modify_data_form">
             <input type="hidden" name="id" readonly class="layui-input layui-input-sm">
-            <input type="hidden" name="userId" readonly class="layui-input layui-input-sm">
             <div class="layui-form-item">
                 <label class="layui-form-label">工号<b>*</b></label>
                 <div class="layui-input-block">
@@ -143,8 +153,15 @@
                            class="layui-input layui-input-sm">
                 </div>
             </div>
-            <div class="layui-form-item">
+             <div class="layui-form-item">
                 <label class="layui-form-label">用户名<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="userId" readonly lay-verify="required" autocomplete="off" lay-verType="tips"
+                           class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户姓名<b>*</b></label>
                 <div class="layui-input-block">
                     <input type="text" name="userName" lay-verify="required" autocomplete="off" lay-verType="tips"
                            class="layui-input layui-input-sm">

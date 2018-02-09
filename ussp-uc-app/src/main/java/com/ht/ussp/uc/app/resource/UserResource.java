@@ -2,7 +2,9 @@ package com.ht.ussp.uc.app.resource;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +16,17 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ht.ussp.client.UCClient;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.domain.HtBoaInUserRole;
+import com.ht.ussp.uc.app.feignClients.EipClient;
 import com.ht.ussp.uc.app.model.ChangePwd;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
@@ -32,6 +37,7 @@ import com.ht.ussp.uc.app.service.HtBoaInPwdHistService;
 import com.ht.ussp.uc.app.service.HtBoaInUserAppService;
 import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
+import com.ht.ussp.uc.app.vo.EmailVo;
 import com.ht.ussp.uc.app.vo.LoginInfoVo;
 import com.ht.ussp.uc.app.vo.PageVo;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
@@ -66,6 +72,11 @@ public class UserResource{
     private HtBoaInUserRoleService htBoaInUserRoleService;
     @Autowired
     private HtBoaInPwdHistService htBoaInPwdHistService;
+    
+    @Autowired
+	private EipClient eipClient;
+    @Autowired
+    private UCClient ucClient;
 
     @ApiOperation(value = "对内：用户个人信息查询", notes = "已登录用户查看自己的个人信息")
     @ApiImplicitParam(name = "userId", value = "用户ID", required = true, paramType = "path", dataType = "int")
@@ -230,7 +241,10 @@ public class UserResource{
         ResponseModal rm = new ResponseModal();
         UserVo userVo = new UserVo();
         // 查找用户
-        HtBoaInUser htBoaInUser = htBoaInUserService.findByUserName(userName);
+        //HtBoaInUser htBoaInUser = htBoaInUserService.findByUserName(userName);
+        //修改登录账号为查询userId
+        HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(userName);
+        
         if (LogicUtil.isNull(htBoaInUser) || LogicUtil.isNullOrEmpty(htBoaInUser.getUserId())) {
             rm.setSysStatus((SysStatus.USER_NOT_FOUND));
             return rm;
@@ -315,7 +329,8 @@ public class UserResource{
     @PostMapping(value = "/add")
     public Result addAsync(@RequestBody HtBoaInUser user, @RequestHeader("userId") String loginUserId) {
         if (user != null) {
-            String userId = UUID.randomUUID().toString().replace("-", "");
+            //String userId = UUID.randomUUID().toString().replace("-", "");
+        	String userId = user.getUserId();//作为用户的登录账号，修改为不是自动生成
             user.setUserId(userId);
             user.setCreateOperator(loginUserId);
             user.setUpdateOperator(loginUserId);
@@ -373,6 +388,46 @@ public class UserResource{
     @GetMapping(value = "/getLoginUserInfo")
     public LoginInfoVo getLoginUserInfo(@RequestParam("userId") String userId) {
         return htBoaInUserService.queryUserInfo(userId);
+    }
+
+    @ApiOperation(value = "发送重置密码邮件")
+    @PostMapping(value = "/sendEmailRestPwd")
+    @ResponseBody
+    public Result sendEmailRestPwd(String userId) {
+    	EmailVo emailVo = new EmailVo();
+    	emailVo.setSubject("重置密码");
+    	String newPassWord = EncryptUtil.genRandomNum(6).toUpperCase();
+    	String newPassWordEncrypt = EncryptUtil.passwordEncrypt(newPassWord);
+    	emailVo.setText("您重置之后的密码为："+newPassWord);
+    	if(userId!=null && userId!="" && userId.length()>0) {
+    		HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(userId);
+    		HtBoaInLogin u = htBoaInLoginService.findByUserId(userId);
+            u.setPassword(newPassWordEncrypt);
+            htBoaInLoginService.update(u);
+            
+            //记录历史密码
+            HtBoaInPwdHist htBoaInPwdHist = new HtBoaInPwdHist();
+            htBoaInPwdHist.setUserId(u.getUserId());
+            htBoaInPwdHist.setPassword(newPassWordEncrypt);
+            htBoaInPwdHist.setPwdCreTime(new Timestamp(System.currentTimeMillis()));
+            htBoaInPwdHist.setLastModifiedDatetime(new Date());
+            htBoaInPwdHistService.add(htBoaInPwdHist);
+            
+            Set to = new HashSet<>();
+    		to.add(htBoaInUser.getEmail());
+    		emailVo.setTo(to);
+    		Result result =  eipClient.sendEmail(emailVo);
+    		log.debug("发送邮件："+result);
+    	} 
+    	return Result.buildSuccess();
+    }
+    
+    @ApiOperation(value = "获取密码为空的用户，需要重置密码")
+    @PostMapping(value = "/queryUserIsNullPwd")
+    public PageResult<UserMessageVo> queryUserIsNullPwd(PageVo page) {
+    	PageResult result = new PageResult();
+    	result = htBoaInUserService.queryUserIsNullPwd(new PageRequest(page.getPage(), page.getLimit()));
+    	return result;
     }
 
 }

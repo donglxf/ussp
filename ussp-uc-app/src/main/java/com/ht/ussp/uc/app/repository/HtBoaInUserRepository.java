@@ -130,4 +130,38 @@ public interface HtBoaInUserRepository extends JpaSpecificationExecutor<HtBoaInU
             ",u.updateOperator=?7  " +
             "where u.userId = ?1 ")
     int updateUserByUserId(String userId, String userName, String jobNumber, String mobile, String idNo, String email, String updateOperator);
+
+
+    @Query(value = "SELECT " +
+            "new com.ht.ussp.uc.app.vo.UserMessageVo(" +
+            "hbiUser.id," +
+            "hbiUser.userId," +
+            "hbiUser.jobNumber," +
+            "hbiUser.userName," +
+            "hbiUser.orgCode," +
+            "org.orgNameCn," +
+            "hbiUser.mobile," +
+            "hbiUser.email," +
+            "hbiUser.idNo," +
+            "hbiUser.delFlag," +
+            "hbiUser.createOperator," +
+            "hbiUser.createdDatetime," +
+            "hbiUser.updateOperator," +
+            "hbiUser.lastModifiedDatetime," +
+            "login.status," +
+            "login.failedCount," +
+            "login.pwdExpDate," +
+            "login.effectiveDate)" +
+            "FROM HtBoaInUser hbiUser ,HtBoaInLogin login  ,HtBoaInOrg org " +
+            "WHERE hbiUser.userId=login.userId " +
+            "AND hbiUser.orgCode=org.orgCode " +
+            "AND hbiUser.delFlag = 0 AND login.password = '' " 
+            , countQuery = "SELECT " +
+            "COUNT(hbiUser.id) " +
+            "FROM  HtBoaInUser hbiUser ,HtBoaInLogin login  ,HtBoaInOrg org  " +
+            "WHERE hbiUser.userId=login.userId " +
+            "AND hbiUser.orgCode=org.orgCode " +
+            "AND hbiUser.delFlag = 0 AND login.password = '' " 
+    )
+    Page<UserMessageVo> queryUserIsNullPwd(Pageable pageable);
 }

@@ -1,5 +1,16 @@
 package com.ht.ussp.uc.app.service;
 
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
@@ -11,17 +22,6 @@ import com.ht.ussp.uc.app.vo.LoginInfoVo;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
 import com.ht.ussp.util.BeanUtils;
 import com.ht.ussp.util.LogicUtil;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author wim qiuwenwu@hongte.info
@@ -48,6 +48,16 @@ public class HtBoaInUserService {
     public HtBoaInUser findByUserName(String userName) {
 
         return htBoaInUserRepository.findByUserName(userName);
+    }
+    /**
+     * 
+     * @Title: findByUserName 
+     * @Description: 通过userId查询用户信息 
+     * @return HtBoaInUser
+     * @throws
+     */
+    public HtBoaInUser findByUserId(String userId) {
+        return htBoaInUserRepository.findByUserId(userId);
     }
 
     
@@ -180,4 +190,16 @@ public class HtBoaInUserService {
     public boolean updateUserByUserId(HtBoaInUser user) {
         return htBoaInUserRepository.updateUserByUserId(user.getUserId(), user.getUserName(), user.getJobNumber(), user.getMobile(), user.getIdNo(), user.getEmail(), user.getUpdateOperator()) == 1;
     }
+    
+    
+    public PageResult<List<UserMessageVo>> queryUserIsNullPwd(PageRequest pageRequest) {
+        PageResult result = new PageResult();
+        Page<UserMessageVo> pageData = htBoaInUserRepository.queryUserIsNullPwd(pageRequest) ;
+        if (pageData != null) {
+            result.count(pageData.getTotalElements()).data(pageData.getContent());
+        }
+        result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
+        return result;
+    }
+    
 }

@@ -147,22 +147,23 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
         , cols: [[
             {type: 'numbers'}
             , {field: 'jobNumber', width: 100, title: '工号'}
-            , {field: 'userName', width: 100, title: '用户名'}
+            , {field: 'userId', width: 100, title: '用户名'}
+            , {field: 'userName', width: 100, title: '用户名称'}
             , {field: 'mobile', width: 120, title: '手机'}
             , {field: 'email', width: 100, title: '邮箱'}
             , {field: 'idNo', minWidth: 100, title: '身份证'}
             , {field: 'orgName', minWidth: 100, title: '所属机构'}
             , {field: 'status', width: 60, title: '状态', templet: "#user_status_laytpl"}
-            , {field: 'updateOperator', width: 100, title: '更新人'}
+           // , {field: 'updateOperator', width: 100, title: '更新人'}
             , {field: 'lastModifiedDatetime', width: 150, title: '更新时间'}
-            , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#user_datatable_bar'}
+            , {fixed: 'right', width: 230, title: '操作', align: 'center', toolbar: '#user_datatable_bar'}
         ]]
     });
     //监听操作栏
     table.on('tool(filter_user_datatable)', function (obj) {
             var data = obj.data;
             if (obj.event === 'detail') {
-                $.post(config.basePath + "user/view/" + data.userId, null, function (result) {
+                $.post(config.basePath + "user/view?userId=" + data.userId,  null, function (result) {
                     if (result["returnCode"] == "0000") {
                         viewDialog = layer.open({
                             type: 1,
@@ -207,7 +208,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
                     if (result["returnCode"] == "0000") {
                         editDialog = layer.open({
                             type: 1,
-                            area: ['400px', '380px'],
+                            area: ['400px', '450px'],
                             shadeClose: true,
                             title: "修改用户",
                             content: $("#user_modify_data_div").html(),
@@ -226,6 +227,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
                             success: function (layero, index) {
                                 //表单数据填充
                                 $.each(result.data, function (name, value) {
+                                	console.log("name:"+name+"  value:"+value);
                                     var $input = $("input[name=" + name + "]", layero);
                                     if ($input && $input.length == 1) {
                                         $input.val(value);
@@ -259,6 +261,16 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
                         layer.msg(result.codeDesc);
                     }
                 });
+            }else if (obj.event === 'resetpwd') {
+            	 $.post(config.basePath + "user/sendEmailRestPwd?userId=" + data.userId, null, function (result) {
+                     if (result["returnCode"] == "0000") {
+                         refreshTable();
+                         layer.close(index);
+                         layer.msg("删除用户成功。");
+                     } else {
+                         layer.msg(result.codeDesc);
+                     }
+                 });
             }
         }
     );
