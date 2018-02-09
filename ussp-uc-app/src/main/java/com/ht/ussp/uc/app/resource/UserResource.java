@@ -26,7 +26,7 @@ import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.domain.HtBoaInUserRole;
-import com.ht.ussp.uc.app.feignClients.EipClient;
+import com.ht.ussp.uc.app.feignclients.EipClient;
 import com.ht.ussp.uc.app.model.ChangePwd;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
@@ -40,6 +40,7 @@ import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.vo.EmailVo;
 import com.ht.ussp.uc.app.vo.LoginInfoVo;
 import com.ht.ussp.uc.app.vo.PageVo;
+import com.ht.ussp.uc.app.vo.ResetPwdUser;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
 import com.ht.ussp.uc.app.vo.UserVo;
 import com.ht.ussp.util.BeanUtils;
@@ -170,13 +171,13 @@ public class UserResource{
         if(!EncryptUtil.matches(changePwd.getOldPwd(),u.getPassword())) {
         	return new ResponseModal("500", "原密码输入不正确");
         }
-        
-        u.setPassword(changePwd.getNewPwd());
+        String newPassWordEncrypt = EncryptUtil.passwordEncrypt(changePwd.getNewPwd());
+        u.setPassword(newPassWordEncrypt);
 
         //记录历史密码
         HtBoaInPwdHist htBoaInPwdHist = new HtBoaInPwdHist();
         htBoaInPwdHist.setUserId(u.getUserId());
-        htBoaInPwdHist.setPassword(EncryptUtil.passwordEncrypt(changePwd.getNewPwd()));
+        htBoaInPwdHist.setPassword(newPassWordEncrypt);
         htBoaInPwdHist.setPwdCreTime(new Timestamp(System.currentTimeMillis()));
         htBoaInPwdHist.setLastModifiedDatetime(new Date());
         htBoaInLoginService.update(u);
@@ -390,7 +391,7 @@ public class UserResource{
         return htBoaInUserService.queryUserInfo(userId);
     }
 
-    @ApiOperation(value = "发送重置密码邮件")
+    @ApiOperation(value = "重置密码并发邮件")
     @PostMapping(value = "/sendEmailRestPwd")
     @ResponseBody
     public Result sendEmailRestPwd(String userId) {
@@ -422,6 +423,43 @@ public class UserResource{
     	return Result.buildSuccess();
     }
     
+	@ApiOperation(value = "批量重置密码并发邮件")
+	@PostMapping(value = "/sendEmailRestPwdBatch")
+	@ResponseBody
+	public Result sendEmailRestPwdBatch(@RequestBody ResetPwdUser resetPwdUser) {
+		EmailVo emailVo = new EmailVo();
+		emailVo.setSubject("重置密码");
+		if (resetPwdUser != null) {
+			for (UserMessageVo userMessageVo : resetPwdUser.getResetPwdUserdata()) {
+				String userId = userMessageVo.getUserId();
+				String newPassWord = EncryptUtil.genRandomNum(6).toUpperCase();
+				String newPassWordEncrypt = EncryptUtil.passwordEncrypt(newPassWord);
+				if (userId != null && userId != "" && userId.length() > 0) {
+					HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(userId);
+					HtBoaInLogin u = htBoaInLoginService.findByUserId(userId);
+					emailVo.setText(userMessageVo.getUserName()+",您重置之后的密码为：" + newPassWord);
+					u.setPassword(newPassWordEncrypt);
+					htBoaInLoginService.update(u);
+
+					// 记录历史密码
+					HtBoaInPwdHist htBoaInPwdHist = new HtBoaInPwdHist();
+					htBoaInPwdHist.setUserId(u.getUserId());
+					htBoaInPwdHist.setPassword(newPassWordEncrypt);
+					htBoaInPwdHist.setPwdCreTime(new Timestamp(System.currentTimeMillis()));
+					htBoaInPwdHist.setLastModifiedDatetime(new Date());
+					htBoaInPwdHistService.add(htBoaInPwdHist);
+
+					Set to = new HashSet<>();
+					to.add(htBoaInUser.getEmail());
+					emailVo.setTo(to);
+					Result result = eipClient.sendEmail(emailVo);
+					log.debug("发送邮件：" + result);
+				}
+			}
+		}
+		return Result.buildSuccess();
+	}
+    
     @ApiOperation(value = "获取密码为空的用户，需要重置密码")
     @PostMapping(value = "/queryUserIsNullPwd")
     public PageResult<UserMessageVo> queryUserIsNullPwd(PageVo page) {
@@ -430,4 +468,5 @@ public class UserResource{
     	return result;
     }
 
+   
 }

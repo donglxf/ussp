@@ -1,4 +1,4 @@
-package com.ht.ussp.uc.app.feignClients;
+package com.ht.ussp.uc.app.feignclients;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;

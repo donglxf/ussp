@@ -7,6 +7,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
+        , resetPwdDialog = 0
         , orgTree //组织机构树控件
         , active = {
         add: function () { //弹出用户新增弹出框
@@ -67,7 +68,77 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
         search: function () {
             //执行重载
             refreshTable($("#user_search_keyword").val());
-        }
+        },
+        batchResetPwd: function () {
+            layer.close(resetPwdDialog);
+            resetPwdDialog = layer.open({
+                type: 1,
+                area: ['1000px', '645px'],
+                shadeClose: true,
+                title: "重置用户密码",
+                content: $("#batch_resetpwd_data_div").html(),
+                btn: ['重置密码', '取消'],
+                yes: function (index, layero) {
+                    var checkStatus = table.checkStatus('batch_resetpwd_dalog_datatable');
+                    var resetPwdUserdata = checkStatus.data;
+                    if(resetPwdUserdata.length>0){
+                    	 $.ajax({
+                             type: "POST",
+                             url: config.basePath + 'user/sendEmailRestPwdBatch',
+                             data: JSON.stringify({
+                                 resetPwdUserdata: resetPwdUserdata
+                             }),
+                             contentType: "application/json; charset=utf-8",
+                             success: function (result) {
+                                 layer.close(index);
+                                 if (result["returnCode"] == '0000') {
+                                     layer.alert("密码重置成功");
+                                 }
+                             },
+                             error: function (result) {
+                                 console.error(result);
+                             }
+                         })
+                    }
+                    
+                },
+                btn2: function () {
+                    layer.closeAll('tips');
+                },
+                success: function (layero, index) {
+                    table.render({
+                        id: 'batch_resetpwd_dalog_datatable'
+                        , elem: $('#batch_resetpwd_dalog_datatable', layero)
+                        , url: config.basePath + 'user/queryUserIsNullPwd'
+                        , page: true
+                        , height: "471"
+                        , cols: [[
+                            {type: 'numbers'}
+                            , {type: 'checkbox'}
+                            , {field: 'jobNumber', width: 100, title: '工号'}
+                            , {field: 'userId', width: 100, title: '用户名'}
+                            , {field: 'userName', width: 100, title: '用户名称'}
+                            , {field: 'mobile', width: 120, title: '手机'}
+                            , {field: 'email', width: 100, title: '邮箱'}
+                            , {field: 'idNo', minWidth: 100, title: '身份证'}
+                            , {field: 'orgName', minWidth: 100, title: '所属机构'}
+                            , {field: 'status', width: 60, title: '状态', templet: "#user_status_laytpl"}
+                        ]]
+                    });
+                    var $keywordInput = $("#batch_resetpwd_search_keyword", layero);
+                    $('#batch_resetpwd_dialog_search', layero).on('click', function () {
+                        var keyWord = $keywordInput.val();
+                        refreshDalogBatchResetDataTable(keyWord);
+                    });
+                    $keywordInput.keydown(function (e) {
+                        if (e.keyCode == 13) {
+                            var keyWord = $keywordInput.val();
+                            refreshDalogBatchResetDataTable( keyWord);
+                        }
+                    });
+                }
+            });
+        },
     };
     var refreshTable = function (keyword) {
         if (!keyword) {
@@ -86,7 +157,21 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
                 }
             });
         }
-    }
+    };
+    var refreshDalogBatchResetDataTable = function (keyword) {
+        if (!keyword) {
+            keyword = null;
+        }
+        console.log(keyword);
+        table.reload('batch_resetpwd_dalog_datatable', {
+            page: {
+                curr: 1 //重新从第 1 页开始
+            }
+            , where: {
+                keyWord: keyword
+            }
+        });
+    };
     //渲染组织机构树
     orgTree = $.fn.zTree.init($('#user_org_ztree_left'), {
             async: {
@@ -264,9 +349,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
             }else if (obj.event === 'resetpwd') {
             	 $.post(config.basePath + "user/sendEmailRestPwd?userId=" + data.userId, null, function (result) {
                      if (result["returnCode"] == "0000") {
-                         refreshTable();
-                         layer.close(index);
-                         layer.msg("删除用户成功。");
+                         layer.msg("重置密码成功。");
                      } else {
                          layer.msg(result.codeDesc);
                      }

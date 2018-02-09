@@ -18,7 +18,7 @@
                 <button class="layui-btn layui-btn-sm" title="新增" data-type="add" ht-auth="add">
                     新增
                 </button>
-                 <button class="layui-btn layui-btn-sm" title="新增" data-type="add" ht-auth="add">
+                 <button class="layui-btn layui-btn-sm" title="新增" data-type="batchResetPwd" ht-auth="batchResetPwd">
                     批量重置密码
                 </button>
             </div>
@@ -290,6 +290,25 @@
                 </div>
             </div>
         </form>
+    </div>
+    <!-- 重置密码 -->
+    <div id="batch_resetpwd_data_div" class="hide">
+         <div class="row-lg" style="height:35px;">
+            <div class="pull-right col-xs-4">
+                <div class="input-group input-group-sm row">
+                    <input type="text" class="form-control"　id="batch_resetpwd_search_keyword" placeholder="请输入用户名/工号/手机号"/>
+                    <div class="input-group-btn">
+                        <button type="button" class="layui-btn layui-btn-sm" id="batch_resetpwd_dialog_search"　data-type="batch_resetpwd_search">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row-lg">
+            <table id="batch_resetpwd_dalog_datatable" lay-filter="batch_resetpwd_dalog_datatable">
+            </table>
+        </div>
     </div>
     <script src="/js/user/user.js"></script>
 </div>
