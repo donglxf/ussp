@@ -3,6 +3,7 @@ spring:
     url: jdbc:mysql://rm-wz9loj99g1f0v71j0.mysql.rds.aliyuncs.com:33060/tuandai_bm?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
     username: rdsroot
     password: F%Z5b^hyc)NJ
+    driver-class-name: com.mysql.cj.jdbc.Driver
   
 cams.account.service.root: http://120.79.47.252:30111/cams/accountmq
 
