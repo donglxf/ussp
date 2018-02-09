@@ -7,6 +7,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
+        , resetPwdDialog = 0
         , orgTree //组织机构树控件
         , active = {
         add: function () { //弹出用户新增弹出框
@@ -67,7 +68,77 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
         search: function () {
             //执行重载
             refreshTable($("#user_search_keyword").val());
-        }
+        },
+        batchResetPwd: function () {
+            layer.close(resetPwdDialog);
+            resetPwdDialog = layer.open({
+                type: 1,
+                area: ['1000px', '645px'],
+                shadeClose: true,
+                title: "重置用户密码",
+                content: $("#batch_resetpwd_data_div").html(),
+                btn: ['重置密码', '取消'],
+                yes: function (index, layero) {
+                    var checkStatus = table.checkStatus('batch_resetpwd_dalog_datatable');
+                    var resetPwdUserdata = checkStatus.data;
+                    if(resetPwdUserdata.length>0){
+                    	 $.ajax({
+                             type: "POST",
+                             url: config.basePath + 'user/sendEmailRestPwdBatch',
+                             data: JSON.stringify({
+                                 resetPwdUserdata: resetPwdUserdata
+                             }),
+                             contentType: "application/json; charset=utf-8",
+                             success: function (result) {
+                                 layer.close(index);
+                                 if (result["returnCode"] == '0000') {
+                                     layer.alert("密码重置成功");
+                                 }
+                             },
+                             error: function (result) {
+                                 console.error(result);
+                             }
+                         })
+                    }
+                    
+                },
+                btn2: function () {
+                    layer.closeAll('tips');
+                },
+                success: function (layero, index) {
+                    table.render({
+                        id: 'batch_resetpwd_dalog_datatable'
+                        , elem: $('#batch_resetpwd_dalog_datatable', layero)
+                        , url: config.basePath + 'user/queryUserIsNullPwd'
+                        , page: true
+                        , height: "471"
+                        , cols: [[
+                            {type: 'numbers'}
+                            , {type: 'checkbox'}
+                            , {field: 'jobNumber', width: 100, title: '工号'}
+                            , {field: 'userId', width: 100, title: '用户名'}
+                            , {field: 'userName', width: 100, title: '用户名称'}
+                            , {field: 'mobile', width: 120, title: '手机'}
+                            , {field: 'email', width: 100, title: '邮箱'}
+                            , {field: 'idNo', minWidth: 100, title: '身份证'}
+                            , {field: 'orgName', minWidth: 100, title: '所属机构'}
+                            , {field: 'status', width: 60, title: '状态', templet: "#user_status_laytpl"}
+                        ]]
+                    });
+                    var $keywordInput = $("#batch_resetpwd_search_keyword", layero);
+                    $('#batch_resetpwd_dialog_search', layero).on('click', function () {
+                        var keyWord = $keywordInput.val();
+                        refreshDalogBatchResetDataTable(keyWord);
+                    });
+                    $keywordInput.keydown(function (e) {
+                        if (e.keyCode == 13) {
+                            var keyWord = $keywordInput.val();
+                            refreshDalogBatchResetDataTable( keyWord);
+                        }
+                    });
+                }
+            });
+        },
     };
     var refreshTable = function (keyword) {
         if (!keyword) {
@@ -86,7 +157,21 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
                 }
             });
         }
-    }
+    };
+    var refreshDalogBatchResetDataTable = function (keyword) {
+        if (!keyword) {
+            keyword = null;
+        }
+        console.log(keyword);
+        table.reload('batch_resetpwd_dalog_datatable', {
+            page: {
+                curr: 1 //重新从第 1 页开始
+            }
+            , where: {
+                keyWord: keyword
+            }
+        });
+    };
     //渲染组织机构树
     orgTree = $.fn.zTree.init($('#user_org_ztree_left'), {
             async: {
@@ -147,22 +232,23 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
         , cols: [[
             {type: 'numbers'}
             , {field: 'jobNumber', width: 100, title: '工号'}
-            , {field: 'userName', width: 100, title: '用户名'}
+            , {field: 'userId', width: 100, title: '用户名'}
+            , {field: 'userName', width: 100, title: '用户名称'}
             , {field: 'mobile', width: 120, title: '手机'}
             , {field: 'email', width: 100, title: '邮箱'}
             , {field: 'idNo', minWidth: 100, title: '身份证'}
             , {field: 'orgName', minWidth: 100, title: '所属机构'}
             , {field: 'status', width: 60, title: '状态', templet: "#user_status_laytpl"}
-            , {field: 'updateOperator', width: 100, title: '更新人'}
+           // , {field: 'updateOperator', width: 100, title: '更新人'}
             , {field: 'lastModifiedDatetime', width: 150, title: '更新时间'}
-            , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#user_datatable_bar'}
+            , {fixed: 'right', width: 230, title: '操作', align: 'center', toolbar: '#user_datatable_bar'}
         ]]
     });
     //监听操作栏
     table.on('tool(filter_user_datatable)', function (obj) {
             var data = obj.data;
             if (obj.event === 'detail') {
-                $.post(config.basePath + "user/view/" + data.userId, null, function (result) {
+                $.post(config.basePath + "user/view?userId=" + data.userId,  null, function (result) {
                     if (result["returnCode"] == "0000") {
                         viewDialog = layer.open({
                             type: 1,
@@ -207,7 +293,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
                     if (result["returnCode"] == "0000") {
                         editDialog = layer.open({
                             type: 1,
-                            area: ['400px', '380px'],
+                            area: ['400px', '450px'],
                             shadeClose: true,
                             title: "修改用户",
                             content: $("#user_modify_data_div").html(),
@@ -226,6 +312,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
                             success: function (layero, index) {
                                 //表单数据填充
                                 $.each(result.data, function (name, value) {
+                                	console.log("name:"+name+"  value:"+value);
                                     var $input = $("input[name=" + name + "]", layero);
                                     if ($input && $input.length == 1) {
                                         $input.val(value);
@@ -259,6 +346,14 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
                         layer.msg(result.codeDesc);
                     }
                 });
+            }else if (obj.event === 'resetpwd') {
+            	 $.post(config.basePath + "user/sendEmailRestPwd?userId=" + data.userId, null, function (result) {
+                     if (result["returnCode"] == "0000") {
+                         layer.msg("重置密码成功。");
+                     } else {
+                         layer.msg(result.codeDesc);
+                     }
+                 });
             }
         }
     );

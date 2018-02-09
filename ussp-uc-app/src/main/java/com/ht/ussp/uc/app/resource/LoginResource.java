@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ht.ussp.bean.LoginUserInfoHelper;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
@@ -50,10 +51,11 @@ public class LoginResource {
     private HtBoaInLoginService htBoaInLoginService;
     @Autowired
     private HtBoaInPwdHistService htBoaInPwdHistService;
+    @Autowired
+    private LoginUserInfoHelper loginUserInfoHelper;
 
     @SuppressWarnings("unchecked")
     @ApiOperation(value = "对内：忘记密码/重置密码", notes = "用户通过用户的手机号、邮箱和历史密码信息进行密码重置")
-    @ApiImplicitParam(name = "resetPwd", value = "重置密码信息验证实体", required = true, dataType = "resetPwd")
     @RequestMapping(value = { "/in/resetpwd" }, method = RequestMethod.POST)
     public ResponseModal resetPwd(@RequestBody ResetPwd resetPwd) {
         long sl = System.currentTimeMillis(), el = 0L;
@@ -66,10 +68,8 @@ public class LoginResource {
         HtBoaInUser htBoaInUser = new HtBoaInUser();
         htBoaInUser.setMobile(resetPwd.getMobile());
         htBoaInUser.setEmail(resetPwd.getEmail());
-        List<HtBoaInUser> htBoaInUserList = htBoaInUserService
-                .findAll(htBoaInUser);
-        r = exceptionReturn(logEnd, "resetPwd: " + resetPwd, htBoaInUserList,
-                sl, "个人用户信息", 1);
+        List<HtBoaInUser> htBoaInUserList = htBoaInUserService .findAll(htBoaInUser);
+        r = exceptionReturn(logEnd, "resetPwd: " + resetPwd, htBoaInUserList, sl, "个人用户信息", 1);
         if (null != r)
             return r;
         htBoaInUser = htBoaInUserList.get(0);
@@ -80,11 +80,8 @@ public class LoginResource {
         pageConf.setSize(resetPwd.getHistPwds().size());
         pageConf.setSortNames(Arrays.asList("pwdCreTime"));
         pageConf.setSortOrders(Arrays.asList(Direction.DESC));
-        Page<HtBoaInPwdHist> htBoaInPwdHistList = (Page<HtBoaInPwdHist>) htBoaInPwdHistService
-                .findAllByPage(pageConf, map);
-        r = exceptionReturn(logEnd, "resetPwd: " + resetPwd,
-                htBoaInPwdHistList.getContent(), sl, "用户历史密码信息",
-                resetPwd.getHistPwds().size());
+        Page<HtBoaInPwdHist> htBoaInPwdHistList = (Page<HtBoaInPwdHist>) htBoaInPwdHistService .findAllByPage(pageConf, map);
+        r = exceptionReturn(logEnd, "resetPwd: " + resetPwd, htBoaInPwdHistList.getContent(), sl, "用户历史密码信息", resetPwd.getHistPwds().size());
         if (null != r)
             return r;
         HtBoaInLogin u = new HtBoaInLogin();

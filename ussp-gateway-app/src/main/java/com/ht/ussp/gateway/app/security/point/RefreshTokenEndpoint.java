@@ -1,5 +1,7 @@
 package com.ht.ussp.gateway.app.security.point;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
+
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -29,11 +31,6 @@ import com.ht.ussp.gateway.app.jwt.TokenVerifier;
 import com.ht.ussp.gateway.app.model.ResponseModal;
 import com.ht.ussp.gateway.app.util.SysStatus;
 import com.ht.ussp.gateway.app.vo.UserVo;
-
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureException;
-import io.jsonwebtoken.UnsupportedJwtException;
 
 
 /**
@@ -77,5 +74,12 @@ public class RefreshTokenEndpoint {
         userVo.setUserId(refreshToken.getUserId());
         userVo.setOrgCode(refreshToken.getOrgCode());
         return tokenFactory.createAccessJwtToken(userVo);
+    }
+    
+    @RequestMapping(value="/uaa/hello")
+    public String hello(){
+    	System.out.println("----hello");
+    	return "hello";
+    	
     }
 }
