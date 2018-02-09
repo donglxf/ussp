@@ -23,6 +23,7 @@
             <ul class="layui-tab-title">
                 <li class="layui-this" lay-id="resMenuType">菜单</li>
                 <li lay-id="resModuleType">模块</li>
+                <li lay-id="resCustomType">自定义权限</li>
             </ul>
             <div class="layui-tab-content">
                 <div class="layui-tab-item layui-show">
@@ -188,8 +189,8 @@
                 <div class="layui-tab-item">
                     <div class="row-lg">
                         <div class="toolbarBtn btn-group">
-                            <button class="layui-btn layui-btn-sm" title="新增" data-type="add" data-res-type="module">
-                                新增
+                            <button class="layui-btn layui-btn-sm" title="新增模块" data-type="add" data-res-type="module">
+                                新增模块
                             </button>
                         </div>
                         <div class="pull-right col-xs-4">
@@ -208,6 +209,32 @@
                     </div>
                     <div class="row-lg">
                         <table id="resource_module_datatable" lay-filter="resource_module_datatable">
+                        </table>
+                    </div>
+                </div>
+                <div class="layui-tab-item">
+                    <div class="row-lg">
+                        <div class="toolbarBtn btn-group">
+                            <button class="layui-btn layui-btn-sm" title="新增自定义权限" data-type="add" data-res-type="custom">
+                                新增自定义权限
+                            </button>
+                        </div>
+                        <div class="pull-right col-xs-4">
+                            <div class="input-group input-group-sm row">
+                                <input type="text" class="form-control"
+                                       id="resource_custom_search_keyword"
+                                       placeholder="请输入自定义权限编号/权限名称"/>
+                                <div class="input-group-btn">
+                                    <button type="button" class="layui-btn layui-btn-sm"
+                                            data-type="search" data-res-type="custom">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row-lg">
+                        <table id="resource_custom_datatable" lay-filter="resource_custom_datatable">
                         </table>
                     </div>
                 </div>
@@ -509,6 +536,39 @@
             <button class="layui-btn hide" lay-submit="" lay-filter="resource_module_add_data_form"></button>
         </form>
     </div>
+    <!--新增自定义权限表单-->
+    <div id="resource_custom_add_data_div" class="hide">
+        <form method="post" class="layui-form" lay-filter="resource_custom_add_data_form">
+            <div class="layui-form-item">
+                <label class="layui-form-label">自定义权限编号<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="resCode" lay-verify="required" autocomplete="off" lay-verType="tips"
+                           class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">自定义权限名称<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="resNameCn" lay-verify="required" autocomplete="off" lay-verType="tips"
+                           class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">权限备注</label>
+                <div class="layui-input-block">
+                    <input type="tel" name="remark" autocomplete="off" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属系统</label>
+                <div class="layui-input-block">
+                    <input type="text" name="appName" readonly class="layui-input layui-input-sm">
+                    <input type="hidden" name="app">
+                </div>
+            </div>
+            <button class="layui-btn hide" lay-submit="" lay-filter="resource_custom_add_data_form"></button>
+        </form>
+    </div>
 
     <div id="resource_api_data_div" class="hide">
         <div class="row-lg" style="height:35px;">
@@ -549,13 +609,6 @@
             </table>
         </div>
     </div>
-    <script type="text/html" id="resource_api_data_laytpl">
-        {{#  if(d.resParent === ''||d.resParent===null){ }}
-        未关联
-        {{#  } else { }}
-        已关联
-        {{#  } }}
-    </script>
     <script type="text/html" id="resource_menu_font_icon_laytpl">
         <i class="fa {{d.fontIcon}}" aria-hidden="true"></i>
     </script>
