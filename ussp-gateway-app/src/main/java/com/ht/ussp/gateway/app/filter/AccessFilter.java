@@ -71,7 +71,7 @@ public class AccessFilter extends ZuulFilter {
     public Object run() {
         Jws<Claims> jwsClaims;
         RequestContext ctx = RequestContext.getCurrentContext();
-        ctx.getResponse().setCharacterEncoding("GBK");
+        ctx.getResponse().setCharacterEncoding("UTF-8");
         HttpServletRequest request = ctx.getRequest();
         String uri = request.getRequestURI().toString();
         String validateUrl = getUrl(uri);//uri.substring(uri.indexOf("/", uri.indexOf("/") + 1));
