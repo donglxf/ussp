@@ -53,7 +53,7 @@ public interface UCClient {
     /**
      * 
      * @Title: getCustomResouce 
-     * @Description: 获取并保存用户资源 
+     * @Description: 获取用户自定权限
      * @return Result
      * @throws
      * @author wim qiuwenwu@hongte.info 

@@ -39,3 +39,15 @@ d)在前端页面引用/common/config.js
 ```
 
 e)在js里面通过gatewayUrl这个变量就可以获取动态的网关配置了，具体可以查看ussp-uc-ui里面ht_config.js的使用
+###0.0.7
+UCClient新增两个接口：
+1、获取用户自定义权限列表
+``` java
+ @GetMapping(value = "/auth/getCustomResouce")
+ Result getCustomResouce(@RequestParam("userId") String userId,@RequestParam("app") String app);
+```
+2、验证用户自定义权限
+``` java
+ @GetMapping(value = "/auth/IsHasCustomResouce")
+ Boolean IsHasCustomResouce(@RequestParam("userId") String userId,@RequestParam("rescode") String rescode,@RequestParam("app") String app);
+```
