@@ -58,7 +58,7 @@ public class HtBoaInOrgService {
         String search = "";
         String orgPath = "";
         if (query != null && query.size() > 0 && query.get("orgCode") != null) {
-        	orgPath = "%" +query.get("orgCode")+ "%";
+        	orgPath = query.get("orgCode");
         }
         if (query != null && query.size() > 0 && query.get("keyWord") != null) {
         	search = "%" +query.get("keyWord")+ "%";
