@@ -492,7 +492,7 @@ public class AuthResouce {
 
 	@GetMapping("/getCustomResouce")
 	@ApiOperation(value = "获取并保存用户资源")
-	public Result getCustomResouce(String userId, String app) {
+	public Result getCustomResouce(@RequestParam("userId") String userId, @RequestParam("app") String app) {
 		String[] custom = { "custom" };
 		List<ResVo> resVoList = htBoaInResourceService.loadByUserIdAndApp(userId, app, custom);
 		if (resVoList.size() < 0) {
@@ -513,7 +513,8 @@ public class AuthResouce {
 	 */
 	@GetMapping("/IsHasCustomResouce")
 	@ApiOperation(value = "用户是否有自定义权限")
-	public Boolean IsHasCustomResouce(String userId, String rescode, String app) {
+	public Boolean IsHasCustomResouce(@RequestParam("userId") String userId, @RequestParam("rescode") String rescode,
+			@RequestParam("app") String app) {
 		Boolean flag = false;
 		String[] custom = { "custom" };
 		List<ResVo> resVoList = htBoaInResourceService.loadByUserIdAndApp(userId, app, custom);

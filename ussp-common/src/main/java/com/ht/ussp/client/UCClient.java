@@ -11,6 +11,8 @@ package com.ht.ussp.client;
 
 import com.ht.ussp.client.dto.ApiResourceDto;
 import com.ht.ussp.client.dto.LoginInfoDto;
+import com.ht.ussp.core.Result;
+
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,4 +49,29 @@ public interface UCClient {
      */
     @GetMapping(value = "/user/getLoginUserInfo")
     LoginInfoDto getLoginUserInfo(@RequestParam("userId") String userId);
+    
+    /**
+     * 
+     * @Title: getCustomResouce 
+     * @Description: 获取并保存用户资源 
+     * @return Result
+     * @throws
+     * @author wim qiuwenwu@hongte.info 
+     * @date 2018年2月10日 下午2:40:21
+     */
+    @GetMapping(value = "/auth/getCustomResouce")
+    Result getCustomResouce(@RequestParam("userId") String userId,@RequestParam("app") String app);
+    
+    /**
+     * 
+     * @Title: IsHasCustomResouce 
+     * @Description: 判断用户是否有自定义权限  
+     * @return Boolean
+     * @throws
+     * @author wim qiuwenwu@hongte.info 
+     * @date 2018年2月10日 下午2:40:42
+     */
+    @GetMapping(value = "/auth/IsHasCustomResouce")
+    Boolean IsHasCustomResouce(@RequestParam("userId") String userId,@RequestParam("rescode") String rescode,@RequestParam("app") String app);
 }
+
