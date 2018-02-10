@@ -44,6 +44,10 @@ public interface HtBoaInAppRepository extends JpaRepository<HtBoaInApp, Long> {
             "WHERE STATUS='0' " +
             "AND DEL_FLAG='0' " +
             "UNION ALL " +
+            "SELECT CONCAT(APP,'_custom'),'custom','自定义权限',3,'customType',APP, NULL,APP " +
+            "FROM HT_BOA_IN_APP " +
+            "WHERE STATUS='0' AND DEL_FLAG='0' " +
+            "UNION ALL " +
             "SELECT " +
             "APP,NAME,NAME_CN,1,'app', '0',NULL,APP " +
             "FROM HT_BOA_IN_APP " +

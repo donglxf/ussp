@@ -11,6 +11,7 @@ package com.ht.ussp.bean;
 
 import com.ht.ussp.client.UCClient;
 import com.ht.ussp.client.dto.LoginInfoDto;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -30,6 +31,7 @@ import javax.annotation.Resource;
 @Log4j2
 @ControllerAdvice
 public class LoginUserInfoHelper {
+    @Getter
     private String userId;
 
     @Autowired(required = false)

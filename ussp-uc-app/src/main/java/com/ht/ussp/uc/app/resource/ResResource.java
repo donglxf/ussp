@@ -55,16 +55,16 @@ public class ResResource {
     }
 
     /**
-     * 用户信息分页查询<br>
+     * 资源分页查询<br>
      *
      * @param page 分页参数对象
      * @return 结果对象
      * @author 谭荣巧
      * @Date 2018/1/12 9:01
      */
-    @ApiOperation(value = "用户信息分页查询")
+    @ApiOperation(value = "自信信息分页查询")
     @PostMapping(value = "/page/load", produces = {"application/json"})
-    public PageResult<List<UserMessageVo>> loadListByPage(ResourcePageVo page) {
+    public PageResult loadListByPage(ResourcePageVo page) {
         return htBoaInResourceService.getPage(page.getPageRequest(), page.getApp(), page.getParentCode(), page.getResType(), page.getKeyWord());
     }
 
@@ -168,12 +168,16 @@ public class ResResource {
      */
     @PostMapping("/relevance")
     public Result relevance(@RequestBody RelevanceApiVo relevanceApiVo) {
-        LoginInfoDto loginInfoDto = loginUserInfoHelper.getLoginInfo();
-        boolean isRelevance = htBoaInResourceService.relevance(relevanceApiVo.getParentCode(), relevanceApiVo.getResourceList(), loginInfoDto.getUserName());
+        boolean isRelevance = htBoaInResourceService.relevance(relevanceApiVo.getApp(), relevanceApiVo.getParentCode(), relevanceApiVo.getResourceList(), loginUserInfoHelper.getUserId());
         if (isRelevance) {
             return Result.buildSuccess();
         }
         return Result.buildFail();
     }
 
+    @ApiOperation(value = "API资源信息分页查询")
+    @PostMapping(value = "/api/page/load", produces = {"application/json"})
+    public PageResult loadApiByPage(ResourcePageVo page) {
+        return htBoaInResourceService.loadApiByPage(page);
+    }
 }

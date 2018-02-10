@@ -9,10 +9,15 @@ import com.ht.ussp.uc.app.repository.HtBoaInResourceRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInRoleRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInRoleResRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInUserAppRepository;
+import com.ht.ussp.uc.app.vo.ApiResourceVo;
+import com.ht.ussp.uc.app.vo.PageVo;
 import com.ht.ussp.uc.app.vo.ResVo;
+import com.ht.ussp.uc.app.vo.ResourcePageVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +28,7 @@ import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author wim qiuwenwu@hongte.info
@@ -41,13 +47,7 @@ public class HtBoaInResourceService {
     @Autowired
     private HtBoaInRoleResRepository htBoaInRoleResRepository;
 
-    public List<ResVo> queryResForY(List<String> res_type, String app) {
-
-        return htBoaInResourceRepository.queryResForY(res_type, app);
-    }
-
     public List<ResVo> queryResForN(List<String> res_code, List<String> res_type, String app) {
-
         return htBoaInResourceRepository.queryResForN(res_code, res_type, app);
     }
 
@@ -83,7 +83,7 @@ public class HtBoaInResourceService {
      * @author 谭荣巧
      * @Date 2018/1/22 21:10
      */
-    public PageResult getPage(Pageable pageable, String app, String parentCode, String resType, String keyWord) {
+    public PageResult<List<HtBoaInResource>> getPage(Pageable pageable, String app, String parentCode, String resType, String keyWord) {
         PageResult result = new PageResult();
         Page<HtBoaInResource> pageData = null;
         if (!StringUtils.isEmpty(app) && !StringUtils.isEmpty(resType)) {
@@ -126,6 +126,14 @@ public class HtBoaInResourceService {
                 query1.where(where);
                 return query1.getRestriction();
             };
+            Sort sort = pageable.getSort();
+            if (sort == null) {
+                List<Sort.Order> orders = new ArrayList<>();
+                orders.add(new Sort.Order(Sort.Direction.ASC, "resParent"));
+                orders.add(new Sort.Order(Sort.Direction.ASC, "sequence"));
+                sort = new Sort(orders);
+                pageable = new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), sort);
+            }
             pageData = htBoaInResourceRepository.findAll(specification, pageable);
         }
         if (pageData != null) {
@@ -218,6 +226,10 @@ public class HtBoaInResourceService {
                 resType = new String[]{"module"};
                 shortType = "MD";
                 break;
+            case "custom":
+                resType = new String[]{"custom"};
+                shortType = "C";
+                break;
             case "btn":
                 resType = new String[]{"btn"};
                 shortType = "B";
@@ -239,7 +251,6 @@ public class HtBoaInResourceService {
             String maxResCode = htBoaInResourceRepository.queryMaxResCodeByAppAndParentAndType(app, ("".equals(resPanrent) ? "NULL" : resPanrent), Arrays.asList(resType), resCodePrefix + "%");
             int index = 0;
             if (!StringUtils.isEmpty(maxResCode)) {
-                System.out.println("maxResCode：" + maxResCode + "\tresCodePrefix：" + resCodePrefix + "\tapp：" + app + "\tresPanrent：" + resPanrent + "\tshortType：" + shortType);
                 //最大资源编码（去除资源编码前缀）
                 try {
                     index = Integer.parseInt(maxResCode.replace(resCodePrefix, "").replaceAll("[^0-9]", ""));
@@ -255,24 +266,43 @@ public class HtBoaInResourceService {
     /**
      * API资源绑定父资源，同时绑定父资源对应的角色<br>
      *
+     * @param app          系统编码
      * @param parentCode   父资源代码
      * @param resourceList api资源集合
-     * @param userName     操作的用户
+     * @param userId       操作的用户
      * @return true 绑定成功，false 绑定失败
      * @author 谭荣巧
      * @Date 2018/2/7 21:19
      */
     @Transactional
-    public boolean relevance(String parentCode, List<HtBoaInResource> resourceList, String userName) {
+    public boolean relevance(String app, String parentCode, List<HtBoaInResource> resourceList, String userId) {
+        String resCodePrefix = String.format("%s_A", parentCode);
+        int index = 0;
+        String code = createResourceCode(app, parentCode, "api");
+        if (!StringUtils.isEmpty(code) && code.contains(resCodePrefix)) {
+            try {
+                index = Integer.parseInt(code.replace(resCodePrefix, ""));
+            } catch (Exception e) {
+                //无需处理
+            }
+        }
+
         //API资源绑定父资源
         List<HtBoaInResource> newList = new ArrayList<>();
         for (HtBoaInResource resource : resourceList) {
             if (!StringUtils.isEmpty(resource.getResParent())) {
                 resource.setId(null);
             }
+            index++;
             //需要重置资源编码
-            resource.setResCode(createResourceCode(resource.getApp(), parentCode, "api"));
+            resource.setResCode(String.format("%s%02d", resCodePrefix, index));
             resource.setResParent(parentCode);
+            resource.setApp(app);
+            resource.setResType("api");
+            resource.setStatus("0");
+            resource.setSequence(index);
+            resource.setCreateOperator(userId);
+            resource.setUpdateOperator(userId);
             newList.add(resource);
         }
         save(newList);
@@ -285,13 +315,19 @@ public class HtBoaInResourceService {
                 newHtBoaInRoleRes = new HtBoaInRoleRes();
                 newHtBoaInRoleRes.setResCode(resource.getResCode());
                 newHtBoaInRoleRes.setRoleCode(htBoaInRoleRes.getRoleCode());
-                newHtBoaInRoleRes.setUpdateOperator(userName);
-                newHtBoaInRoleRes.setCreateOperator(userName);
+                newHtBoaInRoleRes.setUpdateOperator(userId);
+                newHtBoaInRoleRes.setCreateOperator(userId);
                 newHtBoaInRoleRes.setDelFlag(0);
                 newHtBoaInRoleResList.add(newHtBoaInRoleRes);
             }
         }
         htBoaInRoleResRepository.save(newHtBoaInRoleResList);
         return true;
+    }
+
+
+    public PageResult loadApiByPage(ResourcePageVo page) {
+        Page<ApiResourceVo> pageResult = htBoaInResourceRepository.queryApiByPage(page.getApp(), page.getKeyWord(), page.getParentCode(), page.getPageRequest());
+        return PageResult.buildSuccess(pageResult.getContent(), pageResult.getTotalElements());
     }
 }

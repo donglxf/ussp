@@ -113,7 +113,6 @@
         <a href="#">鸿特信息</a>
     </div>
 </div>
-<!--<script src="/plugins/layui/layui.js"></script>-->
 <script src="/plugins/layui/layui.js"></script>
 <script src="/common/config.js"></script>
 
@@ -144,10 +143,11 @@
         var refreshToken = cookie.getRefreshToken();
         // 如果refreshToken失效，则直接跳转到登录页面
         if (refreshToken == null || refreshToken == "") {
-            layer.confirm("登录超时，请重新登录。", function (index) {
-                top.location.href = config.loginPath;
-                layer.close(index);
-            });
+            // layer.confirm("登录超时，请重新登录。", function (index) {
+            //    top.location.href = config.loginPath;
+            //     layer.close(index);
+            // });
+            top.location.href = config.loginPath;
             return false;
         }
         layui.config({

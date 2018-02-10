@@ -38,6 +38,6 @@ public class PageVo {
     }
 
     public PageRequest getPageRequest() {
-        return new PageRequest(page - 1, limit);
+        return new PageRequest(getPage(), limit);
     }
 }

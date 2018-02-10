@@ -36,15 +36,35 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                 case "module":
                     title = "新增模块";
                     break;
+                case "custom":
+                    title = "新增自定义权限";
+                    break;
             }
             switch (type) {
+                case "custom":
+                    if (nodes.length == 0) {
+                        layer.alert("请先在左边选择一个系统。");
+                        return false;
+                    }
+                    break;
                 case "module":
+                    if (nodes.length == 0) {
+                        layer.alert("请先在左边选择一个父模块或系统。");
+                        return false;
+                    } else if (nodes[0]["type"] != "module" && nodes[0]["type"] != "moduleType") {
+                        layer.alert("请选择正确的模块作为父模块。");
+                        return false;
+                    }
+                    break;
                 case "menu":
                     if (nodes.length == 0) {
-                        layer.alert("请先选择一个父菜单或系统。");
+                        layer.alert("请先在左边选择一个父菜单或系统。");
                         return false;
                     } else if (nodes[0]["type"] == "view") {
                         layer.alert("您选择的菜单【" + nodes[0]["name"] + "】不能增加下级菜单，请重新选择。");
+                        return false;
+                    } else if (nodes[0]["type"] != "group" && nodes[0]["type"] != "menuType") {
+                        layer.alert("请选择正确的菜单作为父菜单。");
                         return false;
                     }
                     break;
@@ -148,13 +168,26 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
         },
         relevance: function (resType, relevanceType) {
             layer.close(relevanceDialog);
-            var selectData = selectTableData[relevanceType ? relevanceType : resType];
-            if (!selectData) {
-                layer.alert("请先在上面的表格中选择一个父菜单。");
-                return false;
-            } else if (selectData["resType"] == "group") {
-                layer.alert("请选择一个带链接的页面菜单。");
-                return false;
+            var selectData = selectTableData[relevanceType];
+            switch (relevanceType) {
+                case "module":
+                case "menu":
+                    if (!selectData) {
+                        layer.alert("请先选择一个父菜单。");
+                        return false;
+                    } else if (selectData["resType"] == "group") {
+                        layer.alert("您选择的菜单【" + selectData["resNameCn"] + "】不能关联API资源，请重新选择。");
+                        return false;
+                    }
+                    break;
+                case "api":
+                case "tab":
+                case "btn":
+                    if (!selectData) {
+                        layer.alert("请先在左边选择父资源！");
+                        return false;
+                    }
+                    break;
             }
             var app = selectData["app"];
             var parentCode = selectData["resCode"];
@@ -173,13 +206,14 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                         url: config.basePath + 'resource/relevance',
                         data: JSON.stringify({
                             parentCode: parentCode,
+                            app: app,
                             resourceList: apiCheckStatus.data
                         }),
                         contentType: "application/json; charset=utf-8",
                         success: function (result) {
                             layer.close(index);
                             if (result["returnCode"] == '0000') {
-                                renderTable(relevanceType ? relevanceType + "_api" : "api", parentCode);
+                                renderTable(relevanceType == 'menu' || relevanceType == 'module' ? "api" : relevanceType + "_api", parentCode);
                                 layer.alert("关联API成功。");
                             }
                         },
@@ -198,22 +232,21 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                     table.render({
                         id: 'resource_api_dalog_datatable'
                         , elem: $('#resource_api_dalog_datatable', layero)
-                        , url: config.basePath + 'resource/page/load'
+                        , url: config.basePath + 'resource/api/page/load'
                         , where: {
                             app: app,
+                            parentCode: parentCode,
                             resType: "api"
                         }
-                        , initSort: {field: 'resCode', type: 'asc'}
+                        , initSort: {field: 'resContent', type: 'asc'}
                         , page: true
                         , height: "471"
                         , cols: [[
                             {type: 'numbers'}
                             , {type: 'checkbox'}
-                            , {field: 'resCode', width: 120, title: 'API编号'}
-                            , {field: 'resNameCn', width: 150, title: 'API名称'}
                             , {field: 'resContent', title: 'API链接'}
-                            , {field: 'remark', width: 200, title: '方法名'}
-                            , {align: 'center', width: 100, title: '是否关联', templet: "#resource_api_data_laytpl"}
+                            , {field: 'resNameCn', width: 200, title: 'API名称'}
+                            , {field: 'remark', width: 350, title: '方法名'}
                         ]]
                     });
                     var $keywordInput = $("#resource_api_dialog_search_keyword", layero);
@@ -230,17 +263,12 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                 }
             });
         },
-        search: function (type) {
-            var selectNodes = appAndResourceTree.getSelectedNodes();
-            if (selectNodes && selectNodes.length == 1) {
-                var keyword = $("#resource_" + type + "_search_keyword").val();
-                var resType = selectNodes[0]["type"];
-                if (resType != "view" && resType != "group" && resType != "module") {
-                    renderTable(type, null, keyword);
-                } else {
-                    renderTable(type, undefined, keyword);
-                }
+        search: function (type, relevanceType) {
+            if ("api" == type && relevanceType && relevanceType != "") {
+                type = relevanceType + "_" + type;
             }
+            var keyword = $("#resource_" + type + "_search_keyword").val();
+            renderTable(type, undefined, keyword);
         }
     };
     var refreshDalogAPIDataTable = function (app, keyword, relevanceType) {
@@ -294,23 +322,21 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                         case "group":
                         case "app":
                         case "menuType":
-                            if (resType != "view" && resType != "group") {
-                                renderTable('menu', null);
-                            } else {
-                                renderTable('menu');
-                            }
+                            renderTable('menu');
                             renderTable('btn', treeNode["code"]);
+                            renderTable('btn_api');
                             element.tabChange("resource_top_tab", "resMenuType");
                             element.tabChange("resource_bottom_tab", "resBtnType");
                             break;
                         case "moduleType":
                         case "module":
-                            if (resType != "module") {
-                                renderTable('module', null);
-                            } else {
-                                renderTable('module');
-                            }
+                            renderTable('module');
                             element.tabChange("resource_top_tab", "resModuleType");
+                            break;
+                        case "customType":
+                        case "custom":
+                            renderTable('custom');
+                            element.tabChange("resource_top_tab", "resCustomType");
                             break;
                     }
                 },
@@ -334,6 +360,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
     renderTable("menu");
     renderTable("btn");
     renderTable("btn_api");
+    renderTable("custom");
 
     /**
      * 刷新数据表
@@ -346,15 +373,20 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
         if (!keyword) {
             keyword = null;
         }
+        console.info("xx");
         var selectData;
         switch (type) {
             case "module":
+            case "custom":
             case "menu":
                 var selectNodes = appAndResourceTree.getSelectedNodes();
                 if (selectNodes && selectNodes.length == 1) {
                     selectData = selectNodes[0];
-                    if (typeof(parentCode) == 'undefined' && parentCode == null) {
+                    if (!parentCode) {
                         parentCode = selectNodes[0]["code"];
+                        if (parentCode.indexOf("custom") > 0 || parentCode.indexOf("menu") > 0 || parentCode.indexOf("module") > 0) {
+                            parentCode = null;
+                        }
                     }
                 }
                 break;
@@ -380,34 +412,34 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
             }
         }
         var clos = [[]], height = 'full', page = false, limit = 999, limits = [],
-            initSort = {field: 'lastModifiedDatetime', type: 'desc'};
+            initSort;
         switch (type) {
             case 'menu':
                 resType = "group,view";
                 height = '276';
-                page = true;
-                limit = 5;
-                limits = [5, 10, 20, 30, 40, 50];
-                initSort = {field: 'resParent', type: 'asc'};
+                page = false;
+                // limit = 5;
+                // limits = [5, 10, 20, 30, 40, 50];
+                // initSort = {field: 'resParent', type: 'asc'};
                 clos = [[
                     {type: 'numbers'}
                     , {type: 'checkbox', event: 'rowClick'}
                     , {field: 'resCode', width: 120, title: '菜单编号', event: 'rowClick'}
                     , {field: 'resNameCn', width: 150, title: '菜单名称', event: 'rowClick'}
-                    , {field: 'resContent', title: '菜单链接', event: 'rowClick'}
+                    , {field: 'resContent', cellMinWidth: 110, minWidth: 110, title: '菜单链接', event: 'rowClick'}
                     , {field: 'fontIcon', align: 'center', width: 60, title: '图标', templet: "#resource_menu_font_icon_laytpl", event: 'rowClick'}
                     , {field: 'sequence', align: 'center', width: 60, title: '顺序', event: 'rowClick'}
                     , {field: 'resParent', width: 100, title: '父菜单编号', event: 'rowClick'}
                     , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl", event: 'rowClick'}
                     , {field: 'updateOperator', width: 100, title: '更新人', event: 'rowClick'}
                     , {field: 'lastModifiedDatetime', width: 150, title: '更新时间', event: 'rowClick'}
-                    , {width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn', event: 'rowClick'}
+                    , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn', event: 'rowClick'}
                 ]];
                 break;
             case 'btn':
                 resType = 'btn';
                 height = 'full-601';
-                initSort = {field: 'resCode', type: 'asc'};
+                //initSort = {field: 'resCode', type: 'asc'};
                 clos = [[
                     {type: 'numbers', event: 'rowClick'}
                     , {type: 'checkbox', event: 'rowClick'}
@@ -426,7 +458,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
             case 'tab':
                 resType = 'tab';
                 height = 'full-601';
-                initSort = {field: 'resCode', type: 'asc'};
+                //initSort = {field: 'resCode', type: 'asc'};
                 clos = [[
                     {type: 'numbers'}
                     , {type: 'checkbox', event: 'rowClick'}
@@ -447,14 +479,14 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
             case "module_api":
                 resType = 'api';
                 height = 'full-601';
-                initSort = {field: 'resCode', type: 'asc'};
+                //initSort = {field: 'resCode', type: 'asc'};
                 clos = [[
                     {type: 'numbers'}
                     , {field: 'resCode', width: 150, title: 'API编号'}
                     , {field: 'resContent', cellMinWidth: 125, minWidth: 125, title: 'API链接'}
                     , {field: 'resNameCn', width: 120, title: 'API名称'}
                     , {field: 'remark', width: 200, title: '方法名'}
-                    , {field: 'resParent', width: 120, title: '父菜单编号'}
+                    , {field: 'resParent', width: 120, title: '父资源编号'}
                     , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl"}
                     , {field: 'updateOperator', width: 100, title: '更新人'}
                     , {field: 'lastModifiedDatetime', width: 150, title: '更新时间'}
@@ -467,10 +499,9 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                 page = true;
                 limit = 20;
                 limits = [20, 30, 40, 50, 60, 70];
-                initSort = {field: 'sequence', type: 'asc'};
+                // initSort = {field: 'sequence', type: 'asc'};
                 clos = [[
                     {type: 'numbers'}
-                    , {type: 'checkbox', event: 'rowClick'}
                     , {field: 'resCode', width: 120, title: '模块编号', event: 'rowClick'}
                     , {field: 'resNameCn', width: 150, title: '模块名称', event: 'rowClick'}
                     , {field: 'resContent', title: '模块链接', event: 'rowClick'}
@@ -480,7 +511,24 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                     , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl", event: 'rowClick'}
                     , {field: 'updateOperator', width: 100, title: '更新人', event: 'rowClick'}
                     , {field: 'lastModifiedDatetime', width: 150, title: '更新时间', event: 'rowClick'}
-                    , {width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn', event: 'rowClick'}
+                    , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn', event: 'rowClick'}
+                ]];
+                break;
+            case 'custom':
+                resType = 'custom';
+                height = 'full-234';
+                page = true;
+                limit = 20;
+                limits = [20, 30, 40, 50, 60, 70];
+                clos = [[
+                    {type: 'numbers'}
+                    , {field: 'resCode', width: 120, title: '权限编号'}
+                    , {field: 'resNameCn', width: 150, title: '权限名称'}
+                    , {field: 'remark', title: '权限备注'}
+                    , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl"}
+                    , {field: 'updateOperator', width: 100, title: '更新人', event: 'rowClick'}
+                    , {field: 'lastModifiedDatetime', width: 150, title: '更新时间'}
+                    , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn'}
                 ]];
                 break;
         }
@@ -494,7 +542,6 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                 parentCode: parentCode,
                 keyWord: keyword
             }
-            , initSort: initSort
             , page: page
             , limit: limit
             , limits: limits
@@ -696,6 +743,9 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
     });
     table.on('tool(resource_module_datatable)', function (obj) {
         tableToolEvent(obj, "module")
+    });
+    table.on('tool(resource_custom_datatable)', function (obj) {
+        tableToolEvent(obj, "custom")
     });
     //菜单和模块tab页切换事件
     element.on('tab(resource_top_tab)', function (data) {
