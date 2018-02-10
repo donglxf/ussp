@@ -388,8 +388,8 @@ public class AuthResouce {
 					insertCount++;
 				}
 			}
-			log.debug("共新增API资源" + insertCount + "个");
-			log.debug("共更新API资源" + updateCount + "个");
+			log.info("共新增API资源" + insertCount + "个");
+			log.info("共更新API资源" + updateCount + "个");
 			htBoaInResourceService.save(newResList);
 		}
 	}
