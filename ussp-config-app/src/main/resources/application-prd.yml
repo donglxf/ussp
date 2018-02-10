@@ -6,9 +6,9 @@ spring:
   rabbitmq:
     host: 10.100.1.80
     port: 5672
-    username: guest
-    password: guest
-    virtual-host: /
+    username: admin
+    password: tuandai888
+    virtual-host: /data/rabbitmq-server
   cloud: 
     config:
       bus:
