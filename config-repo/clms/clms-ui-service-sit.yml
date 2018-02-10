@@ -1,0 +1,8 @@
+server:
+  port: ${SERVER_PORT}
+spring:
+  application:
+    name: clms-ui-service
+    version: 1.0.0
+ht.config.ui:
+  gatewayUrl: http://120.79.47.252:30111/
