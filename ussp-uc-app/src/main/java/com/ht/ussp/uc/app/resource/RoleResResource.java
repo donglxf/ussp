@@ -57,7 +57,7 @@ public class RoleResResource {
 
     @ApiOperation(value = "加载资源树数据")
     @RequestMapping("/auth/load")
-    public ResourceTreePageVo loadByRole(String app, String role) {
+    public ResourceTreePageVo loadByRole(String type, String app, String role) {
         ResourceTreePageVo page = new ResourceTreePageVo();
         if (StringUtils.isEmpty(app) || StringUtils.isEmpty(role)) {
             return page;
@@ -65,7 +65,14 @@ public class RoleResResource {
         List<ResourceTreeVo> rtvList = new ArrayList<>();
         List<HtBoaInResource> allList = htBoaInResourceService.getByApp(app);
         List<String> resList = htBoaInRoleResService.queryResByCode(role);
-        List<HtBoaInResource> menuList = allList.stream().filter(res -> "group".equals(res.getResType()) || "view".equals(res.getResType())).collect(Collectors.toList());
+        List<HtBoaInResource> menuList = new ArrayList<>();
+        if ("menu".equals(type)) {
+            menuList = allList.stream().filter(res -> "group".equals(res.getResType()) || "view".equals(res.getResType())).collect(Collectors.toList());
+        } else if ("module".equals(type)) {
+            menuList = allList.stream().filter(res -> "module".equals(res.getResType())).collect(Collectors.toList());
+        } else if ("custom".equals(type)) {
+            menuList = allList.stream().filter(res -> "custom".equals(res.getResType())).collect(Collectors.toList());
+        }
         ResourceTreeVo rtv;
         List<ResourceTreeItemVo> btnRtv;
         List<ResourceTreeItemVo> tabRtv;
@@ -76,21 +83,24 @@ public class RoleResResource {
             rtv.setName(menu.getResName());
             rtv.setNameCn(menu.getResNameCn());
             rtv.setParentCode(menu.getResParent());
-            btnRtv = new ArrayList<>();
-            tabRtv = new ArrayList<>();
-            if ("view".equals(menu.getResType())) {
-                List<HtBoaInResource> btnResourceList = allList.stream().filter(btn -> "btn".equals(btn.getResType()) && menu.getResCode().equals(btn.getResParent())).collect(Collectors.toList());
-                List<HtBoaInResource> tabResourceList = allList.stream().filter(tab -> "tab".equals(tab.getResType()) && menu.getResCode().equals(tab.getResParent())).collect(Collectors.toList());
-                for (HtBoaInResource btn : btnResourceList) {
-                    btnRtv.add(new ResourceTreeItemVo(btn.getResCode(), btn.getResName(), btn.getResNameCn(), resList.contains(btn.getResCode())));
+            rtv.setRemark(menu.getRemark());
+            if ("menu".equals(type)) {
+                btnRtv = new ArrayList<>();
+                tabRtv = new ArrayList<>();
+                if ("view".equals(menu.getResType())) {
+                    List<HtBoaInResource> btnResourceList = allList.stream().filter(btn -> "btn".equals(btn.getResType()) && menu.getResCode().equals(btn.getResParent())).collect(Collectors.toList());
+                    List<HtBoaInResource> tabResourceList = allList.stream().filter(tab -> "tab".equals(tab.getResType()) && menu.getResCode().equals(tab.getResParent())).collect(Collectors.toList());
+                    for (HtBoaInResource btn : btnResourceList) {
+                        btnRtv.add(new ResourceTreeItemVo(btn.getResCode(), btn.getResName(), btn.getResNameCn(), resList.contains(btn.getResCode())));
+                    }
+                    for (HtBoaInResource tab : tabResourceList) {
+                        tabRtv.add(new ResourceTreeItemVo(tab.getResCode(), tab.getResName(), tab.getResNameCn(), resList.contains(tab.getResCode())));
+                    }
                 }
-                for (HtBoaInResource tab : tabResourceList) {
-                    tabRtv.add(new ResourceTreeItemVo(tab.getResCode(), tab.getResName(), tab.getResNameCn(), resList.contains(tab.getResCode())));
-                }
+                rtv.setBtns(btnRtv);
+                rtv.setTabs(tabRtv);
             }
             rtv.setIschecked(resList.contains(menu.getResCode()));
-            rtv.setBtns(btnRtv);
-            rtv.setTabs(tabRtv);
             rtvList.add(rtv);
         }
         page.setTotal(rtvList.size());
@@ -110,7 +120,7 @@ public class RoleResResource {
     @ApiOperation(value = "保存角色与资源的关系")
     @PostMapping(value = "/save")
     public Result saveRoleAndRes(@RequestBody RoleAndResVo roleAndResVo, @RequestHeader("userId") String userid) {
-        htBoaInRoleResService.saveRoleAndRes(roleAndResVo,userid);
+        htBoaInRoleResService.saveRoleAndRes(roleAndResVo, userid);
         return Result.buildSuccess();
     }
 }

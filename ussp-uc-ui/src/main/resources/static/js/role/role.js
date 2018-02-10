@@ -172,7 +172,6 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth' ], function
             }
             , callback: {
             	onClick: function (event, treeId, treeNode, clickFlag) {
-            		console.log("ddddd");
             		refreshTable();
                 },
                 onAsyncSuccess: function (event, treeId, treeNode, msgString) {

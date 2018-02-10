@@ -736,10 +736,14 @@
                     body = grid.elem.find('.grid-body>table');
                 var ths = grid.elem.find('.grid-head th,.grid-head td');
                 var tbhs = grid.elem.find('.grid-body thead th,.grid-body thead td');
-                head.css('width', body.width());
+                if (body.width() > 0) {
+                    head.css('width', body.width());
+                }
                 tbhs.each(function (i, th) {
                     var w = $(th).find('.grid-coll').width();
-                    $(ths[i]).find('.grid-coll').css('width', w);
+                    if (w > 0) {
+                        $(ths[i]).find('.grid-coll').css('width', w);
+                    }
                 });
                 if (grid.elem.hasClass('grid')) {
                     var top = grid.elem.find('.grid-head').height() || 0,
@@ -756,8 +760,9 @@
                     }
                 }
                 var H = grid.elem.find('.grid-body table:first thead').height() || 0;
-                if (H > 0)
-                    grid.elem.find('.grid-body table:first').css('margin-top', -H);
+                if (H <= 0)
+                    H = 31;
+                grid.elem.find('.grid-body table:first').css('margin-top', -H);
                 if (RESIZE.top != 0)
                     grid.elem.find('.grid-body').scrollTop(RESIZE.top);
                 if (RESIZE.left != 0)

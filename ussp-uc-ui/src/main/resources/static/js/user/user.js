@@ -162,7 +162,6 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
         if (!keyword) {
             keyword = null;
         }
-        console.log(keyword);
         table.reload('batch_resetpwd_dalog_datatable', {
             page: {
                 curr: 1 //重新从第 1 页开始
@@ -312,7 +311,6 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
                             success: function (layero, index) {
                                 //表单数据填充
                                 $.each(result.data, function (name, value) {
-                                	console.log("name:"+name+"  value:"+value);
                                     var $input = $("input[name=" + name + "]", layero);
                                     if ($input && $input.length == 1) {
                                         $input.val(value);

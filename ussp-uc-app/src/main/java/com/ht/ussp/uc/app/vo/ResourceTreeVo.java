@@ -30,6 +30,7 @@ public class ResourceTreeVo {
     private String code;
     private String name;
     private String nameCn;
+    private String remark;
     private String parentCode;
     private boolean ischecked;//是否勾选
     private String app;

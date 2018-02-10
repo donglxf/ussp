@@ -65,6 +65,7 @@
 
 .grid-content table td span,
 .grid-content table th {
+    padding-left: 8px;
     white-space: nowrap;
 }
 .grid-content table td .layui-form-checkbox{
@@ -114,9 +115,9 @@
     text-align: center;
 }
 
-.grid-head thead {
-    float: left !important;
-}
+/*.grid-head thead {*/
+    /*float: left !important;*/
+/*}*/
 
 .grid-body {
     overflow: hidden;

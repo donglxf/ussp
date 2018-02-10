@@ -6,20 +6,23 @@ layui.use(['element', 'form', 'ztree', 'laytpl', 'table', 'ht_config', 'ht_auth'
         , treegrid = layui.treegrid
         , config = layui.ht_config
         , ht_auth = layui.ht_auth
+        , isMenuLoad = false
+        , isModuleLoad = false
+        , isCustomLoad = false
+        , selectTab = 0
         , appAndResourceTree //组织机构树控件
         , savePath = config.basePath + "role/res/save"
         , active = {
-        save: function () {
+        save: function (resType) {
             var selectNodes = appAndResourceTree.getSelectedNodes();
             if (selectNodes && selectNodes.length == 1 && selectNodes[0]["app"] != selectNodes[0]["code"]) {
-                var $checkeds = $("#roleRes_grid input:checkbox:checked")
+                var $checkeds = $("#roleRes_" + resType + "_grid input:checkbox:checked")
                     , app = selectNodes[0]["app"]
                     , roleCode = selectNodes[0]["code"]
                     , resCodes = [];
                 layui.each($checkeds, function (index, item) {
                     resCodes.push($(item).val());
                 });
-                console.info(resCodes, app, roleCode);
                 $.ajax({
                     type: "POST",
                     url: savePath,
@@ -43,17 +46,10 @@ layui.use(['element', 'form', 'ztree', 'laytpl', 'table', 'ht_config', 'ht_auth'
                 layer.alert("您未选择您要保存的角色与资源，无法保存。");
             }
         },
-        reset: function () {
+        reset: function (resType) {
             var selectNodes = appAndResourceTree.getSelectedNodes();
             if (selectNodes && selectNodes.length == 1 && selectNodes[0]["app"] != selectNodes[0]["code"]) {
-                refresh(selectNodes[0]["app"], selectNodes[0]["code"]);
-            }
-        },
-        search: function () {
-            var selectNodes = appAndResourceTree.getSelectedNodes();
-            if (selectNodes && selectNodes.length == 1) {
-                //var keyword = $("#resource_" + type + "_search_keyword").val();
-
+                refresh(resType, selectNodes[0]["app"], selectNodes[0]["code"]);
             }
         }
     };
@@ -82,9 +78,23 @@ layui.use(['element', 'form', 'ztree', 'laytpl', 'table', 'ht_config', 'ht_auth'
             }
             , callback: {
                 onClick: function (event, treeId, treeNode) {
-                    refresh(treeNode["app"], treeNode["code"]);
+                    var app = treeNode["app"], roleCode = treeNode["code"]
+                        , isMenuLoad = false
+                        , isModuleLoad = false
+                        , isCustomLoad = false
+                    switch (selectTab) {
+                        case 0:
+                            refresh("menu", app, roleCode);
+                            break;
+                        case 1:
+                            refresh("module", app, roleCode);
+                            break;
+                        case 2:
+                            refresh("custom", app, roleCode);
+                            break;
+                    }
                 },
-                onAsyncSuccess: function (event, treeId, treeNode) {
+                onAsyncSuccess: function () {
                     var node = appAndResourceTree.getNodeByParam("level ", "0");
                     if (node) {
                         appAndResourceTree.selectNode(node);
@@ -101,49 +111,63 @@ layui.use(['element', 'form', 'ztree', 'laytpl', 'table', 'ht_config', 'ht_auth'
         }
     );
 
-    var refresh = function (app, role) {
+    var refresh = function (type, app, role) {
+        var treegridOptions = {
+            elem: 'roleRes_' + type + '_grid',
+            view: 'roleRes_' + type + '_laytpl',
+            searchData: {
+                type: type,
+                app: app,
+                role: role
+            },
+            id: 'code',
+            height: "full-270",
+            parentid: 'parentCode',
+            root: null
+        };
         if (app == null || role == null || app == role) {
-            treegrid.createNew({
-                elem: 'roleRes_grid',
-                view: 'roleRes_table_laytpl',
-                data: {rows: []},
-                searchData: {
-                    app: app,
-                    role: role
-                },
-                id: 'code',
-                height: "full-270",
-                parentid: 'parentCode',
-                root: null
-            }).build();
+            treegridOptions = $.extend({}, treegridOptions, {
+                data: {rows: []}
+            });
         } else {
-            treegrid.createNew({
-                elem: 'roleRes_grid',
-                view: 'roleRes_table_laytpl',
-                url: config.basePath + "role/res/auth/load",
-                searchData: {
-                    app: app,
-                    role: role
-                },
-                id: 'code',
-                height: "full-270",
-                parentid: 'parentCode',
-                root: null
-            }).build();
+            treegridOptions = $.extend({}, treegridOptions, {
+                url: config.basePath + "role/res/auth/load"
+            });
         }
+        treegrid.createNew(treegridOptions).build();
     };
 
-    refresh(null, null);
+    refresh("menu", null, null);
+    refresh("module", null, null);
+    refresh("custom", null, null);
 
     //菜单和模块tab页切换事件
     element.on('tab(resource_top_tab)', function (data) {
-        switch (data.index) {
-            case 0:
-                element.tabChange("resource_bottom_tab", "resBtnType");
-                break;
-            case 1:
-                renderTable("module");
-                break;
+        selectTab = data.index;
+        var selectNodes = appAndResourceTree.getSelectedNodes();
+        if (selectNodes && selectNodes.length == 1 && selectNodes[0]["app"] != selectNodes[0]["code"]) {
+            var app = selectNodes[0]["app"]
+                , roleCode = selectNodes[0]["code"];
+            switch (data.index) {
+                case 0:
+                    if (!isMenuLoad) {
+                        isMenuLoad = true;
+                        refresh("menu", app, roleCode);
+                    }
+                    break;
+                case 1:
+                    if (!isModuleLoad) {
+                        isModuleLoad = true;
+                        refresh("module", app, roleCode);
+                    }
+                    break;
+                case 2:
+                    if (!isCustomLoad) {
+                        isCustomLoad = true;
+                        refresh("custom", app, roleCode);
+                    }
+                    break;
+            }
         }
     });
     //监听工具栏

@@ -373,7 +373,6 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
         if (!keyword) {
             keyword = null;
         }
-        console.info("xx");
         var selectData;
         switch (type) {
             case "module":
