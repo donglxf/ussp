@@ -30,7 +30,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class UserMessageVo implements Serializable {
     //主键
-    private long id;
+    private Long id;
     // 用户ID
     private String userId;
     // 工号
@@ -48,7 +48,7 @@ public class UserMessageVo implements Serializable {
     // 身份证号
     private String idNo;
     // 使用状态  0正常  1删除
-    private int delFlag;
+    private Integer delFlag;
     //创建人
     private String createOperator;
     //创建时间
@@ -62,7 +62,7 @@ public class UserMessageVo implements Serializable {
     // 用户状态 0正常 1禁用 2密码初始化 4冻结 5锁定
     private String status;
     //密码错误次数
-    private int failedCount;
+    private Integer failedCount;
     //失效时间
     private Date pwdExpDate;
     //生效时间
