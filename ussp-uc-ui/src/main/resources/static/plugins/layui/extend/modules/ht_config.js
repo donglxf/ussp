@@ -17,6 +17,7 @@ layui.define(function (exports) {
         , loadMenuUrl: base + "uc/auth/loadMenu"
         , loadBtnAndTabUrl: base + "uc/auth/loadBtnAndTab"
         , loginUrl: base + "uaa/auth/login"
+        , loadSelfinfoUrl: base + "uc/user/in/selfinfo"
         , refreshTokenUrl: base + "uaa/auth/token"
     });
 });

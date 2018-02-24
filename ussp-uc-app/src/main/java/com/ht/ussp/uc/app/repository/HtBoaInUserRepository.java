@@ -1,18 +1,20 @@
 package com.ht.ussp.uc.app.repository;
 
-import com.ht.ussp.uc.app.domain.HtBoaInUser;
-import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
-import com.ht.ussp.uc.app.vo.UserMessageVo;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Map;
+import com.ht.ussp.uc.app.domain.HtBoaInUser;
+import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
+import com.ht.ussp.uc.app.vo.UserMessageVo;
 
 /**
  * @author wim qiuwenwu@hongte.info
@@ -79,7 +81,7 @@ public interface HtBoaInUserRepository extends JpaSpecificationExecutor<HtBoaInU
     )
     Page<UserMessageVo> queryUserPage(String orgCode, String keyWord, Pageable pageable);
 
-    @Query("SELECT new com.ht.ussp.uc.app.model.SelfBoaInUserInfo(u.userId, u.userName, u.email, u.idNo, u.mobile, u.orgCode, o.orgName, o.orgNameCn, u.rootOrgCode, r.orgName, r.orgNameCn, o.orgPath, o.orgType,u.jobNumber) FROM HtBoaInUser u, HtBoaInOrg o, HtBoaInOrg r WHERE u.userId = ?1 AND u.orgCode = o.orgCode AND u.rootOrgCode = r.orgCode")
+    @Query("SELECT new com.ht.ussp.uc.app.model.SelfBoaInUserInfo(u.userId, u.userName, u.email, u.idNo, u.mobile, u.orgCode, o.orgName, o.orgNameCn, u.rootOrgCode, '', '', o.orgPath, o.orgType,u.jobNumber) FROM HtBoaInUser u, HtBoaInOrg o  WHERE u.userId = ?1 AND u.orgCode = o.orgCode ")
     public List<SelfBoaInUserInfo> listSelfUserInfo(String userId);
 
     @Query("SELECT new map(r.roleCode, r.roleName, r.roleNameCn) FROM HtBoaInUser u, HtBoaInRole r, HtBoaInUserRole ur WHERE u.userId = ?1 AND u.userId = ur.userId AND ur.roleCode = r.roleCode")
@@ -131,37 +133,12 @@ public interface HtBoaInUserRepository extends JpaSpecificationExecutor<HtBoaInU
             "where u.userId = ?1 ")
     int updateUserByUserId(String userId, String userName, String jobNumber, String mobile, String idNo, String email, String updateOperator);
 
-
-    @Query(value = "SELECT " +
-            "new com.ht.ussp.uc.app.vo.UserMessageVo(" +
-            "hbiUser.id," +
-            "hbiUser.userId," +
-            "hbiUser.jobNumber," +
-            "hbiUser.userName," +
-            "hbiUser.orgCode," +
-            "org.orgNameCn," +
-            "hbiUser.mobile," +
-            "hbiUser.email," +
-            "hbiUser.idNo," +
-            "hbiUser.delFlag," +
-            "hbiUser.createOperator," +
-            "hbiUser.createdDatetime," +
-            "hbiUser.updateOperator," +
-            "hbiUser.lastModifiedDatetime," +
-            "login.status," +
-            "login.failedCount," +
-            "login.pwdExpDate," +
-            "login.effectiveDate)" +
-            "FROM HtBoaInUser hbiUser ,HtBoaInLogin login  ,HtBoaInOrg org " +
-            "WHERE hbiUser.userId=login.userId " +
-            "AND hbiUser.orgCode=org.orgCode " +
-            "AND hbiUser.delFlag = 0 AND login.password = '' " 
-            , countQuery = "SELECT " +
-            "COUNT(hbiUser.id) " +
-            "FROM  HtBoaInUser hbiUser ,HtBoaInLogin login  ,HtBoaInOrg org  " +
-            "WHERE hbiUser.userId=login.userId " +
-            "AND hbiUser.orgCode=org.orgCode " +
-            "AND hbiUser.delFlag = 0 AND login.password = '' " 
+    @Query(value = "select hbiuser.id,hbiuser.user_id,hbiuser.job_number,hbiuser.user_name ,hbiuser.org_code ,"
+    		+ "hbiuser.mobile,hbiuser.email,hbiuser.id_no,hbiuser.del_flag,org.org_name_cn  " 
+    		+ " from HT_BOA_IN_USER hbiuser ,HT_BOA_IN_ORG org WHERE hbiuser.org_code= :orgCode and hbiuser.org_code=org.org_code and (hbiuser.user_name  like %:keyWord% or hbiuser.job_number like %:keyWord% or hbiuser.user_id like %:keyWord% or hbiuser.mobile like %:keyWord% ) and hbiuser.user_id in (select l.user_id from HT_BOA_IN_LOGIN l where l.password is null or l.password = '') /*#pageable*/",
+    		countQuery = "SELECT count(id)  from HT_BOA_IN_USER hbiuser WHERE hbiuser.org_code= :orgCode and (hbiuser.user_name  like %:keyWord% or hbiuser.job_number like %:keyWord% or hbiuser.user_id like %:keyWord% or hbiuser.mobile like %:keyWord% ) and  hbiuser.user_id in (select l.user_id from HT_BOA_IN_LOGIN l where l.password is null or l.password = '') "
+            ,nativeQuery=true
     )
-    Page<UserMessageVo> queryUserIsNullPwd(Pageable pageable);
+    Page<Object[]> queryUserIsNullPwd(Pageable pageable,@Param("orgCode")String orgCode, @Param("keyWord")String keyWord);
+    
 }

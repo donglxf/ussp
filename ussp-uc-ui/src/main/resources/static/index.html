@@ -195,7 +195,7 @@
             });
             //初始化权限资源
             // ht_auth.load();
-            $.get(config.basePath + "user/in/selfinfo", null, function (result) {
+            $.get(config.loadSelfinfoUrl, null, function (result) {
                 //表单数据填充
                 $.each(result.result, function (name, value) {
                     if ("userName" == name) {
