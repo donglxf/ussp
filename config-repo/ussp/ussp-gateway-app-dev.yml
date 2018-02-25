@@ -3,10 +3,10 @@ server:
 
 spring:
   rabbitmq:
-    host: 10.110.1.240
+    host: 172.16.200.105
     port: 5672
-    username: admin
-    password: admin
+    username: root
+    password: tuandai_bm2015
     virtual-host: /
 
 eureka:
