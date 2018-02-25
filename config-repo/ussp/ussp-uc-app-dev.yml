@@ -4,9 +4,9 @@ spring:
   application:
     name: ussp-uc-app
   datasource:
-      url: jdbc:mysql://10.110.1.240:3306/BOA?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+      url: jdbc:mysql://172.16.200.105:3306/BOA?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
       username: root
-      password: tuandai_bm2015
+      password: tuandai888
       dbcp2:
         validation-query: SELECT 1
         test-while-idle: true
@@ -32,10 +32,10 @@ spring:
           max-idle : 20  #最大空闲连接，默认8
           min-idle : 5   #最小空闲连接，默认0
   rabbitmq:
-    host: 10.110.1.240
+    host: 172.16.200.105
     port: 5672
-    username: admin
-    password: admin
+    username: root
+    password: tuandai_bm2015
     virtual-host: /
 eureka:
   instance:
