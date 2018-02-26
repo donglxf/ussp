@@ -1,5 +1,6 @@
 package com.ht.ussp.uc.app.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
 import com.ht.ussp.uc.app.repository.HtBoaInLoginRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInUserRepository;
+import com.ht.ussp.uc.app.vo.AppAndResourceVo;
 import com.ht.ussp.uc.app.vo.LoginInfoVo;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
 import com.ht.ussp.util.BeanUtils;
@@ -192,14 +194,34 @@ public class HtBoaInUserService {
     }
     
     
-    public PageResult<List<UserMessageVo>> queryUserIsNullPwd(PageRequest pageRequest) {
+    public PageResult<List<UserMessageVo>> queryUserIsNullPwd(PageRequest pageRequest,String orgCode, String keyWord) {
         PageResult result = new PageResult();
-        Page<UserMessageVo> pageData = htBoaInUserRepository.queryUserIsNullPwd(pageRequest) ;
+        keyWord = keyWord==null?"":keyWord;
+        Page<Object[]> pageData = htBoaInUserRepository.queryUserIsNullPwd(pageRequest,orgCode,keyWord);
+        List<UserMessageVo> userMessageVoList = new ArrayList<>();
+        if(pageData.getContent()!=null) {
+        	for (Object[] objects : pageData.getContent()) {
+            	UserMessageVo userMessageVo = new UserMessageVo();
+            	userMessageVo.setId(objects[0] == null ? null : Long.parseLong(objects[0].toString()));
+            	userMessageVo.setUserId(objects[1] == null ? null : objects[1].toString());
+            	userMessageVo.setJobNumber(objects[2] == null ? null : objects[2].toString());
+            	userMessageVo.setUserName(objects[3] == null ? null : objects[3].toString());
+            	userMessageVo.setOrgCode(objects[4] == null ? null : objects[4].toString());
+            	userMessageVo.setMobile(objects[5] == null ? null : objects[5].toString());
+            	userMessageVo.setEmail(objects[6] == null ? null : objects[6].toString());
+            	userMessageVo.setIdNo(objects[7] == null ? null : objects[7].toString());
+            	userMessageVo.setDelFlag(objects[8] == null ? null : Integer.parseInt(objects[8].toString()) );
+            	userMessageVo.setOrgName(objects[9] == null ? null : objects[9].toString() );
+            	userMessageVoList.add(userMessageVo);
+            }
+        }
         if (pageData != null) {
-            result.count(pageData.getTotalElements()).data(pageData.getContent());
+            result.count(pageData.getTotalElements()).data(userMessageVoList);
         }
         result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
         return result;
     }
+    
+    
     
 }
