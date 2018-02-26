@@ -70,14 +70,19 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
             refreshTable($("#user_search_keyword").val());
         },
         batchResetPwd: function () {
+        	 var nodes = orgTree.getSelectedNodes();
+             if (nodes.length == 0) {
+                 layer.alert("请先选择一个组织机构。");
+                 return false;
+             }
             layer.close(resetPwdDialog);
             resetPwdDialog = layer.open({
                 type: 1,
                 area: ['1000px', '645px'],
                 shadeClose: true,
-                title: "重置用户密码",
+                title: "设置用户密码",
                 content: $("#batch_resetpwd_data_div").html(),
-                btn: ['重置密码', '取消'],
+                btn: ['设置密码', '取消'],
                 yes: function (index, layero) {
                     var checkStatus = table.checkStatus('batch_resetpwd_dalog_datatable');
                     var resetPwdUserdata = checkStatus.data;
@@ -92,13 +97,15 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
                              success: function (result) {
                                  layer.close(index);
                                  if (result["returnCode"] == '0000') {
-                                     layer.alert("密码重置成功");
+                                     layer.msg("密码设置成功");
                                  }
                              },
                              error: function (result) {
                                  console.error(result);
                              }
                          })
+                    }else{
+                    	layer.msg("请选择用户");
                     }
                     
                 },
@@ -110,6 +117,9 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
                         id: 'batch_resetpwd_dalog_datatable'
                         , elem: $('#batch_resetpwd_dalog_datatable', layero)
                         , url: config.basePath + 'user/queryUserIsNullPwd'
+                        ,where: {
+                        	orgCode: nodes[0]["orgCode"],
+                        }
                         , page: true
                         , height: "471"
                         , cols: [[
@@ -117,12 +127,11 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
                             , {type: 'checkbox'}
                             , {field: 'jobNumber', width: 100, title: '工号'}
                             , {field: 'userId', width: 100, title: '用户名'}
-                            , {field: 'userName', width: 100, title: '用户名称'}
+                            , {field: 'userName', width: 100, title: '用户姓名'}
                             , {field: 'mobile', width: 120, title: '手机'}
-                            , {field: 'email', width: 100, title: '邮箱'}
+                            , {field: 'email',   title: '邮箱'}
                             , {field: 'idNo', minWidth: 100, title: '身份证'}
                             , {field: 'orgName', minWidth: 100, title: '所属机构'}
-                            , {field: 'status', width: 60, title: '状态', templet: "#user_status_laytpl"}
                         ]]
                     });
                     var $keywordInput = $("#batch_resetpwd_search_keyword", layero);
@@ -162,14 +171,19 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
         if (!keyword) {
             keyword = null;
         }
-        table.reload('batch_resetpwd_dalog_datatable', {
-            page: {
-                curr: 1 //重新从第 1 页开始
-            }
-            , where: {
-                keyWord: keyword
-            }
-        });
+        var selectNodes = orgTree.getSelectedNodes();
+        if (selectNodes && selectNodes.length == 1) {
+        	 table.reload('batch_resetpwd_dalog_datatable', {
+                 page: {
+                     curr: 1 //重新从第 1 页开始
+                 }
+                 , where: {
+                     keyWord: keyword,
+                     orgCode: selectNodes[0]["orgCode"]
+                 }
+             });
+        }
+       
     };
     //渲染组织机构树
     orgTree = $.fn.zTree.init($('#user_org_ztree_left'), {
@@ -232,7 +246,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
             {type: 'numbers'}
             , {field: 'jobNumber', width: 100, title: '工号'}
             , {field: 'userId', width: 100, title: '用户名'}
-            , {field: 'userName', width: 100, title: '用户名称'}
+            , {field: 'userName', width: 100, title: '用户姓名'}
             , {field: 'mobile', width: 120, title: '手机'}
             , {field: 'email', width: 100, title: '邮箱'}
             , {field: 'idNo', minWidth: 100, title: '身份证'}
@@ -345,13 +359,16 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
                     }
                 });
             }else if (obj.event === 'resetpwd') {
-            	 $.post(config.basePath + "user/sendEmailRestPwd?userId=" + data.userId, null, function (result) {
-                     if (result["returnCode"] == "0000") {
-                         layer.msg("重置密码成功。");
-                     } else {
-                         layer.msg(result.codeDesc);
-                     }
-                 });
+            	layer.confirm("确认重置用户 密码？", function (index) {
+            		$.post(config.basePath + "user/sendEmailRestPwd?userId=" + data.userId, null, function (result) {
+                        if (result["returnCode"] == "0000") {
+                          layer.close(index);
+                       	  layer.msg("密码重置成功");
+                        } else {
+                            layer.msg(result.codeDesc);
+                        }
+                    });
+            	 });
             }
         }
     );

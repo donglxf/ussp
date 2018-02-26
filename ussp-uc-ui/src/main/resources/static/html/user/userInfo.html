@@ -2,8 +2,6 @@
     <div id="user_modify_userinfo_div"   >
         <form method="post" class="layui-form"   lay-filter="userInfo_filter_modify_form">
             <input type="hidden" name="id" readonly class="layui-input layui-input-sm">
-            <input type="hidden" name="userId" readonly class="layui-input layui-input-sm">
-            
             <div class="layui-form-item" >
                 <label class="layui-form-label">工号<b>*</b></label>
                 <div class="layui-input-block ">
@@ -13,7 +11,13 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">用户名<b>*</b></label>
                 <div class="layui-input-block">
-                    <input type="text" name="userName" lay-verify="required" readonly autocomplete="off" lay-verType="tips" class=" layui-input-sm layui-bg-gray" style="width: 30%">
+                    <input type="text" name="userId" lay-verify="required" readonly autocomplete="off" lay-verType="tips" class=" layui-input-sm layui-bg-gray" style="width: 30%">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户姓名<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="userName" lay-verify="required"   autocomplete="off" lay-verType="tips" class=" layui-input-sm" style="width: 30%">
                 </div>
             </div>
             <div class="layui-form-item">
@@ -23,9 +27,9 @@
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">邮箱</label>
+                <label class="layui-form-label">邮箱<b>*</b></label>
                 <div class="layui-input-block">
-                    <input type="text" name="email" lay-verify="email" autocomplete="off" lay-verType="tips" class=" layui-input-sm" style="width: 30%">
+                    <input type="text" name="email" lay-verify="email|required" autocomplete="off" lay-verType="tips" class=" layui-input-sm" style="width: 30%">
                 </div>
             </div>
             <div class="layui-form-item">

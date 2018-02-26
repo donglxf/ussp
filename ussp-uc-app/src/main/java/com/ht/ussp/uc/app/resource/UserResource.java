@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ht.ussp.client.UCClient;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
@@ -76,8 +76,6 @@ public class UserResource{
     
     @Autowired
 	private EipClient eipClient;
-    @Autowired
-    private UCClient ucClient;
 
     @ApiOperation(value = "对内：用户个人信息查询", notes = "已登录用户查看自己的个人信息")
     @ApiImplicitParam(name = "userId", value = "用户ID", required = true, paramType = "path", dataType = "int")
@@ -417,10 +415,14 @@ public class UserResource{
             Set to = new HashSet<>();
     		to.add(htBoaInUser.getEmail());
     		emailVo.setTo(to);
-    		Result result =  eipClient.sendEmail(emailVo);
-    		log.debug("发送邮件："+result);
-    	} 
-    	return Result.buildSuccess();
+    		try {
+    			Result result =  eipClient.sendEmail(emailVo);
+    			log.debug("发送邮件："+result);
+			} catch (Exception e) {
+				log.debug("发送邮件Exception："+e.getMessage());
+			}
+    	}
+    	return Result.buildSuccess(); 
     }
     
 	@ApiOperation(value = "批量重置密码并发邮件")
@@ -452,8 +454,12 @@ public class UserResource{
 					Set to = new HashSet<>();
 					to.add(htBoaInUser.getEmail());
 					emailVo.setTo(to);
-					Result result = eipClient.sendEmail(emailVo);
-					log.debug("发送邮件：" + result);
+					try {
+		    			Result result =  eipClient.sendEmail(emailVo);
+		    			log.debug("发送邮件："+result);
+					} catch (Exception e) {
+						log.debug("发送邮件Exception："+e.getMessage());
+					}
 				}
 			}
 		}
@@ -464,7 +470,7 @@ public class UserResource{
     @PostMapping(value = "/queryUserIsNullPwd")
     public PageResult<UserMessageVo> queryUserIsNullPwd(PageVo page) {
     	PageResult result = new PageResult();
-    	result = htBoaInUserService.queryUserIsNullPwd(new PageRequest(page.getPage(), page.getLimit()));
+    	result = htBoaInUserService.queryUserIsNullPwd(new PageRequest(page.getPage(), page.getLimit(),Sort.Direction.ASC,"id"),page.getOrgCode(),page.getKeyWord());
     	return result;
     }
 

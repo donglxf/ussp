@@ -1,10 +1,8 @@
-var userId="912d97ecf09d402ea8cba9c1c1af3366"; 
 layui.use(['form',   'table' ,'ht_config'], function () {
     var $ = layui.jquery
         , form = layui.form
         , config = layui.ht_config
         , table = layui.table;
-    $("#userId").val(userId);
     //自定义验证规则
 	 form.verify({
 		  newPwd : function(value) {
