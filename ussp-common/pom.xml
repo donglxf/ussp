@@ -41,7 +41,16 @@
             <artifactId>dozer</artifactId>
             <version>5.5.1</version>
         </dependency>
-
+		<dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.9</version>
+        </dependency>
     </dependencies>
 
     <repositories>
