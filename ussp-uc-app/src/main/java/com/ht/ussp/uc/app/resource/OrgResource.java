@@ -9,17 +9,31 @@
  */
 package com.ht.ussp.uc.app.resource;
 
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.ht.ussp.bean.LoginUserInfoHelper;
 import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
@@ -34,7 +48,6 @@ import com.ht.ussp.uc.app.service.HtBoaInOrgService;
 import com.ht.ussp.uc.app.service.HtBoaInPositionService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.vo.PageVo;
-import com.ht.ussp.uc.app.vo.UserMessageVo;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
@@ -58,6 +71,9 @@ public class OrgResource {
 
     @Autowired
 	private HtBoaInPositionService htBoaInPositionService;
+    
+    @Autowired
+    private LoginUserInfoHelper loginUserInfoHelper;
     
     /**
      * 根据父机构编码获取组织机构树<br>
@@ -211,4 +227,85 @@ public class OrgResource {
     	   return Result.buildFail();
        }
     }
+    
+    @ApiOperation(value = "根据机构编码查询机构信息")
+    @GetMapping(value = "/getOrgInfoByCode")
+    public HtBoaInOrg getOrgInfoByCode(String orgCode) {
+    	List<HtBoaInOrg> listHtBoaInOrg = htBoaInOrgService.findByOrgCode(orgCode);
+    	if(listHtBoaInOrg==null||listHtBoaInOrg.isEmpty()) {
+    		return null;
+    	} 
+        return listHtBoaInOrg.get(0);
+    }
+        
+    @ApiOperation(value = "根据机构编码查询下级机构信息")
+    @GetMapping(value = "/getSubOrgInfoByCode")
+    public List<HtBoaInOrg> getSubOrgInfoByCode(String parentOrgCode) {
+        return htBoaInOrgService.findByParentOrgCode(parentOrgCode);
+    }
+      
+    /**
+     * 导出
+     */
+    @PostMapping(value = "/downLoadOrgExcel")  
+    @ResponseBody  
+    public void downLoadOrgExcel(HttpServletResponse response){  
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssms");  
+        String dateStr = sdf.format(new Date());  
+        // 指定下载的文件名  
+        response.setHeader("Content-Disposition", "attachment;filename=" +dateStr+".xlsx"); 
+        System.out.println(dateStr);
+        response.setContentType("application/vnd.ms-excel;charset=UTF-8");  
+        response.setHeader("Pragma", "no-cache");  
+        response.setHeader("Cache-Control", "no-cache");  
+        response.setDateHeader("Expires", 0);  
+        XSSFWorkbook workbook=null;  
+        try {  
+            //导出Excel对象  
+            workbook = htBoaInOrgService.exportOrgExcel();  
+        } catch (Exception e1) {  
+            e1.printStackTrace();  
+        }  
+        OutputStream output;  
+        try {  
+            output = response.getOutputStream();  
+            BufferedOutputStream bufferedOutPut = new BufferedOutputStream(output);  
+            bufferedOutPut.flush();  
+            workbook.write(bufferedOutPut);  
+            bufferedOutPut.close();  
+        } catch (IOException e) {  
+            e.printStackTrace();  
+        }  
+        
+    }  
+    
+	/**
+	 * 导入
+	 * @param request
+	 * @param response
+	 */
+	@PostMapping(value = "/importOrgExcel")
+	public Result importOrgExcel(HttpServletRequest request, HttpServletResponse response) {
+		/*try {
+			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+			List<MultipartFile> fileList = multipartRequest.getFiles("file");
+			if (fileList.isEmpty()) {
+				throw new Exception("文件不存在！");
+			}
+			MultipartFile file = fileList.get(0);
+			if (file == null || file.isEmpty()) {
+				throw new Exception("文件不存在！");
+			}
+			InputStream in = file.getInputStream();
+			htBoaInOrgService.importOrgExcel(in, file);
+			in.close();
+			return Result.buildSuccess();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Result.buildFail();
+		}*/
+		System.out.println(loginUserInfoHelper.getLoginInfo().getUserName());
+		System.out.println("");
+		return Result.buildSuccess();
+	}
 }

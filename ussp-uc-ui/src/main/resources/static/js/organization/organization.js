@@ -1,10 +1,11 @@
 
-layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
+layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function () {
     var $ = layui.jquery
         , form = layui.form
         , table = layui.table
         , config = layui.ht_config
         , ht_auth = layui.ht_auth
+        , upload = layui.upload
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
@@ -75,13 +76,36 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         search: function () { 
         	//执行重载
             refreshOrgTable($("#organization_search_keyword").val());
-        }
+        },
+        exportOrg:function(){
+       	   $.post(downLoadOrgExcelUrl, null, function (result) {
+             console.log(result);
+           });
+        },
     };
+    
     var orgListByPageUrl=config.basePath +"org/list"; //列出所有机构记录列表信息  
     var addOrganizationUrl=config.basePath +"org/add"; //添加机构信息
     var delOrganizationUrl=config.basePath +"org/delete"; //添加机构信息
     var orgTreeUrl = config.basePath +"org/tree"; //机构列表
     var checkOrgCodeExistUrl = config.basePath +"org/isExistOrgCode"; //校验岗位编码是否已经存在
+    var downLoadOrgExcelUrl = config.basePath +"org/downLoadOrgExcel"; //导出
+    var importOrgExcelUrl = config.basePath +"org/importOrgExcel"; //导入
+    
+    upload.render({
+		elem: '#importOrg'
+		,url:importOrgExcelUrl
+		,accept: 'file' //普通文件
+		,exts: 'xls' //只允许上传压缩文件
+		,done: function(res){
+			console.log(res)
+			if(res.error){
+				layer.alert(res.error)
+			} else{
+				layer.alert("success:"+res.success+"lost:"+res.lost+"count:"+res.count);
+			}
+		}
+	});
     
     //自定义验证规则
 	form.verify({

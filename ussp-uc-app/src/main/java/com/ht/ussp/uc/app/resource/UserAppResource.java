@@ -110,6 +110,7 @@ public class UserAppResource {
 			u.setApp(htBoaInUserApp.getApp());
 			u.setCreatedDatetime(new Date());
 			u.setCreateOperator(userId);
+			u.setController("N");
 			u = htBoaInUserAppService.add(u);
 		}
        

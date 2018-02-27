@@ -9,17 +9,21 @@
  */
 package com.ht.ussp.bean;
 
-import com.ht.ussp.client.UCClient;
-import com.ht.ussp.client.dto.LoginInfoDto;
-import lombok.Getter;
-import lombok.extern.log4j.Log4j2;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-import javax.annotation.Resource;
+import com.ht.ussp.client.UCClient;
+import com.ht.ussp.client.dto.BoaInRoleInfoDto;
+import com.ht.ussp.client.dto.LoginInfoDto;
+import com.ht.ussp.client.dto.ResDto;
+
+import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * 登录用户助手<br>
@@ -33,12 +37,20 @@ import javax.annotation.Resource;
 public class LoginUserInfoHelper {
     @Getter
     private String userId;
+    
+    @Getter
+    private String app;
 
     @Autowired(required = false)
     private UCClient ucClient;
 
     @ModelAttribute
-    public void intLogin(@RequestHeader(value = "userId", required = false) String userId) {
+    public void intLogin(@RequestHeader(value = "app", required = false) String app) {
+        this.app = app;
+    }
+ 
+    @ModelAttribute
+    public void intLogin2(@RequestHeader(value = "userId", required = false) String userId) {
         this.userId = userId;
     }
 
@@ -59,6 +71,45 @@ public class LoginUserInfoHelper {
             return ucClient.getLoginUserInfo(userId);
         } catch (Exception ex) {
             log.error("获取登录信息发生异常。", ex);
+            return null;
+        }
+    }
+    
+    /**
+     * 获取当前用户所有权限信息
+     * 资源类型枚举值：ResTypeEnum.RES_TYPE_API.getReturnCode()
+     * @return
+     */
+    public List<ResDto> getUserResouce(String resType) {
+        if (StringUtils.isEmpty(userId)) {
+            return null;
+        }
+        if (ucClient == null) {
+            log.warn("无法获取当前用户所有权限信息，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
+        }
+        try {
+            return ucClient.getUserResouce(userId, resType, app);
+        } catch (Exception ex) {
+            log.error("获取当前用户所有权限信息发生异常。", ex);
+            return null;
+        }
+    }
+    
+    /**
+     * 获取当前用户所有角色信息
+     * @return
+     */
+    public List<BoaInRoleInfoDto>  getUserRole() {
+        if (StringUtils.isEmpty(userId)) {
+            return null;
+        }
+        if (ucClient == null) {
+            log.warn("无法获取当前用户所有角色信息，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
+        }
+        try {
+            return ucClient.getUserRole(userId);
+        } catch (Exception ex) {
+            log.error(" 获取当前用户所有角色信息发生异常。", ex);
             return null;
         }
     }

@@ -1,13 +1,17 @@
 package com.ht.ussp.uc.app.resource;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.ussp.common.Constants;
@@ -37,27 +41,43 @@ public class UserRoleResource {
     @Autowired
     private HtBoaInUserRoleService htBoaInUserRoleService;
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-   	@ApiOperation(value = "对内：根据UserId查询用户角色", notes = "根据UserId查询用户角色")
-    @RequestMapping(value = { "/listUserRoleByPage"}, produces = {"application/json"})
-    public PageResult<HtBoaInUserRole> listUserRoleByPage(PageVo page) {
-       	PageResult result = new PageResult();
-       	PageConf pageConf = new PageConf();
-       	pageConf.setPage(page.getPage());
-       	pageConf.setSize(page.getLimit());
-       	pageConf.setSearch(page.getKeyWord());
-           long sl = System.currentTimeMillis(), el = 0L;
-           String msg = "成功";
-           String logHead = "根据UserId查询用户角色：user/listUserRoleByPage param-> {}";
-           String logStart = logHead + " | START:{}";
-           String logEnd = logHead + " {} | END:{}, COST:{}";
-           log.debug(logStart, "page: " + page, sl);
-           
-           result =  htBoaInUserRoleService.listUserRoleByPage(pageConf,page.getQuery()); 
-           el = System.currentTimeMillis();
-           log.debug(logEnd, "page: " + page, msg, el, el - sl);
-           return result;
-     }
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@ApiOperation(value = "对内：根据UserId查询用户角色", notes = "根据UserId查询用户角色")
+	@RequestMapping(value = { "/listUserRoleByPage" }, produces = { "application/json" })
+	public PageResult<HtBoaInUserRole> listUserRoleByPage(PageVo page) {
+		PageResult result = new PageResult();
+		PageConf pageConf = new PageConf();
+		pageConf.setPage(page.getPage());
+		pageConf.setSize(page.getLimit());
+		pageConf.setSearch(page.getKeyWord());
+		long sl = System.currentTimeMillis(), el = 0L;
+		String msg = "成功";
+		String logHead = "根据UserId查询用户角色：user/listUserRoleByPage param-> {}";
+		String logStart = logHead + " | START:{}";
+		String logEnd = logHead + " {} | END:{}, COST:{}";
+		log.debug(logStart, "page: " + page, sl);
+
+		result = htBoaInUserRoleService.listUserRoleByPage(pageConf, page.getQuery());
+		el = System.currentTimeMillis();
+		log.debug(logEnd, "page: " + page, msg, el, el - sl);
+		return result;
+	}
+    
+	@SuppressWarnings("rawtypes")
+	@ApiOperation(value = "获取用户所有角色信息")
+	@RequestMapping(value = { "/getUserRole" }, method = RequestMethod.GET)
+	public List<BoaInRoleInfo> getUserRole(@RequestParam("userId")String userId) {
+    	PageResult result = new PageResult();
+    	PageConf pageConf = new PageConf();
+		pageConf.setPage(0); 
+		pageConf.setSize(500);
+		Map<String, String> query = new HashMap<>();
+		query.put("userId", userId);
+		result = htBoaInUserRoleService.listUserRoleByPage(pageConf, query);
+		List<BoaInRoleInfo> listBoaInRoleInfo= (List<BoaInRoleInfo>) result.getData();
+		return listBoaInRoleInfo;
+	}
+    
 
     @SuppressWarnings("rawtypes")
 	@ApiOperation(value = "对内：新增/编辑用户角色记录", notes = "提交用户角色信息新增/编辑角色")

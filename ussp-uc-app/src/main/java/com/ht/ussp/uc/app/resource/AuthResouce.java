@@ -5,13 +5,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.ht.ussp.uc.app.vo.MenuVo;
-import com.netflix.discovery.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +30,7 @@ import com.ht.ussp.uc.app.service.HtBoaInResourceService;
 import com.ht.ussp.uc.app.service.HtBoaInRoleResService;
 import com.ht.ussp.uc.app.service.HtBoaInUserAppService;
 import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
+import com.ht.ussp.uc.app.vo.MenuVo;
 import com.ht.ussp.uc.app.vo.ResVo;
 import com.ht.ussp.uc.app.vo.UserVo;
 import com.ht.ussp.util.FastJsonUtil;
@@ -186,6 +184,9 @@ public class AuthResouce {
 		}
 		try {
 			List<String> apiValues = redis.opsForList().range(key, 0, -1);
+			if(apiValues==null||apiValues.isEmpty()) {
+				return flag;
+			}
 			JSONArray json = JSONArray.parseArray(apiValues.get(0));
 
 			if (json.size() > 0) {
@@ -534,4 +535,13 @@ public class AuthResouce {
 
 	}
 
+ 
+	@ApiOperation(value = "获取当前用户所有权限信息")
+	@GetMapping("/getUserResouce")
+	public List<ResVo> getUserResouce(@RequestParam("userId") String userId, @RequestParam("rescode") String resType, @RequestParam("app") String app) {
+		Boolean flag = false;
+		String[] resTypes = { resType };
+		List<ResVo> resVoList = htBoaInResourceService.loadByUserIdAndApp(userId, app, resTypes);
+		return resVoList;
+	}
 }
