@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.ht.ussp.bean.LoginUserInfoHelper;
 import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
@@ -71,9 +70,6 @@ public class OrgResource {
 
     @Autowired
 	private HtBoaInPositionService htBoaInPositionService;
-    
-    @Autowired
-    private LoginUserInfoHelper loginUserInfoHelper;
     
     /**
      * 根据父机构编码获取组织机构树<br>
@@ -145,6 +141,7 @@ public class OrgResource {
             u.setUpdateOperator(userId);
             u = htBoaInOrgService.update(u);
         } else {
+        	u.setDelFlag(Constants.DEL_0);
             u.setCreatedDatetime(new Date());
             u.setCreateOperator(userId);
             u.setOrgPath(boaInOrgInfo.getOrgPath() + boaInOrgInfo.getOrgCode() + "/");
@@ -247,9 +244,9 @@ public class OrgResource {
     /**
      * 导出
      */
-    @PostMapping(value = "/downLoadOrgExcel")  
+    @PostMapping(value = "/exportOrgExcel")  
     @ResponseBody  
-    public void downLoadOrgExcel(HttpServletResponse response){  
+    public void exportOrgExcel(HttpServletResponse response){  
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssms");  
         String dateStr = sdf.format(new Date());  
         // 指定下载的文件名  
@@ -285,8 +282,8 @@ public class OrgResource {
 	 * @param response
 	 */
 	@PostMapping(value = "/importOrgExcel")
-	public Result importOrgExcel(HttpServletRequest request, HttpServletResponse response) {
-		/*try {
+	public Result importOrgExcel(HttpServletRequest request, HttpServletResponse response,@RequestHeader("userId") String userId) {
+		try {
 			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 			List<MultipartFile> fileList = multipartRequest.getFiles("file");
 			if (fileList.isEmpty()) {
@@ -295,17 +292,14 @@ public class OrgResource {
 			MultipartFile file = fileList.get(0);
 			if (file == null || file.isEmpty()) {
 				throw new Exception("文件不存在！");
-			}
+			} 
 			InputStream in = file.getInputStream();
-			htBoaInOrgService.importOrgExcel(in, file);
+			htBoaInOrgService.importOrgExcel(in, file,userId);
 			in.close();
-			return Result.buildSuccess();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Result.buildFail();
-		}*/
-		System.out.println(loginUserInfoHelper.getLoginInfo().getUserName());
-		System.out.println("");
+		}
 		return Result.buildSuccess();
 	}
 }

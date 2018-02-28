@@ -1,10 +1,16 @@
 package com.ht.ussp.uc.app.service;
 
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.ht.ussp.uc.app.vo.AppAndRoleVo;
+import com.ht.ussp.util.ExcelUtils;
+
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,8 +18,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.ht.ussp.bean.ExcelBean;
+import com.ht.ussp.common.Constants;
 import com.ht.ussp.uc.app.domain.HtBoaInApp;
+import com.ht.ussp.uc.app.domain.HtBoaInOrg;
 import com.ht.ussp.uc.app.model.BoaInAppInfo;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.repository.HtBoaInAppRepository;
@@ -107,4 +118,44 @@ public class HtBoaInAppService {
         }
         return arList;
     }
+
+	public XSSFWorkbook exportAppExcel() {
+		XSSFWorkbook book = null;
+		try {
+			List<HtBoaInApp> listHtBoaInApp = this.htBoaInAppRepository.findAll();
+			List<ExcelBean> ems = new ArrayList<>();
+			Map<Integer, List<ExcelBean>> map = new LinkedHashMap<>();
+			ems.add(new ExcelBean("机构编码", "orgCode", 0));
+			ems.add(new ExcelBean("机构名称", "orgNameCn", 0));
+			ems.add(new ExcelBean("父机构编码", "parentOrgCode", 0));
+			ems.add(new ExcelBean("排序", "sequence", 0));
+			ems.add(new ExcelBean("状态", "delFlag", 0));
+			map.put(0, ems);
+			book = ExcelUtils.createExcelFile(HtBoaInOrg.class, listHtBoaInApp, map, "机构信息");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return book;
+	}
+
+	@Transactional
+	public void importAppExcel(InputStream in, MultipartFile file, String userId) {
+		try {
+			List<List<Object>> listob = ExcelUtils.getBankListByExcel(in,file.getOriginalFilename());    
+		    for (int i = 0; i < listob.size(); i++) {    
+		            List<Object> ob = listob.get(i);    
+		            HtBoaInApp u = new HtBoaInApp();
+		            u.setApp(String.valueOf(ob.get(0)));
+		            u.setNameCn(String.valueOf(ob.get(1)));
+		            u.setStatus(Constants.STATUS_0);
+		            u.setLastModifiedDatetime(new Date());
+		            u.setCreatedDatetime(new Date());
+		            u.setDelFlag(Constants.DEL_0);
+		            u.setCreateOperator(userId);
+		            u = add(u);
+		        }    
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

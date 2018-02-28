@@ -2,6 +2,7 @@ package com.ht.ussp.uc.app.service;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,9 +17,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ht.ussp.bean.ExcelBean;
+import com.ht.ussp.common.Constants;
 import com.ht.ussp.uc.app.domain.HtBoaInOrg;
 import com.ht.ussp.uc.app.model.BoaInOrgInfo;
 import com.ht.ussp.uc.app.model.PageConf;
@@ -130,23 +133,22 @@ public class HtBoaInOrgService {
 		return book;
 	}
 
-	public void importOrgExcel(InputStream in, MultipartFile file) {
+	@Transactional
+	public void importOrgExcel(InputStream in, MultipartFile file, String userId) {
 		try {
 			List<List<Object>> listob = ExcelUtils.getBankListByExcel(in,file.getOriginalFilename());    
-			System.out.println("d");
-		    /*List<CreditInfoBean> creditInfoList=new ArrayList<CreditInfoBean>();  
 		    for (int i = 0; i < listob.size(); i++) {    
 		            List<Object> ob = listob.get(i);    
-		            CreditInfoBean creditInfoBean = new CreditInfoBean();  
-		            creditInfoBean.setCompanyName(String.valueOf(ob.get(0)));  
-		            creditInfoBean.setBillType(String.valueOf(ob.get(1)));  
-		            creditInfoBean.setBillNumber(String.valueOf(ob.get(2)));  
-		            BigDecimal bd=new BigDecimal(String.valueOf(ob.get(3)));     
-		            creditInfoBean.setBuyerBillAmount(bd.setScale(2, BigDecimal.ROUND_HALF_UP));  
-		            creditInfoBean.setReceiveTime(String.valueOf(ob.get(4)));  
-		            creditInfoBean.setBuyerRemark(String.valueOf(ob.get(5)));  
-		            creditInfoList.add(creditInfoBean);  
-		        }    */
+		            HtBoaInOrg u = new HtBoaInOrg();
+		            u.setLastModifiedDatetime(new Date());
+		            u.setOrgCode(String.valueOf(ob.get(0)));
+		            u.setOrgNameCn(String.valueOf(ob.get(1)));
+		            u.setParentOrgCode(String.valueOf(ob.get(2)));
+		            u.setCreatedDatetime(new Date());
+		            u.setDelFlag(Constants.DEL_0);
+		            u.setCreateOperator(userId);
+		            u = add(u);
+		        }    
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

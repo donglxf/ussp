@@ -48,14 +48,14 @@ public class ExcelUtils {
 
 		list = new ArrayList<List<Object>>();
 		// 遍历Excel中所有的sheet
-		for (int i = 0; i < work.getNumberOfSheets(); i++) {
-			sheet = work.getSheetAt(i);
-			if (sheet == null) {
+		//for (int i = 0; i < work.getNumberOfSheets(); i++) {
+			sheet = work.getSheetAt(0);
+			/*if (sheet == null) {
 				continue;
-			}
+			}*/
 
 			// 遍历当前sheet中的所有行
-			for (int j = sheet.getFirstRowNum(); j < sheet.getLastRowNum(); j++) {
+			for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
 				row = sheet.getRow(j);
 				if (row == null || row.getFirstCellNum() == j) {
 					continue;
@@ -72,7 +72,7 @@ public class ExcelUtils {
 				}
 				list.add(li);
 			}
-		}
+		//}
 		return list;
 	}
 
