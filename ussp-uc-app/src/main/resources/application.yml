@@ -27,10 +27,9 @@ spring:
       max-wait : 10000  #等待可用连接的最大时间，超过该时间，将抛出异常，-1表示永不超时，单位毫秒
       max-idle : 20  #最大空闲连接，默认8
       min-idle : 5   #最小空闲连接，默认0
-ribbon:
-  ReadTimeout: 60000
-  ConnectTimeout: 60000
-  
+
+ 
+     
 ht.config.uc.api:
   synch: false #是否同步API资源到用户权限中心
   packages: com.ht.ussp.uc.app #API资源扫描的包，可用多个，多个使用“,”分隔

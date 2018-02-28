@@ -44,7 +44,15 @@ public class AppResource {
 
     @Autowired
     private HtBoaInAppService htBoaInAppService;
-
+    
+    @ApiOperation("测试")
+    @RequestMapping(value = "/hello", method = RequestMethod.GET)
+    public ResponseModal hello() {
+        ResponseModal rm = new ResponseModal();
+        rm.setStatus_code("200");
+        rm.setResult("hello");
+        return rm;
+    }
     @ApiOperation("查询系统信息")
     @RequestMapping(value = {"/{id}"}, method = RequestMethod.GET)
     public ResponseModal getHtBoaInApp(@PathVariable Long id) {
