@@ -12,6 +12,7 @@
 	<name>服务注册中心</name>
 	<properties>
 		<start-class>com.ht.ussp.registry.app.RegistryApplication</start-class>
+		<docker.image.prefix>ramer</docker.image.prefix>
 	</properties>
 
 	<dependencies>
@@ -32,5 +33,23 @@
 	</dependencies>
 	<build>
 		<finalName>ussp-registry-app</finalName>
+		<plugins>
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>1.0.0</version>
+				<configuration>
+					<imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+					<dockerDirectory>src/main/docker</dockerDirectory>
+					<resources>
+						<resource>
+							<targetPath>/</targetPath>
+							<directory>${project.build.directory}</directory>
+							<include>${project.build.finalName}.jar</include>
+						</resource>
+					</resources>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 </project>

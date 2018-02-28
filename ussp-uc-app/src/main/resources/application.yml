@@ -1,5 +1,3 @@
-server:
-  port: 30126
 spring:
   datasource:
     url: jdbc:mysql://10.110.1.240:3306/BOA?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false

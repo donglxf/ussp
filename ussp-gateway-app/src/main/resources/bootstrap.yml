@@ -12,7 +12,8 @@ spring:
 eureka:
   instance:
     prefer-ip-address: true
-
+server:
+  port: 30111
 ---
 spring:
   profiles: local
@@ -40,7 +41,7 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://10.110.1.240:30101/eureka/
+      defaultZone: http://ussp-registry-app:30101/eureka/
 
 ---
 spring:
@@ -51,11 +52,10 @@ spring:
         enabled: true
     bus:
       enabled: true
-
 eureka:
   client:
     serviceUrl:
-      defaultZone: ${EUREKA_SERVER_ADDRESS}
+      defaultZone: http://ussp-registry-app:30101/eureka/
 
 ---
 spring:

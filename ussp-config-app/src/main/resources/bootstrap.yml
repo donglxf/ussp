@@ -3,6 +3,8 @@ spring:
     name: ussp-config-app
   profiles:
     active: local
+server:
+  port: 30106
 ---
 spring:
   profiles: local
@@ -19,25 +21,22 @@ eureka:
 ---
 spring:
   profiles: dev
-  port: ${SERVER_PORT}
 eureka:
   instance:
     prefer-ip-address: true
   client:
     serviceUrl:
-      defaultZone: http://10.110.1.240:30101/eureka/
+      defaultZone: http://ussp-registry-app:30101/eureka/
       
 ---
 spring:
   profiles: sit
-  port: ${SERVER_PORT}
-
 eureka:
   instance:
     prefer-ip-address: true
   client:
     serviceUrl:
-      defaultZone: ${EUREKA_SERVER_ADDRESS}
+      defaultZone: http://ussp-registry-app:30101/eureka/
 
 ---
 spring: 
