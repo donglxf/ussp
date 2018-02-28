@@ -4,15 +4,37 @@ server:
 eureka:
   instance:
     prefer-ip-address: true
-
+ 
+       
+hystrix:
+  threadpool: 
+    default:
+      coreSize: 2000
+  command:
+    default:
+      execution:
+        isolation:
+          semaphore: 
+            maxConcurrentRequests: 1000
+          thread:
+            timeoutInMilliseconds: 20000
+          strategy: THREAD
+      fallback: 
+         isolation:
+          semaphore:
+            maxConcurrentRequests: 1000
+            
 zuul:
   max:
     host:
-      connections: 500
+      connections: 800
   host:
+    maxTotalConnections: 2000
+    maxPerRouteConnections: 800
     socket-timeout-millis: 60000
     connect-timeout-millis: 60000
-
+  semaphore: 
+    maxSemaphores: 1500
   routes:
     #用户权限管理中心
     ussp-uc:
@@ -82,15 +104,8 @@ gateway:
       refreshTokenExpTime: 720
       tokenIssuer: qiuwenwu@hongte.info
       tokenSigningKey: xm8EV6Hy5RMFK4EEACIDAwQus
-ribbon:
-  ReadTimeout: 60000
-  ConnectTimeout: 60000
-
-hystrix:
-  metrics:
-    enabled: false
 
 ht:
   ignoreUrl: #不验证的url(可以使用通配符（*）)
-     web: /ht/nologin/*,/admin/*,/car/*,/rule/ui/*,/cams/ui/*,/LawUi/* #不需要验证token
+     web: /uc/system/*,/ht/nologin/*,/admin/*,/car/*,/rule/ui/*,/cams/ui/*,/LawUi/* #不需要验证token
      http: /uc/auth/loadBtnAndTab,/uc/auth/loadMenu,/rule/service/check/key #需要验证token
