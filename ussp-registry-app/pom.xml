@@ -57,6 +57,19 @@
 	<!-- 使用里程碑版需要下面的配置（Spring官网上的配置更为简洁，更适合每个版本 http://projects.spring.io/spring-boot/）。新版本新特性，如开发热部署 -->
 	<repositories>
 		<repository>
+			<id>maven-public</id>
+			<name>maven-public</name>
+			<url>http://10.110.1.240:8081/repository/maven-public/</url>
+			<layout>default</layout>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</repository>
+		<repository>
 			<id>spring-snapshots</id>
 			<name>Spring Snapshots</name>
 			<url>https://repo.spring.io/snapshot</url>
@@ -75,6 +88,17 @@
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
+			<id>maven-public</id>
+			<name>maven-public</name>
+			<url>http://10.110.1.240:8081/repository/maven-public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
 			<id>spring-snapshots</id>
 			<name>Spring Snapshots</name>
 			<url>https://repo.spring.io/snapshot</url>
@@ -91,4 +115,17 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
+	<distributionManagement>
+        <repository>
+            <id>nexus-releases</id>
+            <name>releases</name>
+            <url>http://10.110.1.240:8081/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-snapshots</id>
+            <name>snapshots</name>
+            <url>http://10.110.1.240:8081/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
 </project>
