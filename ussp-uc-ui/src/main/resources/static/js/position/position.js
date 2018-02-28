@@ -231,7 +231,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
             {type: 'numbers'}
             , {field: 'positionCode', width: 120, title: '岗位编号'}
             , {field: 'positionNameCn',   title: '岗位名称'}
-            , {field: 'porgNameCn', width: 220, title: '所属机构'}
+            , {field: 'porgCode', width: 220, title: '所属机构'}
             , {field: 'status', templet: '#statusTpl', width: 100, title: '状态'}
             , {field: 'createOperator', width: 100, title: '创建人'}
             , {field: 'createdDatetime',   templet:'#createTimeTpl', title: '创建时间'}
