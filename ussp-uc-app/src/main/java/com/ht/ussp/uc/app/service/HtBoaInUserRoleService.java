@@ -134,7 +134,7 @@ public class HtBoaInUserRoleService {
         	userId =  query.get("userId") ;
         }
         
-        if (query != null && query.size() > 0 && query.get("userId") != null) {
+        if (query != null && query.size() > 0 && query.get("keyWord") != null) {
         	search =  query.get("keyWord") ;
         }
         

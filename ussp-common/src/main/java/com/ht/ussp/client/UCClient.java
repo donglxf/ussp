@@ -9,15 +9,20 @@
  */
 package com.ht.ussp.client;
 
-import com.ht.ussp.client.dto.ApiResourceDto;
-import com.ht.ussp.client.dto.LoginInfoDto;
-import com.ht.ussp.core.Result;
+import java.util.List;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import com.ht.ussp.client.dto.ApiResourceDto;
+import com.ht.ussp.client.dto.BoaInRoleInfoDto;
+import com.ht.ussp.client.dto.HtBoaInOrgDto;
+import com.ht.ussp.client.dto.LoginInfoDto;
+import com.ht.ussp.client.dto.ResDto;
+import com.ht.ussp.core.Result;
 
 /**
  * 用户权限中心服务接口<br>
@@ -73,5 +78,41 @@ public interface UCClient {
      */
     @GetMapping(value = "/auth/IsHasCustomResouce")
     Boolean IsHasCustomResouce(@RequestParam("userId") String userId,@RequestParam("rescode") String rescode,@RequestParam("app") String app);
+
+    /**
+     * 通过机构编码获取机构信息
+     * @param orgCode
+     * @return
+     */
+    @GetMapping(value = "/org/getOrgInfoByCode")
+    HtBoaInOrgDto getOrgInfoByCode(@RequestParam("orgCode") String orgCode);
+    
+    /**
+     * 通过机构编码获取下级机构信息
+     * @param parentOrgCode
+     * @return
+     */
+    @GetMapping(value = "/org/getSubOrgInfoByCode")
+    List<HtBoaInOrgDto> getSubOrgInfoByCode(@RequestParam("parentOrgCode") String parentOrgCode);
+    
+    /**
+     * 获取当前用户所有权限信息（可选参数，资源类型）
+     * @param userId
+     * @param app 
+     * @return
+     */
+    @GetMapping(value = "/auth/getUserResouce")
+    List<ResDto>  getUserResouce(@RequestParam("userId") String userId,@RequestParam("rescode") String rescode,@RequestParam("app") String app);
+    
+    /**
+     * 获取当前用户所有角色信息
+     * @param userId
+     * @param app
+     * @return
+     */
+    @GetMapping(value = "/userrole/getUserRole")
+    List<BoaInRoleInfoDto> getUserRole(@RequestParam("userId") String userId);
+    
+    
 }
 
