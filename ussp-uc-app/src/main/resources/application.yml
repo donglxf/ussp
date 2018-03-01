@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://172.16.200.105:3306/BOA?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
-    username: root
-    password: tuandai888
+    url: jdbc:mysql://172.16.200.111:3306/BOA?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: boa
+    password: ik2kvfbT
     dbcp2:
       validation-query: SELECT 1
       test-while-idle: true
@@ -18,9 +18,9 @@ spring:
     generate-ddl: true
   redis:
     database : 0
-    host : 10.110.1.240
+    host : 172.16.200.111
     port : 6379
-    password : tuandai
+    password : hongte888
     timeout : 3000  #毫秒
     pool :
       max-active : 1000

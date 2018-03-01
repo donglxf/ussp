@@ -1,16 +1,6 @@
 spring:
   application:
     name: ussp-config-app
-  profiles: local
-  cloud:
-    config:
-      server:
-        git:
-          uri: http://10.110.1.240/dev2/ussp.git
-          search-paths: config-repo/*
-          username: config
-          password: ht_config
-
 eureka:
   instance:
     prefer-ip-address: true
