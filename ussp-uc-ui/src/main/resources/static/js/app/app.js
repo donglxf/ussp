@@ -1,9 +1,10 @@
-layui.use(['form',   'table', 'ht_config','ht_auth' ], function () {
+layui.use(['form',   'table', 'ht_config','ht_auth','upload' ], function () {
     var $ = layui.jquery
         , form = layui.form
         , table = layui.table
         , config = layui.ht_config
         , ht_auth = layui.ht_auth
+        , upload = layui.upload
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
@@ -60,6 +61,11 @@ layui.use(['form',   'table', 'ht_config','ht_auth' ], function () {
                 }
             })
         },
+        exportApp:function(){
+        	   $.post(exportAppExcelUrl, null, function (result) {
+              console.log(result);
+            });
+         },
         search: function () {
             //执行重载
         	refreshTable($("#app_search_keyword").val());
@@ -71,7 +77,23 @@ layui.use(['form',   'table', 'ht_config','ht_auth' ], function () {
     var delappUrl=config.basePath +"system/delete"; //删除系统信息
     var statusappUrl=config.basePath +"system/stop"; //禁用
     var checkAppCodeExistUrl = config.basePath +"system/isExistAppCode"; //校验岗位编码是否已经存在
-
+    var exportAppExcelUrl = config.basePath +"system/exportAppExcel"; //导出
+    var importAppExcelUrl = config.basePath +"system/importAppExcel"; //导入
+    
+    upload.render({
+		elem: '#importApp'
+		,url:importAppExcelUrl
+		,accept: 'file' //普通文件
+		,exts: 'xls|xlsx' //只允许上传压缩文件
+		,done: function(res){
+			if (res.returnCode == '0000') {
+            	layer.msg("系统导入成功");
+            	refreshTable();
+            }
+           
+		}
+	});
+    
     //自定义验证规则
 	form.verify({
 		  //校验编码是否已经存在

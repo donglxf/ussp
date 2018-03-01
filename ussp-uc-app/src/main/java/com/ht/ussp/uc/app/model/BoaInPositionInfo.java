@@ -117,7 +117,7 @@ public class BoaInPositionInfo {
     public BoaInPositionInfo(long id,String positionCode, String positionName,
             String positionNameCn,   String orgPath,
             int sequence, String createOperator, Date createdDatetime,
-            String updateOperator, Date lastModifiedDatetime,int delFlag,String status) {
+            String updateOperator, Date lastModifiedDatetime,int delFlag,String status,String pOrgCode) {
         this.positionCode = positionCode;
         this.positionName = positionName;
         this.positionNameCn = positionNameCn;
@@ -130,6 +130,7 @@ public class BoaInPositionInfo {
         this.delFlag = delFlag;
         this.id = id;
         this.status = status;
+        this.pOrgCode = pOrgCode;
     }
 
 }

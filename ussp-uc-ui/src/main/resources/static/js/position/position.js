@@ -1,10 +1,11 @@
 
-layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
+layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function () {
     var $ = layui.jquery
         , form = layui.form
         , config = layui.ht_config
         , table = layui.table
         , ht_auth = layui.ht_auth
+        , upload = layui.upload
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
@@ -77,6 +78,11 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                 }
             })
         },
+        exportPosition:function(){
+     	   $.post(exportPositionExcelUrl, null, function (result) {
+           console.log(result);
+         });
+       },
         search: function () { 
         	//执行重载
             refreshTable($("#position_search_keyword").val());
@@ -88,6 +94,22 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     var orgTreeUrl = config.basePath +"org/tree"; //机构列表
     var statusPositionUrl=config.basePath +"position/in/stop"; //禁用
     var checkPositionCodeExistUrl=config.basePath +"position/isExistPositionCode"; //校验岗位编码是否已经存在
+    var exportPositionExcelUrl = config.basePath +"position/exportPositionExcel"; //导出
+    var importPositionExcelUrl = config.basePath +"position/importPositionExcel"; //导入
+    
+    upload.render({
+		elem: '#importPosition'
+		,url:importPositionExcelUrl
+		,accept: 'file' //普通文件
+		,exts: 'xls|xlsx' //只允许上传压缩文件
+		,done: function(res){
+			if (res.returnCode == '0000') {
+            	layer.msg("岗位导入成功");
+            	refreshTable();
+            }
+           
+		}
+	});
     
     //自定义验证规则
 	form.verify({
@@ -209,7 +231,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
             {type: 'numbers'}
             , {field: 'positionCode', width: 120, title: '岗位编号'}
             , {field: 'positionNameCn',   title: '岗位名称'}
-            , {field: 'porgNameCn', width: 220, title: '所属机构'}
+            , {field: 'porgCode', width: 220, title: '所属机构'}
             , {field: 'status', templet: '#statusTpl', width: 100, title: '状态'}
             , {field: 'createOperator', width: 100, title: '创建人'}
             , {field: 'createdDatetime',   templet:'#createTimeTpl', title: '创建时间'}

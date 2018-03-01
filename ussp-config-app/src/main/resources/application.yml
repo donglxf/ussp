@@ -1,3 +1,5 @@
+server:
+  port: 30106
 spring:
   application:
     name: ussp-config-app

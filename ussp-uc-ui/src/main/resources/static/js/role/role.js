@@ -1,6 +1,6 @@
 
 
-layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth' ], function () {
+layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth' ,'upload'], function () {
 
     var $ = layui.jquery
         , form = layui.form
@@ -8,6 +8,7 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth' ], function
         , config = layui.ht_config
         ,laytpl = layui.laytpl
         , ht_auth = layui.ht_auth
+        , upload = layui.upload
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
@@ -73,6 +74,11 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth' ], function
                 }
             })
         },
+        exportRole:function(){
+        	   $.post(exportRoleExcelUrl, null, function (result) {
+               console.log(result);
+            });
+         },
         search: function () {
             //执行重载
         	refreshTable($("#role_search_keyword").val());
@@ -85,6 +91,21 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth' ], function
     var statusRoleUrl=config.basePath +"role/in/stop"; //禁用
     var checkRoleCodeExist = config.basePath +"role/isExistRoleCode"; //校验角色编码是否已经存在
     var appListByPageUrl=config.basePath +"userapp/listAppByPage"; //列出所有角色记录列表信息
+    var exportRoleExcelUrl = config.basePath +"role/exportRoleExcel"; //导出
+    var importRoleExcelUrl = config.basePath +"role/importRoleExcel"; //导入
+    upload.render({
+		elem: '#importRole'
+		,url:importRoleExcelUrl
+		,accept: 'file' //普通文件
+		,exts: 'xls|xlsx' //只允许上传压缩文件
+		,done: function(res){
+			if (res.returnCode == '0000') {
+             	layer.msg("角色导入成功");
+             	refreshTable();
+            }
+           
+		}
+	});
     //自定义验证规则
 	form.verify({
 		  //校验编码是否已经存在

@@ -283,7 +283,7 @@ public class HtBoaInResourceService {
             try {
                 index = Integer.parseInt(code.replace(resCodePrefix, ""));
             } catch (Exception e) {
-                //无需处理
+                //无需处理 
             }
         }
 

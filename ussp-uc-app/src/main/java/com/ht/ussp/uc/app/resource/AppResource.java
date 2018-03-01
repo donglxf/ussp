@@ -1,8 +1,17 @@
 package com.ht.ussp.uc.app.resource;
 
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +22,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
@@ -44,15 +56,7 @@ public class AppResource {
 
     @Autowired
     private HtBoaInAppService htBoaInAppService;
-    
-    @ApiOperation("测试")
-    @RequestMapping(value = "/hello", method = RequestMethod.GET)
-    public ResponseModal hello() {
-        ResponseModal rm = new ResponseModal();
-        rm.setStatus_code("200");
-        rm.setResult("hello");
-        return rm;
-    }
+
     @ApiOperation("查询系统信息")
     @RequestMapping(value = {"/{id}"}, method = RequestMethod.GET)
     public ResponseModal getHtBoaInApp(@PathVariable Long id) {
@@ -213,4 +217,65 @@ public class AppResource {
         	return Result.buildFail();
         }
      }
+     
+     /**
+      * 导出
+      */
+     @PostMapping(value = "/exportAppExcel")  
+     @ResponseBody  
+     public void exportAppExcel(HttpServletResponse response){  
+    	 SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssms");  
+         String dateStr = sdf.format(new Date());  
+         // 指定下载的文件名  
+         response.setHeader("Content-Disposition", "attachment;filename=" +dateStr+".xlsx"); 
+         System.out.println(dateStr);
+         response.setContentType("application/vnd.ms-excel;charset=UTF-8");  
+         response.setHeader("Pragma", "no-cache");  
+         response.setHeader("Cache-Control", "no-cache");  
+         response.setDateHeader("Expires", 0);  
+         XSSFWorkbook workbook=null;  
+         try {  
+             //导出Excel对象  
+             workbook = htBoaInAppService.exportAppExcel();  
+         } catch (Exception e1) {  
+             e1.printStackTrace();  
+         }  
+         OutputStream output;  
+         try {  
+             output = response.getOutputStream();  
+             BufferedOutputStream bufferedOutPut = new BufferedOutputStream(output);  
+             bufferedOutPut.flush();  
+             workbook.write(bufferedOutPut);  
+             bufferedOutPut.close();  
+         } catch (IOException e) {  
+             e.printStackTrace();  
+         }  
+     }  
+     
+ 	/**
+ 	 * 导入
+ 	 * @param request
+ 	 * @param response
+ 	 */
+ 	@PostMapping(value = "/importAppExcel")
+ 	public Result importAppExcel(HttpServletRequest request, HttpServletResponse response,@RequestHeader("userId") String userId) {
+ 		try {
+			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+			List<MultipartFile> fileList = multipartRequest.getFiles("file");
+			if (fileList.isEmpty()) {
+				throw new Exception("文件不存在！");
+			}
+			MultipartFile file = fileList.get(0);
+			if (file == null || file.isEmpty()) {
+				throw new Exception("文件不存在！");
+			} 
+			InputStream in = file.getInputStream();
+			htBoaInAppService.importAppExcel(in, file,userId);
+			in.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Result.buildFail();
+		}
+		return Result.buildSuccess();
+ 	}
 }

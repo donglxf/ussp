@@ -15,10 +15,11 @@
     <div class="col-xs-9">
         <div class="row row-lg" id="position_table_tools">
             <div class="toolbarBtn btn-group">
-                <button class="layui-btn layui-btn-sm" title="新增" data-type="add" ht-auth="add">
-                    新增
-                </button>
-            </div>
+				<button class="layui-btn layui-btn-sm" title="新增" data-type="add" ht-auth="add">新增</button>
+				<button class="layui-btn layui-btn-sm" title="导出" data-type="exportPosition">导出</button>
+				<button class="layui-btn layui-btn-sm" title="下载导入模板" onclick="location.href='/template/岗位导入模板.xlsx'" >下载导入模板</button>
+				<button class="layui-btn layui-btn-sm" title="导入" id="importPosition" data-type="importPosition">导入</button>
+			</div>
             <div class="pull-right col-xs-4 row">
                 <div class="input-group input-group-sm">
                     <input type="text" class="form-control" maxlength="60" id="position_search_keyword"  placeholder="请输入岗位编号/岗位名称"/>

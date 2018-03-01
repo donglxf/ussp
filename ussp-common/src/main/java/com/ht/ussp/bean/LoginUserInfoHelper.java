@@ -37,6 +37,9 @@ import lombok.extern.log4j.Log4j2;
 public class LoginUserInfoHelper {
     @Getter
     private String userId;
+    
+    @Getter
+    private String app;
 
     @Autowired(required = false)
     private UCClient ucClient;
@@ -45,7 +48,7 @@ public class LoginUserInfoHelper {
     public void intLogin(@RequestHeader(value = "app", required = false) String app) {
         this.app = app;
     }
-
+ 
     @ModelAttribute
     public void intLogin2(@RequestHeader(value = "userId", required = false) String userId) {
         this.userId = userId;
@@ -71,7 +74,7 @@ public class LoginUserInfoHelper {
             return null;
         }
     }
-
+    
     /**
      * 获取当前用户所有权限信息
      * 资源类型枚举值：ResTypeEnum.RES_TYPE_API.getReturnCode()
@@ -91,7 +94,7 @@ public class LoginUserInfoHelper {
             return null;
         }
     }
-
+    
     /**
      * 获取当前用户所有角色信息
      * @return
@@ -110,4 +113,4 @@ public class LoginUserInfoHelper {
             return null;
         }
     }
-}
+}         

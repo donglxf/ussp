@@ -78,7 +78,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
             refreshOrgTable($("#organization_search_keyword").val());
         },
         exportOrg:function(){
-       	   $.post(downLoadOrgExcelUrl, null, function (result) {
+       	   $.post(exportOrgExcelUrl, null, function (result) {
              console.log(result);
            });
         },
@@ -89,21 +89,23 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
     var delOrganizationUrl=config.basePath +"org/delete"; //添加机构信息
     var orgTreeUrl = config.basePath +"org/tree"; //机构列表
     var checkOrgCodeExistUrl = config.basePath +"org/isExistOrgCode"; //校验岗位编码是否已经存在
-    var downLoadOrgExcelUrl = config.basePath +"org/downLoadOrgExcel"; //导出
+    var exportOrgExcelUrl = config.basePath +"org/exportOrgExcel"; //导出
     var importOrgExcelUrl = config.basePath +"org/importOrgExcel"; //导入
     
     upload.render({
 		elem: '#importOrg'
 		,url:importOrgExcelUrl
 		,accept: 'file' //普通文件
-		,exts: 'xls' //只允许上传压缩文件
+		,exts: 'xls|xlsx' //只允许上传压缩文件
 		,done: function(res){
-			console.log(res)
-			if(res.error){
-				layer.alert(res.error)
-			} else{
-				layer.alert("success:"+res.success+"lost:"+res.lost+"count:"+res.count);
-			}
+			if (res.returnCode == '0000') {
+				if (orgTree) {
+		           orgTree.reAsyncChildNodes(null, "refresh");
+		        }
+            	layer.msg("机构导入成功");
+            	refreshOrgTable();
+            }
+           
 		}
 	});
     
