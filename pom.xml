@@ -39,7 +39,7 @@
 
 	<scm>
 		<connection>scm:git:git@10.6.222.54:cnc/yak.git</connection>
-		<developerConnection>scm:git:git@10.110.1.240:dev2/ussp.git</developerConnection>
+		<developerConnection>scm:git:git@172.16.200.102:dev2/ussp.git</developerConnection>
 	</scm>
 
 	<ciManagement>
@@ -50,7 +50,7 @@
 		<repository>
 			<id>maven-public</id>
 			<name>maven-public</name>
-			<url>http://10.110.1.240:8081/repository/maven-public/</url>
+			<url>http://172.16.200.111:8081/repository/maven-public/</url>
 			<layout>default</layout>
 			<releases>
 				<enabled>true</enabled>
@@ -65,7 +65,7 @@
 		<pluginRepository>
 			<id>maven-public</id>
 			<name>maven-public</name>
-			<url>http://10.110.1.240:8081/repository/maven-public/</url>
+			<url>http://172.16.200.111/repository/maven-public/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -78,7 +78,7 @@
 		<repository>
 			<id>nexus-releases</id>
 			<name>releases</name>
-			<url>http://10.110.1.240:8081/repository/maven-releases/</url>
+			<url>http://172.16.200.111:8081/repository/maven-releases/</url>
 		</repository>
 		<snapshotRepository>
 			<id>nexus-snapshots</id>
