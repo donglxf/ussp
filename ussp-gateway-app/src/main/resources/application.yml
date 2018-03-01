@@ -1,7 +1,9 @@
 eureka:
   instance:
     prefer-ip-address: true
- 
+
+server:
+  port: 30111 
        
 hystrix:
   threadpool: 
