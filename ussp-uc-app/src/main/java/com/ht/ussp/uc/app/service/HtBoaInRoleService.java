@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,21 +20,40 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.dingtalk.api.DefaultDingTalkClient;
+import com.dingtalk.api.DingTalkClient;
+import com.dingtalk.api.request.CorpRoleListRequest;
+import com.dingtalk.api.request.CorpRoleSimplelistRequest;
+import com.dingtalk.api.response.CorpRoleListResponse;
+import com.dingtalk.api.response.CorpRoleSimplelistResponse;
 import com.ht.ussp.bean.ExcelBean;
 import com.ht.ussp.common.Constants;
+import com.ht.ussp.uc.app.domain.DdRole;
+import com.ht.ussp.uc.app.domain.DdRoleUser;
 import com.ht.ussp.uc.app.domain.HtBoaInOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInRole;
 import com.ht.ussp.uc.app.model.BoaInRoleInfo;
 import com.ht.ussp.uc.app.model.PageConf;
+import com.ht.ussp.uc.app.repository.DdRoleRepository;
+import com.ht.ussp.uc.app.repository.DdRoleUserRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInRoleRepository;
 import com.ht.ussp.util.ExcelUtils;
+import com.ht.ussp.util.HttpClientUtil;
 
 @Service
 public class HtBoaInRoleService {
 
-    @Autowired
+	@Autowired
     private HtBoaInRoleRepository htBoaInRoleRepository;
-
+	
+	@Autowired
+    private DdRoleRepository ddRoleRepository;
+	
+	@Autowired
+    private DdRoleUserRepository ddRoleUserRepository;
+    
     public HtBoaInRole findById(Long id) {
         return this.htBoaInRoleRepository.findById(id);
     }
@@ -183,5 +201,101 @@ public class HtBoaInRoleService {
 		}
 
 	}
+
+	@Transactional
+	public void getDD() {
+		String getTokenUrl="https://oapi.dingtalk.com/gettoken?corpid=dingb9594db0ecde853a35c2f4657eb6378f&corpsecret=g445dW-0hpWTXkgJGDjty01q_xulKO9EDlX_XV4AOeZaciJDsEBW14xzXNdFPxF1";
+		try {
+			//1.获取token
+			String token = (String) JSONObject.parseObject(HttpClientUtil.getInstance().doGet(getTokenUrl, null)).get("access_token");
+	        
+	        //2.获取角色列表
+			DingTalkClient clientRole = new DefaultDingTalkClient("https://eco.taobao.com/router/rest");
+			CorpRoleListRequest reqRole = new CorpRoleListRequest();
+			/*reqRole.setSize(100L);
+			reqRole.setOffset(0L);*/
+			CorpRoleListResponse rspRole = clientRole.execute(reqRole, token);
+			JSONObject jsonRspRole = JSONObject.parseObject(rspRole.getBody());
+	        JSONArray rspRoleGroup = jsonRspRole.getJSONObject("dingtalk_corp_role_list_response").getJSONObject("result").getJSONObject("list").getJSONArray("role_groups");
+	        List<DdRole> listDdRole = new ArrayList<DdRole>();
+	        List<DdRoleUser> listDdRoleUser = new ArrayList<DdRoleUser>();
+	        for (int i = 0; i < rspRoleGroup.size(); i++) {
+	        	JSONObject roleGroup = (JSONObject) rspRoleGroup.get(i);
+	        	String roleGroupName=roleGroup.getString("group_name");
+	            JSONArray roleArr = roleGroup.getJSONObject("roles").getJSONArray("roles");
+	            for (int j = 0; j < roleArr.size(); j++) {
+	            	JSONObject role = (JSONObject) roleArr.get(j);
+	            	DdRole ddRole = new DdRole();
+		        	ddRole.setRoleId(role.getString("id"));
+		        	ddRole.setRoleName(role.getString("role_name"));
+		        	ddRole.setGroupName(roleGroupName);
+		        	ddRole.setCreatedDatetime(new Date());
+		        	listDdRole.add(ddRole);
+	            	//获取角色的员工列表
+	    			DingTalkClient roleUserclient = new DefaultDingTalkClient("https://eco.taobao.com/router/rest");
+	    			CorpRoleSimplelistRequest roleUserReq = new CorpRoleSimplelistRequest();
+	    			roleUserReq.setRoleId(role.getLong("id"));
+	    			/*roleUserReq.setSize(100L);
+	    			roleUserReq.setOffset(0L);*/
+	    			CorpRoleSimplelistResponse rspRoleUser = roleUserclient.execute(roleUserReq,token);
+	    			JSONObject jsonRspRoleUser = JSONObject.parseObject(rspRoleUser.getBody());
+	    	        JSONArray rspRoleUserArr = jsonRspRoleUser.getJSONObject("dingtalk_corp_role_simplelist_response").getJSONObject("result").getJSONObject("list").getJSONArray("emp_simple_list");
+	    	        if(rspRoleUserArr!=null) {
+	    	        	for (int k = 0; k < rspRoleUserArr.size(); k++) {
+		    	        	JSONObject roleuser = (JSONObject) rspRoleUserArr.get(k);
+		    	        	DdRoleUser ddRoleUser = new DdRoleUser();
+		    	        	ddRoleUser.setRoleId(role.getString("id"));
+		    	        	ddRoleUser.setUserId(roleuser.getString("userid"));
+		    	        	ddRoleUser.setCreatedDatetime(new Date());
+			    			listDdRoleUser.add(ddRoleUser);
+		    	        }
+	    	        }
+	            }
+	        }
+	        ddRoleRepository.save(listDdRole);
+	        ddRoleUserRepository.save(listDdRoleUser);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
     
+	  public static void main(String[] args) {
+	    	String getTokenUrl="https://oapi.dingtalk.com/gettoken?corpid=dingb9594db0ecde853a35c2f4657eb6378f&corpsecret=g445dW-0hpWTXkgJGDjty01q_xulKO9EDlX_XV4AOeZaciJDsEBW14xzXNdFPxF1";
+	    	try {
+	    		//1.获取token
+	    		String token = (String) JSONObject.parseObject(HttpClientUtil.getInstance().doGet(getTokenUrl, null)).get("access_token");
+	    		
+	    		//5.获取角色列表
+	    		DingTalkClient clientRole = new DefaultDingTalkClient("https://eco.taobao.com/router/rest");
+				CorpRoleListRequest reqRole = new CorpRoleListRequest();
+			 
+				CorpRoleListResponse rspRole = clientRole.execute(reqRole, token);
+				JSONObject jsonRspRole = JSONObject.parseObject(rspRole.getBody());
+				System.out.println(jsonRspRole);
+		        JSONArray rspRoleGroup = jsonRspRole.getJSONObject("dingtalk_corp_role_list_response").getJSONObject("result").getJSONObject("list").getJSONArray("role_groups");
+		        System.out.println("角色组总数："+rspRoleGroup.size());
+		        int roleCount=0;
+		        for (int i = 0; i < rspRoleGroup.size(); i++) {
+		        	JSONObject roleGroup = (JSONObject) rspRoleGroup.get(i);
+		            JSONArray roleArr = roleGroup.getJSONObject("roles").getJSONArray("roles");
+		            for (int j = 0; j < roleArr.size(); j++) {
+		            	JSONObject role = (JSONObject) roleArr.get(j);
+		            	System.out.println(role);
+		            	//获取角色的员工列表
+		    			DingTalkClient roleUserclient = new DefaultDingTalkClient("https://eco.taobao.com/router/rest");
+		    			CorpRoleSimplelistRequest roleUserReq = new CorpRoleSimplelistRequest();
+		    			roleUserReq.setRoleId(role.getLong("id"));
+		    		 
+		    			CorpRoleSimplelistResponse rspRoleUser = roleUserclient.execute(roleUserReq,token);
+		    			System.out.println(rspRoleUser.getBody());
+		            	roleCount++;
+		            }
+		        }
+		        System.out.println("角色总数："+roleCount);
+				
+	    		
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 }

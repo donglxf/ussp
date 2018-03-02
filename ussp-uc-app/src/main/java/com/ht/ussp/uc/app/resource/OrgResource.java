@@ -302,4 +302,19 @@ public class OrgResource {
 		}
 		return Result.buildSuccess();
 	}
+	
+	@ApiOperation(value = "获取钉钉数据")
+	@PostMapping(value = "/getDDOrg")
+	public Result getDDOrg() {
+		htBoaInOrgService.getDD();
+		return Result.buildSuccess();
+	}
+	
+	@ApiOperation(value = "机构对照")
+	@PostMapping(value = "/getDDOrgDZ")
+	public Result getDDOrgDZ() {
+		htBoaInOrgService.getDDOrgDZ();
+		return Result.buildSuccess();
+	}
+	
 }
