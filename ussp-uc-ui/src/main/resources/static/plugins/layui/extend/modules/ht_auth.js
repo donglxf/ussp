@@ -43,7 +43,7 @@ layui.define(['jquery', 'tab', 'ht_config'], function (exports) {
             }
         });
     }
-    HtAuth.prototype.load = function () {
+    HtAuth.prototype.load = function (success) {
         $.ajax({
             url: config.loadBtnAndTabUrl
             , async: false
@@ -53,6 +53,9 @@ layui.define(['jquery', 'tab', 'ht_config'], function (exports) {
             }
             , success: function (data) {
                 AllAuth = data;
+                if(success){
+                    success(data);
+                }
             }
         })
     };
