@@ -1,4 +1,4 @@
-package com.ht.ussp.gateway.app.security.ajax;
+package org.ussp.uaa.app.security.ajax;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -9,10 +9,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+import org.ussp.uaa.app.feignClient.UserClient;
+import org.ussp.uaa.app.model.ResponseModal;
+import org.ussp.uaa.app.vo.UserVo;
 
-import com.ht.ussp.gateway.app.feignClients.UserClient;
-import com.ht.ussp.gateway.app.model.ResponseModal;
-import com.ht.ussp.gateway.app.vo.UserVo;
 import com.ht.ussp.util.EncryptUtil;
 import com.ht.ussp.util.FastJsonUtil;
 

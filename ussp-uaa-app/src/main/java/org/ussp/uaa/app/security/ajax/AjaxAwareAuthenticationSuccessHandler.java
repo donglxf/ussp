@@ -1,4 +1,4 @@
-package com.ht.ussp.gateway.app.security.ajax;
+package org.ussp.uaa.app.security.ajax;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -17,13 +17,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.ussp.uaa.app.feignClient.RoleClient;
+import org.ussp.uaa.app.jwt.JwtToken;
+import org.ussp.uaa.app.jwt.JwtTokenFactory;
+import org.ussp.uaa.app.model.ResponseModal;
+import org.ussp.uaa.app.vo.UserVo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ht.ussp.gateway.app.feignClients.RoleClient;
-import com.ht.ussp.gateway.app.jwt.JwtToken;
-import com.ht.ussp.gateway.app.jwt.JwtTokenFactory;
-import com.ht.ussp.gateway.app.model.ResponseModal;
-import com.ht.ussp.gateway.app.vo.UserVo;
 
 /**
  * 

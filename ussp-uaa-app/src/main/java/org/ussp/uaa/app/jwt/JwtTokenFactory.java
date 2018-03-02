@@ -1,4 +1,4 @@
-package com.ht.ussp.gateway.app.jwt;
+package org.ussp.uaa.app.jwt;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -10,9 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import com.ht.ussp.gateway.app.config.JwtSettings;
-import com.ht.ussp.gateway.app.vo.UserVo;
+import org.ussp.uaa.app.config.JwtSettings;
+import org.ussp.uaa.app.vo.UserVo;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

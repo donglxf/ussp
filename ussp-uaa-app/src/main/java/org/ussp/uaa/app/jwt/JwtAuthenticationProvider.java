@@ -1,13 +1,12 @@
-package com.ht.ussp.gateway.app.jwt;
+package org.ussp.uaa.app.jwt;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
-
-import com.ht.ussp.gateway.app.config.JwtSettings;
-import com.ht.ussp.gateway.app.vo.UserVo;
+import org.ussp.uaa.app.config.JwtSettings;
+import org.ussp.uaa.app.vo.UserVo;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;

@@ -1,4 +1,4 @@
-package com.ht.ussp.gateway.app.jwt;
+package org.ussp.uaa.app.jwt;
 
 import java.util.List;
 import java.util.stream.Collectors;
