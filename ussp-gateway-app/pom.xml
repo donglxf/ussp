@@ -9,7 +9,10 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
+	<groupId>com.ht.ussp</groupId>
 	<artifactId>ussp-gateway-app</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	
 	<name>网关</name>
 	<properties>
 		<start-class>com.ht.ussp.gateway.app.GatewayApplication</start-class>
@@ -204,16 +207,16 @@
 		</pluginRepository>
 	</pluginRepositories>
 	<distributionManagement>
-        <repository>
-            <id>nexus-releases</id>
-            <name>releases</name>
-            <url>http://172.16.200.111:8081/repository/maven-releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>nexus-snapshots</id>
-            <name>snapshots</name>
-            <url>http://172.16.200.111:8081/repository/maven-snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
+		<repository>
+			<id>nexus-releases</id>
+			<name>releases</name>
+			<url>http://172.16.200.111:8081/repository/maven-releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus-snapshots</id>
+			<name>snapshots</name>
+			<url>http://172.16.200.111:8081/repository/maven-snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 </project>

@@ -8,58 +8,61 @@
 		<relativePath />
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-    <artifactId>ussp-config-app</artifactId>
-    <name>配置中心服务端应用</name>
-    <properties>
-        <start-class>com.ht.ussp.config.app.ConfigApplication</start-class>
-    </properties>
+
+	<groupId>com.ht.ussp</groupId>
+	<artifactId>ussp-config-app</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<name>配置中心服务端应用</name>
+	<properties>
+		<start-class>com.ht.ussp.config.app.ConfigApplication</start-class>
+	</properties>
 
 
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-eureka</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-config-server</artifactId>
-        </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.springframework.boot</groupId>-->
-            <!--<artifactId>spring-boot-starter-security</artifactId>-->
-        <!--</dependency>-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-bus-amqp</artifactId>
-        </dependency>
-    </dependencies>
-    
-     <dependencyManagement>
-            <dependencies>
-                <dependency>
-                    <groupId>org.springframework.cloud</groupId>
-                    <artifactId>spring-cloud-dependencies</artifactId>
-                    <version>Finchley.M2</version>
-                    <type>pom</type>
-                    <scope>import</scope>
-                </dependency>
-            </dependencies>
-        </dependencyManagement>
-    <build>
-        <finalName>ussp-config-app</finalName>
-        <plugins>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-eureka</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-config-server</artifactId>
+		</dependency>
+		<!--<dependency> -->
+		<!--<groupId>org.springframework.boot</groupId> -->
+		<!--<artifactId>spring-boot-starter-security</artifactId> -->
+		<!--</dependency> -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-bus-amqp</artifactId>
+		</dependency>
+	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>Finchley.M2</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	<build>
+		<finalName>ussp-config-app</finalName>
+		<plugins>
 			<!-- Spring Boot的编译插件（选择了 JRE 版本） -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
-    </build>
+	</build>
 	<!-- 使用里程碑版需要下面的配置（Spring官网上的配置更为简洁，更适合每个版本 http://projects.spring.io/spring-boot/）。新版本新特性，如开发热部署 -->
 	<repositories>
 		<repository>
@@ -122,15 +125,15 @@
 		</pluginRepository>
 	</pluginRepositories>
 	<distributionManagement>
-        <repository>
-            <id>nexus-releases</id>
-            <name>releases</name>
-            <url>http://172.16.200.111:8081/repository/maven-releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>nexus-snapshots</id>
-            <name>snapshots</name>
-            <url>http://172.16.200.111:8081/repository/maven-snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
+		<repository>
+			<id>nexus-releases</id>
+			<name>releases</name>
+			<url>http://172.16.200.111:8081/repository/maven-releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus-snapshots</id>
+			<name>snapshots</name>
+			<url>http://172.16.200.111:8081/repository/maven-snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
 </project>
