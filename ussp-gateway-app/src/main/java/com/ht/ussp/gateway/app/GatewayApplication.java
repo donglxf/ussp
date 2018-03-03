@@ -7,6 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
+import org.springframework.context.annotation.Bean;
+
+import com.ht.ussp.gateway.app.filter.AccessFilter;
 
 /**
  * 
@@ -26,5 +29,10 @@ public class GatewayApplication {
         log.info("网关启动成功！");
 
 	}
+	
+	@Bean
+    public AccessFilter accessFilter(){
+    	return new AccessFilter();
+    }
 	
 }
