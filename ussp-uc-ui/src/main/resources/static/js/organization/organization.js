@@ -78,10 +78,21 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
             refreshOrgTable($("#organization_search_keyword").val());
         },
         exportOrg:function(){
-       	   $.post(exportOrgExcelUrl, null, function (result) {
+        	   $.post(exportOrgExcelUrl, null, function (result) {
+              console.log(result);
+            });
+         },
+         getDDOrg:function(){
+       	   $.post(getDDUrl, null, function (result) {
              console.log(result);
            });
         },
+        getDDOrgDZ:function(){
+      	   $.post(getDDOrgDZUrl, null, function (result) {
+            console.log(result);
+          });
+       },
+          
     };
     
     var orgListByPageUrl=config.basePath +"org/list"; //列出所有机构记录列表信息  
@@ -91,6 +102,8 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
     var checkOrgCodeExistUrl = config.basePath +"org/isExistOrgCode"; //校验岗位编码是否已经存在
     var exportOrgExcelUrl = config.basePath +"org/exportOrgExcel"; //导出
     var importOrgExcelUrl = config.basePath +"org/importOrgExcel"; //导入
+    var getDDUrl = config.basePath +"org/getDDOrg"; //导入
+    var getDDOrgDZUrl = config.basePath +"org/getDDOrgDZ"; //导入
     
     upload.render({
 		elem: '#importOrg'

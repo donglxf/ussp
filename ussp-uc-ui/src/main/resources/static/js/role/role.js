@@ -82,7 +82,13 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth' ,'upload'],
         search: function () {
             //执行重载
         	refreshTable($("#role_search_keyword").val());
-        }
+        },
+        getDDRole:function(){
+     	   $.post(getDDUrl, null, function (result) {
+            console.log(result);
+         });
+      },
+        
     };
     
     var roleListByPageUrl=config.basePath +"role/in/list"; //列出所有角色记录列表信息  
@@ -93,6 +99,7 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth' ,'upload'],
     var appListByPageUrl=config.basePath +"userapp/listAppByPage"; //列出所有角色记录列表信息
     var exportRoleExcelUrl = config.basePath +"role/exportRoleExcel"; //导出
     var importRoleExcelUrl = config.basePath +"role/importRoleExcel"; //导入
+    var getDDUrl = config.basePath +"role/getDDRole"; //导入
     upload.render({
 		elem: '#importRole'
 		,url:importRoleExcelUrl
