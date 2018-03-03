@@ -1,6 +1,9 @@
 server:
   port: 30111 
        
+feign:  
+  hystrix:  
+    enabled: true
 hystrix:
   threadpool: 
     default:
