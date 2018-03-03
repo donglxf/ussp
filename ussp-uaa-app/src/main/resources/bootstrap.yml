@@ -1,6 +1,6 @@
 spring:
   application:
-    name: ussp-gateway-app
+    name: ussp-uaa-app
   cloud:
     config:
       discovery:

@@ -25,6 +25,11 @@
 		<start-class>com.ht.ussp.uaa.app.UaaApplication</start-class>
 	</properties>
 	<dependencies>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-eureka</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -120,20 +125,20 @@
 			</snapshots>
 		</repository>
 		<repository>
-		<id>spring-snapshots</id>
-		<name>Spring Snapshots</name>
-		<url>https://repo.spring.io/snapshot</url>
-		<snapshots>
-		<enabled>true</enabled>
-		</snapshots>
+			<id>spring-snapshots</id>
+			<name>Spring Snapshots</name>
+			<url>https://repo.spring.io/snapshot</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 		</repository>
 		<repository>
-		<id>spring-milestones</id>
-		<name>Spring Milestones</name>
-		<url>https://repo.spring.io/milestone</url>
-		<snapshots>
-		<enabled>false</enabled>
-		</snapshots>
+			<id>spring-milestones</id>
+			<name>Spring Milestones</name>
+			<url>https://repo.spring.io/milestone</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
 		</repository>
 	</repositories>
 	<pluginRepositories>
@@ -149,20 +154,20 @@
 			</snapshots>
 		</pluginRepository>
 		<pluginRepository>
-		<id>spring-snapshots</id>
-		<name>Spring Snapshots</name>
-		<url>https://repo.spring.io/snapshot</url>
-		<snapshots>
-		<enabled>true</enabled>
-		</snapshots>
+			<id>spring-snapshots</id>
+			<name>Spring Snapshots</name>
+			<url>https://repo.spring.io/snapshot</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 		</pluginRepository>
 		<pluginRepository>
-		<id>spring-milestones</id>
-		<name>Spring Milestones</name>
-		<url>https://repo.spring.io/milestone</url>
-		<snapshots>
-		<enabled>false</enabled>
-		</snapshots>
+			<id>spring-milestones</id>
+			<name>Spring Milestones</name>
+			<url>https://repo.spring.io/milestone</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
 	<distributionManagement>
