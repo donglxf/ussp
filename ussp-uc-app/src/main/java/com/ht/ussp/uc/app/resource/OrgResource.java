@@ -9,6 +9,30 @@
  */
 package com.ht.ussp.uc.app.resource;
 
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
 import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
@@ -136,7 +160,7 @@ public class OrgResource {
             u.setUpdateOperator(userId);
             u = htBoaInOrgService.update(u);
         } else {
-            u.setDelFlag(Constants.DEL_0);
+        	u.setDelFlag(Constants.DEL_0);
             u.setCreatedDatetime(new Date());
             u.setCreateOperator(userId);
             u.setOrgPath(boaInOrgInfo.getOrgPath() + boaInOrgInfo.getOrgCode() + "/");
@@ -151,8 +175,8 @@ public class OrgResource {
 
     @SuppressWarnings("rawtypes")
     @ApiOperation(value = "对内：删除标记机构记录")
-    @PostMapping(value = {"/delete"}, produces = {"application/json"})
-    public Result delete(long id, @RequestHeader("userId") String userId) {
+    @PostMapping(value = {"/delete"}, produces = {"application/json"} )
+    public Result delete(long id,@RequestHeader("userId") String userId) {
         long sl = System.currentTimeMillis(), el = 0L;
         String msg = "成功";
         String logHead = "机构记录删除：org/delete param-> {}";
@@ -163,23 +187,23 @@ public class OrgResource {
         //机构下有机构，有人员， 有岗位都不可以删除
         HtBoaInOrg htBoaInOrg = new HtBoaInOrg();
         htBoaInOrg.setParentOrgCode(u.getOrgCode());
-        List<HtBoaInOrg> listHtBoaInOrg = htBoaInOrgService.findAll(htBoaInOrg);
-        if (!listHtBoaInOrg.isEmpty()) {
-            return Result.buildFail("该机构下存在子机构，不可删除！", "该机构下存在子机构，不可删除！");
-        }
-        HtBoaInUser htBoaInUser = new HtBoaInUser();
-        htBoaInUser.setOrgCode(u.getOrgCode());
-        List<HtBoaInUser> listHtBoaInUser = htBoaInUserService.findAll(htBoaInUser);
-        if (!listHtBoaInUser.isEmpty()) {
-            return Result.buildFail("该机构下存在用户，不可删除！", "该机构下存在用户，不可删除！");
-        }
-        HtBoaInPosition htBoaInPosition = new HtBoaInPosition();
-        htBoaInPosition.setParentOrgCode(u.getOrgCode());
-        List<HtBoaInPosition> listHtBoaInPosition = htBoaInPositionService.findAll(htBoaInPosition);
-        if (!listHtBoaInPosition.isEmpty()) {
-            return Result.buildFail("该机构下存在可用岗位，不可删除！", "该机构下存在可用岗位，不可删除！");
-        }
-
+ 		List<HtBoaInOrg> listHtBoaInOrg = htBoaInOrgService.findAll(htBoaInOrg);
+		if(!listHtBoaInOrg.isEmpty()) {
+			return Result.buildFail("该机构下存在子机构，不可删除！", "该机构下存在子机构，不可删除！");
+		}
+		HtBoaInUser htBoaInUser = new HtBoaInUser();
+		htBoaInUser.setOrgCode(u.getOrgCode());
+		List<HtBoaInUser>  listHtBoaInUser = htBoaInUserService.findAll(htBoaInUser);
+		if (!listHtBoaInUser.isEmpty()) {
+			return Result.buildFail("该机构下存在用户，不可删除！", "该机构下存在用户，不可删除！");
+		}
+		HtBoaInPosition htBoaInPosition = new HtBoaInPosition();
+		htBoaInPosition.setParentOrgCode(u.getOrgCode());
+		List<HtBoaInPosition> listHtBoaInPosition = htBoaInPositionService.findAll(htBoaInPosition);
+		if (!listHtBoaInPosition.isEmpty()) {
+			return Result.buildFail("该机构下存在可用岗位，不可删除！", "该机构下存在可用岗位，不可删除！");
+		}
+		
         u.setDelFlag(Constants.DEL_1);
         u.setUpdateOperator(userId);
         u.setLastModifiedDatetime(new Date());
@@ -207,52 +231,52 @@ public class OrgResource {
         log.debug(logEnd, "codes: " + id, msg, el, el - sl);
         return Result.buildSuccess();
     }
-
+    
     @SuppressWarnings("rawtypes")
-    @ApiOperation(value = "对内：机构编码是否可用  true：可用  false：不可用")
-    @PostMapping(value = {"/isExistOrgCode"}, produces = {"application/json"})
-    public Result isExistOrgCode(String orgCode) {
-        List<HtBoaInOrg> listHtBoaInOrg = htBoaInOrgService.findByOrgCode(orgCode);
-        if (listHtBoaInOrg.isEmpty()) {
-            return Result.buildSuccess();
-        } else {
-            return Result.buildFail();
-        }
+   	@ApiOperation(value = "对内：机构编码是否可用  true：可用  false：不可用")
+    @PostMapping(value = {"/isExistOrgCode" }, produces = {"application/json"} )
+    public Result isExistOrgCode( String orgCode) {
+       List<HtBoaInOrg> listHtBoaInOrg = htBoaInOrgService.findByOrgCode(orgCode);
+       if(listHtBoaInOrg.isEmpty()) {
+    	   return Result.buildSuccess();
+       }else {
+    	   return Result.buildFail();
+       }
     }
-
+    
     @ApiOperation(value = "根据机构编码查询机构信息")
     @GetMapping(value = "/getOrgInfoByCode")
     public HtBoaInOrg getOrgInfoByCode(String orgCode) {
-        List<HtBoaInOrg> listHtBoaInOrg = htBoaInOrgService.findByOrgCode(orgCode);
-        if (listHtBoaInOrg == null || listHtBoaInOrg.isEmpty()) {
-            return null;
-        }
+    	List<HtBoaInOrg> listHtBoaInOrg = htBoaInOrgService.findByOrgCode(orgCode);
+    	if(listHtBoaInOrg==null||listHtBoaInOrg.isEmpty()) {
+    		return null;
+    	} 
         return listHtBoaInOrg.get(0);
     }
-
+        
     @ApiOperation(value = "根据机构编码查询下级机构信息")
     @GetMapping(value = "/getSubOrgInfoByCode")
     public List<HtBoaInOrg> getSubOrgInfoByCode(String parentOrgCode) {
         return htBoaInOrgService.findByParentOrgCode(parentOrgCode);
     }
-
+      
     /**
      * 导出
      */
-    @PostMapping(value = "/exportOrgExcel")
-    @ResponseBody
-    public void exportOrgExcel(HttpServletResponse response) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssms");
-        String dateStr = sdf.format(new Date());
+    @PostMapping(value = "/exportOrgExcel")  
+    @ResponseBody  
+    public void exportOrgExcel(HttpServletResponse response){  
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssms");  
+        String dateStr = sdf.format(new Date());  
         // 指定下载的文件名  
-        response.setHeader("Content-Disposition", "attachment;filename=" + dateStr + ".xlsx");
+        response.setHeader("Content-Disposition", "attachment;filename=" +dateStr+".xlsx"); 
         System.out.println(dateStr);
-        response.setContentType("application/vnd.ms-excel;charset=UTF-8");
-        response.setHeader("Pragma", "no-cache");
-        response.setHeader("Cache-Control", "no-cache");
-        response.setDateHeader("Expires", 0);
-        XSSFWorkbook workbook = null;
-        try {
+        response.setContentType("application/vnd.ms-excel;charset=UTF-8");  
+        response.setHeader("Pragma", "no-cache");  
+        response.setHeader("Cache-Control", "no-cache");  
+        response.setDateHeader("Expires", 0);  
+        XSSFWorkbook workbook=null;  
+        try {  
             //导出Excel对象  
             workbook = htBoaInOrgService.exportOrgExcel();
         } catch (Exception e1) {

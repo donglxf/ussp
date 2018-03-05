@@ -291,4 +291,11 @@ public class RoleResource {
 		}
 		return Result.buildSuccess();
 	}
+	
+	@ApiOperation(value = "获取钉钉数据")
+	@PostMapping(value = "/getDDRole")
+	public Result getDDRole() {
+		htBoaInRoleService.getDD();
+		return Result.buildSuccess();
+	}
 }

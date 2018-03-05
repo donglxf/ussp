@@ -20,20 +20,33 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.ht.ussp.bean.ExcelBean;
 import com.ht.ussp.common.Constants;
+import com.ht.ussp.uc.app.domain.DdDept;
+import com.ht.ussp.uc.app.domain.DdDeptUser;
 import com.ht.ussp.uc.app.domain.HtBoaInOrg;
 import com.ht.ussp.uc.app.model.BoaInOrgInfo;
 import com.ht.ussp.uc.app.model.PageConf;
+import com.ht.ussp.uc.app.repository.DdDeptRepository;
+import com.ht.ussp.uc.app.repository.DdDeptUserRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInOrgRepository;
 import com.ht.ussp.util.ExcelUtils;
+import com.ht.ussp.util.HttpClientUtil;
 
 @Service
 public class HtBoaInOrgService {
 
-    @Autowired
+	@Autowired
     private HtBoaInOrgRepository htBoaInOrgRepository;
+	
+	@Autowired
+    private DdDeptRepository ddDeptRepository;
 
+	@Autowired
+    private DdDeptUserRepository ddDeptUserRepository;
+	
     public HtBoaInOrg findById(Long id) {
         return this.htBoaInOrgRepository.findById(id);
     }
@@ -162,5 +175,137 @@ public class HtBoaInOrgService {
             e.printStackTrace();
         }
     }
+
+	@Transactional
+	public void getDD() {
+		String getTokenUrl="https://oapi.dingtalk.com/gettoken?corpid=dingb9594db0ecde853a35c2f4657eb6378f&corpsecret=g445dW-0hpWTXkgJGDjty01q_xulKO9EDlX_XV4AOeZaciJDsEBW14xzXNdFPxF1";
+		String getAuthUrl ="https://oapi.dingtalk.com/auth/scopes";
+		String getDeptList = "https://oapi.dingtalk.com/department/list";
+	    String getDeptUser = "https://oapi.dingtalk.com/user/list";
+	    
+	    try {
+
+			//1.获取token
+			String token = (String) JSONObject.parseObject(HttpClientUtil.getInstance().doGet(getTokenUrl, null)).get("access_token");
+			//2.获取授权部门
+			String authDeptResBody = HttpClientUtil.getInstance().doGet(getAuthUrl+"?access_token="+token, null);
+			JSONObject jsonAuthDept = JSONObject.parseObject(authDeptResBody);
+	        JSONArray jsonAuthDepts = jsonAuthDept.getJSONObject("auth_org_scopes").getJSONArray("authed_dept");
+	        String authDept = jsonAuthDepts.getString(0);
+			//3.获取部门列表
+			String listDeptResBody = HttpClientUtil.getInstance().doGet(getDeptList+"?access_token="+token+"&id="+authDept, null);
+			JSONObject jsonDeptRes = JSONObject.parseObject(listDeptResBody);
+			JSONArray jsonDepts = jsonDeptRes.getJSONArray("department");
+			List<DdDept> listDdDept = new ArrayList<DdDept>();
+			List<DdDeptUser> listDdDeptUser = new ArrayList<DdDeptUser>();
+			if(jsonDepts!=null) {
+				for(int i = 0;i<jsonDepts.size();i++) {
+					JSONObject depts = (JSONObject) jsonDepts.get(i);
+					DdDept ddDept = new DdDept();
+					ddDept.setDeptId(depts.getString("id"));
+					ddDept.setDeptName(new String(depts.getString("name").getBytes(),"utf-8"));
+					ddDept.setParentId(depts.getString("parentid"));
+					ddDept.setCreatedDatetime(new Date());
+					ddDept.setOrders(depts.getString("order"));
+					listDdDept.add(ddDept);
+					// ddDeptRepository.saveAndFlush(ddDept);
+					//4.获取部门成员列表  ---需要循环调用添加
+		    		String listDeptUserResBody = HttpClientUtil.getInstance().doGet(getDeptUser+"?access_token="+token+"&department_id="+depts.get("id"), null);
+		    		JSONObject jsonUserRes = JSONObject.parseObject(listDeptUserResBody);
+		    		JSONArray jsonDeptUsers = jsonUserRes.getJSONArray("userlist");
+		    		if(jsonDeptUsers!=null) {
+		    			for(int j=0;j<jsonDeptUsers.size();j++) {
+			    			JSONObject deptUsers = (JSONObject) jsonDeptUsers.get(j);
+			    			DdDeptUser ddDeptUser = new DdDeptUser();
+			    			ddDeptUser.setUserId(deptUsers.getString("userid"));
+			    			ddDeptUser.setUserName(new String(deptUsers.getString("name").getBytes(),"utf-8"));
+			    			ddDeptUser.setOrgCode(depts.get("id")+"");
+			    			ddDeptUser.setEmail(deptUsers.getString("email"));
+			    			ddDeptUser.setMobile(deptUsers.getString("mobile"));
+			    			ddDeptUser.setJobNumber(deptUsers.getString("jobnumber"));
+			    			ddDeptUser.setPosition(deptUsers.getString("position"));
+			    			ddDept.setCreatedDatetime(new Date());
+			    			listDdDeptUser.add(ddDeptUser); 
+			    			//ddDeptUserRepository.saveAndFlush(ddDeptUser);
+			    		}
+		    		}
+				}
+				ddDeptRepository.deleteAll();
+				ddDeptRepository.save(listDdDept);
+				ddDeptUserRepository.deleteAll();
+				ddDeptUserRepository.save(listDdDeptUser);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 钉钉与生产数据对照
+	 */
+	public void getDDOrgDZ() {
+		//1 递归获取钉钉orgpath
+		List<DdDept> listDdDept = ddDeptRepository.findAll();
+		for(DdDept ddDept :listDdDept) {
+			if(ddDept!=null) {
+				ddDept.setOrgPath(getDDOrgPath(ddDept));
+			}
+		}
+		System.out.println("");
+	 	ddDeptRepository.save(listDdDept);
+		
+		//2递归获取生产数据orgpath
+		//3.对比可以对照的保存起来  不可以对照的保存起来
+	}
+	
+	private String getDDOrgPath(DdDept ddDept) {
+		try {
+			if("58800327".equals(ddDept.getParentId())) {
+				return  ddDept.getDeptName();
+			} else {
+				DdDept ddDeptP = ddDeptRepository.findByDeptId(ddDept.getParentId());
+				return getDDOrgPath(ddDeptP)+"/"+ddDept.getDeptName();
+			}
+		} catch (Exception e) {
+			 System.out.println(ddDept);
+			 System.out.println(ddDept.getDeptId()+" lrc "+ddDept.getParentId());
+		}
+		return "";
+	}
+
+    public static void main(String[] args) {
+    	String getTokenUrl="https://oapi.dingtalk.com/gettoken?corpid=dingb9594db0ecde853a35c2f4657eb6378f&corpsecret=g445dW-0hpWTXkgJGDjty01q_xulKO9EDlX_XV4AOeZaciJDsEBW14xzXNdFPxF1";
+    	String getAuthUrl ="https://oapi.dingtalk.com/auth/scopes";
+    	String getDeptList = "https://oapi.dingtalk.com/department/list";
+    	String getDeptUser = "https://oapi.dingtalk.com/user/list";
+
+    	try {
+    		//1.获取token
+    		String token = (String) JSONObject.parseObject(HttpClientUtil.getInstance().doGet(getTokenUrl, null)).get("access_token");
+    		
+    		//2.获取授权部门
+    		String authDeptResBody = HttpClientUtil.getInstance().doGet(getAuthUrl+"?access_token="+token, null);
+    		JSONObject jsonAuthDept = JSONObject.parseObject(authDeptResBody);
+	        JSONArray jsonAuthDepts = jsonAuthDept.getJSONObject("auth_org_scopes").getJSONArray("authed_dept");
+	        String authDept = jsonAuthDepts.getString(0);
+    		System.out.println(authDept);
+    		//3.获取部门列表
+    		/*String listDeptResBody = HttpClientUtil.getInstance().doGet(getDeptList+"?access_token="+token+"&id="+authDept, null);
+    		System.out.println(listDeptResBody);
+    		JSONObject jsonDeptRes = JSONObject.parseObject(listDeptResBody);
+    		System.out.println(jsonDeptRes);
+    		JSONArray jsonDepts = jsonDeptRes.getJSONArray("department");
+    		System.out.println("部门总数："+jsonDepts.size());
+    		for(int i = 0;i<jsonDepts.size();i++) {
+    			JSONObject depts = (JSONObject) jsonDepts.get(i);
+    			//4.获取部门成员列表  ---需要循环调用添加
+        		String listDeptUserResBody = HttpClientUtil.getInstance().doGet(getDeptUser+"?access_token="+token+"&department_id="+depts.get("id"), null);
+        		System.out.println("id==>> "+depts.get("id")+listDeptUserResBody);
+    		}*/
+    		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 }

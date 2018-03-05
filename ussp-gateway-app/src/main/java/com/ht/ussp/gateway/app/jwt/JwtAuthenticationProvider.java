@@ -1,15 +1,9 @@
 package com.ht.ussp.gateway.app.jwt;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import com.ht.ussp.gateway.app.config.JwtSettings;
@@ -26,7 +20,6 @@ import io.jsonwebtoken.Jws;
  * @date 2018年1月6日 上午10:13:08
  */
 @Component
-@SuppressWarnings("unchecked")
 public class JwtAuthenticationProvider implements AuthenticationProvider {
     private final JwtSettings jwtSettings;
     

@@ -1,0 +1,88 @@
+spring:
+  application:
+    name: ussp-uaa-app
+  cloud:
+    config:
+      discovery:
+        service-id: ussp-config-app
+    bus:
+      enabled: false
+  profiles:
+    active: local
+eureka:
+  instance:
+    prefer-ip-address: true
+
+---
+spring:
+  profiles: local
+  cloud:
+    config:
+      enabled: false
+    bus:
+      enabled: false
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:30101/eureka/
+
+---
+spring:
+  profiles: dev
+  cloud:
+    config:
+      discovery:
+        enabled: true
+    bus:
+      enabled: true
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://172.16.200.110:30101/eureka/
+
+---
+spring:
+  profiles: sit
+  cloud:
+    config:
+      discovery:
+        enabled: true
+    bus:
+      enabled: true
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://172.16.200.112:30101/eureka/
+
+---
+spring:
+  profiles: uat
+  cloud:
+    config:
+      discovery:
+        enabled: true
+    bus:
+      enabled: true
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER_ADDRESS}
+
+---
+spring:
+  profiles: prd
+  cloud:
+    config:
+      discovery:
+        enabled: true
+    bus:
+      enabled: true
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER_ADDRESS}

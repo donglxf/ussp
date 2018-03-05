@@ -5,7 +5,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.ht.ussp.util.PatternUtil;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +22,7 @@ import com.ht.ussp.gateway.app.jwt.RawAccessJwtToken;
 import com.ht.ussp.gateway.app.jwt.TokenExtractor;
 import com.ht.ussp.gateway.app.model.ResponseModal;
 import com.ht.ussp.gateway.app.util.SysStatus;
-import com.ht.ussp.util.LogicUtil;
+import com.ht.ussp.util.PatternUtil;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 

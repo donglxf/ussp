@@ -1,10 +1,9 @@
-eureka:
-  instance:
-    prefer-ip-address: true
-
 server:
   port: 30111 
        
+feign:  
+  hystrix:  
+    enabled: true
 hystrix:
   threadpool: 
     default:
