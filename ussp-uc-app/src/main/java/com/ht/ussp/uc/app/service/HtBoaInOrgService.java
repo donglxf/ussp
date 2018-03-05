@@ -44,6 +44,14 @@ public class HtBoaInOrgService {
         return this.htBoaInOrgRepository.findAll(ex);
     }
 
+    public List<HtBoaInOrg> findAll() {
+        return this.htBoaInOrgRepository.findAll();
+    }
+
+    public List<HtBoaInOrg> add(List<HtBoaInOrg> orgList) {
+        return this.htBoaInOrgRepository.save(orgList);
+    }
+
     public HtBoaInOrg add(HtBoaInOrg u) {
         return this.htBoaInOrgRepository.saveAndFlush(u);
     }
@@ -51,8 +59,8 @@ public class HtBoaInOrgService {
     public HtBoaInOrg update(HtBoaInOrg u) {
         return this.htBoaInOrgRepository.save(u);
     }
-    
-    public Object findAllByPage(PageConf pageConf,Map<String, String> query) {
+
+    public Object findAllByPage(PageConf pageConf, Map<String, String> query) {
         Sort sort = null;
         Pageable pageable = null;
         List<Order> orders = new ArrayList<Order>();
@@ -63,27 +71,27 @@ public class HtBoaInOrgService {
             sort = new Sort(orders);
         }
         if (null != pageConf.getPage() && null != pageConf.getSize())
-            pageable = new PageRequest(pageConf.getPage(), pageConf.getSize(),  sort);
+            pageable = new PageRequest(pageConf.getPage(), pageConf.getSize(), sort);
         String search = "";
         String orgPath = "";
         if (query != null && query.size() > 0 && query.get("orgCode") != null) {
-        	orgPath = query.get("orgCode");
+            orgPath = query.get("orgCode");
         }
         if (query != null && query.size() > 0 && query.get("keyWord") != null) {
-        	search = "%" +query.get("keyWord")+ "%";
+            search = "%" + query.get("keyWord") + "%";
         }
-        
+
         if (null == search || 0 == search.trim().length())
             search = "%%";
-    
-        
+
+
         if (null != pageable) {
-            Page<BoaInOrgInfo> p = this.htBoaInOrgRepository.lisOrgByPageWeb(pageable, search,orgPath);
+            Page<BoaInOrgInfo> p = this.htBoaInOrgRepository.lisOrgByPageWeb(pageable, search, orgPath);
             return p;
-        } 
-            return null;
+        }
+        return null;
     }
-    
+
     /**
      * 根据父组织机构代码查询组织机构，并转化成Tree<br>
      *
@@ -98,60 +106,61 @@ public class HtBoaInOrgService {
         //创建匹配器，即如何使用查询条件
         ExampleMatcher matcher = ExampleMatcher.matching() //构建对象
                 // 忽略 id 和 createTime 字段。
-                .withIgnorePaths("id", "createdDatetime", "orgPath", "jpaVersion", "sequence")
+                .withIgnorePaths("id", "createdDatetime", "orgPath", "dataSource","jpaVersion", "sequence")
                 // 忽略为空字段。
                 .withIgnoreNullValues();
         //创建实例
         Example<HtBoaInOrg> ex = Example.of(queryOrg, matcher);
-        return htBoaInOrgRepository.findAll(ex, new Sort(Sort.Direction.ASC, "parentOrgCode", "sequence"));
+        return htBoaInOrgRepository.findAll(ex, new Sort(Sort.Direction.ASC, "sequence"));
     }
 
     public List<HtBoaInOrg> findByOrgCode(String orgCode) {
-		return this.htBoaInOrgRepository.findByOrgCode(orgCode);
-	}
-    public List<HtBoaInOrg> findByParentOrgCode(String parentOrgCode) {
-		return this.htBoaInOrgRepository.findByParentOrgCode(parentOrgCode);
-	}
-	
-	
-	public XSSFWorkbook exportOrgExcel() {
-		XSSFWorkbook book = null;
-		try {
-			List<HtBoaInOrg> listHtBoaInOrg = this.htBoaInOrgRepository.findAll();
-			List<ExcelBean> ems = new ArrayList<>();
-			Map<Integer, List<ExcelBean>> map = new LinkedHashMap<>();
-			ems.add(new ExcelBean("机构编码", "orgCode", 0));
-			ems.add(new ExcelBean("机构名称", "orgNameCn", 0));
-			ems.add(new ExcelBean("父机构编码", "parentOrgCode", 0));
-			ems.add(new ExcelBean("排序", "sequence", 0));
-			ems.add(new ExcelBean("状态", "delFlag", 0));
-			map.put(0, ems);
-			book = ExcelUtils.createExcelFile(HtBoaInOrg.class, listHtBoaInOrg, map, "机构信息");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return book;
-	}
+        return this.htBoaInOrgRepository.findByOrgCode(orgCode);
+    }
 
-	@Transactional
-	public void importOrgExcel(InputStream in, MultipartFile file, String userId) {
-		try {
-			List<List<Object>> listob = ExcelUtils.getBankListByExcel(in,file.getOriginalFilename());    
-		    for (int i = 0; i < listob.size(); i++) {    
-		            List<Object> ob = listob.get(i);    
-		            HtBoaInOrg u = new HtBoaInOrg();
-		            u.setLastModifiedDatetime(new Date());
-		            u.setOrgCode(String.valueOf(ob.get(0)));
-		            u.setOrgNameCn(String.valueOf(ob.get(1)));
-		            u.setParentOrgCode(String.valueOf(ob.get(2)));
-		            u.setCreatedDatetime(new Date());
-		            u.setDelFlag(Constants.DEL_0);
-		            u.setCreateOperator(userId);
-		            u = add(u);
-		        }    
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    public List<HtBoaInOrg> findByParentOrgCode(String parentOrgCode) {
+        return this.htBoaInOrgRepository.findByParentOrgCode(parentOrgCode);
+    }
+
+
+    public XSSFWorkbook exportOrgExcel() {
+        XSSFWorkbook book = null;
+        try {
+            List<HtBoaInOrg> listHtBoaInOrg = this.htBoaInOrgRepository.findAll();
+            List<ExcelBean> ems = new ArrayList<>();
+            Map<Integer, List<ExcelBean>> map = new LinkedHashMap<>();
+            ems.add(new ExcelBean("机构编码", "orgCode", 0));
+            ems.add(new ExcelBean("机构名称", "orgNameCn", 0));
+            ems.add(new ExcelBean("父机构编码", "parentOrgCode", 0));
+            ems.add(new ExcelBean("排序", "sequence", 0));
+            ems.add(new ExcelBean("状态", "delFlag", 0));
+            map.put(0, ems);
+            book = ExcelUtils.createExcelFile(HtBoaInOrg.class, listHtBoaInOrg, map, "机构信息");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return book;
+    }
+
+    @Transactional
+    public void importOrgExcel(InputStream in, MultipartFile file, String userId) {
+        try {
+            List<List<Object>> listob = ExcelUtils.getBankListByExcel(in, file.getOriginalFilename());
+            for (int i = 0; i < listob.size(); i++) {
+                List<Object> ob = listob.get(i);
+                HtBoaInOrg u = new HtBoaInOrg();
+                u.setLastModifiedDatetime(new Date());
+                u.setOrgCode(String.valueOf(ob.get(0)));
+                u.setOrgNameCn(String.valueOf(ob.get(1)));
+                u.setParentOrgCode(String.valueOf(ob.get(2)));
+                u.setCreatedDatetime(new Date());
+                u.setDelFlag(Constants.DEL_0);
+                u.setCreateOperator(userId);
+                u = add(u);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }

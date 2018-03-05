@@ -39,40 +39,39 @@ public class HtBoaInUserService {
     private HtBoaInLoginRepository htBoaInLoginRepository;
 
     /**
-     * 
-     * @Title: findByUserName 
-     * @Description: 通过用户名查询用户信息 
      * @return HtBoaInUser
      * @throws
-     * @author wim qiuwenwu@hongte.info 
+     * @Title: findByUserName
+     * @Description: 通过用户名查询用户信息
+     * @author wim qiuwenwu@hongte.info
      * @date 2018年1月18日 下午8:18:08
      */
     public HtBoaInUser findByUserName(String userName) {
 
         return htBoaInUserRepository.findByUserName(userName);
     }
+
     /**
-     * 
-     * @Title: findByUserName 
-     * @Description: 通过userId查询用户信息 
      * @return HtBoaInUser
      * @throws
+     * @Title: findByUserName
+     * @Description: 通过userId查询用户信息
      */
     public HtBoaInUser findByUserId(String userId) {
         return htBoaInUserRepository.findByUserId(userId);
     }
 
-    
+
     public LoginInfoVo queryUserInfo(String userId) {
-		LoginInfoVo loginInfoVo=new LoginInfoVo();
-		UserMessageVo userMessageVo=htBoaInUserRepository.queryUserByUserId(userId);
-		if(LogicUtil.isNull(userMessageVo)) {
-			return null;
-		}
-		BeanUtils.deepCopy(userMessageVo, loginInfoVo);
-		return loginInfoVo;
-	}  
-    
+        LoginInfoVo loginInfoVo = new LoginInfoVo();
+        UserMessageVo userMessageVo = htBoaInUserRepository.queryUserByUserId(userId);
+        if (LogicUtil.isNull(userMessageVo)) {
+            return null;
+        }
+        BeanUtils.deepCopy(userMessageVo, loginInfoVo);
+        return loginInfoVo;
+    }
+
     /**
      * 用户信息分页查询<br>
      *
@@ -137,6 +136,10 @@ public class HtBoaInUserService {
         return true;
     }
 
+    public List<HtBoaInUser> findAll() {
+        return this.htBoaInUserRepository.findAll();
+    }
+
     public List<HtBoaInUser> findAll(HtBoaInUser u) {
         ExampleMatcher matcher = ExampleMatcher.matching();
         Example<HtBoaInUser> ex = Example.of(u, matcher);
@@ -192,27 +195,27 @@ public class HtBoaInUserService {
     public boolean updateUserByUserId(HtBoaInUser user) {
         return htBoaInUserRepository.updateUserByUserId(user.getUserId(), user.getUserName(), user.getJobNumber(), user.getMobile(), user.getIdNo(), user.getEmail(), user.getUpdateOperator()) == 1;
     }
-    
-    
-    public PageResult<List<UserMessageVo>> queryUserIsNullPwd(PageRequest pageRequest,String orgCode, String keyWord) {
+
+
+    public PageResult<List<UserMessageVo>> queryUserIsNullPwd(PageRequest pageRequest, String orgCode, String keyWord) {
         PageResult result = new PageResult();
-        keyWord = keyWord==null?"":keyWord;
-        Page<Object[]> pageData = htBoaInUserRepository.queryUserIsNullPwd(pageRequest,orgCode,keyWord);
+        keyWord = keyWord == null ? "" : keyWord;
+        Page<Object[]> pageData = htBoaInUserRepository.queryUserIsNullPwd(pageRequest, orgCode, keyWord);
         List<UserMessageVo> userMessageVoList = new ArrayList<>();
-        if(pageData.getContent()!=null) {
-        	for (Object[] objects : pageData.getContent()) {
-            	UserMessageVo userMessageVo = new UserMessageVo();
-            	userMessageVo.setId(objects[0] == null ? null : Long.parseLong(objects[0].toString()));
-            	userMessageVo.setUserId(objects[1] == null ? null : objects[1].toString());
-            	userMessageVo.setJobNumber(objects[2] == null ? null : objects[2].toString());
-            	userMessageVo.setUserName(objects[3] == null ? null : objects[3].toString());
-            	userMessageVo.setOrgCode(objects[4] == null ? null : objects[4].toString());
-            	userMessageVo.setMobile(objects[5] == null ? null : objects[5].toString());
-            	userMessageVo.setEmail(objects[6] == null ? null : objects[6].toString());
-            	userMessageVo.setIdNo(objects[7] == null ? null : objects[7].toString());
-            	userMessageVo.setDelFlag(objects[8] == null ? null : Integer.parseInt(objects[8].toString()) );
-            	userMessageVo.setOrgName(objects[9] == null ? null : objects[9].toString() );
-            	userMessageVoList.add(userMessageVo);
+        if (pageData.getContent() != null) {
+            for (Object[] objects : pageData.getContent()) {
+                UserMessageVo userMessageVo = new UserMessageVo();
+                userMessageVo.setId(objects[0] == null ? null : Long.parseLong(objects[0].toString()));
+                userMessageVo.setUserId(objects[1] == null ? null : objects[1].toString());
+                userMessageVo.setJobNumber(objects[2] == null ? null : objects[2].toString());
+                userMessageVo.setUserName(objects[3] == null ? null : objects[3].toString());
+                userMessageVo.setOrgCode(objects[4] == null ? null : objects[4].toString());
+                userMessageVo.setMobile(objects[5] == null ? null : objects[5].toString());
+                userMessageVo.setEmail(objects[6] == null ? null : objects[6].toString());
+                userMessageVo.setIdNo(objects[7] == null ? null : objects[7].toString());
+                userMessageVo.setDelFlag(objects[8] == null ? null : Integer.parseInt(objects[8].toString()));
+                userMessageVo.setOrgName(objects[9] == null ? null : objects[9].toString());
+                userMessageVoList.add(userMessageVo);
             }
         }
         if (pageData != null) {
@@ -221,7 +224,6 @@ public class HtBoaInUserService {
         result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
         return result;
     }
-    
-    
-    
+
+
 }

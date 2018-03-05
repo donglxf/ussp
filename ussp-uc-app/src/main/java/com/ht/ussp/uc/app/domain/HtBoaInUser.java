@@ -78,6 +78,14 @@ public class HtBoaInUser implements Serializable {
     @Column(name = "USER_NAME")
     private String userName;
 
+    @Column(name = "DATA_SOURCE")
+    private int dataSource;
+    @Column(name = "USER_TYPE")
+    private String userType;
+    @Column(name = "IS_ORG_USER")
+    private int isOrgUser;
+
+
     public HtBoaInUser() {
     }
 
@@ -207,5 +215,29 @@ public class HtBoaInUser implements Serializable {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public int getDataSource() {
+        return dataSource;
+    }
+
+    public void setDataSource(int dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
+    }
+
+    public int getIsOrgUser() {
+        return isOrgUser;
+    }
+
+    public void setIsOrgUser(int isOrgUser) {
+        this.isOrgUser = isOrgUser;
     }
 }

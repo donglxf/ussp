@@ -27,7 +27,7 @@ public class HtBoaInOrg implements Serializable {
 	private String createOperator;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="CREATED_DATETIME")
+	@Column(name="CREATED_DATETIME", insertable = false, updatable = false)
 	private Date createdDatetime;
 
 	@Column(name="DEL_FLAG")
@@ -37,7 +37,7 @@ public class HtBoaInOrg implements Serializable {
 	private int jpaVersion;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="LAST_MODIFIED_DATETIME")
+	@Column(name="LAST_MODIFIED_DATETIME", insertable = false, updatable = false)
 	private Date lastModifiedDatetime;
 
 	@Column(name="ORG_CODE")
@@ -54,6 +54,9 @@ public class HtBoaInOrg implements Serializable {
 
 	@Column(name="ORG_TYPE")
 	private String orgType;
+
+	@Column(name="DATA_SOURCE")
+	private int dataSource;
 
 	@Column(name="PARENT_ORG_CODE")
 	private String parentOrgCode;
@@ -159,6 +162,14 @@ public class HtBoaInOrg implements Serializable {
 
 	public void setOrgType(String orgType) {
 		this.orgType = orgType;
+	}
+
+	public int getDataSource() {
+		return dataSource;
+	}
+
+	public void setDataSource(int dataSource) {
+		this.dataSource = dataSource;
 	}
 
 	public String getParentOrgCode() {
