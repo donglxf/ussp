@@ -1,98 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<parent>
-		<groupId>com.ht.cloud</groupId>
-		<artifactId>ht-cloud-release</artifactId>
-		<version>dev-20180111-01</version>
-		<relativePath /> <!-- lookup parent from repository -->
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.ht.cloud</groupId>
+        <artifactId>ht-cloud-release</artifactId>
+        <version>dev-20180111-01</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.ht.ussp</groupId>
-	<artifactId>ussp</artifactId>
-	<version>1.0-SNAPSHOT</version>
-	<modules>
-		<module>ussp-registry-app</module>
-		<module>ussp-gateway-app</module>
-		<module>ussp-uc-app</module>
-		<module>ussp-config-app</module>
-		<module>config-client-app</module>
-		<module>ussp-zipkin-server</module>
-		<module>trace-stream1</module>
-		<module>trace-stream2</module>
-		<module>ussp-hystrix-turbine-app</module>
-		<module>hytrix-helloworld</module>
-		<module>ussp-uc-ui</module>
+    <groupId>com.ht.ussp</groupId>
+    <artifactId>ussp</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>ussp-registry-app</module>
+        <module>ussp-gateway-app</module>
+        <module>ussp-uc-app</module>
+        <module>ussp-config-app</module>
+        <module>config-client-app</module>
+        <module>ussp-zipkin-server</module>
+        <module>trace-stream1</module>
+        <module>trace-stream2</module>
+        <module>ussp-hystrix-turbine-app</module>
+        <module>hytrix-helloworld</module>
+        <module>ussp-uc-ui</module>
         <module>ussp-common</module>
         <module>ussp-admin-app</module>
     </modules>
 
-	<packaging>pom</packaging>
-	<name>统一服务支撑平台 USSP</name>
-	<description>Unified service support platform</description>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
-	</properties>
+    <packaging>pom</packaging>
+    <name>统一服务支撑平台 USSP</name>
+    <description>Unified service support platform</description>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+    </properties>
 
-	<scm>
-		<connection>scm:git:git@10.6.222.54:cnc/yak.git</connection>
-		<developerConnection>scm:git:git@172.16.200.102:dev2/ussp.git</developerConnection>
-	</scm>
+    <scm>
+        <connection>scm:git:git@10.6.222.54:cnc/yak.git</connection>
+        <developerConnection>scm:git:git@172.16.200.102:dev2/ussp.git</developerConnection>
+    </scm>
 
-	<ciManagement>
-		<system>Jenkins</system>
-		<url>http://10.110.1.240:8000/</url>
-	</ciManagement>
-	<repositories>
-		<repository>
-			<id>maven-public</id>
-			<name>maven-public</name>
-			<url>http://172.16.200.111:8081/repository/maven-public/</url>
-			<layout>default</layout>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-			</snapshots>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>maven-public</id>
-			<name>maven-public</name>
-			<url>http://172.16.200.111/repository/maven-public/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
-	<distributionManagement>
-		<repository>
-			<id>nexus-releases</id>
-			<name>releases</name>
-			<url>http://172.16.200.111:8081/repository/maven-releases/</url>
-		</repository>
-		<snapshotRepository>
-			<id>nexus-snapshots</id>
-			<name>snapshots</name>
-			<url>http://10.110.1.240:8081/repository/maven-snapshots/</url>
-		</snapshotRepository>
-	</distributionManagement>
+    <ciManagement>
+        <system>Jenkins</system>
+        <url>http://172.16.200.111:8000/</url>
+    </ciManagement>
+    <repositories>
+        <repository>
+            <id>maven-public</id>
+            <name>maven-public</name>
+            <url>http://172.16.200.111:8081/repository/maven-public/</url>
+            <layout>default</layout>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>maven-public</id>
+            <name>maven-public</name>
+            <url>http://172.16.200.111/repository/maven-public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+    <distributionManagement>
+        <repository>
+            <id>nexus-releases</id>
+            <name>releases</name>
+            <url>http://172.16.200.111:8081/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-snapshots</id>
+            <name>snapshots</name>
+            <url>http://172.16.200.111:8081/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>

@@ -87,12 +87,15 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
              console.log(result);
            });
         },
+        dataConver:function(){
+            $.post(dataConverExcelUrl);
+        },
         getDDOrgDZ:function(){
       	   $.post(getDDOrgDZUrl, null, function (result) {
             console.log(result);
           });
        },
-          
+
     };
     
     var orgListByPageUrl=config.basePath +"org/list"; //列出所有机构记录列表信息  
@@ -104,7 +107,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
     var importOrgExcelUrl = config.basePath +"org/importOrgExcel"; //导入
     var getDDUrl = config.basePath +"org/getDDOrg"; //导入
     var getDDOrgDZUrl = config.basePath +"org/getDDOrgDZ"; //导入
-    
+
     upload.render({
 		elem: '#importOrg'
 		,url:importOrgExcelUrl

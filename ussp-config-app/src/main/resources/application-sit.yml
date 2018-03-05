@@ -1,39 +1,28 @@
 server:
   port: 30106
 spring:
-  profiles: dev
+  profiles: sit
   rabbitmq:
-    host: 10.110.1.240
+    host: 172.16.200.113
     port: 5672
     username: admin
-    password: admin
+    password: hongte888
     virtual-host: /
   cloud:
-    inetutils:
-      preferred-networks: 10.200.1
     bus:
       trace:
         enabled: true
     config:
       server:
         git:
-          uri: http://10.110.1.240/dev2/ussp.git
-          search-paths: config-repo/*
-          username: config
-          password: ht_config
-
-eureka:
-  instance:
-    prefer-ip-address: true
-    #instance-id: ${spring.application.name}:${random.int}
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:30101/eureka/  # 闁板秶鐤嗗▔銊ュ斀娑擃厼绺緐rl
+          uri: http://172.16.200.102/config-sit/config.git
+          search-paths: /*
+          username: config-sit
+          password: hongteconfig
 security:
   user:
     name: root
     password: 123456
-
 management:
   security:
     enabled: false

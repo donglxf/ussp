@@ -3,12 +3,11 @@ spring:
     name: ussp-registry-app
   profiles:
     active: local
- 
+server:
+  port: 30101
 ---
 spring:
   profiles: local
-server:
-  port: 30101
 eureka:
   instance:
     prefer-ip-address: true
@@ -24,9 +23,6 @@ eureka:
 ---
 spring:
   profiles: dev
-
-server:
-  port: ${SERVER_PORT}
 eureka:
   instance:
     prefer-ip-address: true
@@ -38,14 +34,11 @@ eureka:
     registerWithEureka: false
     fetchRegistry: false
     serviceUrl: 
-      defaultZone: ${ADDITIONAL_EUREKA_SERVER_LIST}
+      defaultZone: http://172.16.200.110:${server.port}/eureka/
       
 ---
 spring:
   profiles: sit
-
-server:
-  port: ${SERVER_PORT}
 eureka:
   instance:
     prefer-ip-address: true
@@ -58,12 +51,10 @@ eureka:
     registerWithEureka: false
     fetchRegistry: false
     serviceUrl: 
-      defaultZone: ${ADDITIONAL_EUREKA_SERVER_LIST}
-
+      defaultZone: http://172.16.200.112:${server.port}/eureka/
 ---
 spring:
   profiles: uat
-
 server:
   port: ${SERVER_PORT}
 eureka:
