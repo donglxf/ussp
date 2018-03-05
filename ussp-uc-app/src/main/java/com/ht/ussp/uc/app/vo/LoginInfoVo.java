@@ -22,6 +22,8 @@ public class LoginInfoVo {
     private String userName;
     // 机构编码
     private String orgCode;
+    // 机构名称
+    private String orgName;
     // 邮箱
     private String email;
     // 身份证号

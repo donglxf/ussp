@@ -51,3 +51,6 @@ UCClient新增两个接口：
  @GetMapping(value = "/auth/IsHasCustomResouce")
  Boolean IsHasCustomResouce(@RequestParam("userId") String userId,@RequestParam("rescode") String rescode,@RequestParam("app") String app);
 ```
+###0.0.8
+UCClient新增两个接口：
+1、LoginUserInfoHelper#getLoginInfo()方法的返回值，增加机构名称。
