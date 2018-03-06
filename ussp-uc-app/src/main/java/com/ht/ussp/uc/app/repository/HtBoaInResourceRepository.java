@@ -65,4 +65,6 @@ public interface HtBoaInResourceRepository extends JpaSpecificationExecutor<HtBo
             "GROUP BY resNameCn,resContent,remark "
     )
     Page<ApiResourceVo> queryApiByPage(String app, String keyWord, String resParent, Pageable pageable);
+
+	HtBoaInResource findById(Long id);
 }

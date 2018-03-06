@@ -334,4 +334,12 @@ public class HtBoaInResourceService {
         Page<ApiResourceVo> pageResult = htBoaInResourceRepository.queryApiByPage(page.getApp(), page.getKeyWord(), page.getParentCode(), page.getPageRequest());
         return PageResult.buildSuccess(pageResult.getContent(), pageResult.getTotalElements());
     }
+
+	public void changeApiState(Long id, String status) {
+		HtBoaInResource htBoaInResource = htBoaInResourceRepository.findById(id);
+		if(htBoaInResource!=null) {
+			htBoaInResource.setStatus(status);
+			htBoaInResourceRepository.saveAndFlush(htBoaInResource);
+		}
+	}
 }

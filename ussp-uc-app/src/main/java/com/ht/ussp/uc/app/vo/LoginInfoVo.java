@@ -30,4 +30,13 @@ public class LoginInfoVo {
     private String idNo;
     // 手机号
     private String mobile;
+    
+ // 钉钉userID
+    private String ddUserId;
+ // 信贷userID
+    private String bmUserId;
+ // 钉钉机构
+    private String ddOrgCode;
+ // 信贷机构
+    private String bmOrgCode;
 }
