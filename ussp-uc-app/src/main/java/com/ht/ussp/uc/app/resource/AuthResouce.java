@@ -337,6 +337,9 @@ public class AuthResouce {
             String apiResCodePrefix = String.format("%s_A", apiResourceDto.getApp());// API资源编码前缀（系统编码_A）
             //查询数据最新的资源
             List<HtBoaInResource> oldResList = htBoaInResourceService.getByApp(apiResourceDto.getApp());
+            //只需要api资源数据
+            oldResList = oldResList.stream().filter(res -> "api".equals(res.getResType())).collect(Collectors.toList());
+
             Optional<String> maxResCode = oldResList.stream()
                     .filter(res -> apiResourceDto.getApp().equals(res.getApp()) && "api".equals(res.getResType()) && res.getResCode().contains(apiResCodePrefix))
                     .map(HtBoaInResource::getResCode).max((o1, o2) -> o1.compareTo(o2));
@@ -390,7 +393,7 @@ public class AuthResouce {
             //判断是否需要删除旧数据
             if (apiResourceDto.isDeleteOld()) {
                 Map<String, HtBoaInResource> map = new HashMap<>();
-                if(tempList.size()>0) {
+                if (tempList.size() > 0) {
                     for (HtBoaInResource tempRes : tempList) {
                         map.put(tempRes.getRemark(), tempRes);
                     }

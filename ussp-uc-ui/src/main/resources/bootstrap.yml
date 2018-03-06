@@ -15,19 +15,14 @@ ht.config.ui:
 ---
 spring:
   profiles: dev
-
 ht.config.ui:
-  gatewayUrl: http://10.110.1.240:30111/
+  gatewayUrl: http://172.16.200.110:30111/
 
 ---
 spring:
   profiles: sit
-  
-server:
-  port: ${SERVER_PORT}
-
 ht.config.ui:
-  gatewayUrl: /
+  gatewayUrl: http://172.16.200.112:30111/
 
 ---
 spring:

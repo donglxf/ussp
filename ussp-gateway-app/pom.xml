@@ -130,7 +130,7 @@
 		<dependency>
 			<groupId>com.ht.ussp</groupId>
 			<artifactId>ussp-common</artifactId>
-			<version>0.0.6</version>
+			<version>0.0.9</version>
 		</dependency>
 	</dependencies>
 
