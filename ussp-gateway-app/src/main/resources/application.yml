@@ -101,4 +101,4 @@ gateway:
 ht:
   ignoreUrl: #不验证的url(可以使用通配符（*）)
      web: /uc/system/*,/ht/nologin/*,/admin/*,/car/*,/rule/ui/*,/cams/ui/*,/LawUi/* #不需要验证token
-     http: /uc/auth/loadBtnAndTab,/uc/auth/loadMenu,/rule/service/check/key #需要验证token
+     http: /uc/auth/loadBtnAndTab,/uc/auth/loadMenu,/rule/service/check/key,/uc/user/in/selfinfo #需要验证token

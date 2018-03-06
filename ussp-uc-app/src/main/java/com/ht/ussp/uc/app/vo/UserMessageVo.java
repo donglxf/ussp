@@ -67,6 +67,14 @@ public class UserMessageVo implements Serializable {
     private Date pwdExpDate;
     //生效时间
     private Date effectiveDate;
+    
+    private String loginId;
+    
+    private String orgPath;
+    
+    private String rootOrgCode;
+    
+    
 
 
 }
