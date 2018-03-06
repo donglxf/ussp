@@ -27,6 +27,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ApiResourceDto {
+    private boolean isDeleteOld = false;
     private String app;
     private List<ApiInfoDto> apiInfoList = new ArrayList<>();
 

@@ -44,23 +44,27 @@ public class ResourceApiSynchHelper {
     private UCClient ucClient;
 
     @Autowired
-    public ResourceApiSynchHelper(ApplicationContext applicationContext, @Value("${ht.config.uc.api.synch:false}") boolean synch_api, @Value("${ht.config.uc.api.packages:com.ht}") String packages, @Value("${ht.config.uc.api.app:}") String app) {
+    public ResourceApiSynchHelper(ApplicationContext applicationContext,
+                                  @Value("${ht.config.uc.api.synch:false}") boolean synch_api,
+                                  @Value("${ht.config.uc.api.isDeleteOld:false}") boolean isDeleteOld,
+                                  @Value("${ht.config.uc.api.packages:com.ht}") String packages,
+                                  @Value("${ht.config.uc.api.app:}") String app) {
         log.debug("是否同步：" + synch_api + "\t" + packages + "\t" + app);
         if (synch_api) {
             if (StringUtils.isEmpty(app)) {
                 log.warn("同步API资源到用户权限中心，需要指定API资源所属系统，否则无法同步，请通过ht.config.uc.api.app配置。");
             } else {
-                initResourceApiSynchThread(applicationContext, packages, app, false);
+                initResourceApiSynchThread(applicationContext, packages, app, false, isDeleteOld);
             }
         }
     }
 
-    private boolean initResourceApiSynchThread(ApplicationContext applicationContext, String packages, String app, boolean isSynchronized) {
+    private boolean initResourceApiSynchThread(ApplicationContext applicationContext, String packages, String app, boolean isSynchronized, boolean isDeleteOld) {
         if (applicationContext != null) {
             if (isSynchronized) {
-                new ResourceApiAynchThread().init(applicationContext, packages, app).run();
+                new ResourceApiAynchThread().init(applicationContext, packages, app, isDeleteOld).run();
             } else {
-                new Thread(new ResourceApiAynchThread().init(applicationContext, packages, app)).start();
+                new Thread(new ResourceApiAynchThread().init(applicationContext, packages, app, isDeleteOld)).start();
             }
             return true;
         }
@@ -74,6 +78,8 @@ public class ResourceApiSynchHelper {
         private String packages;
         //系统编号
         private String app;
+        //是否删除旧的资源数据
+        private boolean isDeleteOld;
 
         @Override
         public void run() {
@@ -171,7 +177,7 @@ public class ResourceApiSynchHelper {
                     if (StringUtils.isEmpty(methodMapping)) {
                         apiDto.add(mapping, method, apiDescribe);
                     } else {
-                        apiDto.add(mapping.concat("/").concat(methodMapping).replace("//", "/"), method, apiDescribe);
+                        apiDto.add(mapping.concat("/").concat(methodMapping).replace("///", "/").replace("//", "/"), method, apiDescribe);
                     }
                 }
             }
@@ -180,22 +186,33 @@ public class ResourceApiSynchHelper {
                     log.warn("无法同步API资源到用户权限中心，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
                 } else {
                     apiDto.setApp(app);
+                    apiDto.setDeleteOld(isDeleteOld);
                     try {
-                        ucClient.resourceApiAynch(apiDto);
+                        Map<String, Integer> mapResult = ucClient.resourceApiAynch(apiDto);
+                        if (mapResult.containsKey("add")) {
+                            log.info("共新增：" + mapResult.get("add") + "条资源");
+                        }
+                        if (mapResult.containsKey("update")) {
+                            log.info("共更新：" + mapResult.get("update") + "条资源");
+                        }
+                        if (mapResult.containsKey("delete")) {
+                            log.info("共删除：" + mapResult.get("delete") + "条资源");
+                        }
                     } catch (Exception e) {
                         log.warn("同步API资源发生异常，请尝试重启服务。异常：" + e.getMessage());
                     }
                 }
             }
             if (log.isDebugEnabled()) {
-                log.debug("同步API资源完成，共计扫描到" + apiDto.getApiInfoList().size() + "个API。");
+                log.info("同步API资源完成，共计扫描到" + apiDto.getApiInfoList().size() + "个API。");
             }
         }
 
-        public ResourceApiAynchThread init(ApplicationContext applicationContext, String packages, String app) {
+        public ResourceApiAynchThread init(ApplicationContext applicationContext, String packages, String app, boolean isDeleteOld) {
             this.applicationContext = applicationContext;
             this.packages = packages;
             this.app = app;
+            this.isDeleteOld = isDeleteOld;
             return this;
         }
     }

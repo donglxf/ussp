@@ -1,8 +1,6 @@
 package com.ht.ussp.uc.app.resource;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -242,8 +240,6 @@ public class AuthResouce {
         }
     }
 
-    ;
-
     /**
      * @return ResponseModal
      * @throws
@@ -335,42 +331,44 @@ public class AuthResouce {
     @ApiOperation(value = "同步API资源（内部接口）")
     @PostMapping("/api/aynch")
     @Transactional
-    public void resourceApiAynch(@RequestBody ApiResourceDto apiResourceDto) {
-        if (apiResourceDto != null && !StringUtils.isEmpty(apiResourceDto.getApp())
-                && apiResourceDto.getApiInfoList() != null && apiResourceDto.getApiInfoList().size() > 0) {
+    public Map<String, Integer> resourceApiAynch(@RequestBody ApiResourceDto apiResourceDto) {
+        Map<String, Integer> result = new HashMap<>();
+        if (apiResourceDto != null && !StringUtils.isEmpty(apiResourceDto.getApp()) && apiResourceDto.getApiInfoList() != null && apiResourceDto.getApiInfoList().size() > 0) {
             String apiResCodePrefix = String.format("%s_A", apiResourceDto.getApp());// API资源编码前缀（系统编码_A）
+            //查询数据最新的资源
             List<HtBoaInResource> oldResList = htBoaInResourceService.getByApp(apiResourceDto.getApp());
             Optional<String> maxResCode = oldResList.stream()
-                    .filter(res -> apiResourceDto.getApp().equals(res.getApp()) && "api".equals(res.getResType())
-                            && res.getResCode().contains(apiResCodePrefix))
+                    .filter(res -> apiResourceDto.getApp().equals(res.getApp()) && "api".equals(res.getResType()) && res.getResCode().contains(apiResCodePrefix))
                     .map(HtBoaInResource::getResCode).max((o1, o2) -> o1.compareTo(o2));
             int mxResCodeNum = 0;
             try {
                 // 最大资源编码（去除编码前缀）
-                mxResCodeNum = (maxResCode == null || StringUtils.isEmpty(maxResCode.get())) ? 0
-                        : Integer.valueOf(maxResCode.get().replace(apiResCodePrefix, "").replaceAll("[^0-9]", ""));
+                mxResCodeNum = (maxResCode == null || StringUtils.isEmpty(maxResCode.get())) ? 0 : Integer.valueOf(maxResCode.get().replace(apiResCodePrefix, "").replaceAll("[^0-9]", ""));
             } catch (Exception e) {
                 // 发生异常无需处理
             }
-            List<HtBoaInResource> tempList = null;
-            HtBoaInResource oldRes;
+            List<HtBoaInResource> tempList = new ArrayList<>();
+            List<HtBoaInResource> temps = null;
             List<ApiInfoDto> apiDtoList = apiResourceDto.getApiInfoList();
             List<HtBoaInResource> newResList = new ArrayList<>();
+            List<HtBoaInResource> delResList = new ArrayList<>();
             int insertCount = 0;
             int updateCount = 0;
             for (ApiInfoDto api : apiDtoList) {
                 if (oldResList != null && oldResList.size() > 0) {
-                    tempList = oldResList.stream().filter(res -> api.getMethod().equals(res.getRemark())).distinct()
-                            .collect(Collectors.toList());
+                    //根据方法名查找旧的数据
+                    temps = oldResList.stream().filter(res -> api.getMethod().equals(res.getRemark())).distinct().collect(Collectors.toList());
+                    tempList.addAll(temps);
                 }
-                if (tempList != null && tempList.size() > 0) {
-                    oldRes = tempList.get(0);
-                    if ((oldRes.getResNameCn() != null && !oldRes.getResNameCn().equals(api.getApiDescribe()))
-                            || (oldRes.getResContent() != null && !oldRes.getResContent().equals(api.getMapping()))) {
-                        oldRes.setResNameCn(api.getApiDescribe());
-                        oldRes.setResContent(api.getMapping());
-                        newResList.add(oldRes);
-                        updateCount++;
+                if (temps != null && temps.size() > 0) {
+                    for (HtBoaInResource oldRes : temps) {
+                        //判断如果资源名称、资源内容与旧的数据不一致，则修改
+                        if ((oldRes.getResNameCn() != null && !oldRes.getResNameCn().equals(api.getApiDescribe())) || (oldRes.getResContent() != null && !oldRes.getResContent().equals(api.getMapping()))) {
+                            oldRes.setResNameCn(api.getApiDescribe());
+                            oldRes.setResContent(api.getMapping());
+                            newResList.add(oldRes);
+                            updateCount++;
+                        }
                     }
                 } else {
                     HtBoaInResource re = new HtBoaInResource();
@@ -389,10 +387,31 @@ public class AuthResouce {
                     insertCount++;
                 }
             }
+            //判断是否需要删除旧数据
+            if (apiResourceDto.isDeleteOld()) {
+                Map<String, HtBoaInResource> map = new HashMap<>();
+                if(tempList.size()>0) {
+                    for (HtBoaInResource tempRes : tempList) {
+                        map.put(tempRes.getRemark(), tempRes);
+                    }
+                    for (HtBoaInResource oldRes : oldResList) {
+                        if (!map.containsKey(oldRes.getRemark())) {
+                            delResList.add(oldRes);
+                        }
+                    }
+                }
+                log.info("共删除API资源" + delResList.size() + "个");
+                htBoaInResourceService.delete(delResList);
+                result.put("delete", delResList.size());
+            }
+
             log.info("共新增API资源" + insertCount + "个");
             log.info("共更新API资源" + updateCount + "个");
             htBoaInResourceService.save(newResList);
+            result.put("add", insertCount);
+            result.put("update", updateCount);
         }
+        return result;
     }
 
     /**

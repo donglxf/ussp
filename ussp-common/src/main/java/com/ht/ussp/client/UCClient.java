@@ -10,6 +10,7 @@
 package com.ht.ussp.client;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,7 +43,7 @@ public interface UCClient {
      * @Date 2018/1/18 14:28
      */
     @PostMapping("/auth/api/aynch")
-    void resourceApiAynch(@RequestBody ApiResourceDto apiResourceDto);
+    Map<String, Integer> resourceApiAynch(@RequestBody ApiResourceDto apiResourceDto);
 
     /**
      * 获取登录信息<br>
@@ -54,65 +55,67 @@ public interface UCClient {
      */
     @GetMapping(value = "/user/getLoginUserInfo")
     LoginInfoDto getLoginUserInfo(@RequestParam("userId") String userId);
-    
+
     /**
-     * 
-     * @Title: getCustomResouce 
-     * @Description: 获取用户自定权限
      * @return Result
      * @throws
-     * @author wim qiuwenwu@hongte.info 
+     * @Title: getCustomResouce
+     * @Description: 获取用户自定权限
+     * @author wim qiuwenwu@hongte.info
      * @date 2018年2月10日 下午2:40:21
      */
     @GetMapping(value = "/auth/getCustomResouce")
-    Result getCustomResouce(@RequestParam("userId") String userId,@RequestParam("app") String app);
-    
+    Result getCustomResouce(@RequestParam("userId") String userId, @RequestParam("app") String app);
+
     /**
-     * 
-     * @Title: IsHasCustomResouce 
-     * @Description: 判断用户是否有自定义权限  
      * @return Boolean
      * @throws
-     * @author wim qiuwenwu@hongte.info 
+     * @Title: IsHasCustomResouce
+     * @Description: 判断用户是否有自定义权限
+     * @author wim qiuwenwu@hongte.info
      * @date 2018年2月10日 下午2:40:42
      */
     @GetMapping(value = "/auth/IsHasCustomResouce")
-    Boolean IsHasCustomResouce(@RequestParam("userId") String userId,@RequestParam("rescode") String rescode,@RequestParam("app") String app);
+    Boolean IsHasCustomResouce(@RequestParam("userId") String userId, @RequestParam("rescode") String rescode, @RequestParam("app") String app);
 
     /**
      * 通过机构编码获取机构信息
+     *
      * @param orgCode
      * @return
      */
     @GetMapping(value = "/org/getOrgInfoByCode")
     HtBoaInOrgDto getOrgInfoByCode(@RequestParam("orgCode") String orgCode);
-    
+
     /**
      * 通过机构编码获取下级机构信息
+     *
      * @param parentOrgCode
      * @return
      */
     @GetMapping(value = "/org/getSubOrgInfoByCode")
     List<HtBoaInOrgDto> getSubOrgInfoByCode(@RequestParam("parentOrgCode") String parentOrgCode);
-    
+
     /**
      * 获取当前用户所有权限信息（可选参数，资源类型）
+     *
      * @param userId
-     * @param app 
+     * @param app
      * @return
      */
     @GetMapping(value = "/auth/getUserResouce")
-    List<ResDto>  getUserResouce(@RequestParam("userId") String userId,@RequestParam("rescode") String rescode,@RequestParam("app") String app);
-    
+    List<ResDto> getUserResouce(@RequestParam("userId") String userId, @RequestParam("rescode") String rescode, @RequestParam("app") String app);
+
     /**
      * 获取当前用户所有角色信息
+     *
      * @param userId
      * @param app
      * @return
      */
     @GetMapping(value = "/userrole/getUserRole")
     List<BoaInRoleInfoDto> getUserRole(@RequestParam("userId") String userId);
-    
-    
+
+
 }
 

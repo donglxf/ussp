@@ -67,6 +67,10 @@ public class HtBoaInResourceService {
         htBoaInResourceRepository.delete(id);
     }
 
+    public void delete(List<HtBoaInResource> htBoaInResourceList) {
+        htBoaInResourceRepository.delete(htBoaInResourceList);
+    }
+
     public List<HtBoaInResource> getByResParent(String resParent) {
         return htBoaInResourceRepository.findByResParent(resParent);
     }

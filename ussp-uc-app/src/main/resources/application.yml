@@ -32,6 +32,7 @@ ribbon:
   ConnectTimeout: 60000
   
 ht.config.uc.api:
-  synch: false #是否同步API资源到用户权限中心
+  synch: true #是否同步API资源到用户权限中心
+  isDeleteOld: true #是否删除旧资源，删除旧资源的同时，关联关系也将被删除
   packages: com.ht.ussp.uc.app #API资源扫描的包，可用多个，多个使用“,”分隔
   app: UC
