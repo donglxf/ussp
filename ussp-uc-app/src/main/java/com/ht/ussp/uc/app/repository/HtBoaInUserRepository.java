@@ -70,7 +70,8 @@ public interface HtBoaInUserRepository extends JpaSpecificationExecutor<HtBoaInU
             "login.status," +
             "login.failedCount," +
             "login.pwdExpDate," +
-            "login.effectiveDate)" +
+            "login.effectiveDate," +
+             "login.loginId,hbiUser.orgPath,hbiUser.rootOrgCode)" +
             "FROM HtBoaInUser hbiUser ,HtBoaInLogin login  ,HtBoaInOrg org " +
             "WHERE hbiUser.userId=login.userId " +
             "AND hbiUser.orgCode=org.orgCode " +
@@ -120,7 +121,8 @@ public interface HtBoaInUserRepository extends JpaSpecificationExecutor<HtBoaInU
             "login.status," +
             "login.failedCount," +
             "login.pwdExpDate," +
-            "login.effectiveDate)" +
+            "login.effectiveDate,"
+            + "login.loginId,hbiUser.orgPath,hbiUser.rootOrgCode)" +
             "FROM HtBoaInUser hbiUser ,HtBoaInLogin login  ,HtBoaInOrg org " +
             "WHERE hbiUser.userId=login.userId " +
             "AND hbiUser.orgCode=org.orgCode " +

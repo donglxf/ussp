@@ -126,7 +126,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
                             {type: 'numbers'}
                             , {type: 'checkbox'}
                             , {field: 'jobNumber', width: 100, title: '工号'}
-                            , {field: 'userId', width: 100, title: '用户名'}
+                            , {field: 'userId', width: 100, title: '用户编号'}
                             , {field: 'userName', width: 100, title: '用户姓名'}
                             , {field: 'mobile', width: 120, title: '手机'}
                             , {field: 'email',   title: '邮箱'}
@@ -149,6 +149,95 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
             });
         },
     };
+    
+  //自定义验证规则
+	form.verify({
+		//校验工号是否已经存在
+		  checkExistJobNum : function(value) {
+			  var isExist="";
+			  if(value){
+					  $.ajax({
+						  url : config.basePath + "user/checkExist?jobnum=" + value,
+						type : 'POST',
+						async : false,
+						success : function(result) {
+							if (result["returnCode"] == "0000") {
+								isExist="";
+						    } else{
+						    	isExist = "1";
+						    }
+						}
+					});
+			  }
+			  if(isExist=="1"){
+				  return "工号已存在或不可用，请重新输入工号";
+			  } 
+		  },
+		//校验用户名是否已经存在
+		  checkExistLoginId : function(value) {
+			  var isExist="";
+			  if(value){
+					  $.ajax({
+						  url : config.basePath + "user/checkExist?loginid=" + value,
+						type : 'POST',
+						async : false,
+						success : function(result) {
+							if (result["returnCode"] == "0000") {
+								isExist="";
+						    } else{
+						    	isExist = "1";
+						    }
+						}
+					});
+			  }
+			  if(isExist=="1"){
+				  return "用户名已存在或不可用，请重新输入用户名";
+			  } 
+		  },
+		//校验手机号是否已经存在
+		  checkExistMobile : function(value) {
+			  var isExist="";
+			  if(value){
+					  $.ajax({
+						  url : config.basePath + "user/checkExist?mobile=" + value,
+						type : 'POST',
+						async : false,
+						success : function(result) {
+							if (result["returnCode"] == "0000") {
+								isExist="";
+						    } else{
+						    	isExist = "1";
+						    }
+						}
+					});
+			  }
+			  if(isExist=="1"){
+				  return "手机号已存在或不可用，请重新输入手机号";
+			  } 
+		  },
+		//校验邮箱是否已经存在
+		  checkExistEmail : function(value) {
+			  var isExist="";
+			  if(value){
+					  $.ajax({
+						url : config.basePath + "user/checkExist?email=" + value,
+						type : 'POST',
+						async : false,
+						success : function(result) {
+							if (result["returnCode"] == "0000") {
+								isExist="";
+						    } else{
+						    	isExist = "1";
+						    }
+						}
+					}); 
+			  }
+			  if(isExist=="1"){
+				  return "邮箱已存在或不可用，请重新输入邮箱";
+			  } 
+		  },
+		  
+	});
     var refreshTable = function (keyword) {
         if (!keyword) {
             keyword = null;
@@ -245,7 +334,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
         , cols: [[
             {type: 'numbers'}
             , {field: 'jobNumber', width: 100, title: '工号'}
-            , {field: 'userId', width: 100, title: '用户名'}
+            , {field: 'userId', width: 100, title: '用户编号'}
             , {field: 'userName', width: 100, title: '用户姓名'}
             , {field: 'mobile', width: 120, title: '手机'}
             , {field: 'email', width: 100, title: '邮箱'}

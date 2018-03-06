@@ -3,6 +3,7 @@ package com.ht.ussp.uc.app.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import com.ht.ussp.uc.app.domain.HtBoaInOrg;
 import com.ht.ussp.uc.app.repository.HtBoaInOrgRepository;
@@ -134,10 +135,54 @@ public class HtBoaInUserService {
      */
     @Transactional
     public boolean saveUserInfoAndLoginInfo(HtBoaInUser user, HtBoaInLogin logininfo) {
+    	String userId = "";
+    	int isOrgUser = 1;
+    	if (user.getJobNumber() != null && user.getJobNumber().contains("HX-")) {
+            userId = String.format("%s%s%s%s%s", "01", 1, "1", "1", user.getJobNumber().replace("HX-", ""));
+        } else {
+        	isOrgUser = 0;
+            userId = String.format("%s%s%s%s%s", "01", 0, "1", "1", generateNumber(5));
+        }
+    	//查看userId是否被占用
+    	HtBoaInUser htBoaInUser = findByUserId(userId);
+    	if(htBoaInUser!=null) {
+    		userId = String.format("%s%s%s%s%s", "01", isOrgUser, "1", "1", generateNumber(5));
+    	}
+    	user.setUserId(userId);
         htBoaInUserRepository.save(user);
+        logininfo.setUserId(userId);
         htBoaInLoginRepository.save(logininfo);
         return true;
     }
+   
+    
+    private String generateNumber(int length) {
+        String no = "";
+        //初始化备选数组
+        int[] defaultNums = new int[10];
+        for (int i = 0; i < defaultNums.length; i++) {
+            defaultNums[i] = i;
+        }
+
+        Random random = new Random();
+        int[] nums = new int[length];
+        //默认数组中可以选择的部分长度
+        int canBeUsed = defaultNums.length;
+        //填充目标数组
+        for (int i = 0; i < nums.length; i++) {
+            //将随机选取的数字存入目标数组
+            int index = random.nextInt(canBeUsed);
+            nums[i] = defaultNums[index];
+            canBeUsed--;
+        }
+        if (nums.length > 0) {
+            for (int i = 0; i < nums.length; i++) {
+                no += nums[i];
+            }
+        }
+        return no;
+    }
+    
 
     public List<HtBoaInUser> findAll() {
         return this.htBoaInUserRepository.findAll();

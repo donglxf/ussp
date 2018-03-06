@@ -20,6 +20,10 @@ public class HtBoaInLoginService {
 		return htBoaInLoginRepository.findByUserId(userId);
 	}
 	
+	public HtBoaInLogin findByLoginId(String loginId) {
+		return htBoaInLoginRepository.findByLoginId(loginId);
+	}
+	
 	public List<HtBoaInLogin> findAll(HtBoaInLogin u) {
         ExampleMatcher matcher = ExampleMatcher.matching();
         Example<HtBoaInLogin> ex = Example.of(u, matcher);
