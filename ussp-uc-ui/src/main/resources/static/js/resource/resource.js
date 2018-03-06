@@ -432,7 +432,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                     , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl", event: 'rowClick'}
                     , {field: 'updateOperator', width: 100, title: '更新人', event: 'rowClick'}
                     , {field: 'lastModifiedDatetime', width: 150, title: '更新时间', event: 'rowClick'}
-                    , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn', event: 'rowClick'}
+                    , {fixed: 'right', width: 220, title: '操作', align: 'center', toolbar: '#resource_menu_table_btn', event: 'rowClick'}
                 ]];
                 break;
             case 'btn':

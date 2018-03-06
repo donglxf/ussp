@@ -243,13 +243,34 @@
         <script type="text/html" id="resource_table_btn">
             <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
             <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+            {{#  if(d.status === '0'){ }}
+            <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="disable">禁用</a>
+            {{#  } else if(d.status === '1') { }}
+            <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="enable">启用</a>
+            {{#  } else { }}
+            {{#  } }}
+        </script>
+        <script type="text/html" id="resource_menu_table_btn">
+            <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+            <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
             <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+            {{#  if(d.status === '0'){ }}
+            <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="hide">隐藏</a>
+            <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="disable">禁用</a>
+            {{#  } else if(d.status === '1') { }}
+            <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="enable">启用</a>
+            {{#  } else if(d.status === '2') { }}
+            <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="show">显示</a>
+            {{#  } else { }}
+            {{#  } }}
         </script>
         <script type="text/html" id="resource_table_status_laytpl">
             {{#  if(d.status === '0'){ }}
             正常
             {{#  } else if(d.status === '1') { }}
             禁用
+            {{#  } else if(d.status === '2') { }}
+            隐藏
             {{#  } else { }}
             {{ d.status }}
             {{#  } }}
