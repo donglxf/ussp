@@ -1,8 +1,10 @@
+server:
+  port: 30126
 spring:
   datasource:
-    url: jdbc:mysql://10.110.1.240:3306/BOA?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
-    username: root
-    password: tuandai_bm2015
+    url: jdbc:mysql://172.16.200.111:3306/BOA?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: boa
+    password: ik2kvfbT
     dbcp2:
       validation-query: SELECT 1
       test-while-idle: true
@@ -32,6 +34,6 @@ ribbon:
   ConnectTimeout: 60000
   
 ht.config.uc.api:
-  synch: true #是否同步API资源到用户权限中心
+  synch: false #是否同步API资源到用户权限中心
   packages: com.ht.ussp.uc.app #API资源扫描的包，可用多个，多个使用“,”分隔
   app: UC

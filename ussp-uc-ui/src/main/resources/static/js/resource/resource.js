@@ -763,8 +763,8 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                      layer.alert(result.codeDesc);
                  }
              });
-         });*/
-    } 
+         });
+    } */
     };
     //监听操作栏
     table.on('tool(resource_menu_datatable)', function (obj) {
