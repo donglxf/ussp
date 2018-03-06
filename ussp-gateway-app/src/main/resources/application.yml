@@ -1,5 +1,5 @@
 server:
-  port: 30111 
+  port: 30111   
        
 feign:  
   hystrix:  
