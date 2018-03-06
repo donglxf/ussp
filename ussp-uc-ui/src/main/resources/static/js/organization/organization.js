@@ -88,10 +88,16 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
            });
         },
         getDDOrgDZ:function(){
-      	   $.post(getDDOrgDZUrl, null, function (result) {
-            console.log(result);
-          });
-       },
+       	   $.post(getDDOrgDZUrl, null, function (result) {
+             console.log(result);
+           });
+        },
+        convertData:function(){
+       	   $.post(convertDataUrl, null, function (result) {
+             console.log(result);
+           });
+        },
+       
           
     };
     
@@ -104,6 +110,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
     var importOrgExcelUrl = config.basePath +"org/importOrgExcel"; //导入
     var getDDUrl = config.basePath +"org/getDDOrg"; //导入
     var getDDOrgDZUrl = config.basePath +"org/getDDOrgDZ"; //导入
+    var convertDataUrl = config.basePath +"org/dataConver"; //导入
     
     upload.render({
 		elem: '#importOrg'

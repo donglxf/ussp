@@ -61,6 +61,14 @@ public class HtBoaInUserService {
         return htBoaInUserRepository.findByUserId(userId);
     }
 
+    /**
+     * 通过userId email Mobile 工号登录
+     * @param userId
+     * @return
+     */
+    public HtBoaInUser findByUserIdOrEmailOrMobileOrJobNumber(String userId,String email,String mobile,String jboNumber){
+        return htBoaInUserRepository.findByUserIdOrEmailOrMobileOrJobNumber(userId, email, mobile, jboNumber);
+    }
 
     public LoginInfoVo queryUserInfo(String userId) {
         LoginInfoVo loginInfoVo = new LoginInfoVo();
@@ -224,6 +232,10 @@ public class HtBoaInUserService {
         result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
         return result;
     }
+
+	public void add(List<HtBoaInUser> newUserList) {
+		this.htBoaInUserRepository.save(newUserList);
+	}
 
 
 }

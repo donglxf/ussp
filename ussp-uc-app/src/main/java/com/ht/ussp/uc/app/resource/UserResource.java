@@ -110,14 +110,8 @@ public class UserResource{
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.debug(logStart, "selfBoaInUserInfo: " + selfBoaInUserInfo, sl);
-        HtBoaInUser u = new HtBoaInUser();
-        BeanUtils.setObjectFieldsEmpty(u);
-        u.setUserId(selfBoaInUserInfo.getUserId());
-        List<HtBoaInUser> htBoaInUserList = htBoaInUserService.findAll(u);
-        r = exceptionReturn(logEnd, "selfBoaInUserInfo: " + selfBoaInUserInfo, htBoaInUserList, sl, "个人用户信息", 1);
-        if (null != r)
-            return r;
-        u = htBoaInUserList.get(0);
+        HtBoaInUser u = htBoaInUserService.findByUserId(selfBoaInUserInfo.getUserId());
+         
         if (selfBoaInUserInfo.getOrgCode() != null && "" != selfBoaInUserInfo.getOrgCode()) {
             u.setOrgCode(selfBoaInUserInfo.getOrgCode());
         }
@@ -132,15 +126,10 @@ public class UserResource{
         u.setUserName(selfBoaInUserInfo.getUserName());
         htBoaInUserService.update(u);
 
-        SelfBoaInUserInfo s = new SelfBoaInUserInfo();
-        s.setUserId(u.getUserId());
-        List<SelfBoaInUserInfo> selfUserInfoList = htBoaInUserService.findAll(s);
-        r = exceptionReturn(logEnd, "selfBoaInUserInfo: " + selfBoaInUserInfo, selfUserInfoList, sl, "个人用户信息", 1);
-        if (null != r)
-            return r;
+        HtBoaInUser u1 = htBoaInUserService.findByUserId(selfBoaInUserInfo.getUserId());
         el = System.currentTimeMillis();
         log.debug(logEnd, "selfUserInfo: " + selfBoaInUserInfo, msg, el, el - sl);
-        return new ResponseModal("200", msg, selfUserInfoList.get(0));
+        return new ResponseModal("200", msg, u1 );
     }
 
     @ApiOperation(value = "对内：修改密码", notes = "修改密码")
@@ -153,13 +142,6 @@ public class UserResource{
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.debug(logStart, changePwd.toString(), sl);
-        HtBoaInUser htBoaInUser = new HtBoaInUser();
-        htBoaInUser.setUserId(userId);
-        List<HtBoaInUser> htBoaInUserList = htBoaInUserService.findAll(htBoaInUser);
-        r = exceptionReturn(logEnd, "changePwd: " + changePwd, htBoaInUserList, sl, "个人用户信息", 1);
-        if (null != r)
-            return r;
-        htBoaInUser = htBoaInUserList.get(0);
 
         HtBoaInLogin u = htBoaInLoginService.findByUserId(userId);
         //验证原密码是否正确
@@ -242,8 +224,12 @@ public class UserResource{
         // 查找用户
         //HtBoaInUser htBoaInUser = htBoaInUserService.findByUserName(userName);
         //修改登录账号为查询userId
-        HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(userName);
+        // HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(userName);
         
+        //修改登录账号为userId mobile email 工号
+        HtBoaInUser htBoaInUser = htBoaInUserService.findByUserIdOrEmailOrMobileOrJobNumber(userName,userName,userName,userName);
+        
+          
         if (LogicUtil.isNull(htBoaInUser) || LogicUtil.isNullOrEmpty(htBoaInUser.getUserId())) {
             rm.setSysStatus((SysStatus.USER_NOT_FOUND));
             return rm;

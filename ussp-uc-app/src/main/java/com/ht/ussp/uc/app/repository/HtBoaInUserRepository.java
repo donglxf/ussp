@@ -43,6 +43,13 @@ public interface HtBoaInUserRepository extends JpaSpecificationExecutor<HtBoaInU
      * @date 2018年1月22日 下午9:55:52
      */
     HtBoaInUser findByUserId(String userId);
+    
+    /**
+     * 通过userId email Mobile 工号登录
+     * @param userId
+     * @return
+     */
+    HtBoaInUser findByUserIdOrEmailOrMobileOrJobNumber(String userId,String email,String mobile,String jboNumber);
 
     @Query(value = "SELECT " +
             "new com.ht.ussp.uc.app.vo.UserMessageVo(" +
@@ -140,5 +147,6 @@ public interface HtBoaInUserRepository extends JpaSpecificationExecutor<HtBoaInU
             ,nativeQuery=true
     )
     Page<Object[]> queryUserIsNullPwd(Pageable pageable,@Param("orgCode")String orgCode, @Param("keyWord")String keyWord);
+
     
 }

@@ -33,4 +33,8 @@ public class HtBoaInLoginService {
     public HtBoaInLogin update(HtBoaInLogin u) {
         return this.htBoaInLoginRepository.save(u);
     }
+
+	public void add(List<HtBoaInLogin> loginList) {
+		this.htBoaInLoginRepository.save(loginList);
+	}
 }

@@ -14,8 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,7 +39,9 @@ import com.ht.ussp.uc.app.domain.*;
 import com.ht.ussp.uc.app.model.BoaInOrgInfo;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
+import com.ht.ussp.uc.app.service.HtBoaInBmUserService;
 import com.ht.ussp.uc.app.service.HtBoaInContrastService;
+import com.ht.ussp.uc.app.service.HtBoaInLoginService;
 import com.ht.ussp.uc.app.service.HtBoaInOrgService;
 import com.ht.ussp.uc.app.service.HtBoaInPositionService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
@@ -89,6 +89,13 @@ public class OrgResource {
 
     @Autowired
     private HtBoaInContrastService htBoaInContrastService;
+    
+    @Autowired
+    private HtBoaInLoginService htBoaInLoginService;
+    
+    @Autowired
+    private HtBoaInBmUserService htBoaInBmUserService;
+    
 
     /**
      * 根据父机构编码获取组织机构树<br>
@@ -325,10 +332,15 @@ public class OrgResource {
 
     @PostMapping(value = "/dataConver")
     public void importOrgExcel() {
-        List<HtBoaInOrg> orgList = htBoaInOrgService.findAll();
-        List<HtBoaInUser> userList = htBoaInUserService.findAll();
+        //List<HtBoaInOrg> orgList = htBoaInOrgService.findAll();
+       List<HtBoaInUser> userList = htBoaInUserService.findAll();
+        List<DdDeptUser> listDdDeptUser =  htBoaInOrgService.getDDUserList();
 
-        List<HtBoaInOrg> newOrgList = converOrg(orgList, "1", "O", "");
+        List<DdDept> orgList = htBoaInOrgService.getDdDeptList();
+        
+        List<HtBoaInBmUser> listHtBoaInBmUser = htBoaInBmUserService.getHtBoaInBmUserList();
+        List<HtBoaInContrast> listHtBoaInContrast = htBoaInContrastService.getHtBoaInContrastList();
+        List<HtBoaInOrg> newOrgList = converOrg(orgList, "1", "D", "");
 
         List<HtBoaInContrast> htBoaInContrasts = new ArrayList<>();
         HtBoaInContrast htBoaInContrast;
@@ -340,26 +352,27 @@ public class OrgResource {
         HtBoaInLogin l;
 
         List<String> userIdList = new ArrayList<>();
-        for (HtBoaInUser user : userList) {
-            HtBoaInOrg o = newOrgList.stream().filter(org -> org.getRemark().equals(user.getOrgCode())).findFirst().get();
+        for (DdDeptUser ddDeptUser : listDdDeptUser) {
+           /* HtBoaInOrg o = newOrgList.stream().filter(org -> org.getRemark().equals(ddDeptUser.getOrgCode())).findFirst().get();
             u = new HtBoaInUser();
-            String userId = generatorUserId(userIdList, o.getRootOrgCode(), user.getDataSource(), user.getIsOrgUser(), user.getJobNumber());
+            int isOrgUser = ddDeptUser.getJobNumber()==null?0:1;
+            String userId = generatorUserId(userIdList, o.getRootOrgCode(), 2, isOrgUser, ddDeptUser.getJobNumber());
             userIdList.add(userId);
             u.setUserId(userId);
-            u.setUserName(user.getUserName());
+            u.setUserName(ddDeptUser.getUserName());
             u.setOrgCode(o.getOrgCode());
             u.setRootOrgCode(o.getRootOrgCode());
             u.setOrgPath(o.getOrgPath());
-            u.setEmail(user.getEmail());
-            u.setMobile(user.getMobile());
-            u.setJobNumber(user.getJobNumber());
-            u.setIsOrgUser(user.getIsOrgUser());
-            u.setDelFlag(user.getDelFlag());
+            u.setEmail(ddDeptUser.getEmail());
+            u.setMobile(ddDeptUser.getMobile());
+            u.setJobNumber(ddDeptUser.getJobNumber());
+            u.setIsOrgUser(isOrgUser);
+            u.setDelFlag(Constants.DEL_0);
             u.setCreateOperator("自动同步");
             u.setUpdateOperator("自动同步");
             u.setDataSource(2);
 
-            System.out.printf("%-30s%-20s%-20s%-20s%-20s%-20s\n", user.getUserId(), u.getUserId(), u.getJobNumber(), user.getOrgCode(), u.getOrgCode(), u.getUserName());
+            System.out.printf("%-30s%-20s%-20s%-20s%-20s%-20s\n", ddDeptUser.getUserId(), u.getUserId(), u.getJobNumber(), ddDeptUser.getOrgCode(), u.getOrgCode(), u.getUserName());
 
 
             newUserList.add(u);
@@ -372,37 +385,64 @@ public class OrgResource {
             l.setUpdateOperator("自动同步");
             l.setStatus("0");
             l.setFailedCount(0);
-            l.setRootOrgCode(user.getRootOrgCode());
             l.setDelFlag(0);
             loginList.add(l);
-
-
-
-
+ 
 
             htBoaInContrast = new HtBoaInContrast();
             htBoaInContrast.setType("20");
             htBoaInContrast.setUcBusinessId(userId);
-            htBoaInContrast.setDdBusinessId(user.getUserId());
-            htBoaInContrast.setBmBusinessId(user.getUserId());
+            htBoaInContrast.setDdBusinessId(ddDeptUser.getUserId());
+           // htBoaInContrast.setBmBusinessId(user.getUserId());
             htBoaInContrast.setContrast("自动对照");
-            htBoaInContrasts.add(htBoaInContrast);
+            htBoaInContrasts.add(htBoaInContrast);*/
+        	
+        	//对照信贷系统用
+        	List<HtBoaInBmUser> htBoaInBmUsers1 = listHtBoaInBmUser.stream().filter(bmuser -> bmuser.getMobile()!=null).collect(Collectors.toList());
+        	Optional<HtBoaInBmUser> htBoaInBmUserOptional = htBoaInBmUsers1.stream().filter(bmuser -> bmuser.getMobile().equals(ddDeptUser.getMobile())).findFirst();
+        	HtBoaInBmUser htBoaInBmUser = null;
+        	if(htBoaInBmUserOptional.isPresent()) {
+        		htBoaInBmUser = htBoaInBmUserOptional.get();
+        	}
+        	if(htBoaInBmUser!=null) {
+        		HtBoaInUser htBoaInUser = new HtBoaInUser();
+        		List<HtBoaInUser> userList1 = userList.stream().filter(user -> user.getMobile()!=null).collect(Collectors.toList());
+        		Optional<HtBoaInUser> listHtBoaInUser = userList1.stream().filter(user -> user.getMobile().equals(ddDeptUser.getMobile())).findFirst();
+        		if(listHtBoaInUser.isPresent()) {
+        			htBoaInUser = listHtBoaInUser.get();
+        		}
+        		if(htBoaInUser!=null) {
+        			String userid=htBoaInUser.getUserId();
+        			List<HtBoaInContrast> listHtBoaInContrast2 = listHtBoaInContrast.stream().filter(bmuser -> "20".equals(bmuser.getType())).collect(Collectors.toList());
+            		Optional<HtBoaInContrast> htBoaInContrastOptional =  listHtBoaInContrast2.stream().filter(bmuser -> bmuser.getUcBusinessId().equals(userid)).findFirst();
+            		
+            		if(htBoaInContrastOptional.isPresent()) {
+            			htBoaInContrast = htBoaInContrastOptional.get();
+            			if(htBoaInContrast!=null) {
+                    		htBoaInContrast.setBmBusinessId(htBoaInBmUser.getUserId());
+                    		htBoaInContrasts.add(htBoaInContrast);
+                    	}
+            		}
+        		}
+        	}
         }
 
-//        for (HtBoaInOrg org : newOrgList) {
-//            System.out.printf("%-20s%-20s%-20s%-80s%-10s%-15s%-40s\n", org.getOrgCode(), org.getParentOrgCode(), org.getRootOrgCode(), org.getOrgPath(), org.getSequence(), org.getRemark(), org.getOrgNameCn());
-//            htBoaInContrast = new HtBoaInContrast();
-//            htBoaInContrast.setType("10");
-//            htBoaInContrast.setUcBusinessId(org.getOrgCode());
-//            htBoaInContrast.setDdBusinessId(org.getRemark());
-//            htBoaInContrast.setContrast("自动对照");
-//            org.setRemark(null);
-//            htBoaInContrasts.add(htBoaInContrast);
-//        }
-//
-        htBoaInOrgService.add(newOrgList);//保存转换后的数据
-        htBoaInContrastService.add(htBoaInContrasts);//保存对照关系
-    }
+       /* for (HtBoaInOrg org : newOrgList) {  
+            System.out.printf("%-20s%-20s%-20s%-80s%-10s%-15s%-40s\n", org.getOrgCode(), org.getParentOrgCode(), org.getRootOrgCode(), org.getOrgPath(), org.getSequence(), org.getRemark(), org.getOrgNameCn());
+            htBoaInContrast = new HtBoaInContrast();
+            htBoaInContrast.setType("10");
+            htBoaInContrast.setUcBusinessId(org.getOrgCode());
+            htBoaInContrast.setDdBusinessId(org.getRemark());
+            htBoaInContrast.setContrast("自动对照");
+            org.setRemark(null);
+            htBoaInContrasts.add(htBoaInContrast);
+        }*/
+
+       /* htBoaInUserService.add(newUserList);
+        htBoaInLoginService.add(loginList);*/
+  //        htBoaInOrgService.add(newOrgList);//保存转换后的数据
+          htBoaInContrastService.add(htBoaInContrasts);//保存对照关系
+     }
 
     /**
      * 生成用户编码<br>
@@ -421,7 +461,7 @@ public class OrgResource {
      */
     private String generatorUserId(List<String> userIds, String rootOrgCode, int isOrgUser, int dataSource, String jobNumber) {
         String userId;
-        String oc = rootOrgCode.replace("O", "");
+        String oc = rootOrgCode.replace("D", "");
         if (jobNumber != null && jobNumber.contains("HX-")) {
             userId = String.format("%s%s%s%s%s", oc, 1, dataSource, isOrgUser, jobNumber.replace("HX-", ""));
             if (userIds.contains(userId)) {
@@ -464,12 +504,12 @@ public class OrgResource {
         return no;
     }
 
-    private List<HtBoaInOrg> converOrg(List<HtBoaInOrg> orgList, String orgCode, String newOrgCode, String path) {
+    private List<HtBoaInOrg> converOrg(List<DdDept> orgList, String orgCode, String newOrgCode, String path) {
         List<HtBoaInOrg> newOrgList = new ArrayList<>();
         int i = 0;
         HtBoaInOrg newOrg;
-        for (HtBoaInOrg org : orgList) {
-            if (orgCode.equals(org.getParentOrgCode())) {
+        for (DdDept ddDept : orgList) {
+            if (orgCode.equals(ddDept.getParentId())) {
                 newOrg = new HtBoaInOrg();
                 String orgCodeTemp = String.format("%s%02d", newOrgCode, (++i));
                 String newPath;
@@ -482,15 +522,15 @@ public class OrgResource {
                 newOrg.setRootOrgCode(newPath.split("/")[0]);
                 newOrg.setOrgCode(orgCodeTemp);
                 newOrg.setOrgPath(newPath);
-                newOrg.setOrgNameCn(org.getOrgNameCn());
-                newOrg.setCreateOperator(org.getCreateOperator());
-                newOrg.setUpdateOperator(org.getUpdateOperator());
+                newOrg.setOrgNameCn(ddDept.getDeptName());
+                newOrg.setCreateOperator("");
+                newOrg.setUpdateOperator("");
                 newOrg.setDataSource(3);
                 newOrg.setSequence(i);
-                newOrg.setRemark(org.getOrgCode());//把钉钉组织机构id存入该字段
+                newOrg.setRemark(ddDept.getDeptId());//把钉钉组织机构id存入该字段
                 newOrgList.add(newOrg);
                 //System.out.printf("%-20s%-15s%-15s%-80s%-40s\n", newOrgCode, org.getOrgCode(), orgCode, newPath, org.getOrgNameCn());
-                newOrgList.addAll(converOrg(orgList, org.getOrgCode(), orgCodeTemp, newPath));
+                newOrgList.addAll(converOrg(orgList, ddDept.getDeptId(), orgCodeTemp, newPath));
             }
         }
         return newOrgList;
