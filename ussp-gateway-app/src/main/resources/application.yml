@@ -1,5 +1,5 @@
 server:
-  port: 30111 
+  port: 30111   
        
 feign:  
   hystrix:  
@@ -12,8 +12,6 @@ hystrix:
     default:
       execution:
         isolation:
-          semaphore: 
-            maxConcurrentRequests: 1000
           thread:
             timeoutInMilliseconds: 20000
           strategy: THREAD
@@ -23,9 +21,6 @@ hystrix:
             maxConcurrentRequests: 1000
             
 zuul:
-  max:
-    host:
-      connections: 800
   host:
     maxTotalConnections: 2000
     maxPerRouteConnections: 800

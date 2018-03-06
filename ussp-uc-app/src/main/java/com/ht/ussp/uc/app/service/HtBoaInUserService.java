@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.ht.ussp.uc.app.domain.HtBoaInOrg;
+import com.ht.ussp.uc.app.repository.HtBoaInOrgRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -37,19 +39,8 @@ public class HtBoaInUserService {
     private HtBoaInUserRepository htBoaInUserRepository;
     @Autowired
     private HtBoaInLoginRepository htBoaInLoginRepository;
-
-    /**
-     * @return HtBoaInUser
-     * @throws
-     * @Title: findByUserName
-     * @Description: 通过用户名查询用户信息
-     * @author wim qiuwenwu@hongte.info
-     * @date 2018年1月18日 下午8:18:08
-     */
-    public HtBoaInUser findByUserName(String userName) {
-
-        return htBoaInUserRepository.findByUserName(userName);
-    }
+    @Autowired
+    private HtBoaInOrgRepository htBoaInOrgRepository;
 
     /**
      * @return HtBoaInUser
@@ -75,6 +66,10 @@ public class HtBoaInUserService {
         UserMessageVo userMessageVo = htBoaInUserRepository.queryUserByUserId(userId);
         if (LogicUtil.isNull(userMessageVo)) {
             return null;
+        }
+        List<HtBoaInOrg> orgList = htBoaInOrgRepository.findByOrgCode(userMessageVo.getOrgCode());
+        if (orgList != null && !orgList.isEmpty()) {
+            userMessageVo.setOrgName(orgList.get(0).getOrgNameCn());
         }
         BeanUtils.deepCopy(userMessageVo, loginInfoVo);
         return loginInfoVo;
