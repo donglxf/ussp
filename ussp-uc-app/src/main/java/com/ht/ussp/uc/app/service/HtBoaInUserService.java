@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import com.ht.ussp.uc.app.domain.HtBoaInOrg;
-import com.ht.ussp.uc.app.repository.HtBoaInOrgRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -17,12 +15,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.ReturnCodeEnum;
+import com.ht.ussp.uc.app.domain.HtBoaInContrast;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
+import com.ht.ussp.uc.app.domain.HtBoaInOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
+import com.ht.ussp.uc.app.repository.HtBoaInContrastRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInLoginRepository;
+import com.ht.ussp.uc.app.repository.HtBoaInOrgRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInUserRepository;
-import com.ht.ussp.uc.app.vo.AppAndResourceVo;
 import com.ht.ussp.uc.app.vo.LoginInfoVo;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
 import com.ht.ussp.util.BeanUtils;
@@ -42,6 +43,8 @@ public class HtBoaInUserService {
     private HtBoaInLoginRepository htBoaInLoginRepository;
     @Autowired
     private HtBoaInOrgRepository htBoaInOrgRepository;
+    @Autowired
+    private HtBoaInContrastRepository htBoaInContrastRepository;
 
     /**
      * @return HtBoaInUser
@@ -73,6 +76,18 @@ public class HtBoaInUserService {
             userMessageVo.setOrgName(orgList.get(0).getOrgNameCn());
         }
         BeanUtils.deepCopy(userMessageVo, loginInfoVo);
+        if(loginInfoVo!=null) {
+        	HtBoaInContrast htBoaInContrast = htBoaInContrastRepository.findByUcBusinessIdAndType(loginInfoVo.getUserId(),"20");
+        	if(htBoaInContrast!=null) {
+        		loginInfoVo.setBmUserId(htBoaInContrast.getBmBusinessId());
+        		loginInfoVo.setDdUserId(htBoaInContrast.getDdBusinessId());
+        	}
+        	HtBoaInContrast htBoaInContrastOrg = htBoaInContrastRepository.findByUcBusinessIdAndType(loginInfoVo.getOrgCode(),"10");
+        	if(htBoaInContrastOrg!=null) {
+        		loginInfoVo.setBmOrgCode(htBoaInContrastOrg.getBmBusinessId());
+        		loginInfoVo.setDdOrgCode(htBoaInContrastOrg.getDdBusinessId());
+        	}
+        }
         return loginInfoVo;
     }
 

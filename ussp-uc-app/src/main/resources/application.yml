@@ -32,6 +32,6 @@ ribbon:
   ConnectTimeout: 60000
   
 ht.config.uc.api:
-  synch: false #是否同步API资源到用户权限中心
+  synch: true #是否同步API资源到用户权限中心
   packages: com.ht.ussp.uc.app #API资源扫描的包，可用多个，多个使用“,”分隔
   app: UC

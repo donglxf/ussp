@@ -716,7 +716,55 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                     layer.msg(result.codeDesc);
                 }
             });
-        }
+        } else if (obj.event === 'disable') { //禁用 
+            layer.confirm('是否禁用?', function (index) {
+                $.post(config.basePath + 'resource/changeApiState?id=' + data.id+"&status=1", null, function (result) {
+                    if (result["returnCode"] == "0000") {
+                        renderTable(type);
+                        layer.close(index);
+                        layer.msg("禁用成功");
+                    } else {
+                        layer.alert(result.codeDesc);
+                    }
+                });
+            });
+        } else if (obj.event === 'enable'||obj.event === 'show') { //启用
+        	 layer.confirm('是否启用?', function (index) {
+                 $.post(config.basePath + 'resource/changeApiState?id=' + data.id+"&status=0", null, function (result) {
+                     if (result["returnCode"] == "0000") {
+                         renderTable(type);
+                         layer.close(index);
+                         layer.msg("启用成功");
+                     } else {
+                         layer.alert(result.codeDesc);
+                     }
+                 });
+             });
+        } else if (obj.event === 'hide') { //隐藏
+        	layer.confirm('是否设置隐藏?', function (index) {
+                $.post(config.basePath + 'resource/changeApiState?id=' + data.id+"&status=2", null, function (result) {
+                    if (result["returnCode"] == "0000") {
+                        renderTable(type);
+                        layer.close(index);
+                        layer.msg("设置隐藏成功");
+                    } else {
+                        layer.alert(result.codeDesc);
+                    }
+                });
+            });
+        }/*else if (obj.event === 'enable' ||obj.event === 'show') { //显示
+       	 layer.confirm('是否设置显示?', function (index) {
+             $.post(config.basePath + 'resource/changeApiState?id=' + data.id+"&status=3", null, function (result) {
+                 if (result["returnCode"] == "0000") {
+                     renderTable(type);
+                     layer.close(index);
+                     layer.msg("设置显示成功");
+                 } else {
+                     layer.alert(result.codeDesc);
+                 }
+             });
+         });*/
+    } 
     };
     //监听操作栏
     table.on('tool(resource_menu_datatable)', function (obj) {
