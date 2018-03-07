@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -103,7 +104,25 @@ public class HtBoaInUserService {
      */
     public PageResult<List<UserMessageVo>> getUserListPage(PageRequest pageRequest, String orgCode, String keyWord, Map<String, String> query) {
         PageResult result = new PageResult();
-        Page<UserMessageVo> pageData = htBoaInUserRepository.queryUserPage(orgCode, keyWord, pageRequest);
+        Page<UserMessageVo> pageData = null;
+        Page<UserMessageVo> pageDataAll = null;
+        List<UserMessageVo> listUserMessageVo = new ArrayList<UserMessageVo>();
+        List<HtBoaInOrg> orgList = null;
+        if(StringUtils.isEmpty(orgCode)&&StringUtils.isNotEmpty(keyWord)) { //查全局
+        	orgList = htBoaInOrgRepository.findAll();
+        	pageDataAll = htBoaInUserRepository.queryUserPageAll( keyWord, pageRequest);
+        }
+        if(StringUtils.isNotEmpty(orgCode)&&StringUtils.isNotEmpty(keyWord)) {
+        	if("D01".equals(orgCode)) {//顶级机构查全局
+        		orgList = htBoaInOrgRepository.findAll();
+        		pageDataAll = htBoaInUserRepository.queryUserPageAll( keyWord, pageRequest);
+        	}else {//按条件查询
+        		pageData = htBoaInUserRepository.queryUserPage(orgCode, keyWord, pageRequest);
+        	}
+        }
+        if(StringUtils.isNotEmpty(orgCode)&&StringUtils.isEmpty(keyWord)) {//按条件查询
+        	pageData = htBoaInUserRepository.queryUserPage(orgCode, keyWord, pageRequest);
+        }
 //        Page<HtBoaInUser> pageData = null;
 //        if (query != null && query.size() > 0 && query.get("orgCode") != null) {
 //            if (!StringUtil.isEmpty(keyWord)) {
@@ -135,6 +154,18 @@ public class HtBoaInUserService {
 //        }
         if (pageData != null) {
             result.count(pageData.getTotalElements()).data(pageData.getContent());
+        }else {
+        	if(pageDataAll!=null) {
+        		for(UserMessageVo userMessageVo : pageDataAll.getContent()) {
+        			if(orgList!=null) {
+        				HtBoaInOrg o = orgList.stream().filter(org -> org.getOrgCode().equals(userMessageVo.getOrgCode())).findFirst().get();
+        				userMessageVo.setOrgName(o.getOrgNameCn());
+        				listUserMessageVo.add(userMessageVo);
+        			}
+        		}
+        		result.count(pageDataAll.getTotalElements()).data(listUserMessageVo);
+        	}
+        	
         }
         result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
         return result;
