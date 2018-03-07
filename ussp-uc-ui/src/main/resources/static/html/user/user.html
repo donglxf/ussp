@@ -84,16 +84,16 @@
     <div id="user_add_data_div" class="hide">
         <form method="post" class="layui-form" lay-filter="filter_add_data_form">
             <div class="layui-form-item">
-                <label class="layui-form-label">工号<b>*</b></label>
+                <label class="layui-form-label">工号</label>
                 <div class="layui-input-block">
-                    <input type="text" name="jobNumber" lay-verify="required" autocomplete="off" lay-verType="tips"
+                    <input type="text" name="jobNumber" lay-verify="checkExistJobNum" autocomplete="off" lay-verType="tips"
                            class="layui-input layui-input-sm">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">用户名<b>*</b></label>
                 <div class="layui-input-block">
-                    <input type="text" name="loginId" lay-verify="required" autocomplete="off" lay-verType="tips"
+                    <input type="text" name="loginId" lay-verify="required|checkExistLoginId" autocomplete="off" lay-verType="tips"
                            class="layui-input layui-input-sm">
                 </div>
             </div>
@@ -107,14 +107,14 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">手机号<b>*</b></label>
                 <div class="layui-input-block">
-                    <input type="tel" name="mobile" lay-verify="phone" autocomplete="off" lay-verType="tips"
+                    <input type="tel" name="mobile" lay-verify="required|phone|checkExistMobile" autocomplete="off" lay-verType="tips"
                            class="layui-input layui-input-sm">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">邮箱<b>*</b></label>
                 <div class="layui-input-block">
-                    <input type="text" name="email" lay-verify="email" autocomplete="off" lay-verType="tips"
+                    <input type="text" name="email" lay-verify="required|email|checkExistEmail" autocomplete="off" lay-verType="tips"
                            class="layui-input layui-input-sm">
                 </div>
             </div>
@@ -147,9 +147,9 @@
         <form method="post" class="layui-form" lay-filter="user_filter_modify_data_form">
             <input type="hidden" name="id" readonly class="layui-input layui-input-sm">
             <div class="layui-form-item">
-                <label class="layui-form-label">工号<b>*</b></label>
+                <label class="layui-form-label">工号</label>
                 <div class="layui-input-block">
-                    <input type="text" name="jobNumber" lay-verify="required" autocomplete="off" lay-verType="tips"
+                    <input type="text" name="jobNumber"   autocomplete="off" lay-verType="tips"
                            class="layui-input layui-input-sm">
                 </div>
             </div>
@@ -163,7 +163,7 @@
              <div class="layui-form-item">
                 <label class="layui-form-label">用户名<b>*</b></label>
                 <div class="layui-input-block">
-                    <input type="text" name="loginId" readonly  lay-verify="required" autocomplete="off" lay-verType="tips"
+                    <input type="text" name="loginId"    lay-verify="required" autocomplete="off" lay-verType="tips"
                            class="layui-input layui-input-sm">
                 </div>
             </div>
@@ -177,14 +177,14 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">手机号<b>*</b></label>
                 <div class="layui-input-block">
-                    <input type="tel" name="mobile" lay-verify="phone" autocomplete="off" lay-verType="tips"
+                    <input type="tel" name="mobile" lay-verify="phone|required" autocomplete="off" lay-verType="tips"
                            class="layui-input layui-input-sm">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">邮箱<b>*</b></label>
                 <div class="layui-input-block">
-                    <input type="text" name="email" lay-verify="email" autocomplete="off" lay-verType="tips"
+                    <input type="text" name="email" lay-verify="email|required" autocomplete="off" lay-verType="tips"
                            class="layui-input layui-input-sm">
                 </div>
             </div>
@@ -219,14 +219,28 @@
                         <input type="text" name="jobNumber" readonly class="layui-input layui-input-sm">
                     </div>
                 </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">用户名</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="userName" readonly class="layui-input layui-input-sm">
-                    </div>
+				<div class="layui-inline">
+                    <label class="layui-form-label">用户编号</label>
+					<div class="layui-input-inline">
+						<input type="text" name="userId" readonly  class="layui-input layui-input-sm">
+					</div>
                 </div>
             </div>
-            <div class="layui-form-item">
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					<label class="layui-form-label">用户名</label>
+					<div class="layui-input-inline">
+						<input type="text" name="loginId" readonly  class="layui-input layui-input-sm">
+					</div>
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">用户姓名</label>
+					<div class="layui-input-inline">
+						<input type="text" name="userName" readonly   class="layui-input layui-input-sm">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
                 <div class="layui-inline">
                     <label class="layui-form-label">手机号</label>
                     <div class="layui-input-inline">

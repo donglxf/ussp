@@ -157,7 +157,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
 			  var isExist="";
 			  if(value){
 					  $.ajax({
-						  url : config.basePath + "user/checkExist?jobnum=" + value,
+						  url : config.basePath + "user/checkUserExist?jobnum=" + value,
 						type : 'POST',
 						async : false,
 						success : function(result) {
@@ -170,7 +170,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
 					});
 			  }
 			  if(isExist=="1"){
-				  return "工号已存在或不可用，请重新输入工号";
+				  return "工号已存在或不可用";
 			  } 
 		  },
 		//校验用户名是否已经存在
@@ -178,7 +178,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
 			  var isExist="";
 			  if(value){
 					  $.ajax({
-						  url : config.basePath + "user/checkExist?loginid=" + value,
+						  url : config.basePath + "user/checkUserExist?loginid=" + value,
 						type : 'POST',
 						async : false,
 						success : function(result) {
@@ -191,7 +191,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
 					});
 			  }
 			  if(isExist=="1"){
-				  return "用户名已存在或不可用，请重新输入用户名";
+				  return "用户名已存在或不可用";
 			  } 
 		  },
 		//校验手机号是否已经存在
@@ -199,7 +199,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
 			  var isExist="";
 			  if(value){
 					  $.ajax({
-						  url : config.basePath + "user/checkExist?mobile=" + value,
+						  url : config.basePath + "user/checkUserExist?mobile=" + value,
 						type : 'POST',
 						async : false,
 						success : function(result) {
@@ -212,7 +212,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
 					});
 			  }
 			  if(isExist=="1"){
-				  return "手机号已存在或不可用，请重新输入手机号";
+				  return "手机号已存在或不可用";
 			  } 
 		  },
 		//校验邮箱是否已经存在
@@ -220,7 +220,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
 			  var isExist="";
 			  if(value){
 					  $.ajax({
-						url : config.basePath + "user/checkExist?email=" + value,
+						url : config.basePath + "user/checkUserExist?email=" + value,
 						type : 'POST',
 						async : false,
 						success : function(result) {
@@ -233,7 +233,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
 					}); 
 			  }
 			  if(isExist=="1"){
-				  return "邮箱已存在或不可用，请重新输入邮箱";
+				  return "邮箱已存在或不可用";
 			  } 
 		  },
 		  
@@ -354,9 +354,9 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
                     if (result["returnCode"] == "0000") {
                         viewDialog = layer.open({
                             type: 1,
-                            area: ['680px', '360px'],
+                            area: ['720px', '430px'],
                             shadeClose: true,
-                            title: "修改用户",
+                            title: "用户详情",
                             content: $("#user_view_data_div").html(),
                             btn: ['取消'],
                             btn2: function () {
@@ -427,10 +427,12 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
                                         data: JSON.stringify(data.field),
                                         contentType: "application/json; charset=utf-8",
                                         success: function (result2) {
-                                            layer.close(index);
                                             if (result2["returnCode"] == '0000') {
+                                            	layer.close(index);
                                                 refreshTable();
                                                 layer.alert("用户修改成功。");
+                                            }else{
+                                                 layer.msg(result2["msg"]);
                                             }
                                         },
                                         error: function (message) {

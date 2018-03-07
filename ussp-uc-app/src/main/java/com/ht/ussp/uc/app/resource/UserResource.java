@@ -4,9 +4,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -21,10 +19,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ht.ussp.bean.LoginUserInfoHelper;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
-import com.ht.ussp.uc.app.domain.HtBoaInOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.domain.HtBoaInUserRole;
@@ -75,7 +73,6 @@ public class UserResource{
     private HtBoaInUserRoleService htBoaInUserRoleService;
     @Autowired
     private HtBoaInPwdHistService htBoaInPwdHistService;
-    
     @Autowired
 	private EipClient eipClient;
 
@@ -381,8 +378,51 @@ public class UserResource{
     }
 
     @PostMapping("/update")
-    public Result updateAsync(@RequestBody HtBoaInUser user, @RequestHeader("userId") String loginUserId) {
-        if (user != null) {
+    public Result updateAsync(@RequestBody UserMessageVo userMessageVo, @RequestHeader("userId") String loginUserId) {
+        if (userMessageVo != null) {
+        	HtBoaInUser htBoaInUser = null;
+        	if(userMessageVo.getJobNumber()!=null&&!"".equals(userMessageVo.getJobNumber())) {
+        		htBoaInUser = htBoaInUserService.findByJobNumber(userMessageVo.getJobNumber());
+        		if(htBoaInUser!=null&&!htBoaInUser.getUserId().equals(userMessageVo.getUserId())) {
+            		return Result.buildFail("工号已经存在或不可用","工号已经存在或不可用");
+                 } 
+        	}
+            if(userMessageVo.getMobile()!=null) {
+        		htBoaInUser = htBoaInUserService.findByMobile(userMessageVo.getMobile());
+        		if(htBoaInUser!=null&&!htBoaInUser.getUserId().equals(userMessageVo.getUserId())) {
+            		return Result.buildFail("手机号已经存在或不可用","手机号已经存在或不可用");
+                 } 
+        	}
+           if(userMessageVo.getEmail()!=null) {
+        		htBoaInUser = htBoaInUserService.findByEmail(userMessageVo.getEmail());
+        		if(htBoaInUser!=null&&!htBoaInUser.getUserId().equals(userMessageVo.getUserId())) {
+            		return Result.buildFail("邮箱已经存在或不可用","邮箱已经存在或不可用");
+                 } 
+        	}
+			if (userMessageVo.getLoginId() != null) {
+				HtBoaInLogin htBoaInLogin = htBoaInLoginService.findByLoginId(userMessageVo.getLoginId());
+				if (htBoaInLogin != null && !htBoaInLogin.getUserId().equals(userMessageVo.getUserId())) {
+					return Result.buildFail("用户名已经存在或不可用", "用户名已经存在或不可用");
+				} else if (htBoaInLogin != null && htBoaInLogin.getUserId().equals(userMessageVo.getUserId())) {
+					 
+				} else {
+					HtBoaInLogin htBoaInLogins = htBoaInLoginService.findByUserId(userMessageVo.getUserId());
+					htBoaInLogins.setLoginId(userMessageVo.getLoginId());
+					htBoaInLoginService.update(htBoaInLogins);
+				}
+
+			}
+        	
+        	HtBoaInUser user = new HtBoaInUser();
+        	user.setUserId(userMessageVo.getUserId());
+            user.setEmail(userMessageVo.getEmail());
+            user.setJobNumber(userMessageVo.getJobNumber());
+            user.setMobile(userMessageVo.getMobile());
+            user.setOrgCode(userMessageVo.getOrgCode());
+            user.setUserName(userMessageVo.getUserName());
+            user.setIdNo(userMessageVo.getIdNo());
+            user.setRootOrgCode(userMessageVo.getRootOrgCode());
+            user.setOrgPath(userMessageVo.getOrgPath());
             user.setUpdateOperator(loginUserId);
             boolean isUpdate = htBoaInUserService.updateUserByUserId(user);
             if (isUpdate) {
@@ -486,13 +526,13 @@ public class UserResource{
     @ApiOperation(value = "校验数据的重复性 true：可用  false：不可用")
     @PostMapping(value = "/checkUserExist")
     public Result checkUserExist(String jobnum,String mobile,String email,String loginid) {
-    	HtBoaInUser htBoaInUser = new HtBoaInUser();
+    	HtBoaInUser htBoaInUser = null;
     	if(jobnum!=null) {
-    		htBoaInUser.setJobNumber(jobnum);
+    		htBoaInUser = htBoaInUserService.findByJobNumber(jobnum);
     	}else if(mobile!=null) {
-    		htBoaInUser.setMobile(mobile);
+    		htBoaInUser = htBoaInUserService.findByMobile(mobile);
     	}else if(email!=null) {
-    		htBoaInUser.setEmail(email);
+    		htBoaInUser = htBoaInUserService.findByEmail(email);
     	}else if(loginid!=null) {
     		HtBoaInLogin htBoaInLogin = htBoaInLoginService.findByLoginId(loginid);
     		if(htBoaInLogin==null) {
@@ -501,8 +541,7 @@ public class UserResource{
          	   return Result.buildFail();
             }
     	}
-    	List<HtBoaInUser> listHtBoaInUser = htBoaInUserService.findAll(htBoaInUser);
-		if(listHtBoaInUser.isEmpty()) {
+		if(htBoaInUser==null) {
 	       return Result.buildSuccess();
         }else {
      	   return Result.buildFail();
