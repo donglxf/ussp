@@ -57,7 +57,7 @@
         <repository>
             <id>maven-public</id>
             <name>maven-public</name>
-            <url>http://10.110.1.240:8081/repository/maven-public/</url>
+            <url>http://172.16.200.111:8081/repository/maven-public/</url>
             <layout>default</layout>
             <releases>
                 <enabled>true</enabled>
@@ -72,7 +72,7 @@
         <pluginRepository>
             <id>maven-public</id>
             <name>maven-public</name>
-            <url>http://10.110.1.240:8081/repository/maven-public/</url>
+            <url>http://172.16.200.111:8081/repository/maven-public/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -85,12 +85,12 @@
         <repository>
             <id>nexus-releases</id>
             <name>releases</name>
-            <url>http://10.110.1.240:8081/repository/maven-releases/</url>
+            <url>http://172.16.200.111:8081/repository/maven-releases/</url>
         </repository>
         <snapshotRepository>
             <id>nexus-snapshots</id>
             <name>snapshots</name>
-            <url>http://10.110.1.240:8081/repository/maven-snapshots/</url>
+            <url>http://172.16.200.111:8081/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
     <build>
