@@ -29,7 +29,7 @@ public interface HtBoaInAppRepository extends JpaRepository<HtBoaInApp, Long> {
             "FONT_ICON, " +
             "APP " +
             "FROM HT_BOA_IN_RESOURCE " +
-            "WHERE RES_TYPE IN('view','group','module') AND STATUS='0' " +
+            "WHERE RES_TYPE IN('view','group','module') " +
             "AND DEL_FLAG='0' " +
             "UNION ALL " +
             "SELECT " +
