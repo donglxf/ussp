@@ -195,7 +195,7 @@ public class HtBoaInResourceService {
      * @Date 2018/1/29 21:37
      */
     public List<HtBoaInResource> getByApp(String app) {
-        return htBoaInResourceRepository.findByAppAndStatusAndDelFlag(app, "0", 0);
+        return htBoaInResourceRepository.findByAppAndStatusInAndDelFlag(app, new String[]{"0", "2"}, 0);
     }
 
     /**
@@ -335,11 +335,11 @@ public class HtBoaInResourceService {
         return PageResult.buildSuccess(pageResult.getContent(), pageResult.getTotalElements());
     }
 
-	public void changeApiState(Long id, String status) {
-		HtBoaInResource htBoaInResource = htBoaInResourceRepository.findById(id);
-		if(htBoaInResource!=null) {
-			htBoaInResource.setStatus(status);
-			htBoaInResourceRepository.saveAndFlush(htBoaInResource);
-		}
-	}
+    public void changeApiState(Long id, String status) {
+        HtBoaInResource htBoaInResource = htBoaInResourceRepository.findById(id);
+        if (htBoaInResource != null) {
+            htBoaInResource.setStatus(status);
+            htBoaInResourceRepository.saveAndFlush(htBoaInResource);
+        }
+    }
 }
