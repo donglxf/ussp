@@ -292,5 +292,17 @@ public class HtBoaInUserService {
 		this.htBoaInUserRepository.save(newUserList);
 	}
 
+	public HtBoaInUser findByJobNumber(String jobnum) {
+		return this.htBoaInUserRepository.findByJobNumber(jobnum);
+	}
+
+	public HtBoaInUser findByMobile(String mobile) {
+		return this.htBoaInUserRepository.findByMobile(mobile);
+	}
+
+	public HtBoaInUser findByEmail(String email) {
+		return this.htBoaInUserRepository.findByEmail(email);
+	}
+
 
 }

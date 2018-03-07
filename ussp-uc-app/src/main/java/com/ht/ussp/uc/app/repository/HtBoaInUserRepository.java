@@ -150,5 +150,11 @@ public interface HtBoaInUserRepository extends JpaSpecificationExecutor<HtBoaInU
     )
     Page<Object[]> queryUserIsNullPwd(Pageable pageable,@Param("orgCode")String orgCode, @Param("keyWord")String keyWord);
 
+	HtBoaInUser findByJobNumber(String jobnum);
+
+	HtBoaInUser findByMobile(String mobile);
+
+	HtBoaInUser findByEmail(String email);
+
     
 }
