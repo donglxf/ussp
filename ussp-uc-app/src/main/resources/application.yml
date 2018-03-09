@@ -1,9 +1,14 @@
+server:
+  port: 30126
 spring:
   datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
     url: jdbc:mysql://172.16.200.111:3306/BOA?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
-    username: root
-    password: hongte888
+    username: boa
+    password: ik2kvfbT
+    dbcp2:
+      validation-query: SELECT 1
+      test-while-idle: true
+    type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
     initialSize: 5
     maxActive : 20
@@ -37,5 +42,6 @@ ribbon:
   
 ht.config.uc.api:
   synch: false #是否同步API资源到用户权限中心
+  isDeleteOld: false #是否删除旧资源，删除旧资源的同时，关联关系也将被删除
   packages: com.ht.ussp.uc.app #API资源扫描的包，可用多个，多个使用“,”分隔
   app: UC

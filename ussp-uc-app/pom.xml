@@ -118,13 +118,13 @@
 		<dependency>
 			<artifactId>ussp-common</artifactId>
 			<groupId>com.ht.ussp</groupId>
-			<version>0.0.7</version>
+			<version>0.0.9</version>
 		</dependency>
 		<dependency>
-			<artifactId>taobao-sdk-java-auto_1479188381469</artifactId>
-			<groupId>com.taobao.sdk</groupId>
-			<version>20180227</version>
-		</dependency>
+            <artifactId>taobao-sdk-java-auto_1479188381469</artifactId>
+            <groupId>com.taobao.sdk</groupId>
+            <version>20180227</version>
+        </dependency>
 	</dependencies>
 	<build>
 		<finalName>ussp-uc-app</finalName>

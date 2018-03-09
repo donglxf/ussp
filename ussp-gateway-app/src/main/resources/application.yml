@@ -1,3 +1,6 @@
+server:
+  port: 30111   
+       
 feign:  
   hystrix:  
     enabled: true
@@ -18,9 +21,6 @@ hystrix:
             maxConcurrentRequests: 1000
             
 zuul:
-  AccessFilter: 
-    pre: 
-      disable: true
   host:
     maxTotalConnections: 2000
     maxPerRouteConnections: 800
@@ -89,11 +89,6 @@ zuul:
     alms-timer-service:
       path: /alms/timer/**
       serviceId: alms-timer-service
-      
-ussp-uc-app: 
-  ribbon:
-    listOfServers: http://localhost:30126
-
 
 gateway:
   security:
@@ -105,5 +100,5 @@ gateway:
 
 ht:
   ignoreUrl: #不验证的url(可以使用通配符（*）)
-     web: /ht/nologin/*,/admin/*,/car/*,/rule/ui/*,/cams/ui/*,/LawUi/* #不需要验证token
-     http: /uc/auth/loadBtnAndTab,/uc/auth/loadMenu,/rule/service/check/key #需要验证token
+     web: /uc/system/*,/ht/nologin/*,/admin/*,/car/*,/rule/ui/*,/cams/ui/*,/LawUi/* #不需要验证token
+     http: /uc/auth/loadBtnAndTab,/uc/auth/loadMenu,/rule/service/check/key,/uc/user/in/selfinfo #需要验证token
