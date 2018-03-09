@@ -56,7 +56,7 @@ public class HtBoaInRoleResService {
         //先删除已有的角色与资源的关系
         htBoaInRoleResRepository.deleteByRoleCode(roleCode);
         //重新保存角色与资源的关系
-        List<HtBoaInResource> allList = htBoaInResourceRepository.findByAppAndStatusAndDelFlag(roleAndResVo.getApp(), "0", 0);
+        List<HtBoaInResource> allList = htBoaInResourceRepository.findByAppAndStatusInAndDelFlag(roleAndResVo.getApp(), new String[]{"0", "2"}, 0);
         List<HtBoaInRoleRes> htBoaInRoleRess = new ArrayList<>();
         HtBoaInRoleRes rr;
         for (String resCode : resCodes) {
@@ -85,12 +85,12 @@ public class HtBoaInRoleResService {
         htBoaInRoleResRepository.save(htBoaInRoleRess);
         return true;
     }
-    
-    public void delete(HtBoaInRoleRes u) {
-		this.htBoaInRoleResRepository.delete(u);
-	}
 
-	public void deleteByRoleCode(String roleCode) {
-		this.htBoaInRoleResRepository.deleteByRoleCode(roleCode);
-	}
+    public void delete(HtBoaInRoleRes u) {
+        this.htBoaInRoleResRepository.delete(u);
+    }
+
+    public void deleteByRoleCode(String roleCode) {
+        this.htBoaInRoleResRepository.deleteByRoleCode(roleCode);
+    }
 }

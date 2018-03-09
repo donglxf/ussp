@@ -258,6 +258,18 @@ public class HtBoaInOrgService {
 		//3.对比可以对照的保存起来  不可以对照的保存起来
 	}
 	
+	/**
+	 * 钉钉与生产数据对照
+	 */
+	public List<DdDeptUser> getDDUserList() {
+		return ddDeptUserRepository.findAll();
+	}
+	
+	public List<DdDept> getDdDeptList() {
+		return ddDeptRepository.findAll();
+	}
+
+	
 	private String getDDOrgPath(DdDept ddDept) {
 		try {
 			if("58800327".equals(ddDept.getParentId())) {

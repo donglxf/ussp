@@ -24,16 +24,16 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface HtBoaInResourceRepository extends JpaSpecificationExecutor<HtBoaInResource>, JpaRepository<HtBoaInResource, Long> {
     //查询资源--管理员  (模块、菜单、按钮、api)
-    @Query(value = "select new com.ht.ussp.uc.app.vo.ResVo(resCode,resNameCn,sequence,resType,resParent,resContent,fontIcon) from HtBoaInResource where status=0 and app= :app and resType in(:res_type) order by resParent,sequence")
+    @Query(value = "select new com.ht.ussp.uc.app.vo.ResVo(resCode,resNameCn,sequence,resType,resParent,resContent,fontIcon,status) from HtBoaInResource where status in ('0','2') and app= :app and resType in(:res_type) order by resParent,sequence")
     List<ResVo> queryResForY(@Param("res_type") List<String> res_type, @Param("app") String app);
 
     //查询资源--非管理员
-    @Query(value = "select new com.ht.ussp.uc.app.vo.ResVo(resCode,resNameCn,sequence,resType,resParent,resContent,fontIcon) from  HtBoaInResource  where status=0 and app= :app and resType in(:res_type) and resCode in(:res_code) order by resParent,sequence")
+    @Query(value = "select new com.ht.ussp.uc.app.vo.ResVo(resCode,resNameCn,sequence,resType,resParent,resContent,fontIcon,status) from  HtBoaInResource  where status in ('0','2') and app= :app and resType in(:res_type) and resCode in(:res_code) order by resParent,sequence")
     List<ResVo> queryResForN(@Param("res_code") List<String> res_code, @Param("res_type") List<String> res_type, @Param("app") String app);
 
     List<HtBoaInResource> findByResParent(String resPanrent);
 
-    List<HtBoaInResource> findByAppAndStatusAndDelFlag(String app, String status, int delFlag);
+    List<HtBoaInResource> findByAppAndStatusInAndDelFlag(String app, String[] status, int delFlag);
 
     @Query(value = "SELECT MAX(res_code) FROM HT_BOA_IN_RESOURCE WHERE APP=?1  AND ((?2='NULL' AND RES_PARENT IS NULL) OR (RES_PARENT=?2)) AND RES_TYPE in(?3) AND RES_CODE like ?4", nativeQuery = true)
     String queryMaxResCodeByAppAndParentAndType(String app, String resPanrent, List<String> resTypes, String resCodePrefix);
@@ -65,4 +65,6 @@ public interface HtBoaInResourceRepository extends JpaSpecificationExecutor<HtBo
             "GROUP BY resNameCn,resContent,remark "
     )
     Page<ApiResourceVo> queryApiByPage(String app, String keyWord, String resParent, Pageable pageable);
+
+	HtBoaInResource findById(Long id);
 }

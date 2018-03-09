@@ -67,6 +67,10 @@ public class HtBoaInResourceService {
         htBoaInResourceRepository.delete(id);
     }
 
+    public void delete(List<HtBoaInResource> htBoaInResourceList) {
+        htBoaInResourceRepository.delete(htBoaInResourceList);
+    }
+
     public List<HtBoaInResource> getByResParent(String resParent) {
         return htBoaInResourceRepository.findByResParent(resParent);
     }
@@ -191,7 +195,7 @@ public class HtBoaInResourceService {
      * @Date 2018/1/29 21:37
      */
     public List<HtBoaInResource> getByApp(String app) {
-        return htBoaInResourceRepository.findByAppAndStatusAndDelFlag(app, "0", 0);
+        return htBoaInResourceRepository.findByAppAndStatusInAndDelFlag(app, new String[]{"0", "2"}, 0);
     }
 
     /**
@@ -329,5 +333,13 @@ public class HtBoaInResourceService {
     public PageResult loadApiByPage(ResourcePageVo page) {
         Page<ApiResourceVo> pageResult = htBoaInResourceRepository.queryApiByPage(page.getApp(), page.getKeyWord(), page.getParentCode(), page.getPageRequest());
         return PageResult.buildSuccess(pageResult.getContent(), pageResult.getTotalElements());
+    }
+
+    public void changeApiState(Long id, String status) {
+        HtBoaInResource htBoaInResource = htBoaInResourceRepository.findById(id);
+        if (htBoaInResource != null) {
+            htBoaInResource.setStatus(status);
+            htBoaInResourceRepository.saveAndFlush(htBoaInResource);
+        }
     }
 }

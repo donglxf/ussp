@@ -194,7 +194,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
             var parentName = selectData["resNameCn"];
             relevanceDialog = layer.open({
                 type: 1,
-                area: ['1000px', '645px'],
+                area: ['1200px', '645px'],
                 shadeClose: true,
                 title: "选择关联的API",
                 content: $("#resource_api_data_div").html(),
@@ -244,9 +244,9 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                         , cols: [[
                             {type: 'numbers'}
                             , {type: 'checkbox'}
-                            , {field: 'resContent', title: 'API链接'}
+                            , {field: 'resContent', width: 300, title: 'API链接'}
                             , {field: 'resNameCn', width: 200, title: 'API名称'}
-                            , {field: 'remark', width: 350, title: '方法名'}
+                            , {field: 'remark', title: '方法名'}
                         ]]
                     });
                     var $keywordInput = $("#resource_api_dialog_search_keyword", layero);
@@ -432,7 +432,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                     , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl", event: 'rowClick'}
                     , {field: 'updateOperator', width: 100, title: '更新人', event: 'rowClick'}
                     , {field: 'lastModifiedDatetime', width: 150, title: '更新时间', event: 'rowClick'}
-                    , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn', event: 'rowClick'}
+                    , {fixed: 'right', width: 250, title: '操作', align: 'center', toolbar: '#resource_menu_table_btn', event: 'rowClick'}
                 ]];
                 break;
             case 'btn':
@@ -451,7 +451,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                     , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl", event: 'rowClick'}
                     , {field: 'updateOperator', width: 100, title: '更新人', event: 'rowClick'}
                     , {field: 'lastModifiedDatetime', width: 150, title: '更新时间', event: 'rowClick'}
-                    , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn', event: 'rowClick'}
+                    , {fixed: 'right', width: 200, title: '操作', align: 'center', toolbar: '#resource_table_btn', event: 'rowClick'}
                 ]];
                 break;
             case 'tab':
@@ -489,7 +489,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                     , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl"}
                     , {field: 'updateOperator', width: 100, title: '更新人'}
                     , {field: 'lastModifiedDatetime', width: 150, title: '更新时间'}
-                    , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn'}
+                    , {fixed: 'right', width: 200, title: '操作', align: 'center', toolbar: '#resource_table_btn'}
                 ]];
                 break;
             case 'module':
@@ -510,7 +510,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                     , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl", event: 'rowClick'}
                     , {field: 'updateOperator', width: 100, title: '更新人', event: 'rowClick'}
                     , {field: 'lastModifiedDatetime', width: 150, title: '更新时间', event: 'rowClick'}
-                    , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn', event: 'rowClick'}
+                    , {fixed: 'right', width: 200, title: '操作', align: 'center', toolbar: '#resource_table_btn', event: 'rowClick'}
                 ]];
                 break;
             case 'custom':
@@ -527,7 +527,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                     , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl"}
                     , {field: 'updateOperator', width: 100, title: '更新人', event: 'rowClick'}
                     , {field: 'lastModifiedDatetime', width: 150, title: '更新时间'}
-                    , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#resource_table_btn'}
+                    , {fixed: 'right', width: 200, title: '操作', align: 'center', toolbar: '#resource_table_btn'}
                 ]];
                 break;
         }
@@ -716,7 +716,56 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                     layer.msg(result.codeDesc);
                 }
             });
+        } else if (obj.event === 'disable') { //禁用 
+            layer.confirm('是否禁用?', function (index) {
+                $.post(config.basePath + 'resource/changeApiState?id=' + data.id + "&status=1", null, function (result) {
+                    if (result["returnCode"] == "0000") {
+                        renderTable(type);
+                        layer.close(index);
+                        layer.msg("禁用成功");
+                    } else {
+                        layer.alert(result.codeDesc);
+                    }
+                });
+            });
+        } else if (obj.event === 'enable' || obj.event === 'show') { //启用
+            layer.confirm('是否启用?', function (index) {
+                $.post(config.basePath + 'resource/changeApiState?id=' + data.id + "&status=0", null, function (result) {
+                    if (result["returnCode"] == "0000") {
+                        renderTable(type);
+                        layer.close(index);
+                        layer.msg("启用成功");
+                    } else {
+                        layer.alert(result.codeDesc);
+                    }
+                });
+            });
+        } else if (obj.event === 'hide') { //隐藏
+            layer.confirm('是否设置隐藏?', function (index) {
+                $.post(config.basePath + 'resource/changeApiState?id=' + data.id + "&status=2", null, function (result) {
+                    if (result["returnCode"] == "0000") {
+                        renderTable(type);
+                        layer.close(index);
+                        layer.msg("设置隐藏成功");
+                    } else {
+                        layer.alert(result.codeDesc);
+                    }
+                });
+            });
         }
+        /*else if (obj.event === 'enable' ||obj.event === 'show') { //显示
+                    layer.confirm('是否设置显示?', function (index) {
+                     $.post(config.basePath + 'resource/changeApiState?id=' + data.id+"&status=3", null, function (result) {
+                         if (result["returnCode"] == "0000") {
+                             renderTable(type);
+                             layer.close(index);
+                             layer.msg("设置显示成功");
+                         } else {
+                             layer.alert(result.codeDesc);
+                         }
+                     });
+                 });
+            } */
     };
     //监听操作栏
     table.on('tool(resource_menu_datatable)', function (obj) {

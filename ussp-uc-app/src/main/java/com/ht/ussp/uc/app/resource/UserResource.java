@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ht.ussp.bean.LoginUserInfoHelper;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
@@ -73,7 +73,6 @@ public class UserResource{
     private HtBoaInUserRoleService htBoaInUserRoleService;
     @Autowired
     private HtBoaInPwdHistService htBoaInPwdHistService;
-    
     @Autowired
 	private EipClient eipClient;
 
@@ -110,14 +109,8 @@ public class UserResource{
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.debug(logStart, "selfBoaInUserInfo: " + selfBoaInUserInfo, sl);
-        HtBoaInUser u = new HtBoaInUser();
-        BeanUtils.setObjectFieldsEmpty(u);
-        u.setUserId(selfBoaInUserInfo.getUserId());
-        List<HtBoaInUser> htBoaInUserList = htBoaInUserService.findAll(u);
-        r = exceptionReturn(logEnd, "selfBoaInUserInfo: " + selfBoaInUserInfo, htBoaInUserList, sl, "个人用户信息", 1);
-        if (null != r)
-            return r;
-        u = htBoaInUserList.get(0);
+        HtBoaInUser u = htBoaInUserService.findByUserId(selfBoaInUserInfo.getUserId());
+         
         if (selfBoaInUserInfo.getOrgCode() != null && "" != selfBoaInUserInfo.getOrgCode()) {
             u.setOrgCode(selfBoaInUserInfo.getOrgCode());
         }
@@ -132,15 +125,10 @@ public class UserResource{
         u.setUserName(selfBoaInUserInfo.getUserName());
         htBoaInUserService.update(u);
 
-        SelfBoaInUserInfo s = new SelfBoaInUserInfo();
-        s.setUserId(u.getUserId());
-        List<SelfBoaInUserInfo> selfUserInfoList = htBoaInUserService.findAll(s);
-        r = exceptionReturn(logEnd, "selfBoaInUserInfo: " + selfBoaInUserInfo, selfUserInfoList, sl, "个人用户信息", 1);
-        if (null != r)
-            return r;
+        HtBoaInUser u1 = htBoaInUserService.findByUserId(selfBoaInUserInfo.getUserId());
         el = System.currentTimeMillis();
         log.debug(logEnd, "selfUserInfo: " + selfBoaInUserInfo, msg, el, el - sl);
-        return new ResponseModal("200", msg, selfUserInfoList.get(0));
+        return new ResponseModal("200", msg, u1 );
     }
 
     @ApiOperation(value = "对内：修改密码", notes = "修改密码")
@@ -153,13 +141,6 @@ public class UserResource{
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.debug(logStart, changePwd.toString(), sl);
-        HtBoaInUser htBoaInUser = new HtBoaInUser();
-        htBoaInUser.setUserId(userId);
-        List<HtBoaInUser> htBoaInUserList = htBoaInUserService.findAll(htBoaInUser);
-        r = exceptionReturn(logEnd, "changePwd: " + changePwd, htBoaInUserList, sl, "个人用户信息", 1);
-        if (null != r)
-            return r;
-        htBoaInUser = htBoaInUserList.get(0);
 
         HtBoaInLogin u = htBoaInLoginService.findByUserId(userId);
         //验证原密码是否正确
@@ -242,8 +223,18 @@ public class UserResource{
         // 查找用户
         //HtBoaInUser htBoaInUser = htBoaInUserService.findByUserName(userName);
         //修改登录账号为查询userId
-        HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(userName);
+        // HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(userName);
         
+        //修改登录账号为userId mobile email 工号
+        HtBoaInUser htBoaInUser = htBoaInUserService.findByUserIdOrEmailOrMobileOrJobNumber(userName,userName,userName,userName);
+        
+        if(htBoaInUser==null) {
+        	HtBoaInLogin htBoaInLogin = htBoaInLoginService.findByLoginId(userName);
+        	if(htBoaInLogin!=null) {
+        		htBoaInUser = htBoaInUserService.findByUserId(htBoaInLogin.getUserId());
+        	}
+        }
+          
         if (LogicUtil.isNull(htBoaInUser) || LogicUtil.isNullOrEmpty(htBoaInUser.getUserId())) {
             rm.setSysStatus((SysStatus.USER_NOT_FOUND));
             return rm;
@@ -326,23 +317,37 @@ public class UserResource{
      * @Date 2018/1/14 12:08
      */
     @PostMapping(value = "/add")
-    public Result addAsync(@RequestBody HtBoaInUser user, @RequestHeader("userId") String loginUserId) {
-        if (user != null) {
+    public Result addAsync(@RequestBody UserMessageVo userMessageVo, @RequestHeader("userId") String loginUserId) {
+        if (userMessageVo != null) {
             //String userId = UUID.randomUUID().toString().replace("-", "");
-        	String userId = user.getUserId();//作为用户的登录账号，修改为不是自动生成
-            user.setUserId(userId);
+        	/*String userId = user.getUserId();//作为用户的登录账号，修改为不是自动生成
+            user.setUserId(userId);*/
+            HtBoaInUser user = new HtBoaInUser();
+            user.setDataSource(1);
+            user.setEmail(userMessageVo.getEmail());
+            user.setIsOrgUser(1);
+            user.setJobNumber(userMessageVo.getJobNumber());
+            user.setMobile(userMessageVo.getMobile());
+            user.setOrgCode(userMessageVo.getOrgCode());
+            user.setUserName(userMessageVo.getUserName());
+            user.setIdNo(userMessageVo.getIdNo());
+            user.setRootOrgCode(userMessageVo.getRootOrgCode());
+            user.setOrgPath(userMessageVo.getOrgPath());
+            user.setUserType("10");
             user.setCreateOperator(loginUserId);
             user.setUpdateOperator(loginUserId);
             user.setDelFlag(0);
+            
             HtBoaInLogin loginInfo = new HtBoaInLogin();
-            loginInfo.setLoginId(UUID.randomUUID().toString().replace("-", ""));
-            loginInfo.setUserId(userId);
+           // loginInfo.setLoginId(UUID.randomUUID().toString().replace("-", ""));
+            //loginInfo.setUserId(userId);
+            loginInfo.setLoginId(userMessageVo.getLoginId()); //作为用户的登录账号，修改为不是自动生成
             loginInfo.setCreateOperator(loginUserId);
             loginInfo.setUpdateOperator(loginUserId);
             loginInfo.setStatus("0");
             loginInfo.setPassword(EncryptUtil.passwordEncrypt("123456"));
             loginInfo.setFailedCount(0);
-            loginInfo.setRootOrgCode(user.getRootOrgCode());
+            loginInfo.setRootOrgCode(userMessageVo.getOrgCode());
             loginInfo.setDelFlag(0);
             boolean isAdd = htBoaInUserService.saveUserInfoAndLoginInfo(user, loginInfo);
             if (isAdd) {
@@ -351,7 +356,8 @@ public class UserResource{
         }
         return Result.buildFail();
     }
-
+    
+   
     @PostMapping("/delete")
     public Result delAsync(String userId) {
         if (userId != null && !"".equals(userId.trim())) {
@@ -372,8 +378,51 @@ public class UserResource{
     }
 
     @PostMapping("/update")
-    public Result updateAsync(@RequestBody HtBoaInUser user, @RequestHeader("userId") String loginUserId) {
-        if (user != null) {
+    public Result updateAsync(@RequestBody UserMessageVo userMessageVo, @RequestHeader("userId") String loginUserId) {
+        if (userMessageVo != null) {
+        	HtBoaInUser htBoaInUser = null;
+        	if(userMessageVo.getJobNumber()!=null&&!"".equals(userMessageVo.getJobNumber())) {
+        		htBoaInUser = htBoaInUserService.findByJobNumber(userMessageVo.getJobNumber());
+        		if(htBoaInUser!=null&&!htBoaInUser.getUserId().equals(userMessageVo.getUserId())) {
+            		return Result.buildFail("工号已经存在或不可用","工号已经存在或不可用");
+                 } 
+        	}
+            if(userMessageVo.getMobile()!=null) {
+        		htBoaInUser = htBoaInUserService.findByMobile(userMessageVo.getMobile());
+        		if(htBoaInUser!=null&&!htBoaInUser.getUserId().equals(userMessageVo.getUserId())) {
+            		return Result.buildFail("手机号已经存在或不可用","手机号已经存在或不可用");
+                 } 
+        	}
+           if(userMessageVo.getEmail()!=null) {
+        		htBoaInUser = htBoaInUserService.findByEmail(userMessageVo.getEmail());
+        		if(htBoaInUser!=null&&!htBoaInUser.getUserId().equals(userMessageVo.getUserId())) {
+            		return Result.buildFail("邮箱已经存在或不可用","邮箱已经存在或不可用");
+                 } 
+        	}
+			if (userMessageVo.getLoginId() != null) {
+				HtBoaInLogin htBoaInLogin = htBoaInLoginService.findByLoginId(userMessageVo.getLoginId());
+				if (htBoaInLogin != null && !htBoaInLogin.getUserId().equals(userMessageVo.getUserId())) {
+					return Result.buildFail("用户名已经存在或不可用", "用户名已经存在或不可用");
+				} else if (htBoaInLogin != null && htBoaInLogin.getUserId().equals(userMessageVo.getUserId())) {
+					 
+				} else {
+					HtBoaInLogin htBoaInLogins = htBoaInLoginService.findByUserId(userMessageVo.getUserId());
+					htBoaInLogins.setLoginId(userMessageVo.getLoginId());
+					htBoaInLoginService.update(htBoaInLogins);
+				}
+
+			}
+        	
+        	HtBoaInUser user = new HtBoaInUser();
+        	user.setUserId(userMessageVo.getUserId());
+            user.setEmail(userMessageVo.getEmail());
+            user.setJobNumber(userMessageVo.getJobNumber());
+            user.setMobile(userMessageVo.getMobile());
+            user.setOrgCode(userMessageVo.getOrgCode());
+            user.setUserName(userMessageVo.getUserName());
+            user.setIdNo(userMessageVo.getIdNo());
+            user.setRootOrgCode(userMessageVo.getRootOrgCode());
+            user.setOrgPath(userMessageVo.getOrgPath());
             user.setUpdateOperator(loginUserId);
             boolean isUpdate = htBoaInUserService.updateUserByUserId(user);
             if (isUpdate) {
@@ -474,5 +523,30 @@ public class UserResource{
     	return result;
     }
 
-   
+    @ApiOperation(value = "校验数据的重复性 true：可用  false：不可用")
+    @PostMapping(value = "/checkUserExist")
+    public Result checkUserExist(String jobnum,String mobile,String email,String loginid) {
+    	HtBoaInUser htBoaInUser = null;
+    	if(jobnum!=null) {
+    		htBoaInUser = htBoaInUserService.findByJobNumber(jobnum);
+    	}else if(mobile!=null) {
+    		htBoaInUser = htBoaInUserService.findByMobile(mobile);
+    	}else if(email!=null) {
+    		htBoaInUser = htBoaInUserService.findByEmail(email);
+    	}else if(loginid!=null) {
+    		HtBoaInLogin htBoaInLogin = htBoaInLoginService.findByLoginId(loginid);
+    		if(htBoaInLogin==null) {
+    	       return Result.buildSuccess();
+            }else {
+         	   return Result.buildFail();
+            }
+    	}
+		if(htBoaInUser==null) {
+	       return Result.buildSuccess();
+        }else {
+     	   return Result.buildFail();
+        }
+    }
+  
+    
 }

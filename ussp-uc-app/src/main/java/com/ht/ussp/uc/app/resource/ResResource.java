@@ -9,8 +9,19 @@
  */
 package com.ht.ussp.uc.app.resource;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.ht.ussp.bean.LoginUserInfoHelper;
-import com.ht.ussp.client.dto.LoginInfoDto;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInResource;
@@ -19,14 +30,9 @@ import com.ht.ussp.uc.app.service.HtBoaInResourceService;
 import com.ht.ussp.uc.app.vo.AppAndResourceVo;
 import com.ht.ussp.uc.app.vo.RelevanceApiVo;
 import com.ht.ussp.uc.app.vo.ResourcePageVo;
-import com.ht.ussp.uc.app.vo.UserMessageVo;
+
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * 资源操作类<br>
@@ -179,5 +185,13 @@ public class ResResource {
     @PostMapping(value = "/api/page/load", produces = {"application/json"})
     public PageResult loadApiByPage(ResourcePageVo page) {
         return htBoaInResourceService.loadApiByPage(page);
+    }
+    
+    
+    @ApiOperation(value = "API资源状态修改 状态（1，禁用，0，启用，2，隐藏）")
+    @PostMapping(value = "/changeApiState", produces = {"application/json"})
+    public Result changeApiState(Long id,String status) {
+        htBoaInResourceService.changeApiState(id,status);
+    	return Result.buildSuccess();
     }
 }

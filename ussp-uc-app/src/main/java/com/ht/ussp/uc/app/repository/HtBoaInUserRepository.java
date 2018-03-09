@@ -43,6 +43,13 @@ public interface HtBoaInUserRepository extends JpaSpecificationExecutor<HtBoaInU
      * @date 2018年1月22日 下午9:55:52
      */
     HtBoaInUser findByUserId(String userId);
+    
+    /**
+     * 通过userId email Mobile 工号登录
+     * @param userId
+     * @return
+     */
+    HtBoaInUser findByUserIdOrEmailOrMobileOrJobNumber(String userId,String email,String mobile,String jboNumber);
 
     @Query(value = "SELECT " +
             "new com.ht.ussp.uc.app.vo.UserMessageVo(" +
@@ -63,7 +70,8 @@ public interface HtBoaInUserRepository extends JpaSpecificationExecutor<HtBoaInU
             "login.status," +
             "login.failedCount," +
             "login.pwdExpDate," +
-            "login.effectiveDate)" +
+            "login.effectiveDate," +
+             "login.loginId,hbiUser.orgPath,hbiUser.rootOrgCode)" +
             "FROM HtBoaInUser hbiUser ,HtBoaInLogin login  ,HtBoaInOrg org " +
             "WHERE hbiUser.userId=login.userId " +
             "AND hbiUser.orgCode=org.orgCode " +
@@ -80,6 +88,39 @@ public interface HtBoaInUserRepository extends JpaSpecificationExecutor<HtBoaInU
             "AND ?1<>'' AND ?1 is not null"
     )
     Page<UserMessageVo> queryUserPage(String orgCode, String keyWord, Pageable pageable);
+    
+    @Query(value = "SELECT " +
+            "new com.ht.ussp.uc.app.vo.UserMessageVo(" +
+            "hbiUser.id," +
+            "hbiUser.userId," +
+            "hbiUser.jobNumber," +
+            "hbiUser.userName," +
+            "hbiUser.orgCode," +
+            "hbiUser.orgCode," +
+            "hbiUser.mobile," +
+            "hbiUser.email," +
+            "hbiUser.idNo," +
+            "hbiUser.delFlag," +
+            "hbiUser.createOperator," +
+            "hbiUser.createdDatetime," +
+            "hbiUser.updateOperator," +
+            "hbiUser.lastModifiedDatetime," +
+            "login.status," +
+            "login.failedCount," +
+            "login.pwdExpDate," +
+            "login.effectiveDate," +
+             "login.loginId,hbiUser.orgPath,hbiUser.rootOrgCode)" +
+            "FROM HtBoaInUser hbiUser ,HtBoaInLogin login   " +
+            "WHERE hbiUser.userId=login.userId " +
+            "AND (hbiUser.userName LIKE %?1% OR hbiUser.mobile LIKE %?1% OR hbiUser.jobNumber LIKE %?1% OR ?1 is null OR ?1='') " +
+            "AND hbiUser.delFlag = 0 " 
+            , countQuery = "SELECT " +
+            "COUNT(hbiUser.id) " +
+            "FROM HtBoaInUser hbiUser " +
+            "WHERE (hbiUser.userName LIKE %?1% OR hbiUser.mobile LIKE %?1% OR hbiUser.jobNumber LIKE %?1% OR ?1 is null OR ?1='') " +
+            "AND hbiUser.delFlag = 0 " 
+    )
+    Page<UserMessageVo> queryUserPageAll(String keyWord, Pageable pageable);
 
     @Query("SELECT new com.ht.ussp.uc.app.model.SelfBoaInUserInfo(u.userId, u.userName, u.email, u.idNo, u.mobile, u.orgCode, o.orgName, o.orgNameCn, u.rootOrgCode, '', '', o.orgPath, o.orgType,u.jobNumber) FROM HtBoaInUser u, HtBoaInOrg o  WHERE u.userId = ?1 AND u.orgCode = o.orgCode ")
     public List<SelfBoaInUserInfo> listSelfUserInfo(String userId);
@@ -113,7 +154,8 @@ public interface HtBoaInUserRepository extends JpaSpecificationExecutor<HtBoaInU
             "login.status," +
             "login.failedCount," +
             "login.pwdExpDate," +
-            "login.effectiveDate)" +
+            "login.effectiveDate,"
+            + "login.loginId,hbiUser.orgPath,hbiUser.rootOrgCode)" +
             "FROM HtBoaInUser hbiUser ,HtBoaInLogin login  ,HtBoaInOrg org " +
             "WHERE hbiUser.userId=login.userId " +
             "AND hbiUser.orgCode=org.orgCode " +
@@ -140,5 +182,12 @@ public interface HtBoaInUserRepository extends JpaSpecificationExecutor<HtBoaInU
             ,nativeQuery=true
     )
     Page<Object[]> queryUserIsNullPwd(Pageable pageable,@Param("orgCode")String orgCode, @Param("keyWord")String keyWord);
+
+	HtBoaInUser findByJobNumber(String jobnum);
+
+	HtBoaInUser findByMobile(String mobile);
+
+	HtBoaInUser findByEmail(String email);
+
     
 }
