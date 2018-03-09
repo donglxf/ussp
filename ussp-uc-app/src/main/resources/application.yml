@@ -1,13 +1,17 @@
 spring:
   datasource:
-    url: jdbc:mysql://10.110.1.240:3306/BOA?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
-    username: root
-    password: tuandai_bm2015
-    dbcp2:
-      validation-query: SELECT 1
-      test-while-idle: true
     type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://172.16.200.111:3306/BOA?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: root
+    password: hongte888
     driver-class-name: com.mysql.cj.jdbc.Driver
+    initialSize: 5
+    maxActive : 20
+    minIdle: 5
+    validation-query: SELECT 1 FROM DUAL
+    filters: stat,wall,log4j
+    testOnBorrow: false
+    connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
   jpa:
     database: MYSQL
     show-sql: true

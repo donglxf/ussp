@@ -19,7 +19,9 @@ eureka:
     register-with-eureka: false
     fetch-registry: false
     service-url:
-        defaultZone: http://localhost:${server.port}/eureka/
+        defaultZone: http://localhost:${server.port}/eureka/       
+        
+
 ---
 spring:
   profiles: dev

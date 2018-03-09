@@ -25,10 +25,12 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:30101/eureka/
+      defaultZone: http://192.168.13.170:30101/eureka/
 
 ---
 spring:
+  application:
+    name: ussp-uc-app-debug
   profiles: dev
   cloud:
     config:
@@ -40,10 +42,10 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://172.16.200.110:30101/eureka/
-  instance:
-    ip-address: 172.16.200.110
-    status-page-url: http://${eureka.instance.ip-address:${spring.cloud.client.ipAddress}}:${server.port}${status-page-url-path:/info}
-    health-check-url: http://${eureka.instance.ip-address:${spring.cloud.client.ipAddress}}:${server.port}${health-check-url-path:/health}
+#  instance:
+#    ip-address: 172.16.200.110
+#    status-page-url: http://${eureka.instance.ip-address:${spring.cloud.client.ipAddress}}:${server.port}${status-page-url-path:/info}
+#    health-check-url: http://${eureka.instance.ip-address:${spring.cloud.client.ipAddress}}:${server.port}${health-check-url-path:/health}
 
 ---
 spring:

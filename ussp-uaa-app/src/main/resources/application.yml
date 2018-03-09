@@ -1,3 +1,7 @@
 server:
   port: 30000
   
+spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Chongqing
