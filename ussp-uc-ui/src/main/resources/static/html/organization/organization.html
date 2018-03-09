@@ -16,12 +16,12 @@
         <div class="row row-lg" id="organization_table_tools">
 			<div class="toolbarBtn btn-group">
 				<button class="layui-btn layui-btn-sm" title="新增" data-type="add" ht-auth="add">新增</button>
-				<button class="layui-btn layui-btn-sm" title="导出" data-type="exportOrg">导出</button>
-				<button class="layui-btn layui-btn-sm" title="下载导入模板" onclick="location.href='/template/机构导入模板.xlsx'" >下载导入模板</button>
-				<button class="layui-btn layui-btn-sm" title="导入" id="importOrg" data-type="importOrg">导入</button>
-                <button class="layui-btn layui-btn-sm" title="数据转换" data-type="dataConver">数据转换</button>
-				<button class="layui-btn layui-btn-sm" title="获取钉钉机构" id="getDDOrg" data-type="getDDOrg">获取钉钉机构</button>
-				<button class="layui-btn layui-btn-sm" title="机构对照" id="getDDOrgDZ" data-type="getDDOrgDZ">机构对照</button>
+				<button class="layui-btn layui-btn-sm" title="导出" data-type="exportOrg" ht-auth="export" >导出</button>
+				<button class="layui-btn layui-btn-sm" title="下载导入模板" onclick="location.href='/template/机构导入模板.xlsx'" ht-auth="down" >下载导入模板</button>
+				<button class="layui-btn layui-btn-sm" title="导入" id="importOrg" data-type="importOrg" ht-auth="import" >导入</button>
+				<button class="layui-btn layui-btn-sm" title="获取钉钉机构" id="getDDOrg" data-type="getDDOrg" ht-auth="getDDOrg">获取钉钉机构</button>
+				<button class="layui-btn layui-btn-sm" title="机构对照" id="getDDOrgDZ" data-type="getDDOrgDZ" ht-auth="getDDOrgDZ">机构对照</button>
+				<button class="layui-btn layui-btn-sm" title="数据转换" id="convertData" data-type="convertData" ht-auth="convertData">数据转换</button>
 			</div>
 			<div class="pull-right col-xs-4 row">
                 <div class="input-group input-group-sm" id="organization_table_tools2">

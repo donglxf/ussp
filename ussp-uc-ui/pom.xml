@@ -27,7 +27,7 @@
         <dependency>
             <artifactId>ussp-common</artifactId>
             <groupId>com.ht.ussp</groupId>
-            <version>0.0.7</version>
+            <version>0.0.9</version>
         </dependency>
     </dependencies>
 

@@ -13,8 +13,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ht.ussp.uc.app.domain.HtBoaInContrast;
-import com.ht.ussp.uc.app.repository.HtBoaInContrastRepository;
+import com.ht.ussp.uc.app.domain.HtBoaInBmUser;
+import com.ht.ussp.uc.app.repository.HtBoaInBmUserRepository;
 
 /**
  * 对账表的业务逻辑层<br>
@@ -24,15 +24,12 @@ import com.ht.ussp.uc.app.repository.HtBoaInContrastRepository;
  * @Date 2018/3/4 20:31
  */
 @Service
-public class HtBoaInContrastService {
+public class HtBoaInBmUserService {
     @Autowired
-    private HtBoaInContrastRepository htBoaInContrastRepository;
+    private HtBoaInBmUserRepository htBoaInBmUserRepository;
 
-    public List<HtBoaInContrast> add(List<HtBoaInContrast> htBoaInContrastList) {
-        return htBoaInContrastRepository.save(htBoaInContrastList);
+    public List<HtBoaInBmUser> getHtBoaInBmUserList() {
+        return htBoaInBmUserRepository.findAll();
     }
     
-    public List<HtBoaInContrast> getHtBoaInContrastList() {
-        return htBoaInContrastRepository.findAll();
-    }
 }

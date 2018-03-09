@@ -20,4 +20,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @Date 2018/3/4 20:29
  */
 public interface HtBoaInContrastRepository extends JpaRepository<HtBoaInContrast, Long> {
+
+	HtBoaInContrast findByUcBusinessIdAndType(String userId, String string);
 }

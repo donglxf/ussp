@@ -15,14 +15,12 @@ ht.config.ui:
 ---
 spring:
   profiles: dev
-
 ht.config.ui:
   gatewayUrl: http://172.16.200.110:30111/
 
 ---
 spring:
   profiles: sit
-
 ht.config.ui:
   gatewayUrl: http://172.16.200.112:30111/
 

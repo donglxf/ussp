@@ -3,9 +3,9 @@ package com.ht.ussp.uc.app.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
-import com.ht.ussp.uc.app.domain.HtBoaInOrg;
-import com.ht.ussp.uc.app.repository.HtBoaInOrgRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -16,12 +16,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.ReturnCodeEnum;
+import com.ht.ussp.uc.app.domain.HtBoaInContrast;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
+import com.ht.ussp.uc.app.domain.HtBoaInOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
+import com.ht.ussp.uc.app.repository.HtBoaInContrastRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInLoginRepository;
+import com.ht.ussp.uc.app.repository.HtBoaInOrgRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInUserRepository;
-import com.ht.ussp.uc.app.vo.AppAndResourceVo;
 import com.ht.ussp.uc.app.vo.LoginInfoVo;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
 import com.ht.ussp.util.BeanUtils;
@@ -41,6 +44,8 @@ public class HtBoaInUserService {
     private HtBoaInLoginRepository htBoaInLoginRepository;
     @Autowired
     private HtBoaInOrgRepository htBoaInOrgRepository;
+    @Autowired
+    private HtBoaInContrastRepository htBoaInContrastRepository;
 
     /**
      * @return HtBoaInUser
@@ -52,6 +57,14 @@ public class HtBoaInUserService {
         return htBoaInUserRepository.findByUserId(userId);
     }
 
+    /**
+     * 通过userId email Mobile 工号登录
+     * @param userId
+     * @return
+     */
+    public HtBoaInUser findByUserIdOrEmailOrMobileOrJobNumber(String userId,String email,String mobile,String jboNumber){
+        return htBoaInUserRepository.findByUserIdOrEmailOrMobileOrJobNumber(userId, email, mobile, jboNumber);
+    }
 
     public LoginInfoVo queryUserInfo(String userId) {
         LoginInfoVo loginInfoVo = new LoginInfoVo();
@@ -64,6 +77,18 @@ public class HtBoaInUserService {
             userMessageVo.setOrgName(orgList.get(0).getOrgNameCn());
         }
         BeanUtils.deepCopy(userMessageVo, loginInfoVo);
+        if(loginInfoVo!=null) {
+        	HtBoaInContrast htBoaInContrast = htBoaInContrastRepository.findByUcBusinessIdAndType(loginInfoVo.getUserId(),"20");
+        	if(htBoaInContrast!=null) {
+        		loginInfoVo.setBmUserId(htBoaInContrast.getBmBusinessId());
+        		loginInfoVo.setDdUserId(htBoaInContrast.getDdBusinessId());
+        	}
+        	HtBoaInContrast htBoaInContrastOrg = htBoaInContrastRepository.findByUcBusinessIdAndType(loginInfoVo.getOrgCode(),"10");
+        	if(htBoaInContrastOrg!=null) {
+        		loginInfoVo.setBmOrgCode(htBoaInContrastOrg.getBmBusinessId());
+        		loginInfoVo.setDdOrgCode(htBoaInContrastOrg.getDdBusinessId());
+        	}
+        }
         return loginInfoVo;
     }
 
@@ -79,7 +104,25 @@ public class HtBoaInUserService {
      */
     public PageResult<List<UserMessageVo>> getUserListPage(PageRequest pageRequest, String orgCode, String keyWord, Map<String, String> query) {
         PageResult result = new PageResult();
-        Page<UserMessageVo> pageData = htBoaInUserRepository.queryUserPage(orgCode, keyWord, pageRequest);
+        Page<UserMessageVo> pageData = null;
+        Page<UserMessageVo> pageDataAll = null;
+        List<UserMessageVo> listUserMessageVo = new ArrayList<UserMessageVo>();
+        List<HtBoaInOrg> orgList = null;
+        if(StringUtils.isEmpty(orgCode)&&StringUtils.isNotEmpty(keyWord)) { //查全局
+        	orgList = htBoaInOrgRepository.findAll();
+        	pageDataAll = htBoaInUserRepository.queryUserPageAll( keyWord, pageRequest);
+        }
+        if(StringUtils.isNotEmpty(orgCode)&&StringUtils.isNotEmpty(keyWord)) {
+        	if("D01".equals(orgCode)) {//顶级机构查全局
+        		orgList = htBoaInOrgRepository.findAll();
+        		pageDataAll = htBoaInUserRepository.queryUserPageAll( keyWord, pageRequest);
+        	}else {//按条件查询
+        		pageData = htBoaInUserRepository.queryUserPage(orgCode, keyWord, pageRequest);
+        	}
+        }
+        if(StringUtils.isNotEmpty(orgCode)&&StringUtils.isEmpty(keyWord)) {//按条件查询
+        	pageData = htBoaInUserRepository.queryUserPage(orgCode, keyWord, pageRequest);
+        }
 //        Page<HtBoaInUser> pageData = null;
 //        if (query != null && query.size() > 0 && query.get("orgCode") != null) {
 //            if (!StringUtil.isEmpty(keyWord)) {
@@ -111,6 +154,18 @@ public class HtBoaInUserService {
 //        }
         if (pageData != null) {
             result.count(pageData.getTotalElements()).data(pageData.getContent());
+        }else {
+        	if(pageDataAll!=null) {
+        		for(UserMessageVo userMessageVo : pageDataAll.getContent()) {
+        			if(orgList!=null) {
+        				HtBoaInOrg o = orgList.stream().filter(org -> org.getOrgCode().equals(userMessageVo.getOrgCode())).findFirst().get();
+        				userMessageVo.setOrgName(o.getOrgNameCn());
+        				listUserMessageVo.add(userMessageVo);
+        			}
+        		}
+        		result.count(pageDataAll.getTotalElements()).data(listUserMessageVo);
+        	}
+        	
         }
         result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
         return result;
@@ -126,10 +181,54 @@ public class HtBoaInUserService {
      */
     @Transactional
     public boolean saveUserInfoAndLoginInfo(HtBoaInUser user, HtBoaInLogin logininfo) {
+    	String userId = "";
+    	int isOrgUser = 1;
+    	if (user.getJobNumber() != null && user.getJobNumber().contains("HX-")) {
+            userId = String.format("%s%s%s%s%s", "01", 1, "1", "1", user.getJobNumber().replace("HX-", ""));
+        } else {
+        	isOrgUser = 0;
+            userId = String.format("%s%s%s%s%s", "01", 0, "1", "1", generateNumber(5));
+        }
+    	//查看userId是否被占用
+    	HtBoaInUser htBoaInUser = findByUserId(userId);
+    	if(htBoaInUser!=null) {
+    		userId = String.format("%s%s%s%s%s", "01", isOrgUser, "1", "1", generateNumber(5));
+    	}
+    	user.setUserId(userId);
         htBoaInUserRepository.save(user);
+        logininfo.setUserId(userId);
         htBoaInLoginRepository.save(logininfo);
         return true;
     }
+   
+    
+    private String generateNumber(int length) {
+        String no = "";
+        //初始化备选数组
+        int[] defaultNums = new int[10];
+        for (int i = 0; i < defaultNums.length; i++) {
+            defaultNums[i] = i;
+        }
+
+        Random random = new Random();
+        int[] nums = new int[length];
+        //默认数组中可以选择的部分长度
+        int canBeUsed = defaultNums.length;
+        //填充目标数组
+        for (int i = 0; i < nums.length; i++) {
+            //将随机选取的数字存入目标数组
+            int index = random.nextInt(canBeUsed);
+            nums[i] = defaultNums[index];
+            canBeUsed--;
+        }
+        if (nums.length > 0) {
+            for (int i = 0; i < nums.length; i++) {
+                no += nums[i];
+            }
+        }
+        return no;
+    }
+    
 
     public List<HtBoaInUser> findAll() {
         return this.htBoaInUserRepository.findAll();
@@ -219,6 +318,22 @@ public class HtBoaInUserService {
         result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
         return result;
     }
+
+	public void add(List<HtBoaInUser> newUserList) {
+		this.htBoaInUserRepository.save(newUserList);
+	}
+
+	public HtBoaInUser findByJobNumber(String jobnum) {
+		return this.htBoaInUserRepository.findByJobNumber(jobnum);
+	}
+
+	public HtBoaInUser findByMobile(String mobile) {
+		return this.htBoaInUserRepository.findByMobile(mobile);
+	}
+
+	public HtBoaInUser findByEmail(String email) {
+		return this.htBoaInUserRepository.findByEmail(email);
+	}
 
 
 }
