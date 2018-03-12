@@ -67,6 +67,11 @@ public class HtBoaInResourceService {
         htBoaInResourceRepository.delete(id);
     }
 
+    public List<HtBoaInResource> findByResCodeAndApp(String resCode,String app) {
+        return htBoaInResourceRepository.findByResCodeAndApp(resCode,app);
+    }
+
+    
     public void delete(List<HtBoaInResource> htBoaInResourceList) {
         htBoaInResourceRepository.delete(htBoaInResourceList);
     }
@@ -266,6 +271,38 @@ public class HtBoaInResourceService {
         }
         return "";
     }
+    
+    public String createMenuCode(String app, String resPanrent ) {
+        String[] resType = new String[]{"view", "group"};
+        String shortType = "M";
+        String maxResCode = "";
+
+        //资源编码前缀
+        String resCodePrefix = "";
+        if (StringUtils.isEmpty(resPanrent)) {
+            //资源编码前缀
+            resCodePrefix = String.format("%s_%s", app, shortType);
+        } else {
+        	resCodePrefix = String.format("%s%s", resPanrent, shortType);
+        }
+        if (StringUtils.isEmpty(resPanrent)) {
+        	maxResCode = htBoaInResourceRepository.queryMaxMenuCodeByAppAndParentAndType(app, Arrays.asList(resType), resCodePrefix + "%");
+        }else {
+            maxResCode = htBoaInResourceRepository.queryMaxResCodeByAppAndParentAndType(app, ("".equals(resPanrent) ? "NULL" : resPanrent), Arrays.asList(resType), resCodePrefix + "%");
+        }
+          
+        int index = 0;
+        if (!StringUtils.isEmpty(maxResCode)) {
+            //最大资源编码（去除资源编码前缀）
+            try {
+                index = Integer.parseInt(maxResCode.replace(resCodePrefix, "").replaceAll("[^0-9]", ""));
+            } catch (Exception e) {
+                return "";
+            }
+        }
+        return String.format("%s%02d", resCodePrefix, (index + 1));
+    
+    }
 
     /**
      * API资源绑定父资源，同时绑定父资源对应的角色<br>
@@ -342,4 +379,8 @@ public class HtBoaInResourceService {
             htBoaInResourceRepository.saveAndFlush(htBoaInResource);
         }
     }
+
+	public List<HtBoaInResource> findByAppAndResType(String app, String resType) {
+		return htBoaInResourceRepository.findByAppAndResType(app,resType);
+	}
 }

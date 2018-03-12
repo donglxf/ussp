@@ -8,10 +8,10 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
         , resetPwdDialog = 0
-        , orgTree //组织机构树控件
+        , userOrgTree //组织机构树控件
         , active = {
         add: function () { //弹出用户新增弹出框
-            var nodes = orgTree.getSelectedNodes();
+            var nodes = userOrgTree.getSelectedNodes();
             if (nodes.length == 0) {
                 layer.alert("请先选择一个组织机构。");
                 return false;
@@ -70,7 +70,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
             refreshTable($("#user_search_keyword").val());
         },
         batchResetPwd: function () {
-        	 var nodes = orgTree.getSelectedNodes();
+        	 var nodes = userOrgTree.getSelectedNodes();
              if (nodes.length == 0) {
                  layer.alert("请先选择一个组织机构。");
                  return false;
@@ -242,7 +242,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
         if (!keyword) {
             keyword = null;
         }
-        var selectNodes = orgTree.getSelectedNodes();
+        var selectNodes = userOrgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
             table.reload('user_datatable', {
                 height: 'full-200',
@@ -254,13 +254,23 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
                     orgCode: selectNodes[0]["orgCode"]
                 }
             });
+        }else{
+        	table.reload('user_datatable', {
+                height: 'full-200',
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+                , where: {
+                    keyWord: keyword,
+                }
+            });
         }
     };
     var refreshDalogBatchResetDataTable = function (keyword) {
         if (!keyword) {
             keyword = null;
         }
-        var selectNodes = orgTree.getSelectedNodes();
+        var selectNodes = userOrgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
         	 table.reload('batch_resetpwd_dalog_datatable', {
                  page: {
@@ -275,7 +285,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
        
     };
     //渲染组织机构树
-    orgTree = $.fn.zTree.init($('#user_org_ztree_left'), {
+    userOrgTree = $.fn.zTree.init($('#user_org_ztree_left'), {
             async: {
                 enable: true,
                 url: config.basePath + "org/tree",
@@ -289,7 +299,8 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
                 }
             }
             , view: {
-                showIcon: false
+            	 height: "full-183"
+                ,showIcon: false
                 , selectedMulti: false
                 , fontCss: function (treeId, treeNode) {
                     return (!!treeNode.highlight) ? {color: "#A60000", "font-weight": "bold"} : {
@@ -304,9 +315,9 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
                     refreshTable();
                 },
                 onAsyncSuccess: function (event, treeId, treeNode) {
-                    var node = orgTree.getNodeByParam("level ", "0");
+                    var node = userOrgTree.getNodeByParam("level ", "0");
                     if (node) {
-                        orgTree.selectNode(node);
+                        userOrgTree.selectNode(node);
                     }
                 }
             },
@@ -472,16 +483,37 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
         active[type] ? active[type].call(this) : '';
     });
     //刷新树的数据
-    $('#user_btn_refresh_tree').on('click', function (e) {
-        if (orgTree) {
-            orgTree.reAsyncChildNodes(null, "refresh");
+   /* $('#user_btn_refresh_tree').on('click', function (e) {
+        if (userOrgTree) {
+            userOrgTree.reAsyncChildNodes(null, "refresh");
+        }
+    });*/
+    
+    $('#user_btn_tree .btn').on('click', function () {
+        var type = $(this).data('type');
+        switch (type) {
+            case "refresh":
+                if (userOrgTree) {
+                	userOrgTree.reAsyncChildNodes(null, "refresh");
+                }
+                break;
+            case "expandAll":
+                if (userOrgTree) {
+                	userOrgTree.expandAll(true);
+                }
+                break;
+            case "collapseAll":
+                if (userOrgTree) {
+                	userOrgTree.expandAll(false);
+                }
+                break;
         }
     });
     var nodeList = [];
     //搜索树的数据
     $('#user_search_tree_org').bind('input', function (e) {
-        if (orgTree && $(this).val() != "") {
-            nodeList = orgTree.getNodesByParamFuzzy("name", $(this).val());
+        if (userOrgTree && $(this).val() != "") {
+            nodeList = userOrgTree.getNodesByParamFuzzy("name", $(this).val());
             updateNodes(true);
         } else {
             updateNodes(false);
@@ -492,9 +524,9 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
     function updateNodes(highlight) {
         for (var i = 0, l = nodeList.length; i < l; i++) {
             nodeList[i].highlight = highlight;
-            orgTree.updateNode(nodeList[i]);
+            userOrgTree.updateNode(nodeList[i]);
             if (highlight) {
-                orgTree.expandNode(orgTree.getNodeByParam("orgCode", nodeList[i]["parentOrgCode"]), true, false, null, null);
+                userOrgTree.expandNode(userOrgTree.getNodeByParam("orgCode", nodeList[i]["parentOrgCode"]), true, false, null, null);
             }
         }
     }
