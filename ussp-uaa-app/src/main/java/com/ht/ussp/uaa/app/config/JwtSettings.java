@@ -1,5 +1,6 @@
 package com.ht.ussp.uaa.app.config;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -10,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * @date 2018年1月6日 上午10:29:21
  */
 @Configuration
+@ConfigurationProperties(prefix = "uaa.security.jwt")
 public class JwtSettings {
 	/**
 	 * token有效时间

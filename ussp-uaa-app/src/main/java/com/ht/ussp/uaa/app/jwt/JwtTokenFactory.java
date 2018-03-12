@@ -50,7 +50,6 @@ public class JwtTokenFactory {
 		claims.put("userId", userVo.getUserId());
 		claims.put("orgCode", userVo.getOrgCode());
 		LocalDateTime currentTime = LocalDateTime.now();
-
 		String token = Jwts.builder().setClaims(claims).setIssuer(settings.getTokenIssuer())
 				.setIssuedAt(Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant()))
 				.setExpiration(Date.from(currentTime.plusMinutes(settings.getTokenExpirationTime())

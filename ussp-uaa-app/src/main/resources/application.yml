@@ -3,5 +3,12 @@ server:
   
 spring:
   jackson:
-    date-format: yyyy-MM-dd HH:mm:ss
     time-zone: Asia/Chongqing
+
+uaa:
+  security:
+    jwt:
+      tokenExpirationTime: 29  #分钟
+      refreshTokenExpTime: 720
+      tokenIssuer: qiuwenwu@hongte.info
+      tokenSigningKey: xm8EV6Hy5RMFK4EEACIDAwQus
