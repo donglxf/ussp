@@ -40,4 +40,7 @@ public class LoginInfoDto {
     private String ddOrgCode;
  // 信贷机构
     private String bmOrgCode;
+    
+    //是否管理员  Y是  N不是
+  	private String controller;
 }

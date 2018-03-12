@@ -71,7 +71,7 @@ public interface HtBoaInUserRepository extends JpaSpecificationExecutor<HtBoaInU
             "login.failedCount," +
             "login.pwdExpDate," +
             "login.effectiveDate," +
-             "login.loginId,hbiUser.orgPath,hbiUser.rootOrgCode)" +
+             "login.loginId,hbiUser.orgPath,hbiUser.rootOrgCode,hbiUser.userId)" +
             "FROM HtBoaInUser hbiUser ,HtBoaInLogin login  ,HtBoaInOrg org " +
             "WHERE hbiUser.userId=login.userId " +
             "AND hbiUser.orgCode=org.orgCode " +
@@ -109,7 +109,7 @@ public interface HtBoaInUserRepository extends JpaSpecificationExecutor<HtBoaInU
             "login.failedCount," +
             "login.pwdExpDate," +
             "login.effectiveDate," +
-             "login.loginId,hbiUser.orgPath,hbiUser.rootOrgCode)" +
+             "login.loginId,hbiUser.orgPath,hbiUser.rootOrgCode,hbiUser.userId)" +
             "FROM HtBoaInUser hbiUser ,HtBoaInLogin login   " +
             "WHERE hbiUser.userId=login.userId " +
             "AND (hbiUser.userName LIKE %?1% OR hbiUser.mobile LIKE %?1% OR hbiUser.jobNumber LIKE %?1% OR ?1 is null OR ?1='') " +
@@ -155,7 +155,7 @@ public interface HtBoaInUserRepository extends JpaSpecificationExecutor<HtBoaInU
             "login.failedCount," +
             "login.pwdExpDate," +
             "login.effectiveDate,"
-            + "login.loginId,hbiUser.orgPath,hbiUser.rootOrgCode)" +
+            + "login.loginId,hbiUser.orgPath,hbiUser.rootOrgCode,hbiUser.userId)" +
             "FROM HtBoaInUser hbiUser ,HtBoaInLogin login  ,HtBoaInOrg org " +
             "WHERE hbiUser.userId=login.userId " +
             "AND hbiUser.orgCode=org.orgCode " +

@@ -9,6 +9,7 @@
  */
 package com.ht.ussp.uc.app.resource;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,10 @@ import com.ht.ussp.bean.LoginUserInfoHelper;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInResource;
+import com.ht.ussp.uc.app.domain.HtBoaInRoleRes;
 import com.ht.ussp.uc.app.service.HtBoaInAppService;
 import com.ht.ussp.uc.app.service.HtBoaInResourceService;
+import com.ht.ussp.uc.app.service.HtBoaInRoleResService;
 import com.ht.ussp.uc.app.vo.AppAndResourceVo;
 import com.ht.ussp.uc.app.vo.RelevanceApiVo;
 import com.ht.ussp.uc.app.vo.ResourcePageVo;
@@ -53,7 +56,11 @@ public class ResResource {
     private HtBoaInResourceService htBoaInResourceService;
     @Autowired
     private HtBoaInAppService htBoaInAppService;
+    
+    @Autowired
+    private HtBoaInRoleResService htBoaInRoleResService;
 
+    
 
     @PostMapping("/app/load")
     public List<AppAndResourceVo> loadAppAndResourceTreeData() {
@@ -192,6 +199,122 @@ public class ResResource {
     @PostMapping(value = "/changeApiState", produces = {"application/json"})
     public Result changeApiState(Long id,String status) {
         htBoaInResourceService.changeApiState(id,status);
+    	return Result.buildSuccess();
+    }
+    
+   
+	/**
+	 * 提供外部，新增菜单
+	 * 
+	 * @param resource
+	 * @param userId
+	 * @return
+	 */
+    @GetMapping(value = "/addMenu")
+	public Result addMenu(@RequestParam("resNameCn") String resNameCn, @RequestParam("resContent") String resContent,
+			@RequestParam("fontIcon") String fontIcon, @RequestParam("resParent") String resParent,
+			@RequestParam("resParentName") String resParentName, @RequestParam("roles") String[] roles,
+			@RequestParam("userId") String userId, @RequestParam("app") String app) {
+		HtBoaInResource resource = new HtBoaInResource();
+		if (StringUtils.isEmpty(resContent)) {
+			resource.setResType("group");
+		} else {
+			resource.setResType("view");
+		}
+		resource.setResNameCn(resNameCn);
+		resource.setResContent(resContent);
+		resource.setFontIcon(fontIcon);
+		resource.setResParent(resParent);
+		resource.setApp(app);
+		resource.setResCode( htBoaInResourceService.createMenuCode(app, resParent));
+		resource.setStatus("0");
+		resource.setCreateOperator(userId);
+		resource.setCreatedDatetime(new Date());
+		resource.setDelFlag(0);
+		resource = htBoaInResourceService.save(resource);
+		if (resource != null && !StringUtils.isEmpty(resource.getId())) {
+			for(String role :roles) {
+				HtBoaInRoleRes u = new HtBoaInRoleRes();
+				u.setResCode(resource.getResCode());
+				u.setRoleCode(role);
+				u.setCreatedDatetime(new Date());
+				u.setCreateOperator(userId);
+				u.setDelFlag(0);
+				htBoaInRoleResService.save(u);
+			}
+			return Result.buildSuccess(resource);
+		}
+		return Result.buildFail();
+	}
+    
+	/**
+	 * 提供外部，修改菜单
+	 * 
+	 * @param resource
+	 * @param userId
+	 * @return
+	 */
+	@GetMapping("/updateMenu")
+	public Result updateMenu(@RequestParam("resCode") String resCode,@RequestParam("resNameCn") String resNameCn, @RequestParam("resContent") String resContent,
+			@RequestParam("fontIcon") String fontIcon, @RequestParam("roles") String[] roles,
+			@RequestParam("userId") String userId, @RequestParam("app") String app) {
+		if(org.apache.commons.lang3.StringUtils.isNoneEmpty(resCode)) {
+			List<HtBoaInResource> listHtBoaInResource = htBoaInResourceService.findByResCodeAndApp(resCode,app);
+			if(listHtBoaInResource!=null&&!listHtBoaInResource.isEmpty()) {
+				HtBoaInResource resource = listHtBoaInResource.get(0);
+				if (StringUtils.isEmpty(resContent)) {
+					resource.setResType("group");
+				} else {
+					resource.setResType("view");
+				}
+				resource.setResNameCn(resNameCn);
+				resource.setResContent(resContent);
+				resource.setFontIcon(fontIcon);
+				resource.setUpdateOperator(userId);
+				resource.setLastModifiedDatetime(new Date());
+				resource = htBoaInResourceService.save(resource);
+				if (resource != null) {
+					for(String role :roles) {
+						List<HtBoaInRoleRes> listHtBoaInRoleRes = htBoaInRoleResService.findByResCodeAndRoleCode(resource.getResCode(),role);
+						for(HtBoaInRoleRes u:listHtBoaInRoleRes) {
+							htBoaInRoleResService.deleteById(u.getId());
+							u.setResCode(resource.getResCode());
+							u.setRoleCode(role);
+							u.setCreatedDatetime(new Date());
+							u.setCreateOperator(userId);
+							u.setDelFlag(0);
+							htBoaInRoleResService.save(u);
+						}
+					}
+					return Result.buildSuccess(resource);
+				}
+			}
+		}
+		return Result.buildFail();
+	}
+	
+	@ApiOperation(value = "API资源状态修改 状态（1，禁用，0，启用，2，隐藏）")
+    @GetMapping(value = "/changeMenuState")
+    public Result changeMenuState(@RequestParam("resCode")String resCode, @RequestParam("status")String status,@RequestParam("userId")String userId,@RequestParam("app")String app) {
+		if(org.apache.commons.lang3.StringUtils.isNoneEmpty(resCode)) {
+			List<HtBoaInResource> listHtBoaInResource = htBoaInResourceService.findByResCodeAndApp(resCode, app);
+			if(listHtBoaInResource!=null&&!listHtBoaInResource.isEmpty()) {
+				HtBoaInResource resource = listHtBoaInResource.get(0);
+				if(resource!=null) {
+					htBoaInResourceService.changeApiState(resource.getId(),status);
+				}
+			}
+		}
+    	return Result.buildSuccess();
+    }
+	
+    @GetMapping(value = "/getMenus")
+    public Result getMenus(@RequestParam("app")String app,@RequestParam("resType")String resType) {
+		if(org.apache.commons.lang3.StringUtils.isNotEmpty(app)) {
+			resType = org.apache.commons.lang3.StringUtils.isNotEmpty(resType)?resType:"view";
+			List<HtBoaInResource> listHtBoaInResource = htBoaInResourceService.findByAppAndResType(app,resType);
+			return Result.buildSuccess(listHtBoaInResource);
+		}
     	return Result.buildSuccess();
     }
 }

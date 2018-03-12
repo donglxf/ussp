@@ -93,4 +93,16 @@ public class HtBoaInRoleResService {
     public void deleteByRoleCode(String roleCode) {
         this.htBoaInRoleResRepository.deleteByRoleCode(roleCode);
     }
+    
+    public void save(HtBoaInRoleRes u) {
+        this.htBoaInRoleResRepository.save(u);
+    }
+    
+    public List<HtBoaInRoleRes> findByResCodeAndRoleCode(String resCode,String roleCode) {
+       return this.htBoaInRoleResRepository.findByResCodeAndRoleCode(resCode,roleCode);
+    }
+
+	public void deleteById(Long id) {
+		this.htBoaInRoleResRepository.deleteById(id);
+	}
 }

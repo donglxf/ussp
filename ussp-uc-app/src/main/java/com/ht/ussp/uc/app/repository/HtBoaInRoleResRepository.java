@@ -21,4 +21,8 @@ public interface HtBoaInRoleResRepository extends JpaSpecificationExecutor<HtBoa
     int deleteByRoleCode(String roleCode);
 
     List<HtBoaInRoleRes> findByResCode(String resCode);
+
+    List<HtBoaInRoleRes>  findByResCodeAndRoleCode(String resCode, String roleCode);
+
+	void deleteById(Long id);
 }
