@@ -2,7 +2,7 @@ package com.ht.ussp.uaa.app.model;
 
 import java.io.Serializable;
 
-import com.ht.ussp.uaa.app.util.SysStatus;
+import com.ht.ussp.common.SysStatus;
 
 
 

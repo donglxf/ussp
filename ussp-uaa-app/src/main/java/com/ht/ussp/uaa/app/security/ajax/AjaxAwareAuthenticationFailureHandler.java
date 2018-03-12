@@ -15,10 +15,10 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.uaa.app.exception.AuthMethodNotSupportedException;
 import com.ht.ussp.uaa.app.exception.JwtExpiredTokenException;
 import com.ht.ussp.uaa.app.model.ResponseModal;
-import com.ht.ussp.uaa.app.util.SysStatus;
 
 /**
  * 
