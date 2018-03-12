@@ -13,27 +13,19 @@ Configuration:
       - name: PROJECT_NAME
         value: /gateway/ussp-gateway-app
       - name: CONAOLE_LOG_PATTERN
-        value: "%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{%5p} %style{%X{pid}}{magenta} [%15.15t] %style{%-40.40c{1}}{Cyan} %L : %m%n"
+        value: "%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{%5p} %style{%X{pid}}{magenta} [%15.15t] %style{%-40.40c{1}}{Cyan} %4L : %m%n"
       - name: FILE_LOG_PATTERN
         value: "%d{yyyy-MM-dd HH:mm:ss.SSS} %5p %X{pid} [%15.15t] %-40.40c{1} : %m%n"
   Appenders:
     Console:  #输出到控制台
       name: CONSOLE
       target: SYSTEM_OUT
-      ThresholdFilter:
-        level: ${sys:log.level.console} # “sys:”表示：如果VM参数中没指定这个变量值，则使用本文件中定义的缺省全局变量值
-        onMatch: ACCEPT
-        onMismatch: DENY
       PatternLayout:
         pattern: ${CONAOLE_LOG_PATTERN}
     RollingFile: # 输出到文件，超过128MB归档
       name: ROLLING_FILE
       fileName: ${LOG_HOME}/${PROJECT_NAME}.log
       filePattern: ${LOG_HOME}/${PROJECT_NAME}_%d{yyyy-MM-dd}.log
-      ThresholdFilter:
-        level: ${sys:log.level.file} # “sys:”表示：如果VM参数中没指定这个变量值，则使用本文件中定义的缺省全局变量值
-        onMatch: ACCEPT
-        onMismatch: DENY
       PatternLayout:
         pattern: ${FILE_LOG_PATTERN}
       Policies:
@@ -42,13 +34,13 @@ Configuration:
           modulate: true
   Loggers:
     Root:  
-      level: info  
-      AppenderRef:  
+      level: info
+      AppenderRef:
         - ref: CONSOLE
         - ref: ROLLING_FILE #开发环境无需产生日志文件
-    Logger: # 为com.ht包配置特殊的Log级别，方便调试  
-      - name: com.ht 
-        additivity: false  
-        level: info
-        AppenderRef:  
+    Logger: # 为com.ht包配置特殊的Log级别，方便调试
+      - name: com.ht.ussp.gateway.app
+        additivity: false
+        level: DEBUG
+        AppenderRef:
           - ref: CONSOLE

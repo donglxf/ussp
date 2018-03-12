@@ -1,3 +1,5 @@
+server:
+  port: 30111
 spring:
   application:
     name: ussp-gateway-app
@@ -38,8 +40,8 @@ spring:
 eureka:
   instance:
     ip-address: 172.16.200.110
-    status-page-url: http://${eureka.instance.ip-address:${spring.cloud.client.ipAddress}}:${server.port}${status-page-url-path:/info}
-    health-check-url: http://${eureka.instance.ip-address:${spring.cloud.client.ipAddress}}:${server.port}${health-check-url-path:/health}
+    status-page-url: http://${eureka.instance.ip-address}:${server.port}${status-page-url-path:/info}
+    health-check-url: http://${eureka.instance.ip-address}:${server.port}${health-check-url-path:/health}
   client:
     serviceUrl:
       defaultZone: http://172.16.200.110:30101/eureka/
@@ -56,8 +58,8 @@ spring:
 eureka:
   instance:
     ip-address: 172.16.200.112
-    status-page-url: http://${eureka.instance.ip-address:${spring.cloud.client.ipAddress}}:${server.port}${status-page-url-path:/info}
-    health-check-url: http://${eureka.instance.ip-address:${spring.cloud.client.ipAddress}}:${server.port}${health-check-url-path:/health}
+    status-page-url: http://${eureka.instance.ip-address}:${server.port}${status-page-url-path:/info}
+    health-check-url: http://${eureka.instance.ip-address}:${server.port}${health-check-url-path:/health}
   client:
     serviceUrl:
       defaultZone: http://172.16.200.112:30101/eureka/
