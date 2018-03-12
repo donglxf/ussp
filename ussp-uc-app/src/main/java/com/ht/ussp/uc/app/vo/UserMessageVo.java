@@ -74,7 +74,8 @@ public class UserMessageVo implements Serializable {
     
     private String rootOrgCode;
     
-    
+    //是否管理员  Y是  N不是
+  	private String controller;
 
 
 }

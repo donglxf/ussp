@@ -1,6 +1,5 @@
 server:
-  port: 30111 
-
+  port: 30111
 spring:
   application:
     name: ussp-gateway-app

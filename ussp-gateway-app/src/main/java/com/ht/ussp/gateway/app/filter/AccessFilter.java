@@ -132,7 +132,6 @@ public class AccessFilter extends ZuulFilter {
         }
 
         //验证api权限
-        log.debug("------------validateUrl------" + validateUrl);
         String api_key = String.format("%s:%s:%s", userId, app, "api");
         if (!roleClient.IsHasAuth(api_key, validateUrl)) {
             ctx.setSendZuulResponse(false);

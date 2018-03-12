@@ -9,10 +9,10 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
-        , orgTree //组织机构树控件
+        , positionOrgTree //组织机构树控件
         , active = {
         add: function () { //弹出岗位新增弹出框
-            var nodes = orgTree.getSelectedNodes();
+            var nodes = positionOrgTree.getSelectedNodes();
             if (nodes.length == 0) {
                 layer.alert("请先选择一个组织机构。");
                 return false;
@@ -140,7 +140,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
         if (!keyword) {
             keyword = null;
         }
-        var selectNodes = orgTree.getSelectedNodes();
+        var selectNodes = positionOrgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
             table.reload('position_datatable', {
             	height: 'full-200',
@@ -157,7 +157,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
         }
     };
     //渲染组织机构树
-    orgTree = $.fn.zTree.init($('#position_org_ztree_left'), {
+    positionOrgTree = $.fn.zTree.init($('#position_org_ztree_left'), {
             view: {
                 showIcon: false
                 , selectedMulti: false
@@ -196,9 +196,9 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
                     refreshTable();
                 },
                 onAsyncSuccess: function (event, treeId, treeNode, msgString) {
-                    var node = orgTree.getNodeByParam("level ", "0");
+                    var node = positionOrgTree.getNodeByParam("level ", "0");
                     if (node) {
-                        orgTree.selectNode(node);
+                        positionOrgTree.selectNode(node);
                     }
                 }
             },
@@ -367,15 +367,15 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
     });
     //刷新树的数据
     $('#position_btn_refresh_tree').on('click', function (e) {
-        if (orgTree) {
-            orgTree.reAsyncChildNodes(null, "refresh");
+        if (positionOrgTree) {
+            positionOrgTree.reAsyncChildNodes(null, "refresh");
         }
     });
     var nodeList = [];
     //搜索树的数据
     $('#position_search_tree_org').bind('input', function (e) {
-        if (orgTree && $(this).val() != "") {
-            nodeList = orgTree.getNodesByParamFuzzy("name", $(this).val());
+        if (positionOrgTree && $(this).val() != "") {
+            nodeList = positionOrgTree.getNodesByParamFuzzy("name", $(this).val());
             updateNodes(true);
         } else {
             updateNodes(false);
@@ -386,9 +386,9 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
     function updateNodes(highlight) {
         for (var i = 0, l = nodeList.length; i < l; i++) {
             nodeList[i].highlight = highlight;
-            orgTree.updateNode(nodeList[i]);
+            positionOrgTree.updateNode(nodeList[i]);
             if (highlight) {
-                orgTree.expandNode(orgTree.getNodeByParam("orgCode", nodeList[i]["parentOrgCode"]), true, false, null, null);
+                positionOrgTree.expandNode(positionOrgTree.getNodeByParam("orgCode", nodeList[i]["parentOrgCode"]), true, false, null, null);
             }
         }
     }

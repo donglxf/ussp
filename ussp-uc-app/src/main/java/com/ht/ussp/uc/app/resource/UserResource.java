@@ -434,8 +434,8 @@ public class UserResource{
 
     @ApiOperation(value = "对内，获取用户登录信息")
     @GetMapping(value = "/getLoginUserInfo")
-    public LoginInfoVo getLoginUserInfo(@RequestParam("userId") String userId) {
-        return htBoaInUserService.queryUserInfo(userId);
+    public LoginInfoVo getLoginUserInfo(@RequestParam("userId") String userId,@RequestParam("app") String app) {
+        return htBoaInUserService.queryUserInfo(userId,app);
     }
 
     @ApiOperation(value = "重置密码并发邮件")

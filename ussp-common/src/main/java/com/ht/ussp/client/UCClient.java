@@ -54,7 +54,7 @@ public interface UCClient {
      * @Date 2018/1/31 10:26
      */
     @GetMapping(value = "/user/getLoginUserInfo")
-    LoginInfoDto getLoginUserInfo(@RequestParam("userId") String userId);
+    LoginInfoDto getLoginUserInfo(@RequestParam("userId") String userId, @RequestParam("app") String app);
 
     /**
      * @return Result
@@ -115,7 +115,35 @@ public interface UCClient {
      */
     @GetMapping(value = "/userrole/getUserRole")
     List<BoaInRoleInfoDto> getUserRole(@RequestParam("userId") String userId);
+     
+    /**
+     * 添加菜单
+     * @param orgCode
+     * @return
+     */
+	@GetMapping(value = "/resource/addMenu")
+	Result addMenu(@RequestParam("resNameCn") String resNameCn,@RequestParam("resContent")String resContent,@RequestParam("fontIcon")String fontIcon,@RequestParam("resParent")String resParent,@RequestParam("resParentName")String resParentName,@RequestParam("roles")String[] roles,@RequestParam("userId")String userId,@RequestParam("app")String app);
 
+	/**
+     * 修改菜单
+     * @param orgCode
+     * @return
+     */
+	@GetMapping(value = "/resource/updateMenu")
+	Result updateMenu(@RequestParam("resNameCn")String resNameCn,@RequestParam("resContent")String resContent,@RequestParam("fontIcon")String fontIcon,@RequestParam("roles")String[] roles,@RequestParam("userId")String userId,@RequestParam("app")String app);
+
+	/**
+	 * 禁用启用菜单
+	 * @param id
+	 * @param status
+	 * @return
+	 */
+	@GetMapping(value = "/resource/changeMenuState")
+	void changeApiState(@RequestParam("resCode")String resCode, @RequestParam("status")String status,@RequestParam("userId")String userId,@RequestParam("app")String app);
+
+	@GetMapping(value = "/resource/getMenus")
+	Result getMenus(@RequestParam("app")String app,@RequestParam("resType")String resType);
+    
 
 }
 

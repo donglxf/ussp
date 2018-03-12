@@ -20,10 +20,12 @@ import com.ht.ussp.uc.app.domain.HtBoaInContrast;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
+import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
 import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
 import com.ht.ussp.uc.app.repository.HtBoaInContrastRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInLoginRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInOrgRepository;
+import com.ht.ussp.uc.app.repository.HtBoaInUserAppRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInUserRepository;
 import com.ht.ussp.uc.app.vo.LoginInfoVo;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
@@ -46,6 +48,10 @@ public class HtBoaInUserService {
     private HtBoaInOrgRepository htBoaInOrgRepository;
     @Autowired
     private HtBoaInContrastRepository htBoaInContrastRepository;
+    @Autowired
+    private HtBoaInUserAppRepository htBoaInUserAppRepository;
+    
+    
 
     /**
      * @return HtBoaInUser
@@ -66,7 +72,7 @@ public class HtBoaInUserService {
         return htBoaInUserRepository.findByUserIdOrEmailOrMobileOrJobNumber(userId, email, mobile, jboNumber);
     }
 
-    public LoginInfoVo queryUserInfo(String userId) {
+    public LoginInfoVo queryUserInfo(String userId,String app) {
         LoginInfoVo loginInfoVo = new LoginInfoVo();
         UserMessageVo userMessageVo = htBoaInUserRepository.queryUserByUserId(userId);
         if (LogicUtil.isNull(userMessageVo)) {
@@ -77,6 +83,7 @@ public class HtBoaInUserService {
             userMessageVo.setOrgName(orgList.get(0).getOrgNameCn());
         }
         BeanUtils.deepCopy(userMessageVo, loginInfoVo);
+        //获取用户关联的信贷信息 
         if(loginInfoVo!=null) {
         	HtBoaInContrast htBoaInContrast = htBoaInContrastRepository.findByUcBusinessIdAndType(loginInfoVo.getUserId(),"20");
         	if(htBoaInContrast!=null) {
@@ -87,6 +94,11 @@ public class HtBoaInUserService {
         	if(htBoaInContrastOrg!=null) {
         		loginInfoVo.setBmOrgCode(htBoaInContrastOrg.getBmBusinessId());
         		loginInfoVo.setDdOrgCode(htBoaInContrastOrg.getDdBusinessId());
+        	}
+        	//获取用户是否是系统管理员
+        	if(StringUtils.isNotEmpty(app)) {
+        		HtBoaInUserApp htBoaInUserApp = htBoaInUserAppRepository.findByUserIdAndApp(userId, app);
+        		loginInfoVo.setController(htBoaInUserApp.getController());
         	}
         }
         return loginInfoVo;
