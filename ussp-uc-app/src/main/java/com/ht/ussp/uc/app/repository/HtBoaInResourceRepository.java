@@ -37,6 +37,9 @@ public interface HtBoaInResourceRepository extends JpaSpecificationExecutor<HtBo
 
     @Query(value = "SELECT MAX(res_code) FROM HT_BOA_IN_RESOURCE WHERE APP=?1  AND ((?2='NULL' AND RES_PARENT IS NULL) OR (RES_PARENT=?2)) AND RES_TYPE in(?3) AND RES_CODE like ?4", nativeQuery = true)
     String queryMaxResCodeByAppAndParentAndType(String app, String resPanrent, List<String> resTypes, String resCodePrefix);
+    
+    @Query(value = "SELECT MAX(res_code) FROM HT_BOA_IN_RESOURCE WHERE APP=?1  AND RES_TYPE in(?2) AND RES_CODE like ?3 AND RES_PARENT IS NULL", nativeQuery = true)
+    String queryMaxMenuCodeByAppAndParentAndType(String app,   List<String> resTypes, String resCodePrefix);
 
     @Query(value = "SELECT new com.ht.ussp.uc.app.vo.ApiResourceVo(id,resNameCn,resContent,remark,resParent)" +
             "FROM HtBoaInResource " +
@@ -67,4 +70,8 @@ public interface HtBoaInResourceRepository extends JpaSpecificationExecutor<HtBo
     Page<ApiResourceVo> queryApiByPage(String app, String keyWord, String resParent, Pageable pageable);
 
 	HtBoaInResource findById(Long id);
+
+	List<HtBoaInResource> findByResCodeAndApp(String resCode,String app);
+
+	List<HtBoaInResource> findByAppAndResType(String app, String resType);
 }

@@ -1,7 +1,6 @@
 server:
-  port: 30111   
-       
-feign:  
+  port: 30111
+feign:
   hystrix:  
     enabled: true
 hystrix:
@@ -19,7 +18,7 @@ hystrix:
          isolation:
           semaphore:
             maxConcurrentRequests: 1000
-            
+
 zuul:
   host:
     maxTotalConnections: 2000
@@ -59,9 +58,11 @@ zuul:
     risk-ui:
       path: /rule/ui/**
       serviceId: risk-ui
+      sensitiveHeaders: "*"
     rule-service:
       path: /rule/service/**
       serviceId: rule-service
+      sensitiveHeaders: "*"
     risk-activiti:
       path: /activiti/**
       serviceId: risk-activiti-service
@@ -102,3 +103,5 @@ ht:
   ignoreUrl: #不验证的url(可以使用通配符（*）)
      web: /uc/system/*,/ht/nologin/*,/admin/*,/car/*,/rule/ui/*,/cams/ui/*,/LawUi/* #不需要验证token
      http: /uc/auth/loadBtnAndTab,/uc/auth/loadMenu,/rule/service/check/key,/uc/user/in/selfinfo #需要验证token
+  rule:
+    className: com.ht.ussp.gateway.app.rule.InstanceIdAndIPAddrRule #自定义路由策略

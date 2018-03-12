@@ -68,7 +68,7 @@ public class LoginUserInfoHelper {
             log.warn("无法同步API资源到用户权限中心，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
         }
         try {
-            return ucClient.getLoginUserInfo(userId);
+            return ucClient.getLoginUserInfo(userId,app);
         } catch (Exception ex) {
             log.error("获取登录信息发生异常。", ex);
             return null;

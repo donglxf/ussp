@@ -1166,6 +1166,16 @@ layui.define(['laytpl', 'laypage', 'layer', 'form'], function (exports) {
             that.fullSize();
             that.scrollPatch();
         });
+
+        //add by tanrq 2018/3/12 解决省略信息，打开后无法关闭的bug
+        _WIN.on('click',function (a){
+            if( !$(a.target).hasClass("layui-table-cell")&&  $(a.target).parents(".layui-table-tips").length==0 ){
+                layer.close(that.tipsIndex);
+            }
+            if( !Math.round($(a.target).prop('scrollWidth')) > Math.round($(a.target).outerWidth()) &&  $(a.target).parents(".layui-table-tips").length==0){
+                layer.close(that.tipsIndex);
+            }
+        });
     };
 
     //初始化
