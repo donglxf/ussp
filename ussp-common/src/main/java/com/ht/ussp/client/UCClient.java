@@ -130,7 +130,9 @@ public interface UCClient {
      * @return
      */
 	@GetMapping(value = "/resource/updateMenu")
-	Result updateMenu(@RequestParam("resNameCn")String resNameCn,@RequestParam("resContent")String resContent,@RequestParam("fontIcon")String fontIcon,@RequestParam("roles")String[] roles,@RequestParam("userId")String userId,@RequestParam("app")String app);
+	Result updateMenu(@RequestParam("resCode") String resCode,@RequestParam("resNameCn") String resNameCn, @RequestParam("resContent") String resContent,
+			@RequestParam("fontIcon") String fontIcon, @RequestParam("roles") String[] roles,
+			@RequestParam("userId") String userId, @RequestParam("app") String app);
 
 	/**
 	 * 禁用启用菜单

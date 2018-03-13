@@ -61,6 +61,9 @@ UCClient新增两个接口：
 1. LoginUserInfoHelper#getLoginInfo()方法的返回值，增加信贷钉钉对照数据（userId和orgCode）。
 2. API资源同步功能新增旧资源删除功能。
 
-### 0.1.0
+### 0.0.10
 1. LoginUserInfoHelper#getLoginInfo()方法的返回值，增加信贷钉钉对照数据（controller Y:是管理员  N:不是管理员）。
 2.增加MenuInfoHelper菜单管理，增加addMenu，修改updateMenu，禁用changeApiState(1，禁用，0，启用)功能。
+
+### 0.0.11
+1.MenuInfoHelper菜单管理，增加关联系统

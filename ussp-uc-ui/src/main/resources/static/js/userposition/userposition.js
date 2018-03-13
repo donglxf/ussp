@@ -64,6 +64,16 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                  }
              });
         	 userpositionUserId="";
+        }else{
+        	table.reload('userposition_user_datatable', {
+                height: 'full-200',
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+                , where: {
+                    keyWord: keyword,
+                }
+            });
         }
     };
     var refreshuserpositionTable = function (keyword) {
