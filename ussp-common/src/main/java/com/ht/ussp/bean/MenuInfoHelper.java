@@ -9,6 +9,7 @@
  */
 package com.ht.ussp.bean;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -52,15 +53,16 @@ public class MenuInfoHelper {
 	 * 获取菜单 resType view菜单   菜单组group
 	 * @return
 	 */
-	public Result getMenuList(String resType) {
+	public Result getMenuList(String resType,String apps) {
 		if (ucClient == null) {
 			log.warn("无法获取菜单，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
 		}
 		try {
+			apps = StringUtils.isEmpty(apps)?app:apps;
 			return ucClient.getMenus(app,resType);
 		} catch (Exception ex) {
 			log.error("获取菜单发生异常。", ex);
-			return null;
+			return Result.buildFail(ex.toString(), ex.getMessage());
 		}
 	}
 	
@@ -73,18 +75,21 @@ public class MenuInfoHelper {
 	 * @param resParent
 	 * @param resParentName
 	 * @param roles
+	 *  @param apps 
 	 * @return
 	 */
 	public Result addMenu(String resNameCn, String resContent, String fontIcon, String resParent, String resParentName,
-			String[] roles) {
+			String[] roles,String apps) {
 		if (ucClient == null) {
 			log.warn("无法添加菜单，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
 		}
 		try {
-			return ucClient.addMenu(resNameCn, resContent, fontIcon, resParent, resParentName, roles,   userId,app);
+			apps = StringUtils.isEmpty(apps)?app:apps;
+			userId = StringUtils.isEmpty(userId)?"":userId;
+			return ucClient.addMenu(resNameCn, resContent, fontIcon, resParent, resParentName, roles, userId,apps);
 		} catch (Exception ex) {
 			log.error("添加菜单发生异常。", ex);
-			return null;
+			return Result.buildFail(ex.toString(), ex.getMessage());
 		}
 	}
     
@@ -97,33 +102,38 @@ public class MenuInfoHelper {
 	 * @param roles
 	 * @return
 	 */
-	public Result updateMenu(String resNameCn, String resContent, String fontIcon, String[] roles) {
+	public Result updateMenu(String resCode,String resNameCn, String resContent, String fontIcon, String[] roles,String apps) {
 		if (ucClient == null) {
 			log.warn("无法更新菜单，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
 		}
 		try {
-			return ucClient.updateMenu(resNameCn, resContent, fontIcon, roles,   userId,app);
+			apps = StringUtils.isEmpty(apps)?app:apps;
+			userId = StringUtils.isEmpty(userId)?"":userId;
+			return ucClient.updateMenu(resCode, resNameCn, resContent, fontIcon, roles, userId,   apps);
 		} catch (Exception ex) {
 			log.error("更新菜单发生异常。", ex);
-			return null;
+			return Result.buildFail(ex.toString(), ex.getMessage());
 		}
 	}
 
 	/**
 	 * 禁用/启用菜单
+	 * 1，禁用，0，启用
 	 * 
 	 * @return
 	 */
-	public boolean changeApiState(String resCode, String status) {
+	public Result changeApiState(String resCode, String status,String apps) {
 		if (ucClient == null) {
 			log.warn("无法禁用/启用菜单，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
 		}
 		try {
-			ucClient.changeApiState(resCode, status, userId, status);
-			return true;
+			apps = StringUtils.isEmpty(apps)?app:apps;
+			userId = StringUtils.isEmpty(userId)?"":userId;
+			ucClient.changeApiState(resCode, status, userId, apps);
+			return Result.buildSuccess();
 		} catch (Exception ex) {
 			log.error("禁用/启用菜单发生异常。", ex);
-			return false;
+			return Result.buildFail(ex.toString(), ex.getMessage());
 		}
 	}
      

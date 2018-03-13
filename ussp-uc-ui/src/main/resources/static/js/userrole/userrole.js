@@ -10,7 +10,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
-        , orgTree //组织机构树控件
+        , userRoleOrgTree //组织机构树控件
         , active = {
     		search: function () { 
             	//执行重载
@@ -51,7 +51,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         if (!keyword) {
             keyword = null;
         }
-        var selectNodes = orgTree.getSelectedNodes();
+        var selectNodes = userRoleOrgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
         	 table.reload('userrole_user_datatable', {
                  page: {
@@ -63,13 +63,23 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                  }
              });
         	 userrole_userId = "";
+        }else{
+        	table.reload('userrole_user_datatable', {
+                height: 'full-200',
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+                , where: {
+                    keyWord: keyword,
+                }
+            });
         }
     };
     var refreshUserRoleTable = function (keyword) {
         if (!keyword) {
             keyword = null;
         }
-        var selectNodes = orgTree.getSelectedNodes();
+        var selectNodes = userRoleOrgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
         	 table.reload('userrole_role_datatable', {
         		  height: 'full-600',
@@ -92,7 +102,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         }else{
         	return;
         }
-        var selectNodes = orgTree.getSelectedNodes();
+        var selectNodes = userRoleOrgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
         	 table.reload('userrole_role_datatable', {
         		  height: 'full-600',
@@ -110,7 +120,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     };
    
     //渲染组织机构树
-    orgTree = $.fn.zTree.init($('#userrole_org_ztree_left'), {
+    userRoleOrgTree = $.fn.zTree.init($('#userrole_org_ztree_left'), {
             view: {
                 showIcon: false
                 , selectedMulti: false
@@ -140,9 +150,9 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                 	refreshUserRoleTable();
                 },
                 onAsyncSuccess: function (event, treeId, treeNode, msgString) {
-                    var node = orgTree.getNodeByParam("level ", "0");
+                    var node = userRoleOrgTree.getNodeByParam("level ", "0");
                     if (node) {
-                        orgTree.selectNode(node);
+                        userRoleOrgTree.selectNode(node);
                     }
                 }
             },
@@ -286,15 +296,15 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     });
     //刷新树的数据
     $('#userrole_btn_refresh_tree').on('click', function (e) {
-        if (orgTree) {
-            orgTree.reAsyncChildNodes(null, "refresh");
+        if (userRoleOrgTree) {
+            userRoleOrgTree.reAsyncChildNodes(null, "refresh");
         }
     });
     var nodeList = [];
     //搜索树的数据
     $('#userrole_search_tree_org').bind('input', function (e) {
-        if (orgTree && $(this).val() != "") {
-            nodeList = orgTree.getNodesByParamFuzzy("name", $(this).val());
+        if (userRoleOrgTree && $(this).val() != "") {
+            nodeList = userRoleOrgTree.getNodesByParamFuzzy("name", $(this).val());
             updateNodes(true);
         } else {
             updateNodes(false);
@@ -305,9 +315,9 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     function updateNodes(highlight) {
         for (var i = 0, l = nodeList.length; i < l; i++) {
             nodeList[i].highlight = highlight;
-            orgTree.updateNode(nodeList[i]);
+            userRoleOrgTree.updateNode(nodeList[i]);
             if (highlight) {
-                orgTree.expandNode(orgTree.getNodeByParam("orgCode", nodeList[i]["parentOrgCode"]), true, false, null, null);
+                userRoleOrgTree.expandNode(userRoleOrgTree.getNodeByParam("orgCode", nodeList[i]["parentOrgCode"]), true, false, null, null);
             }
         }
     }
