@@ -2,7 +2,6 @@ package com.ht.ussp.uaa.app.feignClient;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ht.ussp.uaa.app.model.ResponseModal;
 import com.ht.ussp.uaa.app.vo.UserVo;
@@ -28,13 +27,4 @@ public interface RoleClient {
 	@RequestMapping(value = "/auth/saveResources")
 	public ResponseModal saveResources(UserVo userVo);
 
-	/**
-	 * 
-	 * @Title: IsHasAuth 
-	 * @Description: 验证资源权限，TRUE：通过    FALSE：不通过 
-	 * @return Boolean
-	 * @throws
-	 */
-	@RequestMapping(value = "/auth/IsHasAuth")
-	public Boolean IsHasAuth(@RequestParam("key") String key, @RequestParam("url") String url);
 }

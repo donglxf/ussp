@@ -31,6 +31,7 @@ import com.ht.ussp.uaa.app.jwt.TokenExtractor;
 import com.ht.ussp.uaa.app.jwt.TokenVerifier;
 import com.ht.ussp.uaa.app.model.ResponseModal;
 import com.ht.ussp.uaa.app.vo.UserVo;
+import com.ht.ussp.uaa.app.vo.ValidateJwtVo;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -89,20 +90,17 @@ public class RefreshTokenEndpoint {
 
 	@RequestMapping(value = "/uaa/validateJwt", method = RequestMethod.GET, produces = {
 			MediaType.APPLICATION_JSON_VALUE })
-	public ResponseModal validateJwt(String tokenPayload) throws Exception{
+	public ValidateJwtVo validateJwt(String tokenPayload) throws Exception{
 		Jws<Claims> jwsClaims;
-		ResponseModal rm = new ResponseModal();
-		Map<String,String> map=new HashMap<String,String>();
+		ValidateJwtVo vdj = new ValidateJwtVo();
 
 		RawAccessJwtToken AccessToken = new RawAccessJwtToken(tokenExtractor.extract(tokenPayload));
 		jwsClaims = AccessToken.parseClaims(jwtSettings.getTokenSigningKey());
 		String userId = jwsClaims.getBody().get("userId").toString();
         String orgCode = jwsClaims.getBody().get("orgCode").toString();
-		rm.setSysStatus(SysStatus.SUCCESS);
-		map.put(userId, userId);
-		map.put(orgCode, orgCode);
-		rm.setResult(map);
-		return rm;
+        vdj.setUserId(userId);
+        vdj.setOrgCode(orgCode);
+		return vdj;
 	}
 
 	@RequestMapping(value = "/uaa/hello")
