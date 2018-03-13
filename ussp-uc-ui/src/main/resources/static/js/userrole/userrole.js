@@ -65,7 +65,6 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         	 userrole_userId = "";
         }else{
         	table.reload('userrole_user_datatable', {
-                height: 'full-200',
                 page: {
                     curr: 1 //重新从第 1 页开始
                 }
@@ -79,7 +78,19 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         if (!keyword) {
             keyword = null;
         }
-        var selectNodes = userRoleOrgTree.getSelectedNodes();
+        table.reload('userrole_role_datatable', {
+  		  height: 'full-600',
+  	        page: {
+  	            curr: 1 //重新从第 1 页开始
+  	        }
+  	        , where: {
+  	        	query: {
+            		    keyWord: keyword,
+                      userId:userrole_userId
+                 }
+  	        }
+  	   });
+       /* var selectNodes = userRoleOrgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
         	 table.reload('userrole_role_datatable', {
         		  height: 'full-600',
@@ -94,7 +105,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                        }
         	        }
         	   });
-        }
+        }*/
     };
     refreshRoleTable = function (sucess) {
         if(sucess==1){
@@ -122,6 +133,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     //渲染组织机构树
     userRoleOrgTree = $.fn.zTree.init($('#userrole_org_ztree_left'), {
             view: {
+            	height: "full-183",
                 showIcon: false
                 , selectedMulti: false
                 , fontCss: function (treeId, treeNode) {
@@ -137,7 +149,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                 dataFilter: function (treeId, parentNode, childNodes) {
                     if (!childNodes) return null;
                     for (var i = 0, l = childNodes.length; i < l; i++) {
-                        childNodes[i].open = true;
+                    	//  childNodes[i].open = true;
                         childNodes[i].name = childNodes[i]["orgNameCn"].replace(/\.n/g, '.');
                     }
                     return childNodes;
@@ -295,9 +307,29 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         active[type] ? active[type].call(this) : '';
     });
     //刷新树的数据
-    $('#userrole_btn_refresh_tree').on('click', function (e) {
+    /*$('#userrole_btn_refresh_tree').on('click', function (e) {
         if (userRoleOrgTree) {
             userRoleOrgTree.reAsyncChildNodes(null, "refresh");
+        }
+    });*/
+    $('#userrole_btn_tree .btn').on('click', function () {
+        var type = $(this).data('type');
+        switch (type) {
+            case "refresh":
+                if (userRoleOrgTree) {
+                	userRoleOrgTree.reAsyncChildNodes(null, "refresh");
+                }
+                break;
+            case "expandAll":
+                if (userRoleOrgTree) {
+                	userRoleOrgTree.expandAll(true);
+                }
+                break;
+            case "collapseAll":
+                if (userRoleOrgTree) {
+                	userRoleOrgTree.expandAll(false);
+                }
+                break;
         }
     });
     var nodeList = [];
