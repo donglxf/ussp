@@ -78,7 +78,7 @@ public class MenuInfoHelper {
 	 *  @param apps 
 	 * @return
 	 */
-	public Result addMenu(String resNameCn, String resContent, String fontIcon, String resParent, String resParentName,
+	public Result<String> addMenu(String resNameCn, String resContent, String fontIcon, String resParent, String resParentName,
 			String[] roles,String apps) {
 		if (ucClient == null) {
 			log.warn("无法添加菜单，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");

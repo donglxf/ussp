@@ -67,3 +67,6 @@ UCClient新增两个接口：
 
 ### 0.0.11
 1.MenuInfoHelper菜单管理，增加关联系统
+
+### 0.0.12
+1.MenuInfoHelper菜单管理，增加菜单修改返回值

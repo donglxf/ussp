@@ -69,6 +69,16 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
             //执行重载
             refreshTable($("#user_search_keyword").val());
         },
+        getDtoUserInfo: function () {
+        	  $.ajax({
+					url : config.basePath + "user/getDtoUserInfo",
+					type : 'POST',
+					async : false,
+					success : function(result) {
+						 console.info(result);
+					}
+				}); 
+        },
         batchResetPwd: function () {
         	 var nodes = userOrgTree.getSelectedNodes();
              if (nodes.length == 0) {

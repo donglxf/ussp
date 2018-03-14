@@ -75,7 +75,9 @@ public class UserResource{
     private HtBoaInPwdHistService htBoaInPwdHistService;
     @Autowired
 	private EipClient eipClient;
-
+    @Autowired
+	private LoginUserInfoHelper loginUserInfoHelper;
+    
     @ApiOperation(value = "对内：用户个人信息查询", notes = "已登录用户查看自己的个人信息")
     @ApiImplicitParam(name = "userId", value = "用户ID", required = true, paramType = "path", dataType = "int")
     @RequestMapping(value = {"/in/selfinfo"}, method = RequestMethod.GET)
@@ -548,5 +550,9 @@ public class UserResource{
         }
     }
   
+    @PostMapping(value = "/getDtoUserInfo")
+    public Result getDtoUserInfo() {
+    	return Result.buildSuccess(loginUserInfoHelper.getLoginInfo());
+    }
     
 }
