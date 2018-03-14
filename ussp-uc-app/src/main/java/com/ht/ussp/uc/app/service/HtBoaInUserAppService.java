@@ -170,4 +170,8 @@ public class HtBoaInUserAppService {
     	List<HtBoaInUserApp> listHtBoaInUserApp = htBoaInUserAppRepository.getUserAppList(app,userId);
         return listHtBoaInUserApp;
     }
+
+	public List<HtBoaInUserApp> getUserAppListByUserId(String userId) {
+		return htBoaInUserAppRepository.findByUserIdAndDelFlag(userId,0);
+	}
 }

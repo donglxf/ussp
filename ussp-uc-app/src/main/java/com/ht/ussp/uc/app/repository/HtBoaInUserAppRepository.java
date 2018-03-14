@@ -52,4 +52,6 @@ public interface HtBoaInUserAppRepository extends JpaRepository<HtBoaInUserApp,L
     @Query("SELECT new com.ht.ussp.uc.app.model.BoaInAppInfo(u.app, u.name, u.nameCn,  u.status, ur.createOperator, ur.createdDatetime, ur.updateOperator, ur.lastModifiedDatetime,ur.delFlag,ur.id,ur.controller) "
 			+ "FROM HtBoaInUserApp ur ,HtBoaInApp u    WHERE  ur.app = u.app AND  u.app = ?1 and ur.userId=?2 GROUP BY u")
 	public List<HtBoaInUserApp> getUserAppList(String app, String userId);
+
+	public List<HtBoaInUserApp> findByUserIdAndDelFlag(String userId, int delFlag);
 }
