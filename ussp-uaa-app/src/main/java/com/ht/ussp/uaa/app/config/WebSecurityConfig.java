@@ -17,7 +17,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ht.ussp.uaa.app.filter.CustomCorsFilter;
 import com.ht.ussp.uaa.app.jwt.JwtAuthenticationProvider;
 import com.ht.ussp.uaa.app.jwt.JwtTokenAuthenticationProcessingFilter;
 import com.ht.ussp.uaa.app.jwt.SkipPathRequestMatcher;
@@ -108,7 +107,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(API_ROOT_URL).authenticated()
             .and()
-                .addFilterBefore(new CustomCorsFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(buildAjaxLoginProcessingFilter(AUTHENTICATION_URL), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(buildJwtTokenAuthenticationProcessingFilter(permitAllEndpointList,
                 API_ROOT_URL), UsernamePasswordAuthenticationFilter.class);
