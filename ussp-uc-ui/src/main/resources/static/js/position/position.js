@@ -159,7 +159,8 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
     //渲染组织机构树
     positionOrgTree = $.fn.zTree.init($('#position_org_ztree_left'), {
             view: {
-                showIcon: false
+            	 height: "full-183"
+                ,showIcon: false
                 , selectedMulti: false
                 , fontCss: function (treeId, treeNode) {
                     return (!!treeNode.highlight) ? {color: "#A60000", "font-weight": "bold"} : {
@@ -174,7 +175,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
                 dataFilter: function (treeId, parentNode, childNodes) {
                     if (!childNodes) return null;
                     for (var i = 0, l = childNodes.length; i < l; i++) {
-                        childNodes[i].open = true;
+                    	//childNodes[i].open = true;
                         childNodes[i].name = childNodes[i]["orgNameCn"].replace(/\.n/g, '.');
                     }
                     return childNodes;
@@ -366,9 +367,29 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
         active[type] ? active[type].call(this) : '';
     });
     //刷新树的数据
-    $('#position_btn_refresh_tree').on('click', function (e) {
+   /* $('#position_btn_refresh_tree').on('click', function (e) {
         if (positionOrgTree) {
             positionOrgTree.reAsyncChildNodes(null, "refresh");
+        }
+    });*/
+    $('#position_btn_tree .btn').on('click', function () {
+        var type = $(this).data('type');
+        switch (type) {
+            case "refresh":
+                if (positionOrgTree) {
+                	positionOrgTree.reAsyncChildNodes(null, "refresh");
+                }
+                break;
+            case "expandAll":
+                if (positionOrgTree) {
+                	positionOrgTree.expandAll(true);
+                }
+                break;
+            case "collapseAll":
+                if (positionOrgTree) {
+                	positionOrgTree.expandAll(false);
+                }
+                break;
         }
     });
     var nodeList = [];
