@@ -12,3 +12,5 @@ uaa:
       refreshTokenExpTime: 720
       tokenIssuer: qiuwenwu@hongte.info
       tokenSigningKey: xm8EV6Hy5RMFK4EEACIDAwQus
+      
+      

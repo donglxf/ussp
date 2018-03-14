@@ -30,11 +30,17 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-eureka</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 			<exclusions>
-			<exclusion>
+				<exclusion>
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-starter-tomcat</artifactId>
 				</exclusion>
@@ -44,7 +50,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-undertow</artifactId>
@@ -90,12 +96,7 @@
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-yaml</artifactId>
 		</dependency>
-		
-		<dependency>
-			<groupId>com.ht.ussp</groupId>
-			<artifactId>ussp-common</artifactId>
-			<version>0.0.11</version>
-		</dependency>
+
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -107,6 +108,11 @@
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-resources-plugin</artifactId>
 			<version>2.4.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.ht.ussp</groupId>
+			<artifactId>ussp-common</artifactId>
+			<version>0.0.11</version>
 		</dependency>
 	</dependencies>
 
@@ -122,6 +128,7 @@
 		</dependencies>
 	</dependencyManagement>
 	<build>
+		<finalName>ussp-uaa-app</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
