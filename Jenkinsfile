@@ -2,6 +2,9 @@ pipeline {
   agent any
   stages {
     stage('sonar') {
+        tools {
+            maven 'M3'
+          }
       steps {
        sh 'mvn clean package sonar:sonar -Dsonar.host.url=http://172.16.200.111:9000'
         //tool(type: 'sonarqube scanner', name: 'sonarScanner1')
@@ -14,7 +17,5 @@ pipeline {
              }
       }
 
-  tools {
-    maven 'M3'
-  }
+  
 }
