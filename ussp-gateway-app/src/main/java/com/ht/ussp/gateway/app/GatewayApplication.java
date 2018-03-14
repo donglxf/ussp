@@ -1,11 +1,5 @@
 package com.ht.ussp.gateway.app;
 
-import com.ht.ussp.gateway.app.filter.AccessFilter;
-import com.ht.ussp.gateway.app.filter.CustomRuleFilter;
-import com.ht.ussp.gateway.app.rule.InstanceIdAndIPAddrRule;
-import com.netflix.loadbalancer.IRule;
-import com.netflix.loadbalancer.RoundRobinRule;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,6 +7,10 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.context.annotation.Bean;
+
+import com.ht.ussp.gateway.app.filter.AccessFilter;
+
+import lombok.extern.log4j.Log4j2;
 
 /**
  * @author wim qiuwenwu@hongte.info

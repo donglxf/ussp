@@ -37,9 +37,9 @@ import com.ht.ussp.uaa.app.security.point.RestAuthenticationEntryPoint;
 @EnableWebSecurity  
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public static final String AUTHENTICATION_HEADER_NAME = "Authorization";
-    public static final String AUTHENTICATION_URL = "/uaa/auth/login";
-    public static final String REFRESH_TOKEN_URL = "/uaa/auth/token";
-    public static final String API_ROOT_URL = "/uaa/**";
+    public static final String AUTHENTICATION_URL = "/auth/login";
+    public static final String REFRESH_TOKEN_URL = "/auth/token";
+    public static final String API_ROOT_URL = "/**";
 
     @Autowired private RestAuthenticationEntryPoint authenticationEntryPoint;
     @Autowired private AuthenticationSuccessHandler successHandler;
@@ -84,7 +84,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         List<String> permitAllEndpointList = Arrays.asList(
             AUTHENTICATION_URL,
             REFRESH_TOKEN_URL,
-            "/uaa/hello",
+            "/hello",
+            "/validateJwt",
             "/console"
         );
 

@@ -1,5 +1,5 @@
 server:
-  port: 30000
+  port: 30136
   
 spring:
   jackson:

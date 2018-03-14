@@ -27,11 +27,12 @@ public enum SysStatus {
 	
 	NO_ROLE("9920","该用户没关联角色"),
 	TOKEN_IS_EXPIRED("9921","TOKEN过期"),
-	TOKEN_IS_VALID("9922","验签失败"),
+	TOKEN_IS_VALID("9922","TOKEN无效"),
 	API_NOT_NULL("9923","API权限不能为空"),
 	AUTH_FAILED("9924","授权失败"),
 	TOKEN_IS_NULL("9925","TOKEN不能为空"),
 	HAS_NO_ACCESS("9926","您没有访问权限"),
+	HEADER_CANNOT_NULL("9927","HEADER不能为空"),
 
 	NO_RESULT("9996","查无数据"),
 	ERROR_PARAM("9997", "参数错误"),
