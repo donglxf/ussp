@@ -242,7 +242,7 @@ public class ResResource {
 				u.setDelFlag(0);
 				htBoaInRoleResService.save(u);
 			}
-			return Result.buildSuccess(resource);
+			return Result.buildSuccess(resource.getResCode());
 		}
 		return Result.buildFail();
 	}
