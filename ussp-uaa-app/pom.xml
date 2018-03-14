@@ -94,7 +94,7 @@
 		<dependency>
 			<groupId>com.ht.ussp</groupId>
 			<artifactId>ussp-common</artifactId>
-			<version>0.0.10</version>
+			<version>0.0.11</version>
 		</dependency>
 
 		<dependency>
