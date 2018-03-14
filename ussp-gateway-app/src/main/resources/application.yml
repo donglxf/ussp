@@ -90,6 +90,20 @@ zuul:
     alms-timer-service:
       path: /alms/timer/**
       serviceId: alms-timer-service
+    report-birt-view:
+      path: /rp/view/**
+      serviceId: report-birt-view
+      sensitiveHeaders: "*"
+    rp-app-service:
+      path: /rp-app-service/**
+      serviceId: rp-app-service
+      sensitiveHeaders: "*"
+    rp-code-service:
+      path: /rp-code-service/**
+      serviceId: rp-code-service
+    rp-ui-service:
+      path: /rp-ui-service/**
+      serviceId: rp-ui-service
 
 gateway:
   security:
@@ -101,7 +115,7 @@ gateway:
 
 ht:
   ignoreUrl: #不验证的url(可以使用通配符（*）)
-     web: /uc/system/*,/ht/nologin/*,/admin/*,/car/*,/rule/ui/*,/cams/ui/*,/LawUi/* #不需要验证token
+     web: /uc/system/*,/ht/nologin/*,/admin/*,/car/*,/rule/ui/*,/cams/ui/*,/LawUi/*,/rp/view/brit/*,/rp/view/plugins/*,/rp/view/common/*,/rp/view/js/*,/rp/view/css/*,/rp/view/datas/*,/rp/view/*.html,/rp-ui-service/*,/rp/view/frameset #不需要验证token
      http: /uc/auth/loadBtnAndTab,/uc/auth/loadMenu,/rule/service/check/key,/uc/user/in/selfinfo #需要验证token
   rule:
     className: com.ht.ussp.gateway.app.rule.InstanceIdAndIPAddrRule #自定义路由策略
