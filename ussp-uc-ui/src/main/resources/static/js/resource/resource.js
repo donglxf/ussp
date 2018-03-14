@@ -137,6 +137,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
                             parent: resParent,
                             type: type
                         },
+                        dataType: "text",  
                         success: function (result) {
                             $("input[name=resCode]", layero).val(result);
                         }

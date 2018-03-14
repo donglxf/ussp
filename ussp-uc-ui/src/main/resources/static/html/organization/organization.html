@@ -2,9 +2,15 @@
     <div class="tree col-xs-3" style="">
         <div>
             <div class="tree_search">
-                <div class="input-group input-group-sm">
+                <div class="input-group input-group-sm" id="organization_btn_tree">
                     <input type="text" id="organization_search_tree_org" maxlength="60" class="form-control" placeholder="请输入机构名"/>
-                    <div id="organization_btn_refresh_tree" class="input-group-addon btn" title="刷新">
+                     <div data-type="expandAll" class="input-group-addon btn" title="展开所有">
+                        <i class="fa fa-plus-square"></i>
+                    </div>
+                    <div data-type="collapseAll" class="input-group-addon btn" title="收起所有">
+                        <i class="fa fa-minus-square"></i>
+                    </div>
+                    <div data-type="refresh" class="input-group-addon btn" title="刷新">
                         <i class="fa fa-refresh"></i>
                     </div>
                 </div>
