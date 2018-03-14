@@ -1,6 +1,6 @@
 package com.ht.ussp.uaa.app.model;
 
-import com.ht.ussp.uaa.app.util.SysStatus;
+import com.ht.ussp.common.SysStatus;
 
 public class Modal {
 	

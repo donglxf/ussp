@@ -1,4 +1,4 @@
-package com.ht.ussp.uaa.app.util;
+package com.ht.ussp.common;
 
 /**
  * 

@@ -10,7 +10,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
-        , orgTree //组织机构树控件
+        , userAppOrgTree //组织机构树控件
         , active = {
     		search: function () { 
             	//执行重载
@@ -51,7 +51,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         if (!keyword) {
             keyword = null;
         }
-        var selectNodes = orgTree.getSelectedNodes();
+        var selectNodes = userAppOrgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
         	 table.reload('userapp_user_datatable', {
                  page: {
@@ -63,28 +63,34 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                  }
              });
         	 userapp_userId = "";
+        }else{
+        	table.reload('userapp_user_datatable', {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+                , where: {
+                    keyWord: keyword,
+                }
+            });
         }
     };
     var refreshUserAppTable = function (keyword) {
         if (!keyword) {
             keyword = null;
         }
-        var selectNodes = orgTree.getSelectedNodes();
-        if (selectNodes && selectNodes.length == 1) {
-        	 table.reload('userapp_app_datatable', {
-        		 height: 'full-600' ,
-        	        page: {
-        	            curr: 1 //重新从第 1 页开始
-        	        }
-        	        , where: {
-        	        	query: {
-                  		     keyWord: keyword,
-                            orgCode: selectNodes[0]["orgCode"],
-                            userId:userapp_userId
-                       }
-        	        }
-        	   });
-        }
+        table.reload('userapp_app_datatable', {
+   		 height: 'full-600' ,
+   	        page: {
+   	            curr: 1 //重新从第 1 页开始
+   	        }
+   	        , where: {
+   	        	query: {
+             		     keyWord: keyword,
+                      // orgCode: selectNodes[0]["orgCode"],
+                       userId:userapp_userId
+                  }
+   	        }
+   	   });
     };
      refreshAppTable = function (sucess) {
     	if(sucess==1){
@@ -92,7 +98,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         }else{
         	return;
         }
-        var selectNodes = orgTree.getSelectedNodes();
+        var selectNodes = userAppOrgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
         	 table.reload('userapp_app_datatable', {
         		 height: 'full-600' ,
@@ -110,8 +116,9 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     };
    
     //渲染组织机构树
-    orgTree = $.fn.zTree.init($('#userapp_org_ztree_left'), {
+    userAppOrgTree = $.fn.zTree.init($('#userapp_org_ztree_left'), {
             view: {
+            	 height: "full-183",
                 showIcon: false
                 , selectedMulti: false
                 , fontCss: function (treeId, treeNode) {
@@ -127,7 +134,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                 dataFilter: function (treeId, parentNode, childNodes) {
                     if (!childNodes) return null;
                     for (var i = 0, l = childNodes.length; i < l; i++) {
-                        childNodes[i].open = true;
+                    	//childNodes[i].open = true;
                         childNodes[i].name = childNodes[i]["orgNameCn"].replace(/\.n/g, '.');
                     }
                     return childNodes;
@@ -140,9 +147,9 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                 	refreshUserAppTable();
                 },
                 onAsyncSuccess: function (event, treeId, treeNode, msgString) {
-                    var node = orgTree.getNodeByParam("level ", "0");
+                    var node = userAppOrgTree.getNodeByParam("level ", "0");
                     if (node) {
-                        orgTree.selectNode(node);
+                        userAppOrgTree.selectNode(node);
                     }
                 }
             },
@@ -298,16 +305,36 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         active[type] ? active[type].call(this) : '';
     });
     //刷新树的数据
-    $('#userapp_btn_refresh_tree').on('click', function (e) {
-        if (orgTree) {
-            orgTree.reAsyncChildNodes(null, "refresh");
+   /* $('#userapp_btn_refresh_tree').on('click', function (e) {
+        if (userAppOrgTree) {
+            userAppOrgTree.reAsyncChildNodes(null, "refresh");
+        }
+    });*/
+    $('#userapp_btn_tree .btn').on('click', function () {
+        var type = $(this).data('type');
+        switch (type) {
+            case "refresh":
+                if (userAppOrgTree) {
+                	userAppOrgTree.reAsyncChildNodes(null, "refresh");
+                }
+                break;
+            case "expandAll":
+                if (userAppOrgTree) {
+                	userAppOrgTree.expandAll(true);
+                }
+                break;
+            case "collapseAll":
+                if (userAppOrgTree) {
+                	userAppOrgTree.expandAll(false);
+                }
+                break;
         }
     });
     var nodeList = [];
     //搜索树的数据
     $('#userapp_search_tree_org').bind('input', function (e) {
-        if (orgTree && $(this).val() != "") {
-            nodeList = orgTree.getNodesByParamFuzzy("name", $(this).val());
+        if (userAppOrgTree && $(this).val() != "") {
+            nodeList = userAppOrgTree.getNodesByParamFuzzy("name", $(this).val());
             updateNodes(true);
         } else {
             updateNodes(false);
@@ -318,9 +345,9 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     function updateNodes(highlight) {
         for (var i = 0, l = nodeList.length; i < l; i++) {
             nodeList[i].highlight = highlight;
-            orgTree.updateNode(nodeList[i]);
+            userAppOrgTree.updateNode(nodeList[i]);
             if (highlight) {
-                orgTree.expandNode(orgTree.getNodeByParam("orgCode", nodeList[i]["parentOrgCode"]), true, false, null, null);
+                userAppOrgTree.expandNode(userAppOrgTree.getNodeByParam("orgCode", nodeList[i]["parentOrgCode"]), true, false, null, null);
             }
         }
     }
