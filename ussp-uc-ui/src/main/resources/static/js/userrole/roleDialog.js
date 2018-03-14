@@ -57,6 +57,7 @@ layui.config({
         	 {type:'checkbox'}
             , {field: 'roleCode', width: 150, title: '角色编号'}
             , {field: 'roleNameCn',  title: '角色名称'}
+            , {field: 'app',  title: '所属系统'}
             , {field: 'status', width: 100,templet: '#statusTpl', title: '状态'}
             , {field: 'createOperator', width: 150, title: '创建人'}
             , {field: 'createdDatetime', width: 200,templet: '#createTimeTpl', title: '创建时间'}

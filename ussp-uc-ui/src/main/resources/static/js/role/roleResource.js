@@ -10,11 +10,11 @@ layui.use(['element', 'form', 'ztree', 'laytpl', 'table', 'ht_config', 'ht_auth'
         , isModuleLoad = false
         , isCustomLoad = false
         , selectTab = 0
-        , appAndResourceTree //组织机构树控件
+        , roleAndResourceTree //组织机构树控件
         , savePath = config.basePath + "role/res/save"
         , active = {
         save: function (resType) {
-            var selectNodes = appAndResourceTree.getSelectedNodes();
+            var selectNodes = roleAndResourceTree.getSelectedNodes();
             if (selectNodes && selectNodes.length == 1 && selectNodes[0]["app"] != selectNodes[0]["code"]) {
                 var $checkeds = $("#roleRes_" + resType + "_grid input:checkbox:checked")
                     , app = selectNodes[0]["app"]
@@ -47,14 +47,14 @@ layui.use(['element', 'form', 'ztree', 'laytpl', 'table', 'ht_config', 'ht_auth'
             }
         },
         reset: function (resType) {
-            var selectNodes = appAndResourceTree.getSelectedNodes();
+            var selectNodes = roleAndResourceTree.getSelectedNodes();
             if (selectNodes && selectNodes.length == 1 && selectNodes[0]["app"] != selectNodes[0]["code"]) {
                 refresh(resType, selectNodes[0]["app"], selectNodes[0]["code"]);
             }
         }
     };
     //渲染组织机构树
-    appAndResourceTree = $.fn.zTree.init($('#roleRes_app_auth_ztree_left'), {
+    roleAndResourceTree = $.fn.zTree.init($('#roleRes_app_auth_ztree_left'), {
             async: {
                 enable: true,
                 url: config.basePath + "role/res/app/load",
@@ -67,6 +67,7 @@ layui.use(['element', 'form', 'ztree', 'laytpl', 'table', 'ht_config', 'ht_auth'
                 }
             }
             , view: {
+            	height: "full-183",
                 showIcon: false
                 , selectedMulti: false
                 , fontCss: function (treeId, treeNode) {
@@ -95,9 +96,9 @@ layui.use(['element', 'form', 'ztree', 'laytpl', 'table', 'ht_config', 'ht_auth'
                     }
                 },
                 onAsyncSuccess: function () {
-                    var node = appAndResourceTree.getNodeByParam("level ", "0");
+                    var node = roleAndResourceTree.getNodeByParam("level ", "0");
                     if (node) {
-                        appAndResourceTree.selectNode(node);
+                        roleAndResourceTree.selectNode(node);
                     }
                 }
             },
@@ -144,7 +145,7 @@ layui.use(['element', 'form', 'ztree', 'laytpl', 'table', 'ht_config', 'ht_auth'
     //菜单和模块tab页切换事件
     element.on('tab(resource_top_tab)', function (data) {
         selectTab = data.index;
-        var selectNodes = appAndResourceTree.getSelectedNodes();
+        var selectNodes = roleAndResourceTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1 && selectNodes[0]["app"] != selectNodes[0]["code"]) {
             var app = selectNodes[0]["app"]
                 , roleCode = selectNodes[0]["code"];
@@ -177,16 +178,37 @@ layui.use(['element', 'form', 'ztree', 'laytpl', 'table', 'ht_config', 'ht_auth'
         active[type] ? active[type].call(this, resType) : '';
     });
     //刷新树的数据
-    $('#roleRes_btn_refresh_tree').on('click', function (e) {
-        if (appAndResourceTree) {
-            appAndResourceTree.reAsyncChildNodes(null, "refresh");
+   /* $('#roleRes_btn_refresh_tree').on('click', function (e) {
+        if (roleAndResourceTree) {
+            roleAndResourceTree.reAsyncChildNodes(null, "refresh");
+        }
+    });*/
+    $('#roleRes_btn_tree .btn').on('click', function () {
+        var type = $(this).data('type');
+        switch (type) {
+            case "refresh":
+                if (roleAndResourceTree) {
+                	roleAndResourceTree.reAsyncChildNodes(null, "refresh");
+                }
+                break;
+            case "expandAll":
+                if (roleAndResourceTree) {
+                	roleAndResourceTree.expandAll(true);
+                }
+                break;
+            case "collapseAll":
+                if (roleAndResourceTree) {
+                	roleAndResourceTree.expandAll(false);
+                }
+                break;
         }
     });
+    
     var nodeList = [];
     //搜索树的数据
     $('#user_search_tree_org').bind('input', function (e) {
-        if (appAndResourceTree && $(this).val() != "") {
-            nodeList = appAndResourceTree.getNodesByParamFuzzy("name", $(this).val());
+        if (roleAndResourceTree && $(this).val() != "") {
+            nodeList = roleAndResourceTree.getNodesByParamFuzzy("name", $(this).val());
             updateNodes(true);
         } else {
             updateNodes(false);
@@ -197,9 +219,9 @@ layui.use(['element', 'form', 'ztree', 'laytpl', 'table', 'ht_config', 'ht_auth'
     function updateNodes(highlight) {
         for (var i = 0, l = nodeList.length; i < l; i++) {
             nodeList[i].highlight = highlight;
-            appAndResourceTree.updateNode(nodeList[i]);
+            roleAndResourceTree.updateNode(nodeList[i]);
             if (highlight) {
-                appAndResourceTree.expandNode(appAndResourceTree.getNodeByParam("code", nodeList[i]["parentCode"]), true, false, null, null);
+                roleAndResourceTree.expandNode(roleAndResourceTree.getNodeByParam("code", nodeList[i]["parentCode"]), true, false, null, null);
             }
         }
     }
