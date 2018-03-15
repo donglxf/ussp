@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.ht.ussp</groupId>
     <artifactId>ussp-common</artifactId>
-    <version>0.0.12</version>
+    <version>0.0.13</version>
     <name>工具</name>
     <packaging>jar</packaging>
     <properties>
