@@ -104,6 +104,12 @@
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
+		
+		<dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <scope>provided</scope>
+            </dependency>
 
 		<!-- log -->
 		<dependency>
@@ -130,7 +136,7 @@
 		<dependency>
 			<groupId>com.ht.ussp</groupId>
 			<artifactId>ussp-common</artifactId>
-			<version>0.0.10</version>
+			<version>0.0.13</version>
 		</dependency>
 	</dependencies>
 
