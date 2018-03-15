@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.ht.ussp.uc.app.domain.HtBoaInPosition;
 import com.ht.ussp.uc.app.domain.HtBoaInRole;
@@ -60,5 +61,11 @@ public interface HtBoaInRoleRepository
     List<String> findRoleCodeByUserId(String userId);
     
     List<HtBoaInRole> findByRoleCode(String roleCode);
+
+    @Query("SELECT new com.ht.ussp.uc.app.model.BoaInRoleInfo(u.roleCode, u.roleName, u.roleNameCn,  u.status, u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,u.delFlag,u.id,u.app) FROM HtBoaInRole u    WHERE  u.delFlag=0 AND u.app in (?1) GROUP BY u")
+	public Page<BoaInRoleInfo> listRoleInfoByAppPageWeb(Pageable pageable, String app);
+    
+    public Page<HtBoaInRole> findByAppInAndDelFlagAndStatus(Pageable pageable, List<String> app,int delFlag,String status);
+    
 
 }

@@ -63,6 +63,26 @@ public class HtBoaInRoleService {
         Example<HtBoaInRole> ex = Example.of(u, matcher);
         return this.htBoaInRoleRepository.findAll(ex);
     }
+    
+    public Object findAllRoleByAppPage(PageConf pageConf, List<String> apps) {
+    	 Sort sort = null;
+         Pageable pageable = null;
+         List<Order> orders = new ArrayList<Order>();
+         if (null != pageConf.getSortNames()) {
+             for (int i = 0; i < pageConf.getSortNames().size(); i++) {
+                 orders.add(new Order(pageConf.getSortOrders().get(i), pageConf.getSortNames().get(i)));
+             }
+             sort = new Sort(orders);
+         }
+         if (null != pageConf.getPage() && null != pageConf.getSize())
+             pageable = new PageRequest(pageConf.getPage(), pageConf.getSize(), sort);
+
+         if (null != pageable) {
+             Page<HtBoaInRole> p = this.htBoaInRoleRepository.findByAppInAndDelFlagAndStatus(pageable,apps,0,"0");
+             return p;
+         } 
+         return null;
+	}
 
     public Object findAllByPage(PageConf pageConf,Map<String, String> query) {
         Sort sort = null;
@@ -82,7 +102,7 @@ public class HtBoaInRoleService {
         	app = "%" +query.get("app")+ "%";
         }else {
         	app = "%%";
-        }
+        } 
         
         String search = pageConf.getSearch();
         if (null == search || 0 == search.trim().length())
@@ -298,4 +318,5 @@ public class HtBoaInRoleService {
 				e.printStackTrace();
 			}
 		}
+
 }

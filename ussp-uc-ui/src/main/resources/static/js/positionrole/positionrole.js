@@ -277,28 +277,28 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         active[type] ? active[type].call(this) : '';
     });
     //刷新树的数据
-    $('#positionrole_btn_refresh_tree').on('click', function (e) {
+    /*$('#positionrole_btn_refresh_tree').on('click', function (e) {
         if (posiRoleOrgTree) {
             posiRoleOrgTree.reAsyncChildNodes(null, "refresh");
         }
-    });
+    });*/
     
-    $('#position_btn_tree .btn').on('click', function () {
+    $('#positionrole_btn_tree .btn').on('click', function () {
         var type = $(this).data('type');
         switch (type) {
             case "refresh":
-                if (positionOrgTree) {
-                	positionOrgTree.reAsyncChildNodes(null, "refresh");
+                if (posiRoleOrgTree) {
+                	posiRoleOrgTree.reAsyncChildNodes(null, "refresh");
                 }
                 break;
             case "expandAll":
-                if (positionOrgTree) {
-                	positionOrgTree.expandAll(true);
+                if (posiRoleOrgTree) {
+                	posiRoleOrgTree.expandAll(true);
                 }
                 break;
             case "collapseAll":
-                if (positionOrgTree) {
-                	positionOrgTree.expandAll(false);
+                if (posiRoleOrgTree) {
+                	posiRoleOrgTree.expandAll(false);
                 }
                 break;
         }

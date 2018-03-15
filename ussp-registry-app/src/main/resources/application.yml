@@ -11,10 +11,9 @@ spring:
 eureka:
   instance:
     prefer-ip-address: true
-    lease-expiration-duration-in-seconds: 30
-    lease-renewal-interval-in-seconds: 10
   server:
     enable-self-preservation: false  #关闭保护机制，以确保注册中心将不可用的实例正确剔除
+    eviction-interval-timer-in-ms: 3000
   client:
     register-with-eureka: false
     fetch-registry: false
@@ -28,10 +27,9 @@ spring:
 eureka:
   instance:
     prefer-ip-address: true
-    lease-expiration-duration-in-seconds: 30
-    lease-renewal-interval-in-seconds: 10
   server:
     enable-self-preservation: false
+    eviction-interval-timer-in-ms: 2000
   client:
     registerWithEureka: false
     fetchRegistry: false
@@ -44,11 +42,9 @@ spring:
 eureka:
   instance:
     prefer-ip-address: true
-    lease-expiration-duration-in-seconds: 30
-    lease-renewal-interval-in-seconds: 10
   server:
     enable-self-preservation: false
-    eviction-interval-timer-in-ms: 5000
+    eviction-interval-timer-in-ms: 2000
   client:
     registerWithEureka: false
     fetchRegistry: false
@@ -62,10 +58,9 @@ server:
 eureka:
   instance:
     prefer-ip-address: true
-    lease-expiration-duration-in-seconds: 30
-    lease-renewal-interval-in-seconds: 10
   server:
     enable-self-preservation: false
+    eviction-interval-timer-in-ms: 2000
   client:
     registerWithEureka: false
     fetchRegistry: false
@@ -81,8 +76,6 @@ server:
 eureka:
   instance:
     prefer-ip-address: true
-    lease-expiration-duration-in-seconds: 30
-    lease-renewal-interval-in-seconds: 10
   server:
     enable-self-preservation: true
   client:

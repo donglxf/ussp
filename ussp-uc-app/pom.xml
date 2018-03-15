@@ -14,6 +14,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<start-class>com.ht.ussp.uc.app.UcApplication</start-class>
+		<maven.deploy.skip>true</maven.deploy.skip>
 	</properties>
 
 	<dependencies>
@@ -118,7 +119,7 @@
 		<dependency>
 			<artifactId>ussp-common</artifactId>
 			<groupId>com.ht.ussp</groupId>
-			<version>0.0.10</version>
+			<version>0.0.13</version>
 		</dependency>
 		<dependency>
             <artifactId>taobao-sdk-java-auto_1479188381469</artifactId>
@@ -128,5 +129,15 @@
 	</dependencies>
 	<build>
 		<finalName>ussp-uc-app</finalName>
+		<plugins>
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
 	</build>
 </project>

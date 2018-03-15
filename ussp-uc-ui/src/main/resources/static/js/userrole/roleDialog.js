@@ -10,7 +10,7 @@ layui.config({
         ,cookie = layui.ht_cookie
         , table = layui.table;
     
-    var roleListByPageUrl=config.basePath +"role/in/list"; //列出所有角色记录列表信息  
+    var roleListByPageUrl=config.basePath +"role/userRolelist"; //列出所有角色记录列表信息  
     var addUserRoleListUrl=config.basePath + 'userrole/add'; //禁用/启用用户角色 /stop/{id}/{status}
     
     var loadRoleListTable = function (keyword) {
@@ -47,11 +47,17 @@ layui.config({
             , dataName: 'data' //数据列表的字段名称，默认：data
         } //如果无需自定义数据响应名称，可不加该参数
         , page: true
+        , where: {
+	        	query: {
+                 userId:parent.userrole_userId
+            }
+	        }
         , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
         , cols: [[
         	 {type:'checkbox'}
             , {field: 'roleCode', width: 150, title: '角色编号'}
             , {field: 'roleNameCn',  title: '角色名称'}
+            , {field: 'app',  title: '所属系统'}
             , {field: 'status', width: 100,templet: '#statusTpl', title: '状态'}
             , {field: 'createOperator', width: 150, title: '创建人'}
             , {field: 'createdDatetime', width: 200,templet: '#createTimeTpl', title: '创建时间'}

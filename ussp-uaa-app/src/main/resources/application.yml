@@ -1,5 +1,5 @@
 server:
-  port: 30000
+  port: 30136
   
 spring:
   jackson:
@@ -12,3 +12,5 @@ uaa:
       refreshTokenExpTime: 720
       tokenIssuer: qiuwenwu@hongte.info
       tokenSigningKey: xm8EV6Hy5RMFK4EEACIDAwQus
+      
+      

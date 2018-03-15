@@ -5,12 +5,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,12 +34,14 @@ import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInRole;
+import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
 import com.ht.ussp.uc.app.model.BoaInRoleInfo;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.service.HtBoaInPositionRoleService;
 import com.ht.ussp.uc.app.service.HtBoaInRoleResService;
 import com.ht.ussp.uc.app.service.HtBoaInRoleService;
+import com.ht.ussp.uc.app.service.HtBoaInUserAppService;
 import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
 import com.ht.ussp.uc.app.vo.PageVo;
 
@@ -69,9 +74,12 @@ public class RoleResource {
     @Autowired
     private HtBoaInRoleResService htBoaInRoleResService;
     
+    @Autowired
+    private HtBoaInUserAppService htBoaInUserAppService;
+
+    
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @ApiOperation(value = "对内：角色记录查询", notes = "列出所有角色记录列表信息")
-   /* @ApiImplicitParam(name = "pageConf", value = "分页信息实体", required = true, dataType = "PageConf")*/
     @RequestMapping(value = {"/in/list" }, method = RequestMethod.POST)
     public PageResult<BoaInRoleInfo> list(PageVo page) {
     	PageResult result = new PageResult();
@@ -86,6 +94,53 @@ public class RoleResource {
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.debug(logStart, "pageConf: " + pageConf, sl);
         Page<BoaInRoleInfo> pageData = (Page<BoaInRoleInfo>) htBoaInRoleService.findAllByPage(pageConf,page.getQuery());
+        el = System.currentTimeMillis();
+        log.debug(logEnd, "pageConf: " + pageConf, msg, el, el - sl);
+        if (pageData != null) {
+            result.count(pageData.getTotalElements()).data(pageData.getContent());
+        }
+        result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
+        return result;
+    }
+    
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @ApiOperation(value = "获取用户对应的系统角色")
+    @RequestMapping(value = {"/userRolelist" }, method = RequestMethod.POST)
+    public PageResult<BoaInRoleInfo> userRolelist(PageVo page) {
+    	PageResult result = new PageResult();
+    	PageConf pageConf = new PageConf();
+    	pageConf.setPage(page.getPage());
+    	pageConf.setSize(page.getLimit());
+    	pageConf.setSearch(page.getKeyWord());
+        long sl = System.currentTimeMillis(), el = 0L;
+        String msg = "成功";
+        String logHead = "角色记录查询：role/in/list param-> {}";
+        String logStart = logHead + " | START:{}";
+        String logEnd = logHead + " {} | END:{}, COST:{}";
+        log.debug(logStart, "pageConf: " + pageConf, sl);
+        Map<String, String> query = page.getQuery();
+        String userId = "";
+        if (query != null && query.size() > 0 && query.get("userId") != null) {
+        	userId = query.get("userId");
+        }
+        
+        //1.根据用户id查询对应关联的系统 然后查找对应的角色
+        List<HtBoaInUserApp>  listHtBoaInUserApp = htBoaInUserAppService.getUserAppListByUserId(userId);
+        List<String> appList = new ArrayList<String>();
+        for(HtBoaInUserApp u:listHtBoaInUserApp) {
+        	if(StringUtils.isNotBlank(u.getApp())) {
+        		appList.add(u.getApp());
+        	}
+        }
+        Page<BoaInRoleInfo> pageData = null;
+        if(appList.isEmpty()) {
+        	 pageData = (Page<BoaInRoleInfo>) htBoaInRoleService.findAllByPage(pageConf,page.getQuery());
+        }else {
+        	Object obj= htBoaInRoleService.findAllRoleByAppPage(pageConf,appList);
+        	if(obj!=null) {
+        		pageData = (Page<BoaInRoleInfo>) htBoaInRoleService.findAllRoleByAppPage(pageConf,appList);
+        	}
+        }
         el = System.currentTimeMillis();
         log.debug(logEnd, "pageConf: " + pageConf, msg, el, el - sl);
         if (pageData != null) {
