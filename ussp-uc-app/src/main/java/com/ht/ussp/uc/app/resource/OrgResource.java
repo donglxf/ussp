@@ -157,6 +157,7 @@ public class OrgResource {
         u.setOrgCode(boaInOrgInfo.getOrgCode());
         u.setOrgName(boaInOrgInfo.getOrgName());
         u.setOrgNameCn(boaInOrgInfo.getOrgNameCn());
+        u.setOrgType(boaInOrgInfo.getOrgType());
         u.setParentOrgCode(boaInOrgInfo.getParentOrgCode());
         u.setRootOrgCode(boaInOrgInfo.getRootOrgCode());
         u.setOrgPath(boaInOrgInfo.getOrgPath());
@@ -281,6 +282,21 @@ public class OrgResource {
     public Result testGetOrgInfoByOrgType() {
     	return Result.buildSuccess(orgInfoHelper.getOrgInfoByOrgType("D01100501","20"));
     }  
+    
+    @ApiOperation(value = "产生新的orgcode")
+    @GetMapping(value = "/getNewOrgCode")
+    public String getNewOrgCode(String parentOrgCode) {
+    	//1.查看父级下有多少机构 然后再最大机构上加1
+    	List<HtBoaInOrg> listHtBoaInOrg=htBoaInOrgService.findByParentOrgCode(parentOrgCode);
+    	int size = 0;
+    	if(listHtBoaInOrg==null || listHtBoaInOrg.isEmpty()) {
+    		size = 1;
+    	}else {
+    		size = listHtBoaInOrg.size()+1;
+    	}
+        return String.format("%s%02d", parentOrgCode, size);
+    }
+    
     
     /**
      * 导出
