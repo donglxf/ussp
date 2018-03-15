@@ -67,15 +67,15 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
                                 	layer.msg("机构新增成功");
                                 	refreshOrgTable();
                                 }
-                                if (organizationTree) {
+                                /*if (organizationTree) {
                                     organizationTree.reAsyncChildNodes(null, "refresh");
-                                }
+                                }*/
                             },
                             error: function (message) {
                                 layer.msg("机构新增发生异常，请联系管理员。");
-                                if (organizationTree) {
+                                /*if (organizationTree) {
                                     organizationTree.reAsyncChildNodes(null, "refresh");
-                                }
+                                }*/
                                 console.error(message);
                             }
                         });
@@ -301,9 +301,9 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
                          layer.msg(result.codeDesc);
                      }
                      refreshOrgTable();
-                     if (organizationTree) {
+                     /*if (organizationTree) {
                          organizationTree.reAsyncChildNodes(null, "refresh");
-                     }
+                     }*/
                  });
             });
         } else if (obj.event === 'edit') {
@@ -354,9 +354,9 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
                                 	layer.msg("机构修改成功");
                                     refreshOrgTable();
                                 }
-                                if (organizationTree) {
+                               /* if (organizationTree) {
                                     organizationTree.reAsyncChildNodes(null, "refresh");
-                                }
+                                }*/
                             },
                             error: function (message) {
                                 layer.msg("机构修改发生异常，请联系管理员。");
