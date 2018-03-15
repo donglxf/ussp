@@ -194,7 +194,7 @@
     </div>
     <!--查看表单-->
     <div id="organization_view_data_div"   class="hide">
-        <form method="post" class="layui-form"  >
+        <form method="post" class="layui-form" lay-filter="filter_view_organization_form" >
             <div class="layui-form-item">
                 <label class="layui-form-label">机构编号</label>
                 <div class="layui-input-block">
@@ -216,11 +216,11 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">机构类型</label>
                 <div class="layui-input-block">
-				    <input type="radio" name="orgType" value="60" title="小组">
-				    <input type="radio" name="orgType" value="50" title="部门">
-				    <input type="radio" name="orgType" value="40" title="分公司">
-				    <input type="radio" name="orgType" value="30" title="片区" >
-				    <input type="radio" name="orgType" value="20" title="中心" >
+				    <input type="radio" name="orgType" value="60" title="小组" readonly >
+				    <input type="radio" name="orgType" value="50" title="部门" readonly >
+				    <input type="radio" name="orgType" value="40" title="分公司" readonly >
+				    <input type="radio" name="orgType" value="30" title="片区"  readonly >
+				    <input type="radio" name="orgType" value="20" title="中心"  readonly >
                 </div>
             </div>
             <div class="layui-form-item">

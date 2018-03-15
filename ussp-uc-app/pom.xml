@@ -46,6 +46,12 @@
 			<artifactId>druid</artifactId>
 			<version>1.1.8</version>
 		</dependency>
+		<dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <scope>provided</scope>
+            </dependency>
+		
 
 		<!-- redis -->
 		<dependency>

@@ -287,6 +287,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
                         	 }
                         }
                      });
+                     form.render(null, "filter_view_organization_form");
                  }
              });
         } else if (obj.event === 'del') {
