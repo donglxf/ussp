@@ -4,8 +4,9 @@
     <parent>
         <groupId>com.ht.cloud</groupId>
         <artifactId>ht-cloud-release</artifactId>
-        <version>dev-20180111-01</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>dev-20180308-01</version>
+        <relativePath />
+ <!-- lookup parent from repository -->
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
