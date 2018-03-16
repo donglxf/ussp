@@ -1,6 +1,10 @@
 server:
   port: 30136
   
+  undertow:
+    io-threads: 4
+    worker-threads: 1000
+  
 spring:
   jackson:
     time-zone: Asia/Chongqing

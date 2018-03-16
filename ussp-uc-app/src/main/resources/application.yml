@@ -14,7 +14,7 @@ spring:
     maxActive : 20
     minIdle: 5
     validation-query: SELECT 1 FROM DUAL
-    filters: stat,wall,log4j
+    filters: stat,wall
     testOnBorrow: false
     connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=800
   jpa:
