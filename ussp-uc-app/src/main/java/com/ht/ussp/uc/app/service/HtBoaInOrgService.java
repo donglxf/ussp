@@ -134,6 +134,26 @@ public class HtBoaInOrgService {
     public List<HtBoaInOrg> findByParentOrgCode(String parentOrgCode) {
         return this.htBoaInOrgRepository.findByParentOrgCode(parentOrgCode);
     }
+    
+    public HtBoaInOrg getOrgInfoByOrgType(String orgCode, String orgType) {
+		return getParentOrgs(orgCode,orgType);
+	}
+
+    private HtBoaInOrg getParentOrgs(String orgCode,String orgType) {
+    	HtBoaInOrg htBoaInOrg = null;
+    	List<HtBoaInOrg> listHtBoaInOrg = this.htBoaInOrgRepository.findByOrgCode(orgCode);
+		if(listHtBoaInOrg!=null&&!listHtBoaInOrg.isEmpty()) {
+			htBoaInOrg = listHtBoaInOrg.get(0);
+		}
+		if(htBoaInOrg!=null && orgType.equals(htBoaInOrg.getOrgType())) {
+			return htBoaInOrg;
+		}
+		if("D01".equals(orgCode)) {
+			return htBoaInOrg;
+		} else {
+			return  getParentOrgs(htBoaInOrg.getParentOrgCode(),orgType);
+		}
+	}
 
 
     public XSSFWorkbook exportOrgExcel() {
@@ -320,4 +340,5 @@ public class HtBoaInOrgService {
 		}
 	}
 
+	
 }

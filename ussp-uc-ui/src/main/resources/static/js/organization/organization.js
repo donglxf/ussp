@@ -20,7 +20,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
             layer.close(addDialog);
             addDialog = layer.open({
                 type: 1,
-                area: ['400px', '400px'],
+                area: ['600px', '400px'],
                 maxmin: true,
                 shadeClose: true,
                 title: "新增机构",
@@ -43,6 +43,17 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
                     $("input[name=parentOrgCode]", layero).val(nodes[0]["orgCode"]);
                     $("input[name=orgPath]", layero).val(nodes[0]["orgPath"]);
                     $("input[name=rootOrgCode]", layero).val(nodes[0]["rootOrgCode"]);
+                    $.ajax({
+                        type: "GET",
+                        url: getNewOrgCodeUrl,
+                        data: {
+                        	parentOrgCode: nodes[0]["orgCode"],
+                        },
+                        dataType: "text",
+                        success: function (result) {
+                            $("input[name=orgCode]", layero).val(result);
+                        }
+                    })
                     form.render(null, "filter_add_organization_form");
                     form.on('submit(filter_add_organization_form)', function (data) {
                         $.ajax({
@@ -56,15 +67,15 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
                                 	layer.msg("机构新增成功");
                                 	refreshOrgTable();
                                 }
-                                if (organizationTree) {
+                                /*if (organizationTree) {
                                     organizationTree.reAsyncChildNodes(null, "refresh");
-                                }
+                                }*/
                             },
                             error: function (message) {
                                 layer.msg("机构新增发生异常，请联系管理员。");
-                                if (organizationTree) {
+                                /*if (organizationTree) {
                                     organizationTree.reAsyncChildNodes(null, "refresh");
-                                }
+                                }*/
                                 console.error(message);
                             }
                         });
@@ -107,6 +118,8 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
     var importOrgExcelUrl = config.basePath +"org/importOrgExcel"; //导入
     var getDDUrl = config.basePath +"org/getDDOrg"; //导入
     var getDDOrgDZUrl = config.basePath +"org/getDDOrgDZ"; //导入
+    var getNewOrgCodeUrl = config.basePath +"org/getNewOrgCode"; //获取OrgCode
+    
 
     upload.render({
 		elem: '#importOrg'
@@ -145,7 +158,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
 					});
 			  }
 			  if(isExist=="1"){
-				  return "新增机构编码已存在或不可用，请重新输入机构编码";
+				  return "机构编码已存在或不可用";
 			  } 
 		  },
 		  
@@ -240,6 +253,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
             {type: 'numbers'}
             , {field: 'orgCode', width: 120, title: '机构编号'}
             , {field: 'orgNameCn',   title: '机构名称'}
+            , {field: 'orgType', width: 100,   title: '机构类型',templet:'#orgTypeTpl',}
             , {field: 'parentOrgCode', width: 220, title: '所属机构'}
             , {field: 'delFlag', templet: '#orgStatusTpl', width: 100, title: '状态'}
             , {field: 'createOperator', width: 100, title: '创建人'}
@@ -253,7 +267,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
         if (obj.event === 'detail') {
         	 viewDialog = layer.open({
                  type: 1,
-                 area: ['400px', '400px'],
+                 area: ['600px', '400px'],
                  shadeClose: true,
                  title: "机构详情",
                  content: $("#organization_view_data_div").html(),
@@ -267,7 +281,13 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
                          if ($input && $input.length == 1) {
                              $input.val(value);
                          }
+                         if("orgType"==name){
+                        	 if(value){
+                        		 $("input:radio[name='orgType'][value="+value+"]", layero).attr("checked",true);
+                        	 }
+                        }
                      });
+                     form.render(null, "filter_view_organization_form");
                  }
              });
         } else if (obj.event === 'del') {
@@ -281,15 +301,15 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
                          layer.msg(result.codeDesc);
                      }
                      refreshOrgTable();
-                     if (organizationTree) {
+                     /*if (organizationTree) {
                          organizationTree.reAsyncChildNodes(null, "refresh");
-                     }
+                     }*/
                  });
             });
         } else if (obj.event === 'edit') {
             editDialog = layer.open({
             	 type: 1,
-                 area: ['400px', '400px'],
+            	 area: ['600px', '400px'],
                  maxmin: true,
                  shadeClose: true,
                  title: "修改机构",
@@ -313,6 +333,12 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
                         if ($input && $input.length == 1) {
                             $input.val(value);
                         }
+                        if("orgType"==name){
+                        	 if(value){
+                        		 $("input:radio[name='orgType'][value="+value+"]", layero).attr("checked",true);
+                        	 }
+                        }
+                       
                     });
                     
                     form.render(null, "filter_modify_organization_form");
@@ -328,16 +354,15 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
                                 	layer.msg("机构修改成功");
                                     refreshOrgTable();
                                 }
-                                if (organizationTree) {
+                               /* if (organizationTree) {
                                     organizationTree.reAsyncChildNodes(null, "refresh");
-                                }
+                                }*/
                             },
                             error: function (message) {
                                 layer.msg("机构修改发生异常，请联系管理员。");
                                 if (organizationTree) {
                                     organizationTree.reAsyncChildNodes(null, "refresh");
                                 }
-                                layer.close(index);
                                 console.error(message);
                             }
                         });

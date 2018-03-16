@@ -70,7 +70,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
             refreshTable($("#user_search_keyword").val());
         },
         getDtoUserInfo: function () {
-        	  $.ajax({
+      	  $.ajax({
 					url : config.basePath + "user/getDtoUserInfo",
 					type : 'POST',
 					async : false,
@@ -79,6 +79,17 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
 					}
 				}); 
         },
+	     getOrgSub: function () {
+	    	  $.ajax({
+					url : config.basePath + "org/testGetOrgInfoByOrgType",
+					type : 'POST',
+					async : false,
+					success : function(result) {
+						 console.info(result);
+					}
+				}); 
+	      },
+        
         batchResetPwd: function () {
         	 var nodes = userOrgTree.getSelectedNodes();
              if (nodes.length == 0) {

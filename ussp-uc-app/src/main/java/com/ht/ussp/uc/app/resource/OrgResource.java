@@ -14,10 +14,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,46 +33,37 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.ht.ussp.bean.OrgInfoHelper;
 import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.core.ReturnCodeEnum;
-import com.ht.ussp.uc.app.domain.*;
+import com.ht.ussp.uc.app.domain.DdDept;
+import com.ht.ussp.uc.app.domain.DdDeptUser;
+import com.ht.ussp.uc.app.domain.HtBoaInBmUser;
+import com.ht.ussp.uc.app.domain.HtBoaInContrast;
+import com.ht.ussp.uc.app.domain.HtBoaInLogin;
+import com.ht.ussp.uc.app.domain.HtBoaInOrg;
+import com.ht.ussp.uc.app.domain.HtBoaInPosition;
+import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.model.BoaInOrgInfo;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.service.HtBoaInBmUserService;
 import com.ht.ussp.uc.app.service.HtBoaInContrastService;
-import com.ht.ussp.uc.app.service.HtBoaInLoginService;
 import com.ht.ussp.uc.app.service.HtBoaInOrgService;
 import com.ht.ussp.uc.app.service.HtBoaInPositionService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.vo.PageVo;
-import com.ht.ussp.util.EncryptUtil;
+
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang.StringUtils;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 组织机构资源类<br>
@@ -91,10 +89,10 @@ public class OrgResource {
     private HtBoaInContrastService htBoaInContrastService;
     
     @Autowired
-    private HtBoaInLoginService htBoaInLoginService;
+    private HtBoaInBmUserService htBoaInBmUserService;
     
     @Autowired
-    private HtBoaInBmUserService htBoaInBmUserService;
+    private OrgInfoHelper orgInfoHelper;
     
 
     /**
@@ -159,6 +157,7 @@ public class OrgResource {
         u.setOrgCode(boaInOrgInfo.getOrgCode());
         u.setOrgName(boaInOrgInfo.getOrgName());
         u.setOrgNameCn(boaInOrgInfo.getOrgNameCn());
+        u.setOrgType(boaInOrgInfo.getOrgType());
         u.setParentOrgCode(boaInOrgInfo.getParentOrgCode());
         u.setRootOrgCode(boaInOrgInfo.getRootOrgCode());
         u.setOrgPath(boaInOrgInfo.getOrgPath());
@@ -266,7 +265,39 @@ public class OrgResource {
     public List<HtBoaInOrg> getSubOrgInfoByCode(String parentOrgCode) {
         return htBoaInOrgService.findByParentOrgCode(parentOrgCode);
     }
-      
+    
+    /**
+     * 获取用户所属机构类型信息 (10:公司 20:中心 30:片区 40:分公司 50部门 60小组)
+     *  资源类型枚举值：OrgTypeEnum.ORG_TYPE_COMPANY.getReturnCode()
+     * @return
+     */
+    @ApiOperation(value = "获取用户所属机构类型信息")
+    @GetMapping(value = "/getOrgInfoByOrgType")
+    public HtBoaInOrg getOrgInfoByOrgType(@RequestParam("orgCode")String orgCode,@RequestParam("orgType") String orgType) {
+        return htBoaInOrgService.getOrgInfoByOrgType(orgCode,orgType);
+    }
+    
+
+    @PostMapping(value = "/testGetOrgInfoByOrgType")
+    public Result testGetOrgInfoByOrgType() {
+    	return Result.buildSuccess(orgInfoHelper.getOrgInfoByOrgType("D01100501","20"));
+    }  
+    
+    @ApiOperation(value = "产生新的orgcode")
+    @GetMapping(value = "/getNewOrgCode")
+    public String getNewOrgCode(String parentOrgCode) {
+    	//1.查看父级下有多少机构 然后再最大机构上加1
+    	List<HtBoaInOrg> listHtBoaInOrg=htBoaInOrgService.findByParentOrgCode(parentOrgCode);
+    	int size = 0;
+    	if(listHtBoaInOrg==null || listHtBoaInOrg.isEmpty()) {
+    		size = 1;
+    	}else {
+    		size = listHtBoaInOrg.size()+1;
+    	}
+        return String.format("%s%02d", parentOrgCode, size);
+    }
+    
+    
     /**
      * 导出
      */

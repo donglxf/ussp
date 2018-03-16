@@ -77,6 +77,23 @@
 		<font color="red">已删除</font>
       {{#  } }}
 	        </script>
+	        <script type="text/html" id="orgTypeTpl">
+              {{#  if(d.orgType == '10'){ }}
+                                                        公司
+              {{#  } else if(d.orgType == '20'){  }}
+		                             中心
+              {{#  } else if(d.orgType == '30'){  }}
+		         片区
+			  {{#  } else if(d.orgType == '40'){  }}
+		        分公司
+			  {{#  } else if(d.orgType == '50'){  }}
+		         部门
+			  {{#  } else if(d.orgType == '60'){  }}
+		       小组
+              {{#  } }}
+	        </script>
+	        
+	        
         </div>
     </div>
     <!--新增表单-->
@@ -89,15 +106,34 @@
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">机构名称<b>*</b></label>
+                <label class="layui-form-label">机构简称</label>
                 <div class="layui-input-block">
-                    <input type="text" name="orgName" lay-verify="required" maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="text" name="orgName"   maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">机构中文名称<b>*</b></label>
                 <div class="layui-input-block">
                     <input type="text" name="orgNameCn" lay-verify="required" maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">机构类型<b>*</b></label>
+                <div class="layui-input-block">
+                   <!-- <select name="orgType" lay-verify="required">
+				        <option value=""></option>
+				        <option value="10">公司</option>
+				        <option value="20">中心</option>
+				        <option value="30">片区</option>
+				        <option value="40">分公司</option>
+				        <option value="50">部门</option>
+				        <option value="60">小组</option>
+				    </select> -->
+				    <input type="radio" name="orgType" value="60" title="小组">
+				    <input type="radio" name="orgType" value="50" title="部门" checked>
+				    <input type="radio" name="orgType" value="40" title="分公司">
+				    <input type="radio" name="orgType" value="30" title="片区" >
+				    <input type="radio" name="orgType" value="20" title="中心" >
                 </div>
             </div>
             <div class="layui-form-item">
@@ -113,7 +149,7 @@
         </form>
     </div>
     <!--修改表单-->
-    <div id="organization_modify_data_div" class=" hide" class="hide">
+    <div id="organization_modify_data_div"   class="hide">
         <form method="post" class="layui-form" lay-filter="filter_modify_organization_form">
             <div class="layui-form-item">
                 <label class="layui-form-label">机构编号<b>*</b></label>
@@ -122,15 +158,25 @@
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">机构名称<b>*</b></label>
+                <label class="layui-form-label">机构简称</label>
                 <div class="layui-input-block">
-                    <input type="text" name="orgName" lay-verify="required" maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="text" name="orgName"  maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
             </div>
              <div class="layui-form-item">
                 <label class="layui-form-label">机构中文名称 </label>
                 <div class="layui-input-block">
                     <input type="text" name="orgNameCn"  maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">机构类型<b>*</b></label>
+                <div class="layui-input-block">
+				    <input type="radio" name="orgType" value="60" title="小组">
+				    <input type="radio" name="orgType" value="50" title="部门">
+				    <input type="radio" name="orgType" value="40" title="分公司">
+				    <input type="radio" name="orgType" value="30" title="片区" >
+				    <input type="radio" name="orgType" value="20" title="中心" >
                 </div>
             </div>
             <div class="layui-form-item">
@@ -147,8 +193,8 @@
         </form>
     </div>
     <!--查看表单-->
-    <div id="organization_view_data_div" class="ibox-content hide" class="hide">
-        <form method="post" class="layui-form" lay-filter="user_filter_view_data_form">
+    <div id="organization_view_data_div"   class="hide">
+        <form method="post" class="layui-form" lay-filter="filter_view_organization_form" >
             <div class="layui-form-item">
                 <label class="layui-form-label">机构编号</label>
                 <div class="layui-input-block">
@@ -165,6 +211,16 @@
                 <label class="layui-form-label">机构中文名称</label>
                 <div class="layui-input-block">
                     <input type="text" name="orgNameCn" lay-verify="required"   readonly maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">机构类型</label>
+                <div class="layui-input-block">
+				    <input type="radio" name="orgType" value="60" title="小组" disabled="true" >
+				    <input type="radio" name="orgType" value="50" title="部门" disabled="true" >
+				    <input type="radio" name="orgType" value="40" title="分公司" disabled="true" >
+				    <input type="radio" name="orgType" value="30" title="片区"  disabled="true" >
+				    <input type="radio" name="orgType" value="20" title="中心"  disabled="true" >
                 </div>
             </div>
             <div class="layui-form-item">

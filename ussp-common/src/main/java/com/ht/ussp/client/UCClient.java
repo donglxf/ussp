@@ -95,6 +95,15 @@ public interface UCClient {
      */
     @GetMapping(value = "/org/getSubOrgInfoByCode")
     List<HtBoaInOrgDto> getSubOrgInfoByCode(@RequestParam("parentOrgCode") String parentOrgCode);
+    
+    /**
+     * 获取用户所属机构类型信息 (10:公司 20:中心 30:片区 40:分公司 50部门 60小组)
+     *  资源类型枚举值：OrgTypeEnum.ORG_TYPE_COMPANY.getReturnCode()
+     * @return
+     */
+    @GetMapping(value = "/org/getOrgInfoByOrgType")
+	HtBoaInOrgDto getOrgInfoByOrgType(@RequestParam("orgCode")String orgCode,@RequestParam("orgType") String orgType);
+    
 
     /**
      * 获取当前用户所有权限信息（可选参数，资源类型）
@@ -145,7 +154,7 @@ public interface UCClient {
 
 	@GetMapping(value = "/resource/getMenus")
 	Result getMenus(@RequestParam("app")String app,@RequestParam("resType")String resType);
-    
+
 
 }
 

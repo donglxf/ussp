@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.ht.ussp.client.UCClient;
 import com.ht.ussp.client.dto.HtBoaInOrgDto;
+import com.ht.ussp.common.OrgTypeEnum;
 
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
@@ -80,6 +81,23 @@ public class OrgInfoHelper {
             return ucClient.getOrgInfoByCode(orgCode);
         } catch (Exception ex) {
             log.error("通过机构编码获取机构信息发生异常。", ex);
+            return null;
+        }
+    }
+    
+    /**
+     * 获取用户所属机构类型信息 (10:公司 20:中心 30:片区 40:分公司 50部门 60小组)
+     *  资源类型枚举值：OrgTypeEnum.ORG_TYPE_COMPANY.getReturnCode()
+     * @return
+     */
+    public HtBoaInOrgDto getOrgInfoByOrgType(String orgCode,String orgType) {
+        if (ucClient == null) {
+            log.warn("无法获取用户所属机构类型信息，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
+        }
+        try {
+            return ucClient.getOrgInfoByOrgType(orgCode,orgType);
+        } catch (Exception ex) {
+            log.error("获取用户所属机构类型信息发生异常。", ex);
             return null;
         }
     }
