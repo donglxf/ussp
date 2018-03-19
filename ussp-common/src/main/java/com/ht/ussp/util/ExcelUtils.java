@@ -66,6 +66,7 @@ public class ExcelUtils {
 				for (int y = row.getFirstCellNum(); y < row.getLastCellNum(); y++) {
 					cell = row.getCell(y);
 					if (cell == null ) {
+						li.add("");
 						continue;
 					}
 					li.add(getCellValue(cell));

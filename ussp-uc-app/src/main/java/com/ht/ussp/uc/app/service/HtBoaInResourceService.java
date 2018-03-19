@@ -1,7 +1,9 @@
 package com.ht.ussp.uc.app.service;
 
+import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.ReturnCodeEnum;
+import com.ht.ussp.uc.app.domain.HtBoaInOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInResource;
 import com.ht.ussp.uc.app.domain.HtBoaInRoleRes;
 import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
@@ -13,6 +15,8 @@ import com.ht.ussp.uc.app.vo.ApiResourceVo;
 import com.ht.ussp.uc.app.vo.PageVo;
 import com.ht.ussp.uc.app.vo.ResVo;
 import com.ht.ussp.uc.app.vo.ResourcePageVo;
+import com.ht.ussp.util.ExcelUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,11 +26,15 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
+
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -274,12 +282,12 @@ public class HtBoaInResourceService {
     
     public String createMenuCode(String app, String resPanrent ) {
         String[] resType = new String[]{"view", "group"};
-        String shortType = "M";
+        String shortType = "";
         String maxResCode = "";
-
         //资源编码前缀
         String resCodePrefix = "";
         if (StringUtils.isEmpty(resPanrent)) {
+        	shortType = "M";
             //资源编码前缀
             resCodePrefix = String.format("%s_%s", app, shortType);
         } else {
@@ -383,4 +391,60 @@ public class HtBoaInResourceService {
 	public List<HtBoaInResource> findByAppAndResType(String app, String resType) {
 		return htBoaInResourceRepository.findByAppAndResType(app,resType);
 	}
+
+
+    @Transactional
+    public void importResExcel(InputStream in, MultipartFile file, String userId,String app) {
+        try {
+            List<List<Object>> listob = ExcelUtils.getBankListByExcel(in, file.getOriginalFilename());
+            List<HtBoaInResource> listHtBoaInResources = new ArrayList<HtBoaInResource>();
+            
+            for (int i = 0; i < listob.size(); i++) {
+                List<Object> ob = listob.get(i); 
+                if(app.equals(String.valueOf(ob.get(10)))) {
+                	HtBoaInResource u = new HtBoaInResource();
+                    u.setResCode(String.valueOf(ob.get(0)));
+                    u.setResNameCn(String.valueOf(ob.get(1)));
+                    u.setSequence(Integer.parseInt(String.valueOf(ob.get(2))));
+                    u.setResType(String.valueOf(ob.get(3)));
+                    u.setResParent(String.valueOf(ob.get(4)));
+                    u.setRemark(String.valueOf(ob.get(5)));
+                    u.setStatus(String.valueOf(ob.get(6)));
+                    //u.setResIcon(String.valueOf(ob.get(7)));
+                    u.setFontIcon(String.valueOf(ob.get(8)));
+                    u.setResContent(String.valueOf(ob.get(9)));
+                    u.setApp(String.valueOf(ob.get(10)));
+                    u.setLastModifiedDatetime(new Date());
+                    u.setCreatedDatetime(new Date());
+                    u.setDelFlag(Constants.DEL_0);
+                    u.setCreateOperator(userId);
+                    
+                    List<HtBoaInResource> listHtBoaInResourceResCode = htBoaInResourceRepository.findByResCodeAndApp(u.getResCode(),app);
+            		if(listHtBoaInResourceResCode!=null&&!listHtBoaInResourceResCode.isEmpty()&&listHtBoaInResourceResCode.size()>0) {
+            			continue;
+            		}
+                    
+                    if("api".equals(u.getResType())) {
+                    	if(!StringUtils.isEmpty(u.getRemark())) {
+                    		int indexOfThrows = u.getRemark().indexOf("throws");
+                    		String rk = u.getRemark();
+                    		if(indexOfThrows>0) {
+                    			rk = u.getRemark().substring(0, u.getRemark().indexOf("throws"));
+                    		}
+                    		List<HtBoaInResource> listHtBoaInResource = htBoaInResourceRepository.findByRemarkLikeAndResTypeAndApp(rk.trim()+"%","api",app);
+                    		if(listHtBoaInResource!=null&&!listHtBoaInResource.isEmpty()&&listHtBoaInResource.size()>0) {
+                    			continue;
+                    		}
+                    	}
+                    }
+                    listHtBoaInResources.add(u);
+                }
+            }
+            if(!listHtBoaInResources.isEmpty()) {
+            	save(listHtBoaInResources);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

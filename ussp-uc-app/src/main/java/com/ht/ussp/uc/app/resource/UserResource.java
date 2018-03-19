@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.ussp.bean.LoginUserInfoHelper;
+import com.ht.ussp.bean.MenuInfoHelper;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
@@ -76,7 +77,10 @@ public class UserResource{
     @Autowired
 	private EipClient eipClient;
     @Autowired
-	private LoginUserInfoHelper loginUserInfoHelper;
+   	private LoginUserInfoHelper loginUserInfoHelper;
+    @Autowired
+   	private MenuInfoHelper menuInfoHelper;
+    
     
     @ApiOperation(value = "对内：用户个人信息查询", notes = "已登录用户查看自己的个人信息")
     @ApiImplicitParam(name = "userId", value = "用户ID", required = true, paramType = "path", dataType = "int")
@@ -552,6 +556,7 @@ public class UserResource{
   
     @PostMapping(value = "/getDtoUserInfo")
     public Result getDtoUserInfo() {
+    	Result s = menuInfoHelper.addMenu("test", "test", "", "RP_M03", "testName", new String[] {"234"}, "lrc");
     	return Result.buildSuccess(loginUserInfoHelper.getLoginInfo());
     }
     

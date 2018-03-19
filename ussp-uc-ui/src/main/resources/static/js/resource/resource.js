@@ -1,10 +1,12 @@
-layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
+var checkResApp = "";
+layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload'], function () {
     var $ = layui.jquery
         , element = layui.element
         , form = layui.form
         , table = layui.table
         , config = layui.ht_config
         , ht_auth = layui.ht_auth
+        ,upload= layui.upload
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
@@ -272,6 +274,21 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
             renderTable(type, undefined, keyword);
         }
     };
+    upload.render({
+		elem: '#importResourceExcel'
+		,url:config.basePath + "resource/importResourceExcel"
+		,accept: 'file' //普通文件
+		//,data:{app:$("#checkResApp").val()} 
+        ,before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+    	this.data = {app:$("#checkResApp").val()} ; // uploadData是你自己需要上传的参数
+    	}
+		,exts: 'xls|xlsx' //只允许上传压缩文件
+		,done: function(res){
+			if (res.returnCode == '0000') {
+            	layer.msg("资源导入成功");
+            }
+		}
+	});
     var refreshDalogAPIDataTable = function (app, keyword, relevanceType) {
         if (!keyword) {
             keyword = null;
@@ -318,6 +335,19 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], functio
             , callback: {
                 onClick: function (event, treeId, treeNode) {
                     var resType = treeNode["type"];
+                    if("app"==resType){
+                    	 $("#down").show();
+                    	 $("#checkResApp").val(treeNode["code"]);
+                    	 $("#importResourceExcel").html("导入"+treeNode["name"]);
+                    	 $("#importResourceExcel").show();
+                    	 console.log($("#checkResApp").val());
+                    }else{
+                    	$("#down").hide();
+                    	checkResApp = "";
+                    	$("#importResourceExcel").hide();
+                    	console.log("33 "+checkResApp);
+                    }
+                    
                     switch (resType) {
                         case "view":
                         case "group":

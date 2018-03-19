@@ -67,8 +67,7 @@ public class MenuInfoHelper {
 	}
 	
 	/**
-	 * 添加菜单  
-	 * 
+	 * 添加菜单  (菜单格式：系统编码_M_父菜单序号_子菜单序号   ex:父菜单-UC_M02   子菜单-UC_M0205)
 	 * @param resNameCn
 	 * @param resContent
 	 * @param fontIcon
@@ -76,7 +75,7 @@ public class MenuInfoHelper {
 	 * @param resParentName
 	 * @param roles
 	 *  @param apps 
-	 * @return
+	 * @return 菜单编码
 	 */
 	public Result<String> addMenu(String resNameCn, String resContent, String fontIcon, String resParent, String resParentName,
 			String[] roles,String apps) {
@@ -95,12 +94,12 @@ public class MenuInfoHelper {
     
 	/**
 	 * 更新菜单
-	 * 
+	 * （根据菜单编码更新菜单信息，菜单编码不可修改）
 	 * @param resNameCn
 	 * @param resContent
 	 * @param fontIcon
 	 * @param roles
-	 * @return
+	 * @return  returnCode:0000  更新成功
 	 */
 	public Result updateMenu(String resCode,String resNameCn, String resContent, String fontIcon, String[] roles,String apps) {
 		if (ucClient == null) {
@@ -118,9 +117,10 @@ public class MenuInfoHelper {
 
 	/**
 	 * 禁用/启用菜单
-	 * 1，禁用，0，启用
-	 * 
-	 * @return
+	 * @param resCode
+	 * @param status   1，禁用，0，启用
+	 * @param apps
+	 * @return returnCode:0000  状态更改成功
 	 */
 	public Result changeApiState(String resCode, String status,String apps) {
 		if (ucClient == null) {
