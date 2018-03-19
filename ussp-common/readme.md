@@ -72,3 +72,5 @@ UCClient新增两个接口：
 1.MenuInfoHelper菜单管理，增加菜单修改返回值
 ### 0.0.13
 1.OrgInfoHelper 增加获取用户所属片区 (10:公司 20:中心 30:片区 40:分公司 50部门 60小组)
+### 0.0.14
+1、config.js 新增instanceId和unInstanceId参数，通过bootstrap.yml的ht.config.ui.instanceId和ht.config.ui.unInstanceId进行配置
