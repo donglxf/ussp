@@ -141,6 +141,14 @@ layui.define(["ht_cookie", "ht_config"], function (exports) {
                             var headers = {
                                 app: config.app /*系统编码统一通过http headers进行传输*/
                             }
+                            //指定路由的服务名（instanceId：注册中心注册的服务实例名）
+                            if (config.instanceId && config.instanceId.length > 0) {
+                                headers.instanceId = config.instanceId;
+                            }
+                            //指定不路由的服务名（uninstanceId：注册中心注册的服务实例名）
+                            if (config.uninstanceId && config.uninstanceId.length > 0) {
+                                headers.uninstanceId = config.uninstanceId;
+                            }
                             //noToken 默认为false，当为true时，则不传输token
                             if (opt.noToken == false || !opt.noToken) {
                                 headers.Authorization = "Bearer " + cookie.getToken();

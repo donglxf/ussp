@@ -23,13 +23,21 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/common")
-public class GatewayURLHelper {
+public class CommonJSController {
 
     @Value("${ht.config.ui.gatewayUrl:htt://localhost:30111}")
     private String gatewayUrl;
+    @Value("${ht.config.ui.instanceId:}")
+    private String instanceId;
+    @Value("${ht.config.ui.unInstanceId:}")
+    private String unInstanceId;
 
     @GetMapping(value = "/config.js", produces = "application/javascript")
     public String config() {
-        return String.format("var gatewayUrl='%s';", gatewayUrl);
+        StringBuffer config = new StringBuffer();
+        config.append("var gatewayUrl='").append(gatewayUrl).append("';");
+        config.append("var instanceId='").append(instanceId).append("';");
+        config.append("var unInstanceId='").append(unInstanceId).append("';");
+        return config.toString();
     }
 }

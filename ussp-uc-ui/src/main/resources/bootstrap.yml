@@ -10,7 +10,8 @@ server:
 spring:
   profiles: local
 ht.config.ui:
-  gatewayUrl: http://localhost:30111/
+  gatewayUrl: http://172.16.200.110:30111/
+  instanceId: tanrq-PC:ussp-uc-app:30126
 
 ---
 spring:
