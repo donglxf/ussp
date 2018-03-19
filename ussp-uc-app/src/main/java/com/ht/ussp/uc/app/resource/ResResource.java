@@ -9,8 +9,12 @@
  */
 package com.ht.ussp.uc.app.resource;
 
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -21,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.ht.ussp.bean.LoginUserInfoHelper;
 import com.ht.ussp.core.PageResult;
@@ -317,4 +323,33 @@ public class ResResource {
 		}
     	return Result.buildSuccess();
     }
+    
+    /**
+     * 导入
+     *
+     * @param request
+     * @param response
+     */
+    @PostMapping(value = "/importResourceExcel")
+    public Result importResourceExcel(HttpServletRequest request, HttpServletResponse response, @RequestHeader("userId") String userId ,@RequestParam("app")String app) {
+        try {
+            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+            List<MultipartFile> fileList = multipartRequest.getFiles("file");
+            if (fileList.isEmpty()) {
+                throw new Exception("文件不存在！");
+            }
+            MultipartFile file = fileList.get(0);
+            if (file == null || file.isEmpty()) {
+                throw new Exception("文件不存在！");
+            }
+            InputStream in = file.getInputStream();
+            htBoaInResourceService.importResExcel(in, file, userId,app);
+            in.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.buildFail();
+        }
+        return Result.buildSuccess();
+    }
+
 }

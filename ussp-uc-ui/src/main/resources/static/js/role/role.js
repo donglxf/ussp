@@ -117,7 +117,7 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth' ,'upload'],
 	form.verify({
 		  //校验编码是否已经存在
 		  checkExistRoleCode : function(value) {
-			  var isExist="";
+			  var isExist="1";
 			  if(value){
 					  $.ajax({
 						url : checkRoleCodeExist + "?roleCode=" + value,
@@ -133,7 +133,7 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth' ,'upload'],
 					});
 			  }
 			  if(isExist=="1"){
-				  return "新增角色编码不可用，请重新输入角色编码";
+				  return "角色编码存在或不可用";
 			  } 
 		  },
 		  

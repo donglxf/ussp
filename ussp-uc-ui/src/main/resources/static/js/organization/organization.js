@@ -142,7 +142,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
 	form.verify({
 		  //校验编码是否已经存在
 		  checkExistOrgCode : function(value) {
-			  var isExist="";
+			  var isExist="1";
 			  if(value){
 					  $.ajax({
 						url : checkOrgCodeExistUrl + "?orgCode=" + value,

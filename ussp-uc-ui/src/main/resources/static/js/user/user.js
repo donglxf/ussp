@@ -175,7 +175,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
 	form.verify({
 		//校验工号是否已经存在
 		  checkExistJobNum : function(value) {
-			  var isExist="";
+			  var isExist="1";
 			  if(value){
 					  $.ajax({
 						  url : config.basePath + "user/checkUserExist?jobnum=" + value,
@@ -196,7 +196,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
 		  },
 		//校验用户名是否已经存在
 		  checkExistLoginId : function(value) {
-			  var isExist="";
+			  var isExist="1";
 			  if(value){
 					  $.ajax({
 						  url : config.basePath + "user/checkUserExist?loginid=" + value,
@@ -217,7 +217,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
 		  },
 		//校验手机号是否已经存在
 		  checkExistMobile : function(value) {
-			  var isExist="";
+			  var isExist="1";
 			  if(value){
 					  $.ajax({
 						  url : config.basePath + "user/checkUserExist?mobile=" + value,

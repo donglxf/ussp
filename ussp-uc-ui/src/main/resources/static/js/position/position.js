@@ -115,7 +115,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
 	form.verify({
 		  //校验编码是否已经存在
 		  checkExistPosCode : function(value) {
-			  var isExist="";
+			  var isExist="1";
 			  if(value){
 					  $.ajax({
 						url : checkPositionCodeExistUrl + "?positionCode=" + value,
@@ -131,7 +131,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
 					});
 			  }
 			  if(isExist=="1"){
-				  return "新增岗位编码已存在或不可用，请重新输入岗位编码";
+				  return "岗位编码已存在或不可用";
 			  } 
 		  },
 		  
