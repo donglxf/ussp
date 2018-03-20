@@ -85,6 +85,9 @@ zuul:
     alms-timer-service:
       path: /alms/timer/**
       serviceId: alms-timer-service
+    alms-open-service:
+      path: /alms/open/**
+      serviceId: alms-open-service
     ht:
       path: /ht/*
       serviceId: eip-in
