@@ -119,3 +119,8 @@ ht:
      http: /uc/auth/loadBtnAndTab,/uc/auth/loadMenu,/rule/service/check/key,/uc/user/in/selfinfo,/rp/view/frameset #需要验证token
   rule:
     className: com.ht.ussp.gateway.app.rule.InstanceIdAndIPAddrRule #自定义路由策略
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 5MB
