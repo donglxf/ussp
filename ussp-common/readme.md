@@ -74,3 +74,6 @@ UCClient新增两个接口：
 1.OrgInfoHelper 增加获取用户所属片区 (10:公司 20:中心 30:片区 40:分公司 50部门 60小组)
 ### 0.0.14
 1、config.js 新增instanceId和unInstanceId参数，通过bootstrap.yml的ht.config.ui.instanceId和ht.config.ui.unInstanceId进行配置
+
+### 0.0.15
+1、LoginUserInfoHelper 新增getUserInfoByUserId 根据userId获取用户信息 ,若userId不为空则按userId查询,userId为空则根据bmUserId查询,

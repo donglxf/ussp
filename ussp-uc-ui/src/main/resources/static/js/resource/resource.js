@@ -340,12 +340,10 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                     	 $("#checkResApp").val(treeNode["code"]);
                     	 $("#importResourceExcel").html("导入"+treeNode["name"]);
                     	 $("#importResourceExcel").show();
-                    	 console.log($("#checkResApp").val());
                     }else{
                     	$("#down").hide();
                     	checkResApp = "";
                     	$("#importResourceExcel").hide();
-                    	console.log("33 "+checkResApp);
                     }
                     
                     switch (resType) {

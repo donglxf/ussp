@@ -65,7 +65,7 @@ public class LoginUserInfoHelper {
             return null;
         }
         if (ucClient == null) {
-            log.warn("无法同步API资源到用户权限中心，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
+            log.warn("无法获取用户登录信息，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
         }
         try {
             return ucClient.getLoginUserInfo(userId,app);
@@ -113,4 +113,26 @@ public class LoginUserInfoHelper {
             return null;
         }
     }
+    
+
+    /**
+     * 根据userId获取用户信息
+     * @param userId 若为空则根据bmUserId查询
+     * @param bmUserId 若userId不为空则按userId查询,userId为空则根据bmUserId查询,
+     * @return
+     */
+	public LoginInfoDto getUserInfoByUserId(String userId, String bmUserId) {
+		if (ucClient == null) {
+			log.warn("无法获取用户信息，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
+		}
+		try {
+			userId = userId == null ? "" : userId;
+			bmUserId = bmUserId == null ? "" : bmUserId;
+			return ucClient.getUserInfoByUserId(userId, bmUserId,app);
+		} catch (Exception ex) {
+			log.error("获取登录信息发生异常。", ex);
+			return null;
+		}
+	}
+    
 }         

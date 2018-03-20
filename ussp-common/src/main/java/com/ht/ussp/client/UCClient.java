@@ -55,6 +55,16 @@ public interface UCClient {
      */
     @GetMapping(value = "/user/getLoginUserInfo")
     LoginInfoDto getLoginUserInfo(@RequestParam("userId") String userId, @RequestParam("app") String app);
+    
+    /**
+     * 根据userId获取bmUserId
+     * @param userId
+     * @param bmUserId
+     * @param app
+     * @return
+     */
+    @GetMapping(value = "/user/getUserInfoByUserId")
+    LoginInfoDto getUserInfoByUserId(@RequestParam("userId")String userId, @RequestParam("bmUserId")String bmUserId, @RequestParam("app") String app);
 
     /**
      * @return Result

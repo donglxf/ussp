@@ -232,7 +232,9 @@ public class ResResource {
 		resource.setFontIcon(fontIcon);
 		resource.setResParent(resParent);
 		resource.setApp(app);
-		resource.setResCode( htBoaInResourceService.createMenuCode(app, resParent));
+		String resCode = htBoaInResourceService.createMenuCode(app, resParent);
+		resource.setResCode(resCode);
+		resource.setSequence(Integer.parseInt(resCode.substring(resCode.length()-2, resCode.length())));
 		resource.setStatus("0");
 		resource.setCreateOperator(userId);
 		resource.setCreatedDatetime(new Date());
@@ -252,7 +254,6 @@ public class ResResource {
 		}
 		return Result.buildFail();
 	}
-    
 	/**
 	 * 提供外部，修改菜单
 	 * 
