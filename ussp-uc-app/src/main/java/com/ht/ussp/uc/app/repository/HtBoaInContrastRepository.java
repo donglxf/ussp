@@ -10,6 +10,9 @@
 package com.ht.ussp.uc.app.repository;
 
 import com.ht.ussp.uc.app.domain.HtBoaInContrast;
+
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -22,4 +25,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface HtBoaInContrastRepository extends JpaRepository<HtBoaInContrast, Long> {
 
 	HtBoaInContrast findByUcBusinessIdAndType(String userId, String string);
+	
+	List<HtBoaInContrast> findByBmBusinessIdAndType(String bmBusinessId, String string);
 }

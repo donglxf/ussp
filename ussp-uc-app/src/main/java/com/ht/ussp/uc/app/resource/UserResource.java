@@ -19,10 +19,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.druid.util.StringUtils;
 import com.ht.ussp.bean.LoginUserInfoHelper;
 import com.ht.ussp.bean.MenuInfoHelper;
+import com.ht.ussp.client.dto.LoginInfoDto;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
+import com.ht.ussp.uc.app.domain.HtBoaInContrast;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
@@ -33,6 +36,7 @@ import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
 import com.ht.ussp.uc.app.model.SysStatus;
+import com.ht.ussp.uc.app.service.HtBoaInContrastService;
 import com.ht.ussp.uc.app.service.HtBoaInLoginService;
 import com.ht.ussp.uc.app.service.HtBoaInPwdHistService;
 import com.ht.ussp.uc.app.service.HtBoaInUserAppService;
@@ -80,6 +84,10 @@ public class UserResource{
    	private LoginUserInfoHelper loginUserInfoHelper;
     @Autowired
    	private MenuInfoHelper menuInfoHelper;
+    
+    @Autowired
+   	private HtBoaInContrastService htBoaInContrastService;
+    
     
     
     @ApiOperation(value = "对内：用户个人信息查询", notes = "已登录用户查看自己的个人信息")
@@ -444,6 +452,20 @@ public class UserResource{
         return htBoaInUserService.queryUserInfo(userId,app);
     }
 
+    @ApiOperation(value = "对内，获取用户信息")
+    @GetMapping(value = "/getUserInfoByUserId")
+    public LoginInfoVo getUserInfoByUserId(@RequestParam("userId")String userId, @RequestParam("bmUserId")String bmUserId, @RequestParam("app") String app) {
+    	if(StringUtils.isEmpty(userId)) {
+    		List<HtBoaInContrast> listHtBoaInContrast= htBoaInContrastService.getHtBoaInContrastListByBmUserId(bmUserId);
+    		if(listHtBoaInContrast==null||listHtBoaInContrast.isEmpty()) {
+    			return null;
+    		}else {
+    			userId=listHtBoaInContrast.get(0).getUcBusinessId();
+    		}
+    	}
+        return htBoaInUserService.queryUserInfo(userId,app);
+    }
+    
     @ApiOperation(value = "重置密码并发邮件")
     @PostMapping(value = "/sendEmailRestPwd")
     @ResponseBody
@@ -556,8 +578,9 @@ public class UserResource{
   
     @PostMapping(value = "/getDtoUserInfo")
     public Result getDtoUserInfo() {
-    	Result s = menuInfoHelper.addMenu("test", "test", "", "RP_M03", "testName", new String[] {"234"}, "lrc");
-    	return Result.buildSuccess(loginUserInfoHelper.getLoginInfo());
+    	LoginInfoDto l = loginUserInfoHelper.getUserInfoByUserId("", "huangmeixia"); 
+    	//return Result.buildSuccess(loginUserInfoHelper.getLoginInfo());
+    	return Result.buildSuccess(l);
     }
     
 }

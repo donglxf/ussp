@@ -35,4 +35,9 @@ public class HtBoaInContrastService {
     public List<HtBoaInContrast> getHtBoaInContrastList() {
         return htBoaInContrastRepository.findAll();
     }
+    
+    
+    public List<HtBoaInContrast> getHtBoaInContrastListByBmUserId(String bmBusinessId) {
+        return htBoaInContrastRepository.findByBmBusinessIdAndType(bmBusinessId, "20");
+    }
 }
