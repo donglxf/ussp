@@ -1,4 +1,3 @@
-var checkResApp = "";
 layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload'], function () {
     var $ = layui.jquery
         , element = layui.element
@@ -342,7 +341,6 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                     	 $("#importResourceExcel").show();
                     }else{
                     	$("#down").hide();
-                    	checkResApp = "";
                     	$("#importResourceExcel").hide();
                     }
                     

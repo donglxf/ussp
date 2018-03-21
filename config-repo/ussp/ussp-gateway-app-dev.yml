@@ -106,5 +106,5 @@ ribbon:
 ht:
   ignoreUrl: #不验证的url(可以使用通配符（*）)
      web: /uc/echo,/ht/nologin/*,/admin/*,/car/*,/rule/ui/*,/cams/ui/*,/cams/accountmq/*,/lawUi/*,/alms/ui/*,/alms/core/downLoadController/*,/alms/open/carAuction/* #不需要验证token
-     http: /uc/auth/loadBtnAndTab,/uc/auth/loadMenu,/rule/service/check/key,/uc/user/in/selfinfo #需要验证token
+     http: /uc/auth/loadBtnAndTab,/uc/auth/loadMenu,/rule/service/check/key,/uc/user/in/selfinfo,/uc/user/in/changePwd,/uc/user/in/selfinfo/set #需要验证token
 

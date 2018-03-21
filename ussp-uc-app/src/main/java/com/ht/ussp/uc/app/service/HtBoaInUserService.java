@@ -16,12 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.ReturnCodeEnum;
+import com.ht.ussp.uc.app.domain.HtBoaInBmUser;
 import com.ht.ussp.uc.app.domain.HtBoaInContrast;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
 import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
+import com.ht.ussp.uc.app.repository.HtBoaInBmUserRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInContrastRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInLoginRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInOrgRepository;
@@ -50,7 +52,8 @@ public class HtBoaInUserService {
     private HtBoaInContrastRepository htBoaInContrastRepository;
     @Autowired
     private HtBoaInUserAppRepository htBoaInUserAppRepository;
-    
+    @Autowired
+    private HtBoaInBmUserRepository htBoaInBmUserRepository;
     
 
     /**
@@ -95,6 +98,12 @@ public class HtBoaInUserService {
         		loginInfoVo.setBmOrgCode(htBoaInContrastOrg.getBmBusinessId());
         		loginInfoVo.setDdOrgCode(htBoaInContrastOrg.getDdBusinessId());
         	}
+        	if(StringUtils.isEmpty(loginInfoVo.getBmOrgCode())&&StringUtils.isNoneEmpty(htBoaInContrast.getBmBusinessId())) {
+        		HtBoaInBmUser htBoaInBmUser = htBoaInBmUserRepository.findByUserId(htBoaInContrast.getBmBusinessId());
+        		if(htBoaInBmUser!=null) {
+            		loginInfoVo.setBmOrgCode(htBoaInBmUser.getOrgCode());
+            	}
+    		}
         	//获取用户是否是系统管理员
         	if(StringUtils.isNotEmpty(app)) {
         		HtBoaInUserApp htBoaInUserApp = htBoaInUserAppRepository.findByUserIdAndApp(userId, app);
