@@ -98,7 +98,7 @@ public class ExternalTokenManager {
 			return rm;
 		}
 		 rm.setSysStatus(SysStatus.SUCCESS);
-		}catch(BadCredentialsException ex) {
+		}catch(BadCredentialsException|NullPointerException ex) {
 			rm.setSysStatus(SysStatus.TOKEN_IS_VALID);
 			log.info("----token invalid----");
 		}catch (JwtExpiredTokenException expiredEx) {
