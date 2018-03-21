@@ -1,6 +1,4 @@
-server:
-  port: 30111
-feign:
+feign:  
   hystrix:  
     enabled: true
 hystrix:
@@ -18,8 +16,11 @@ hystrix:
          isolation:
           semaphore:
             maxConcurrentRequests: 1000
-
+            
 zuul:
+  AccessFilter:
+    pre:
+      disable: false
   host:
     maxTotalConnections: 2000
     maxPerRouteConnections: 800
@@ -32,6 +33,11 @@ zuul:
     ussp-uc:
       path: /uc/**
       serviceId: ussp-uc-app
+    #用户账户与授权平台
+    ussp-uaa:
+      path: /uaa/**
+      serviceId: ussp-uaa-app
+      sensitiveHeaders: "*"
     #外联平台
     eip:
       path: /ht/**
@@ -83,44 +89,40 @@ zuul:
     litigation-ui:
       path: /lawUi/**
       serviceId: litigation-ui
-   #贷后系统
+    #贷后系统
     alms-core-service:
       path: /alms/core/**
       serviceId: alms-core-service
-    alms-timer-service:
-      path: /alms/timer/**
-      serviceId: alms-timer-service
-    report-birt-view:
+    alms-scheduled-service:
+      path: /alms/scheduled/**
+      serviceId: alms-scheduled-service
+    alms-open-service:
+      path: /alms/open/**
+      serviceId: alms-open-service  
+    ht:
+      path: /ht/*
+      serviceId: eip-in
+    rp-birt-view:
       path: /rp/view/**
-      serviceId: report-birt-view
+      serviceId: rp-birt-view
       sensitiveHeaders: "*"
-    rp-app-service:
-      path: /rp-app-service/**
-      serviceId: rp-app-service
+    #微信公众号
+    wx-app:
+      path: /wx/app/**
+      serviceId: wx-app
       sensitiveHeaders: "*"
-    rp-code-service:
-      path: /rp-code-service/**
-      serviceId: rp-code-service
-    rp-ui-service:
-      path: /rp-ui-service/**
-      serviceId: rp-ui-service
+    wx-ui:
+      path: /wx/ui/**
+      serviceId: wx-ui
 
-gateway:
-  security:
-    jwt:
-      tokenExpirationTime: 29  #分钟
-      refreshTokenExpTime: 720
-      tokenIssuer: qiuwenwu@hongte.info
-      tokenSigningKey: xm8EV6Hy5RMFK4EEACIDAwQus
 
 ht:
   ignoreUrl: #不验证的url(可以使用通配符（*）)
-     web: /uc/system/*,/ht/nologin/*,/admin/*,/car/*,/rule/ui/*,/cams/ui/*,/LawUi/*,/rp/view/*,/rp-ui-service/*, #不需要验证token
-     http: /uc/auth/loadBtnAndTab,/uc/auth/loadMenu,/rule/service/check/key,/uc/user/in/selfinfo,/uc/user/in/changePwd,/uc/user/in/selfinfo/set,/rp/view/frameset #需要验证token
+     app: /wx/*,/ht/*  #系统级验证
+     web: /uaa/*,/uc/system/*,/ht/nologin/*,/admin/*,/car/*,/rule/ui/*,/cams/ui/*,/cams/accountmq/*,/lawUi/*,/alms/ui/*,/alms/core/downLoadController/*,/alms/core/car/download,/alms/open/carAuction/*,/activiti/service/*,/rp-ui-service/*,/rp/view/* #不需要验证token
+     http: /uc/hello,/uc/auth/loadBtnAndTab,/uc/auth/loadMenu,/rule/service/check/key,/rule/service/user/getUserInfo,/lawService/index/*,/lawService/ProcessApproveStepBar/getProcessWorkLogList #需要验证token
   rule:
     className: com.ht.ussp.gateway.app.rule.InstanceIdAndIPAddrRule #自定义路由策略
+    
 
-spring:
-  servlet:
-    multipart:
-      max-file-size: 5MB
+

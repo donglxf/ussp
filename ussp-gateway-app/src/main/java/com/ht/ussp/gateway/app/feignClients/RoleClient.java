@@ -4,9 +4,6 @@ import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.ht.ussp.gateway.app.model.ResponseModal;
-import com.ht.ussp.gateway.app.vo.UserVo;
-
 /**
  * 
  * @ClassName: RoleClient
@@ -18,15 +15,6 @@ import com.ht.ussp.gateway.app.vo.UserVo;
 @FeignClient(value = "ussp-uc-app")
 public interface RoleClient {
 
-	/**
-	 * 
-	 * @Title: saveResources 
-	 * @Description: 调用该接口，查找角色对应资源，并将其保存到REDIS  
-	 * @return ResponseModal
-	 * @throws
-	 */
-	@RequestMapping(value = "/auth/saveResources")
-	public ResponseModal saveResources(UserVo userVo);
 
 	/**
 	 * 
