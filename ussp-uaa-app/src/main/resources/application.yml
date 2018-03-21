@@ -14,6 +14,7 @@ uaa:
     jwt:
       tokenExpirationTime: 29  #分钟
       refreshTokenExpTime: 720
+      appTokenTime: 365 #天
       tokenIssuer: qiuwenwu@hongte.info
       tokenSigningKey: xm8EV6Hy5RMFK4EEACIDAwQus
       

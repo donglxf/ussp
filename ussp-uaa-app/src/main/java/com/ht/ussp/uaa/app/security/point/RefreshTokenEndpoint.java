@@ -70,7 +70,6 @@ public class RefreshTokenEndpoint {
 
 		RawAccessJwtToken rawToken = new RawAccessJwtToken(tokenPayload);
 		
-//		try {
 			refreshToken = RefreshToken.create(rawToken, jwtSettings.getTokenSigningKey())
 					.orElseThrow(() -> new InvalidJwtToken());
 		} catch (BadCredentialsException ex) {

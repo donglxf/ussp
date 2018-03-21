@@ -17,6 +17,10 @@ public class JwtSettings {
 	 * token有效时间
 	 */
 	private Integer tokenExpirationTime;
+	/**
+	 * 外部系统token有效时间
+	 */
+	private Integer appTokenTime;
 
 	/**
 	 * 发布者
@@ -64,4 +68,13 @@ public class JwtSettings {
 	public void setTokenSigningKey(String tokenSigningKey) {
 		this.tokenSigningKey = tokenSigningKey;
 	}
+
+	public Integer getAppTokenTime() {
+		return appTokenTime;
+	}
+
+	public void setAppTokenTime(Integer appTokenTime) {
+		this.appTokenTime = appTokenTime;
+	}
+	
 }

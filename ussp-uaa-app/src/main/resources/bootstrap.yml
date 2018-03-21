@@ -26,7 +26,6 @@ spring:
       enabled: false
     bus:
       enabled: false
-
 eureka:
   client:
     serviceUrl:
