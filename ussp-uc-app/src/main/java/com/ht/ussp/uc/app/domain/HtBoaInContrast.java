@@ -63,7 +63,7 @@ public class HtBoaInContrast implements Serializable {
     @Column(name = "uc_business_id")
     private String ucBusinessId;
 
-    @Column(name = "status")
-    private String status;
+    /*@Column(name = "status")
+    private String status;*/
 
 }
