@@ -12,7 +12,7 @@ import io.jsonwebtoken.Jws;
  * @author wim qiuwenwu@hongte.info
  * @date 2018年1月6日 上午11:50:30
  */
-public class RefreshToken implements JwtToken {
+public final class RefreshToken implements JwtToken {
     private Jws<Claims> claims;
 
     private RefreshToken(Jws<Claims> claims) {
