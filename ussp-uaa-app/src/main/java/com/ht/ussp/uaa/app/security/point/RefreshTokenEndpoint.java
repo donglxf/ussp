@@ -103,9 +103,9 @@ public class RefreshTokenEndpoint {
 		ValidateJwtVo vdj = new ValidateJwtVo();
 		
 		try {
-		RawAccessJwtToken AccessToken = new RawAccessJwtToken(tokenExtractor.extract(tokenPayload));
+		RawAccessJwtToken accessToken = new RawAccessJwtToken(tokenExtractor.extract(tokenPayload));
 		
-		jwsClaims = AccessToken.parseClaims(jwtSettings.getTokenSigningKey());
+		jwsClaims = accessToken.parseClaims(jwtSettings.getTokenSigningKey());
 		 userId = jwsClaims.getBody().get("userId").toString();
 		 orgCode = jwsClaims.getBody().get("orgCode").toString();
 		 vdj.setUserId(userId);

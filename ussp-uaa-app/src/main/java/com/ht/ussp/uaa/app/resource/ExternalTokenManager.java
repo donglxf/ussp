@@ -46,17 +46,11 @@ import lombok.extern.log4j.Log4j2;
 @RequestMapping(value = "/external")
 @Log4j2
 public class ExternalTokenManager {
-	private static final Logger logger = LoggerFactory.getLogger(JwtTokenFactory.class);
 	@Autowired
 	@Qualifier("jwtHeaderTokenExtractor")
 	private TokenExtractor tokenExtractor;
 	@Autowired
 	private JwtSettings jwtSettings;
-
-//	@Autowired
-//	public ExternalTokenManager(JwtSettings settings) {
-//		this.settings = settings;
-//	}
 
 	@PostMapping(value = "/createAppToken")
 	@ApiOperation(value = "创建系统级别token")
@@ -76,35 +70,34 @@ public class ExternalTokenManager {
 				.setExpiration(Date.from(
 						currentTime.plusDays(jwtSettings.getAppTokenTime()).atZone(ZoneId.systemDefault()).toInstant()))
 				.signWith(SignatureAlgorithm.HS512, jwtSettings.getTokenSigningKey()).compact();
-		logger.info(app + "'s token has created:" + token);
+		log.info(app + "'s token has created:" + token);
 		return new AccessJwtToken(token, claims);
 
 	}
-	
-	
 
 	@RequestMapping(value = "/validateAppJwt")
-	public ResponseModal validateAppJwt(@RequestParam("tokenPayload") String tokenPayload,@RequestParam("app") String app,HttpServletResponse response){
-		ResponseModal rm=new ResponseModal();
+	public ResponseModal validateAppJwt(@RequestParam("tokenPayload") String tokenPayload,
+			@RequestParam("app") String app, HttpServletResponse response) {
+		ResponseModal rm = new ResponseModal();
 		Jws<Claims> jwsClaims;
-		
+
 		try {
-		RawAccessJwtToken AccessToken = new RawAccessJwtToken(tokenExtractor.extract(tokenPayload));
-		
-		jwsClaims = AccessToken.parseClaims(jwtSettings.getTokenSigningKey());
-		String parseApp = jwsClaims.getBody().get("app").toString();
-		if(!app.equals(parseApp)) {
-			rm.setSysStatus(SysStatus.TOKEN_IS_VALID);
-			return rm;
-		}
-		 rm.setSysStatus(SysStatus.SUCCESS);
-		}catch(BadCredentialsException|NullPointerException ex) {
+			RawAccessJwtToken accessToken = new RawAccessJwtToken(tokenExtractor.extract(tokenPayload));
+
+			jwsClaims = accessToken.parseClaims(jwtSettings.getTokenSigningKey());
+			String parseApp = jwsClaims.getBody().get("app").toString();
+			if (!app.equals(parseApp)) {
+				rm.setSysStatus(SysStatus.TOKEN_IS_VALID);
+				return rm;
+			}
+			rm.setSysStatus(SysStatus.SUCCESS);
+		} catch (BadCredentialsException | NullPointerException ex) {
 			rm.setSysStatus(SysStatus.TOKEN_IS_VALID);
 			log.info("----token invalid----");
-		}catch (JwtExpiredTokenException expiredEx) {
+		} catch (JwtExpiredTokenException expiredEx) {
 			rm.setSysStatus(SysStatus.TOKEN_IS_EXPIRED);
 			log.info("----token expired----");
-        }
+		}
 		return rm;
 	}
 }
