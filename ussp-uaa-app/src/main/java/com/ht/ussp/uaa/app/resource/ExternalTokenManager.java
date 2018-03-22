@@ -8,8 +8,6 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -22,11 +20,9 @@ import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.uaa.app.config.JwtSettings;
 import com.ht.ussp.uaa.app.exception.JwtExpiredTokenException;
 import com.ht.ussp.uaa.app.jwt.AccessJwtToken;
-import com.ht.ussp.uaa.app.jwt.JwtTokenFactory;
 import com.ht.ussp.uaa.app.jwt.RawAccessJwtToken;
 import com.ht.ussp.uaa.app.jwt.TokenExtractor;
 import com.ht.ussp.uaa.app.model.ResponseModal;
-import com.ht.ussp.uaa.app.vo.ValidateJwtVo;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -80,10 +76,8 @@ public class ExternalTokenManager {
 			@RequestParam("app") String app, HttpServletResponse response) {
 		ResponseModal rm = new ResponseModal();
 		Jws<Claims> jwsClaims;
-
 		try {
 			RawAccessJwtToken accessToken = new RawAccessJwtToken(tokenExtractor.extract(tokenPayload));
-
 			jwsClaims = accessToken.parseClaims(jwtSettings.getTokenSigningKey());
 			String parseApp = jwsClaims.getBody().get("app").toString();
 			if (!app.equals(parseApp)) {
@@ -97,6 +91,8 @@ public class ExternalTokenManager {
 		} catch (JwtExpiredTokenException expiredEx) {
 			rm.setSysStatus(SysStatus.TOKEN_IS_EXPIRED);
 			log.info("----token expired----");
+		}catch (Exception ex) {
+			log.info("validateAppjwt exception....."+ex);
 		}
 		return rm;
 	}

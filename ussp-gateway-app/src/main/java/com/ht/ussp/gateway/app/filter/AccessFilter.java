@@ -21,6 +21,8 @@ import com.ht.ussp.util.PatternUtil;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 
+import lombok.extern.log4j.Log4j2;
+
 /**
  * 
  * @ClassName: AccessFilter
@@ -28,6 +30,7 @@ import com.netflix.zuul.context.RequestContext;
  * @author wim qiuwenwu@hongte.info
  * @date 2018年3月12日 上午11:50:44
  */
+@Log4j2
 public class AccessFilter extends ZuulFilter {
 
 	@Value("${ht.ignoreUrl.app}")
@@ -62,17 +65,14 @@ public class AccessFilter extends ZuulFilter {
 		ctx.getResponse().setCharacterEncoding("UTF-8");
 		HttpServletRequest request = ctx.getRequest();
 		String uri = request.getRequestURI().toString();
-
 		// 必须带Authorization
 		String tokenPayload = request.getHeader("Authorization");
 		String app = request.getHeader("app");
 		String validateUrl = getUrl(uri);
-
 		// 不鉴权的URL直接路由
 		if (isIgnoreUrl(uri, htIgnoreUrlWeb)) {
 			return null;
 		}
-
 		// 鉴权TOKEN不能为空
 		if (StringUtils.isEmpty(tokenPayload)) {
 			ctx.setSendZuulResponse(false);
@@ -83,7 +83,6 @@ public class AccessFilter extends ZuulFilter {
 			}
 			return null;
 		}
-
 		String userId = null;
 
 		// 如果系统级别URL不为空，进行系统级别鉴权
@@ -129,7 +128,6 @@ public class AccessFilter extends ZuulFilter {
 			}
 		}
 		
-		
 		// 如果请求的URL与htIgnoreApp不匹配，验证内部系统JWT
 		try {
 			ResponseModal rm = UaaClient.validateJwt(tokenPayload);
@@ -164,16 +162,13 @@ public class AccessFilter extends ZuulFilter {
 			}
 		}
 		
-		
 		ctx.getResponse().setHeader("Content-type", "application/json;charset=UTF-8");
 		ctx.setSendZuulResponse(true);
 		ctx.setResponseStatusCode(200);
-
 		// 验证token，不验证API
 		if (isIgnoreUrl(uri, htIgnoreUrlHttp)) {
 			return null;
 		}
-
 		// 验证api权限
 		String api_key = String.format("%s:%s:%s", userId, app, "api");
 		if (StringUtils.isEmpty(userId) || StringUtils.isEmpty(app) || !roleClient.isHasAuth(api_key, validateUrl)) {

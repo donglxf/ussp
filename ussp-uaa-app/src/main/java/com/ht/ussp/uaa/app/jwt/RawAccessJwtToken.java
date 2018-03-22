@@ -14,6 +14,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * 
@@ -22,6 +23,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
  * @author wim qiuwenwu@hongte.info
  * @date 2018年1月12日 上午9:14:26
  */
+@Log4j2
 public class RawAccessJwtToken implements JwtToken {
     private static Logger logger = LoggerFactory.getLogger(RawAccessJwtToken.class);
             
