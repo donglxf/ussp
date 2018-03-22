@@ -102,10 +102,10 @@ public class AccessFilter extends ZuulFilter {
 						return null;
 					}
 					ResponseModal rm = UaaClient.validateAppJwt(tokenPayload,app);
-					if ("0000".equals(rm.getStatus_code())) {
+					if ("0000".equals(rm.getStatusCode())) {
 							ctx.setSendZuulResponse(true);
 							return null;
-					} else if ("9922".equals(rm.getStatus_code())) {
+					} else if ("9922".equals(rm.getStatusCode())) {
 						ctx.setSendZuulResponse(false);
 						try {
 							mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_VALID));
@@ -113,7 +113,7 @@ public class AccessFilter extends ZuulFilter {
 							e.printStackTrace();
 						}
 						return null;
-					} else if ("9921".equals(rm.getStatus_code())) {
+					} else if ("9921".equals(rm.getStatusCode())) {
 						ctx.setSendZuulResponse(false);
 						try {
 							mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_EXPIRED));
@@ -133,13 +133,13 @@ public class AccessFilter extends ZuulFilter {
 		// 如果请求的URL与htIgnoreApp不匹配，验证内部系统JWT
 		try {
 			ResponseModal rm = UaaClient.validateJwt(tokenPayload);
-			if ("0000".equals(rm.getStatus_code())) {
+			if ("0000".equals(rm.getStatusCode())) {
 				String str = FastJsonUtil.objectToJson(rm.getResult());
 				ValidateJwtVo vdt = FastJsonUtil.jsonToPojo(str, ValidateJwtVo.class);
 				userId = vdt.getUserId();
 				ctx.addZuulRequestHeader("userId", userId);
 				ctx.addZuulRequestHeader("orgCode", vdt.getOrgCode());
-			} else if ("9922".equals(rm.getStatus_code())) {
+			} else if ("9922".equals(rm.getStatusCode())) {
 				ctx.setSendZuulResponse(false);
 				try {
 					mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_VALID));
@@ -147,7 +147,7 @@ public class AccessFilter extends ZuulFilter {
 					e.printStackTrace();
 				}
 				return null;
-			} else if ("9921".equals(rm.getStatus_code())) {
+			} else if ("9921".equals(rm.getStatusCode())) {
 				ctx.setSendZuulResponse(false);
 				try {
 					mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_EXPIRED));
@@ -176,7 +176,7 @@ public class AccessFilter extends ZuulFilter {
 
 		// 验证api权限
 		String api_key = String.format("%s:%s:%s", userId, app, "api");
-		if (StringUtils.isEmpty(userId) || StringUtils.isEmpty(app) || !roleClient.IsHasAuth(api_key, validateUrl)) {
+		if (StringUtils.isEmpty(userId) || StringUtils.isEmpty(app) || !roleClient.isHasAuth(api_key, validateUrl)) {
 			ctx.setSendZuulResponse(false);
 			try {
 				mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.HAS_NO_ACCESS));

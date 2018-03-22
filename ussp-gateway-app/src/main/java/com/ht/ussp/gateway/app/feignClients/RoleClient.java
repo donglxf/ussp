@@ -24,5 +24,5 @@ public interface RoleClient {
 	 * @throws
 	 */
 	@RequestMapping(value = "/auth/IsHasAuth")
-	public Boolean IsHasAuth(@RequestParam("key") String key, @RequestParam("url") String url);
+	public Boolean isHasAuth(@RequestParam("key") String key, @RequestParam("url") String url);
 }
