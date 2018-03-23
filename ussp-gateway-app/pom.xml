@@ -13,7 +13,7 @@
 	<artifactId>ussp-gateway-app</artifactId>
 	<version>1.0-SNAPSHOT</version>
 
-	<name>网关</name>
+	<name>统一服务网关</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>

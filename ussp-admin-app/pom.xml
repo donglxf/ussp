@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ussp-admin-app</artifactId>
+    <name>统一服务看板</name>
     <properties>
             <spring-boot-admin.version>1.5.6</spring-boot-admin.version>
     </properties>

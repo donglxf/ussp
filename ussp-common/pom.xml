@@ -11,7 +11,7 @@
     <groupId>com.ht.ussp</groupId>
     <artifactId>ussp-common</artifactId>
     <version>0.0.16</version>
-    <name>工具</name>
+    <name>统一服务工具包</name>
     <packaging>jar</packaging>
     <properties>
          <maven.deploy.skip>true</maven.deploy.skip>

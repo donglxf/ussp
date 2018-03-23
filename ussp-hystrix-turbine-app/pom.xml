@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ussp-hystrix-turbine-app</artifactId>
-
+    <name>统一服务熔断看板</name>
     <dependencies>
         <dependency>
             <groupId>org.springframework.cloud</groupId>

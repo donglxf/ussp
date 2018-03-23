@@ -12,7 +12,7 @@
 	<groupId>com.ht.ussp</groupId>
 	<artifactId>ussp-registry-app</artifactId>
 	<version>1.0-SNAPSHOT</version>
-	<name>服务注册中心</name>
+	<name>统一服务注册中心</name>
 	<properties>
 		<start-class>com.ht.ussp.registry.app.RegistryApplication</start-class>
 		<maven.deploy.skip>true</maven.deploy.skip>

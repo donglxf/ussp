@@ -9,7 +9,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>ussp-zipkin-server</artifactId>
-	<name>zipin路径跟踪应用</name>
+	<name>统一服务链路跟踪</name>
 
 	<properties>
 		<start-class>com.ht.zipkin.server.app.ZipkinApplication</start-class>

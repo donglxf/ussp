@@ -8,8 +8,7 @@
 	<artifactId>ussp-uaa-app</artifactId>
 	<version>1.0-SNAPSHOT</version>
 
-	<name>ussp-uaa-app</name>
-	<description>用户鉴权中心</description>
+	<name>统一服务鉴权中心</name>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
