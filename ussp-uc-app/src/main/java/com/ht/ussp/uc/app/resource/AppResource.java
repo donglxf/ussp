@@ -62,7 +62,7 @@ public class AppResource {
     public ResponseModal getHtBoaInApp(@PathVariable Long id) {
         ResponseModal rm = new ResponseModal();
         HtBoaInApp htBoaInApp = htBoaInAppService.findById(id);
-        rm.setStatus_code("200");
+        rm.setStatusCode("200");
         rm.setResult(htBoaInApp);
         log.debug("====htBoaInApp====" + htBoaInApp);
         return rm;

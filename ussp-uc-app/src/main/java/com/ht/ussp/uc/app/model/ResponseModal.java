@@ -2,6 +2,8 @@ package com.ht.ussp.uc.app.model;
 
 import java.io.Serializable;
 
+import com.ht.ussp.common.SysStatus;
+
 
 public class ResponseModal extends Modal implements Serializable{
 
