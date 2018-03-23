@@ -36,6 +36,8 @@ spring:
       max-wait : 10000  #等待可用连接的最大时间，超过该时间，将抛出异常，-1表示永不超时，单位毫秒
       max-idle : 20  #最大空闲连接，默认8
       min-idle : 5   #最小空闲连接，默认0
+  jackson:
+    time-zone: GMT+8
 ribbon:
   ReadTimeout: 60000
   ConnectTimeout: 60000
