@@ -1,8 +1,0 @@
-server:
-  port: 30321
-spring:
-  application:
-    name: clms-ui-service
-    version: 1.0.0
-ht.config.ui:
-  gatewayUrl: http://10.110.1.240:30111/
