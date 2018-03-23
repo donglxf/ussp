@@ -17,6 +17,7 @@
         <module>ussp-registry-app</module>
         <module>ussp-gateway-app</module>
         <module>ussp-uc-app</module>
+        <module>ussp-uaa-app</module>
         <module>ussp-config-app</module>
         <module>ussp-zipkin-server</module>
         <module>ussp-hystrix-turbine-app</module>
