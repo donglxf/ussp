@@ -9,20 +9,19 @@
                 <div class="layui-tab-item layui-show">
                     <div class="row-lg">
                         <div class="toolbarBtn btn-group">
-                            <button class="layui-btn layui-btn-sm" title="获取钉钉用户数据" data-type="save" data-res-type="menu">
+                            <button class="layui-btn layui-btn-sm" title="获取钉钉用户数据" data-type="syndatadd"  >
                                获取钉钉用户数据
                             </button>
-                            <button class="layui-btn layui-btn-sm " title="获取信贷用户数据" data-type="reset" data-res-type="menu">
+                            <button class="layui-btn layui-btn-sm " title="获取信贷用户数据" data-type="reset" >
                                 获取信贷用户数据
                             </button>
                         </div>
                     </div>
-                    <div class="row-lg">
-                        <div id="roleRes_menu_grid" class="grid layui-form layui-border-box layui-table-view"></div>
-                    </div>
-                     <div class="row-lg">
-                        <div id="roleRes_menu_grid" class="grid layui-form layui-border-box layui-table-view"></div>
-                    </div>
+                   <div class="row-lg">
+                            <table id="resource_menu_datatable" lay-filter="resource_menu_datatable"
+                                   class="disableCheckAll">
+                            </table>
+                        </div>
                 </div>
                 <div class="layui-tab-item">
                     <div class="row-lg">
@@ -44,5 +43,5 @@
             </div>
         </div>
     </div>
-    <script src="/js/syndata/syndata.js?v=1.2"></script>
+    <script src="/js/syndata/syndata.js"></script>
 </div>

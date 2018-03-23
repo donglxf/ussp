@@ -15,7 +15,6 @@ public class SynDataService {
     private HtBoaInContrastRepository htBoaInContrastRepository;
 
     public List<HtBoaInContrast> findListByType(String type) {
-    	//return htBoaInContrastRepository.findByTypeAndStatus(type);
-    	return null;
+    	return htBoaInContrastRepository.findByType(type);
     }
 }

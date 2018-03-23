@@ -88,22 +88,24 @@ public class HtBoaInUserService {
         BeanUtils.deepCopy(userMessageVo, loginInfoVo);
         //获取用户关联的信贷信息 
         if(loginInfoVo!=null) {
-        	HtBoaInContrast htBoaInContrast = htBoaInContrastRepository.findByUcBusinessIdAndType(loginInfoVo.getUserId(),"20");
-        	if(htBoaInContrast!=null) {
-        		loginInfoVo.setBmUserId(htBoaInContrast.getBmBusinessId());
-        		loginInfoVo.setDdUserId(htBoaInContrast.getDdBusinessId());
-        	}
+        	
         	HtBoaInContrast htBoaInContrastOrg = htBoaInContrastRepository.findByUcBusinessIdAndType(loginInfoVo.getOrgCode(),"10");
         	if(htBoaInContrastOrg!=null) {
         		loginInfoVo.setBmOrgCode(htBoaInContrastOrg.getBmBusinessId());
         		loginInfoVo.setDdOrgCode(htBoaInContrastOrg.getDdBusinessId());
         	}
-        	if(StringUtils.isEmpty(loginInfoVo.getBmOrgCode())&&StringUtils.isNoneEmpty(htBoaInContrast.getBmBusinessId())) {
-        		HtBoaInBmUser htBoaInBmUser = htBoaInBmUserRepository.findByUserId(htBoaInContrast.getBmBusinessId());
-        		if(htBoaInBmUser!=null) {
-            		loginInfoVo.setBmOrgCode(htBoaInBmUser.getOrgCode());
-            	}
-    		}
+        	HtBoaInContrast htBoaInContrast = htBoaInContrastRepository.findByUcBusinessIdAndType(loginInfoVo.getUserId(),"20");
+        	if(htBoaInContrast!=null) {
+        		loginInfoVo.setBmUserId(htBoaInContrast.getBmBusinessId());
+        		loginInfoVo.setDdUserId(htBoaInContrast.getDdBusinessId());
+        		if(StringUtils.isEmpty(loginInfoVo.getBmOrgCode())&&StringUtils.isNoneEmpty(htBoaInContrast.getBmBusinessId())) {
+            		HtBoaInBmUser htBoaInBmUser = htBoaInBmUserRepository.findByUserId(htBoaInContrast.getBmBusinessId());
+            		if(htBoaInBmUser!=null) {
+                		loginInfoVo.setBmOrgCode(htBoaInBmUser.getOrgCode());
+                	}
+        		}
+        	}
+        	
         	//获取用户是否是系统管理员
         	if(StringUtils.isNotEmpty(app)) {
         		HtBoaInUserApp htBoaInUserApp = htBoaInUserAppRepository.findByUserIdAndApp(userId, app);

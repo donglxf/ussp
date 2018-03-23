@@ -36,8 +36,15 @@ public class HtBoaInContrastService {
         return htBoaInContrastRepository.findAll();
     }
     
+    public List<HtBoaInContrast> getHtBoaInContrastListByBmUserId(String bmBusinessId,String type) {
+        return htBoaInContrastRepository.findByBmBusinessIdAndType(bmBusinessId, type);
+    }
     
-    public List<HtBoaInContrast> getHtBoaInContrastListByBmUserId(String bmBusinessId) {
-        return htBoaInContrastRepository.findByBmBusinessIdAndType(bmBusinessId, "20");
+    public List<HtBoaInContrast> getHtBoaInContrastListByDdBusinessId(String ddBusinessId,String type) {
+        return htBoaInContrastRepository.findByDdBusinessIdAndType(ddBusinessId, type);
+    }
+    
+    public List<HtBoaInContrast> getHtBoaInContrastListByType( String type) {
+        return htBoaInContrastRepository.findByType( type);
     }
 }

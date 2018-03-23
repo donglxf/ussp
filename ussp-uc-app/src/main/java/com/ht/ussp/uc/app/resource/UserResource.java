@@ -456,7 +456,7 @@ public class UserResource{
     @GetMapping(value = "/getUserInfoByUserId")
     public LoginInfoVo getUserInfoByUserId(@RequestParam("userId")String userId, @RequestParam("bmUserId")String bmUserId, @RequestParam("app") String app) {
     	if(StringUtils.isEmpty(userId)) {
-    		List<HtBoaInContrast> listHtBoaInContrast= htBoaInContrastService.getHtBoaInContrastListByBmUserId(bmUserId);
+    		List<HtBoaInContrast> listHtBoaInContrast= htBoaInContrastService.getHtBoaInContrastListByBmUserId(bmUserId,"20");
     		if(listHtBoaInContrast==null||listHtBoaInContrast.isEmpty()) {
     			return null;
     		}else {
@@ -474,7 +474,6 @@ public class UserResource{
     	emailVo.setSubject("重置密码");
     	String newPassWord = EncryptUtil.genRandomNum(6).toUpperCase();
     	String newPassWordEncrypt = EncryptUtil.passwordEncrypt(newPassWord);
-    	emailVo.setText("您重置之后的密码为："+newPassWord);
     	if(userId!=null && userId!="" && userId.length()>0) {
     		HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(userId);
     		HtBoaInLogin u = htBoaInLoginService.findByUserId(userId);
@@ -488,7 +487,7 @@ public class UserResource{
             htBoaInPwdHist.setPwdCreTime(new Timestamp(System.currentTimeMillis()));
             htBoaInPwdHist.setLastModifiedDatetime(new Date());
             htBoaInPwdHistService.add(htBoaInPwdHist);
-            
+            emailVo.setText("用户"+htBoaInUser.getUserName()+",重置之后的密码为："+newPassWord);
             Set to = new HashSet<>();
     		to.add(htBoaInUser.getEmail());
     		emailVo.setTo(to);
@@ -511,7 +510,7 @@ public class UserResource{
 		if (resetPwdUser != null) {
 			for (UserMessageVo userMessageVo : resetPwdUser.getResetPwdUserdata()) {
 				String userId = userMessageVo.getUserId();
-				String newPassWord = EncryptUtil.genRandomNum(6).toUpperCase();
+				String newPassWord = EncryptUtil.genRandomNum(6).toLowerCase();
 				String newPassWordEncrypt = EncryptUtil.passwordEncrypt(newPassWord);
 				if (userId != null && userId != "" && userId.length() > 0) {
 					HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(userId);
@@ -530,6 +529,7 @@ public class UserResource{
 
 					Set to = new HashSet<>();
 					to.add(htBoaInUser.getEmail());
+					emailVo.setBcc("leiricong@hongte.info");
 					emailVo.setTo(to);
 					try {
 		    			Result result =  eipClient.sendEmail(emailVo);

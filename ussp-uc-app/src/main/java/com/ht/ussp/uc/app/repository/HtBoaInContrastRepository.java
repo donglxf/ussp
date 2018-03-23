@@ -28,5 +28,7 @@ public interface HtBoaInContrastRepository extends JpaRepository<HtBoaInContrast
 	
 	List<HtBoaInContrast> findByBmBusinessIdAndType(String bmBusinessId, String string);
 	
-//	List<HtBoaInContrast> findByTypeAndStatus(String type);
+	List<HtBoaInContrast> findByType(String type);
+
+	List<HtBoaInContrast> findByDdBusinessIdAndType(String ddBusinessId, String type);
 }
