@@ -27,6 +27,9 @@
         <docker.repostory>172.16.200.101</docker.repostory>
         <docker.registry.name>ht</docker.registry.name>
         <docker.maintainer>xiayutai@hongte.info</docker.maintainer>
+        
+        <git-commit-id-plugin.version>2.2.4</git-commit-id-plugin.version>
+        <docker-maven-plugin.version>1.0.0</docker-maven-plugin.version>
 	</properties>
 
 	<dependencies>
@@ -154,6 +157,12 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			
+			<plugin>
+                    <groupId>pl.project13.maven</groupId>
+                    <artifactId>git-commit-id-plugin</artifactId>
+                    <version>${git-commit-id-plugin.version}</version>
+                </plugin>
 
 			<!-- Docker maven plugin -->
 			<plugin>
