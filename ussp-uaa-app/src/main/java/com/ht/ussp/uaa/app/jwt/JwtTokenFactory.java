@@ -27,7 +27,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
  */
 @Component
 public class JwtTokenFactory {
-	private static final Logger logger = LoggerFactory.getLogger(JwtTokenFactory.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenFactory.class);
 	private final JwtSettings settings;
 
 	@Autowired
@@ -56,7 +56,7 @@ public class JwtTokenFactory {
 						.atZone(ZoneId.systemDefault()).toInstant()))
 				.setAudience(userVo.getUserName()).signWith(SignatureAlgorithm.HS512, settings.getTokenSigningKey())
 				.compact();
-		logger.info("jwt has created:" + token);
+		LOGGER.info("jwt has created:" + token);
 		return new AccessJwtToken(token, claims);
 	}
 
@@ -83,7 +83,7 @@ public class JwtTokenFactory {
 				.setExpiration(Date.from(currentTime.plusMinutes(settings.getRefreshTokenExpTime())
 						.atZone(ZoneId.systemDefault()).toInstant()))
 				.signWith(SignatureAlgorithm.HS512, settings.getTokenSigningKey()).compact();
-		logger.info("refreshToken has created:" + token);
+		LOGGER.info("refreshToken has created:" + token);
 		return new AccessJwtToken(token, claims);
 	}
 }

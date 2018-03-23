@@ -33,6 +33,7 @@ public enum SysStatus {
 	TOKEN_IS_NULL("9925","TOKEN不能为空"),
 	HAS_NO_ACCESS("9926","您没有访问权限"),
 	HEADER_CANNOT_NULL("9927","HEADER不能为空"),
+	APP_CANNOT_NULL("9928","APP不能为空"),
 
 	NO_RESULT("9996","查无数据"),
 	ERROR_PARAM("9997", "参数错误"),

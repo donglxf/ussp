@@ -38,6 +38,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public static final String AUTHENTICATION_HEADER_NAME = "Authorization";
     public static final String AUTHENTICATION_URL = "/auth/login";
     public static final String REFRESH_TOKEN_URL = "/auth/token";
+    public static final String EXTERNAL_CREATEAPPTOKEN = "/external/createAppToken";
     public static final String API_ROOT_URL = "/**";
 
     @Autowired private RestAuthenticationEntryPoint authenticationEntryPoint;
@@ -83,6 +84,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         List<String> permitAllEndpointList = Arrays.asList(
             AUTHENTICATION_URL,
             REFRESH_TOKEN_URL,
+            EXTERNAL_CREATEAPPTOKEN,
             "/hello",
             "/validateJwt",
             "/console"
@@ -98,14 +100,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 
             .and().headers().frameOptions().disable()
-
+            .and().requestMatchers().antMatchers(permitAllEndpointList.toArray(new String[permitAllEndpointList.size()]))
             .and()
-                .authorizeRequests()
-                .antMatchers(permitAllEndpointList.toArray(new String[permitAllEndpointList.size()]))
-                .permitAll()
-            .and()
-                .authorizeRequests()
-                .antMatchers(API_ROOT_URL).authenticated()
+              .authorizeRequests()
+              .antMatchers(
+                      "/",
+                      "/*.html",
+                      "/favicon.ico",
+                      "/**/favicon.ico",
+                      "/**/*.css",
+                      "/**/*.gif",
+                      "/**/*.js")
+              .permitAll()
             .and()
                 .addFilterBefore(buildAjaxLoginProcessingFilter(AUTHENTICATION_URL), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(buildJwtTokenAuthenticationProcessingFilter(permitAllEndpointList,

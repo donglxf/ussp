@@ -14,6 +14,8 @@ spring:
 eureka:
   instance:
     prefer-ip-address: true
+    lease-expiration-duration-in-seconds: 1
+    lease-renewal-interval-in-seconds: 1
 
 ---
 spring:

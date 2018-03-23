@@ -16,12 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.ReturnCodeEnum;
+import com.ht.ussp.uc.app.domain.HtBoaInBmUser;
 import com.ht.ussp.uc.app.domain.HtBoaInContrast;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
 import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
+import com.ht.ussp.uc.app.repository.HtBoaInBmUserRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInContrastRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInLoginRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInOrgRepository;
@@ -50,7 +52,8 @@ public class HtBoaInUserService {
     private HtBoaInContrastRepository htBoaInContrastRepository;
     @Autowired
     private HtBoaInUserAppRepository htBoaInUserAppRepository;
-    
+    @Autowired
+    private HtBoaInBmUserRepository htBoaInBmUserRepository;
     
 
     /**
@@ -85,16 +88,24 @@ public class HtBoaInUserService {
         BeanUtils.deepCopy(userMessageVo, loginInfoVo);
         //获取用户关联的信贷信息 
         if(loginInfoVo!=null) {
-        	HtBoaInContrast htBoaInContrast = htBoaInContrastRepository.findByUcBusinessIdAndType(loginInfoVo.getUserId(),"20");
-        	if(htBoaInContrast!=null) {
-        		loginInfoVo.setBmUserId(htBoaInContrast.getBmBusinessId());
-        		loginInfoVo.setDdUserId(htBoaInContrast.getDdBusinessId());
-        	}
+        	
         	HtBoaInContrast htBoaInContrastOrg = htBoaInContrastRepository.findByUcBusinessIdAndType(loginInfoVo.getOrgCode(),"10");
         	if(htBoaInContrastOrg!=null) {
         		loginInfoVo.setBmOrgCode(htBoaInContrastOrg.getBmBusinessId());
         		loginInfoVo.setDdOrgCode(htBoaInContrastOrg.getDdBusinessId());
         	}
+        	HtBoaInContrast htBoaInContrast = htBoaInContrastRepository.findByUcBusinessIdAndType(loginInfoVo.getUserId(),"20");
+        	if(htBoaInContrast!=null) {
+        		loginInfoVo.setBmUserId(htBoaInContrast.getBmBusinessId());
+        		loginInfoVo.setDdUserId(htBoaInContrast.getDdBusinessId());
+        		if(StringUtils.isEmpty(loginInfoVo.getBmOrgCode())&&StringUtils.isNoneEmpty(htBoaInContrast.getBmBusinessId())) {
+            		HtBoaInBmUser htBoaInBmUser = htBoaInBmUserRepository.findByUserId(htBoaInContrast.getBmBusinessId());
+            		if(htBoaInBmUser!=null) {
+                		loginInfoVo.setBmOrgCode(htBoaInBmUser.getOrgCode());
+                	}
+        		}
+        	}
+        	
         	//获取用户是否是系统管理员
         	if(StringUtils.isNotEmpty(app)) {
         		HtBoaInUserApp htBoaInUserApp = htBoaInUserAppRepository.findByUserIdAndApp(userId, app);

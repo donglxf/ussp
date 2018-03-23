@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class JwtHeaderTokenExtractor implements TokenExtractor {
-    public static String HEADER_PREFIX = "Bearer ";
+    public final static String HEADER_PREFIX = "Bearer ";
 
     @Override
     public String extract(String header) {

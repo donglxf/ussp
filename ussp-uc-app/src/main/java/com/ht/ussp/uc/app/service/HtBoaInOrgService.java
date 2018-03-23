@@ -217,6 +217,11 @@ public class HtBoaInOrgService {
 			JSONObject jsonDeptRes = JSONObject.parseObject(listDeptResBody);
 			JSONArray jsonDepts = jsonDeptRes.getJSONArray("department");
 			List<DdDept> listDdDept = new ArrayList<DdDept>();
+			DdDept ddDeptTop = new DdDept();
+			ddDeptTop.setDeptId(authDept);
+			ddDeptTop.setDeptName("鸿特信息");
+			ddDeptTop.setCreatedDatetime(new Date());
+			listDdDept.add(ddDeptTop);
 			List<DdDeptUser> listDdDeptUser = new ArrayList<DdDeptUser>();
 			if(jsonDepts!=null) {
 				for(int i = 0;i<jsonDepts.size();i++) {
@@ -288,7 +293,15 @@ public class HtBoaInOrgService {
 	public List<DdDept> getDdDeptList() {
 		return ddDeptRepository.findAll();
 	}
-
+	
+	public List<DdDept> findDDByParentId(String parentId) {
+		return ddDeptRepository.findByParentId(parentId);
+	}
+	
+	public DdDept findByDDParentOrgCode(String parentId) {
+		return ddDeptRepository.findByDeptId(parentId);
+	}
+	
 	
 	private String getDDOrgPath(DdDept ddDept) {
 		try {

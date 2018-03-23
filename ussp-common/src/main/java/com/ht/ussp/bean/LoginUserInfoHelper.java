@@ -135,4 +135,41 @@ public class LoginUserInfoHelper {
 		}
 	}
     
+	
+	/**
+     * 获取用户所有权限信息
+     * 资源类型枚举值：ResTypeEnum.RES_TYPE_API.getReturnCode()
+     * @return
+     */
+    public List<ResDto> getUserResouces(String resType,String userIds) {
+        if (ucClient == null) {
+            log.warn("无法获取当前用户所有权限信息，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
+        }
+        userIds = (StringUtils.isEmpty(userIds))?userId:userIds;
+        try {
+            return ucClient.getUserResouce(userIds, resType, app);
+        } catch (Exception ex) {
+            log.error("获取当前用户所有权限信息发生异常。", ex);
+            return null;
+        }
+    }
+    
+    /**
+     * 获取用户所有角色信息
+     * @return
+     */
+    public List<BoaInRoleInfoDto> getUserRoles(String userIds) {
+        if (ucClient == null) {
+            log.warn("无法获取当前用户所有角色信息，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
+        }
+        userIds = (StringUtils.isEmpty(userIds))?userId:userIds;
+        try {
+            return ucClient.getUserRole(userId);
+        } catch (Exception ex) {
+            log.error(" 获取当前用户所有角色信息发生异常。", ex);
+            return null;
+        }
+    }
+	
+	
 }         

@@ -1,5 +1,7 @@
 package com.ht.ussp.uc.app.model;
 
+import com.ht.ussp.common.SysStatus;
+
 public class Modal {
 	
 
@@ -7,36 +9,36 @@ public class Modal {
 		super();
 	}
 
-	public Modal(String status_code, String result_msg) {
+	public Modal(String statusCode, String resultMsg) {
 		super();
-		this.status_code = status_code;	
-		this.result_msg = result_msg;
+		this.statusCode = statusCode;	
+		this.resultMsg = resultMsg;
 	}
 
-	private String status_code;
+	private String statusCode;
 	
-	private String result_msg;
+	private String resultMsg;
 
  
 	
-	public String getStatus_code() {
-		return status_code;
+	public String getStatusCode() {
+		return statusCode;
 	}
 
-	public void setStatus_code(String status_code) {
-		this.status_code = status_code;
+	public void setStatusCode(String statusCode) {
+		this.statusCode = statusCode;
 	}
 
-	public String getResult_msg() {
-		return result_msg;
+	public String getResultMsg() {
+		return resultMsg;
 	}
 
-	public void setResult_msg(String result_msg) {
-		this.result_msg = result_msg;
+	public void setResultMsg(String resultMsg) {
+		this.resultMsg = resultMsg;
 	}
 
 	public void setSysStatus(SysStatus ss) {
-		status_code=ss.getStatus();
-		result_msg=ss.getMsg();		 
+		statusCode=ss.getStatus();
+		resultMsg=ss.getMsg();		 
 	}
 }

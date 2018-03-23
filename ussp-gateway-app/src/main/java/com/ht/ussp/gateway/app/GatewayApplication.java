@@ -1,6 +1,5 @@
 package com.ht.ussp.gateway.app;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -9,6 +8,7 @@ import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.context.annotation.Bean;
 
 import com.ht.ussp.gateway.app.filter.AccessFilter;
+import com.ht.ussp.gateway.app.filter.CustomCorsFilter;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -25,32 +25,21 @@ import lombok.extern.log4j.Log4j2;
 @EnableDiscoveryClient
 public class GatewayApplication {
 
-
-    @Value("${ht.rule.enabled:false}")
-    private boolean enabled;
-
     public static void main(String[] args) {
         SpringApplication.run(GatewayApplication.class, args);
         log.info("网关启动成功！");
 
     }
 
-//    @Bean
-//    public CustomRuleFilter customRuleFilter() {
-//        return new CustomRuleFilter();
-//    }
-
     @Bean
     public AccessFilter accessFilter() {
         return new AccessFilter();
     }
-
-//    @Bean
-//    public IRule ribbonRule() {
-//        //判断是否启用自定义负载策略
-//        if (enabled) {
-//            return new InstanceIdAndIPAddrRule();//这里配置策略，和配置文件对应
-//        }
-//        return new RoundRobinRule();
-//    }
+    
+    @Bean
+    public CustomCorsFilter customCorsFilter() {
+    	return new CustomCorsFilter();
+    }
+    
+    
 }
