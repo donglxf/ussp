@@ -25,7 +25,7 @@ public interface HtBoaInAppRepository extends JpaRepository<HtBoaInApp, Long> {
     @Query(value = "SELECT * FROM ( " +
             "SELECT " +
             "RES_CODE,RES_NAME,RES_NAME_CN,SEQUENCE,RES_TYPE, " +
-            "IF(RES_PARENT IS NULL, (IF(RES_TYPE='group', CONCAT(APP,'_menu'), CONCAT(APP,'_',RES_TYPE))),RES_PARENT) AS RES_PARENT, " +
+            "IF(RES_PARENT IS NULL, (IF(RES_TYPE='group' or RES_TYPE='view', CONCAT(APP,'_menu'), CONCAT(APP,'_',RES_TYPE))),RES_PARENT) AS RES_PARENT, " +
             "FONT_ICON, " +
             "APP " +
             "FROM HT_BOA_IN_RESOURCE " +
