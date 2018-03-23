@@ -356,7 +356,12 @@ public class HtBoaInResourceService {
         }
         save(newList);
         //API资源绑定父资源对应的角色
-        List<HtBoaInRoleRes> roleResList = htBoaInRoleResRepository.findByResCode(parentCode);
+        bindParentRole(parentCode, newList, userId);
+        return true;
+    }
+    
+    public void bindParentRole(String parentCode,List<HtBoaInResource> newList,String userId) {
+    	List<HtBoaInRoleRes> roleResList = htBoaInRoleResRepository.findByResCode(parentCode);
         List<HtBoaInRoleRes> newHtBoaInRoleResList = new ArrayList<>();
         HtBoaInRoleRes newHtBoaInRoleRes;
         for (HtBoaInRoleRes htBoaInRoleRes : roleResList) {
@@ -371,7 +376,6 @@ public class HtBoaInResourceService {
             }
         }
         htBoaInRoleResRepository.save(newHtBoaInRoleResList);
-        return true;
     }
 
 

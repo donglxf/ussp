@@ -10,6 +10,7 @@
 package com.ht.ussp.uc.app.resource;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -132,6 +133,14 @@ public class ResResource {
             resource.setDelFlag(0);
             resource = htBoaInResourceService.save(resource);
             if (resource != null && !StringUtils.isEmpty(resource.getId())) {
+            	try {
+            		if("api".equals(resource.getResType())) {
+            			List<HtBoaInResource> newList = new ArrayList<HtBoaInResource>();
+            			newList.add(resource);
+            			htBoaInResourceService.bindParentRole(resource.getResParent(), newList, userId);
+            		}
+    			} catch (Exception e) {
+    			}
                 return Result.buildSuccess();
             }
         }
