@@ -24,6 +24,7 @@
         <module>ussp-uc-ui</module>
         <module>ussp-common</module>
         <module>ussp-admin-app</module>
+        <module>ussp-uaa-app</module>
     </modules>
 
     <packaging>pom</packaging>
