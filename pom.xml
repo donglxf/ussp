@@ -18,12 +18,8 @@
         <module>ussp-gateway-app</module>
         <module>ussp-uc-app</module>
         <module>ussp-config-app</module>
-        <module>config-client-app</module>
         <module>ussp-zipkin-server</module>
-        <module>trace-stream1</module>
-        <module>trace-stream2</module>
         <module>ussp-hystrix-turbine-app</module>
-        <module>hytrix-helloworld</module>
         <module>ussp-uc-ui</module>
         <module>ussp-common</module>
         <module>ussp-admin-app</module>
