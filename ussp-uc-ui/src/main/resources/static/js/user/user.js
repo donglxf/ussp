@@ -1,6 +1,13 @@
-layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
+var userapp_userId = "";
+var userrole_userId = "";
+var userpositionUserId = "";
+var refreshUserAppTable = "";
+var refreshUserRoleTable = "";
+var refreshuserpositionTable="";
+layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
     var $ = layui.jquery
         , config = layui.ht_config
+        , element = layui.element
         , form = layui.form
         , table = layui.table
         , ht_auth = layui.ht_auth
@@ -8,6 +15,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
         , resetPwdDialog = 0
+        , selectBottomTabIndex = 0//当前选中的tab标签页
         , userOrgTree //组织机构树控件
         , active = {
         add: function () { //弹出用户新增弹出框
@@ -146,9 +154,9 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
                         , cols: [[
                             {type: 'numbers'}
                             , {type: 'checkbox'}
-                            , {field: 'jobNumber', width: 100, title: '工号'}
-                            , {field: 'userId', width: 100, title: '用户编号'}
+                            , {field: 'userId', width: 100, title: '用户编号',}
                             , {field: 'userName', width: 100, title: '用户姓名'}
+                            , {field: 'jobNumber', width: 100, title: '工号'}
                             , {field: 'mobile', width: 120, title: '手机'}
                             , {field: 'email',   title: '邮箱'}
                             , {field: 'idNo', minWidth: 100, title: '身份证'}
@@ -259,6 +267,63 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
 		  },
 		  
 	});
+	//刷新用户系统 refreshUserAppTable
+	   refreshUserAppTable = function (keyword) {
+	        if (!keyword) {
+	            keyword = null;
+	        }
+	        if(!userapp_userId){
+	        	return;
+	        }
+	        table.reload('userapp_app_datatable', {
+	   		 height: 'full-600' ,
+	   	        page: {
+	   	            curr: 1 //重新从第 1 页开始
+	   	        }
+	   	        , where: {
+	   	        	query: {
+	             		   keyWord: keyword,
+	                       userId:userapp_userId
+	                  }
+	   	        }
+	   	   });
+	    };
+	  //刷新用户岗位
+	      refreshuserpositionTable = function (keyword) {
+	        if (!keyword) {
+	            keyword = null;
+	        }
+	        table.reload('userposition_position_datatable', {
+	   		 height: 'full-600',
+	   	        page: {
+	   	            curr: 1 //重新从第 1 页开始
+	   	        }
+	   	        , where: {
+	   	        	query: {
+	             		   keyWord: keyword,
+	                       userId:userpositionUserId
+	                  }
+	   	        }
+	   	   });
+	    };
+	  //刷新用户角色 refreshUserRoleTable 
+	    refreshUserRoleTable = function (keyword) {
+	        if (!keyword) {
+	            keyword = null;
+	        }
+	        table.reload('userrole_role_datatable', {
+	  		  height: 'full-600',
+	  	        page: {
+	  	            curr: 1 //重新从第 1 页开始
+	  	        }
+	  	        , where: {
+	  	        	query: {
+	            		    keyWord: keyword,
+	                      userId:userrole_userId
+	                 }
+	  	        }
+	  	   });
+	  }
     var refreshTable = function (keyword) {
         if (!keyword) {
             keyword = null;
@@ -266,7 +331,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
         var selectNodes = userOrgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
             table.reload('user_datatable', {
-                height: 'full-200',
+                height: 'full-672',
                 page: {
                     curr: 1 //重新从第 1 页开始
                 }
@@ -277,7 +342,7 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
             });
         }else{
         	table.reload('user_datatable', {
-                height: 'full-200',
+                height: 'full-672',
                 page: {
                     curr: 1 //重新从第 1 页开始
                 }
@@ -361,20 +426,22 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
         //         orgCode: "DEV1"
         //     }
         // }5
+        , limit : 5
+        , limits :[5, 10, 20, 30, 40, 50]
         , page: true
-        , height: 'full-200'
+        , height: 'full-672'
         , cols: [[
-            {type: 'numbers'}
-            , {field: 'jobNumber', width: 100, title: '工号'}
-            , {field: 'userId', width: 100, title: '用户编号'}
-            , {field: 'userName', width: 100, title: '用户姓名'}
-            , {field: 'mobile', width: 120, title: '手机'}
-            , {field: 'email', width: 100, title: '邮箱'}
-            , {field: 'idNo', minWidth: 100, title: '身份证'}
-            , {field: 'orgName', minWidth: 100, title: '所属机构'}
-            , {field: 'status', width: 60, title: '状态', templet: "#user_status_laytpl"}
+            {type: 'numbers',event: 'rowClick'}
+            , {field: 'userId', width: 110, title: '用户编号',event: 'rowClick'}
+            , {field: 'userName', width: 150, title: '用户姓名',event: 'rowClick'}
+            , {field: 'jobNumber', width: 100, title: '工号',event: 'rowClick'}
+            , {field: 'mobile', width: 120, title: '手机',event: 'rowClick'}
+            , {field: 'email', width: 150, title: '邮箱'}
+            //, {field: 'idNo', minWidth: 100, title: '身份证',event: 'rowClick'}
+            , {field: 'orgName', minWidth: 60, title: '所属机构',event: 'rowClick'}
+            , {field: 'status', width: 60, title: '状态', templet: "#user_status_laytpl",event: 'rowClick'}
            // , {field: 'updateOperator', width: 100, title: '更新人'}
-            , {field: 'lastModifiedDatetime', width: 150, title: '更新时间'}
+            , {field: 'lastModifiedDatetime', width: 150, title: '更新时间',event: 'rowClick'}
             , {fixed: 'right', width: 230, title: '操作', align: 'center', toolbar: '#user_datatable_bar'}
         ]]
     });
@@ -492,9 +559,43 @@ layui.use(['form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
                         }
                     });
             	 });
+            } else if (obj.event === 'rowClick') {
+            	var data = obj.data;
+                userapp_userId = data.userId;
+                userrole_userId = data.userId;
+                userpositionUserId = data.userId;
+            	 switch (selectBottomTabIndex) {
+                 case 0:
+                     refreshUserAppTable();
+                     break;
+                 case 1:
+                	 refreshuserpositionTable();
+                     break;
+                 case 2:
+                	 refreshUserRoleTable();
+                     break;
+             }
+                //刷新用户角色 refreshUserRoleTable 刷新用户系统 refreshUserAppTable
+
             }
         }
     );
+    
+    //菜单和模块tab页切换事件
+    element.on('tab(user_bottom_tab)', function (data) {
+    	selectBottomTabIndex = data.index;
+        switch (data.index) {
+            case 0:
+            	refreshUserAppTable();
+                break;
+            case 1:
+            	refreshuserpositionTable();
+                break;
+            case 2:
+            	refreshUserRoleTable();
+                break;
+        }
+    });
     table.on('renderComplete(filter_user_datatable)', function (obj) {
         ht_auth.render("user_auth");
     });

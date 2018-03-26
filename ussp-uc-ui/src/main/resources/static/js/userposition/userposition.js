@@ -210,10 +210,10 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
             {type: 'numbers'}
             , {field: 'positionCode',   title: '岗位编号'}
             , {field: 'positionNameCn',   title: '岗位名称'}
-            , {field: 'porgNameCn',   title: '所属机构'}
+            //, {field: 'porgNameCn',   title: '所属机构'}
             , {field: 'delFlag', width: 100, title: '状态' ,templet: '#userposition_statusTpl'}
-            , {field: 'createOperator', width: 100, title: '创建人'}
-            , {field: 'createdDatetime', width: 200,templet: '#createTimeTpl', title: '创建时间'}
+            //, {field: 'createOperator', width: 100, title: '创建人'}
+            //, {field: 'createdDatetime', width: 200,templet: '#createTimeTpl', title: '创建时间'}
             , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#userposition_position_datatable_bar'}
         ]]
     });

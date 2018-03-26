@@ -16,10 +16,23 @@
 </head>
 <body>
  <!--新增表单-->
-
+<div class="layui-form-item" align="center">
+	    <div class="row-lg"  id="userposition_positionDialog_table_tools">
+               <div class="pull-right col-xs-4">
+                   <div class="input-group input-group-sm row">
+                        <input type="text" class="form-control" maxlength="60" id="userposition_positionDialog_search_keyword"  placeholder="请输入岗位编号/岗位名称"/>
+                       <div class="input-group-btn">
+                           <button type="button" class="layui-btn layui-btn-sm"  data-type="search" >
+                               <i class="fa fa-search"></i>
+                           </button>
+                       </div>
+                   </div>
+               </div>
+        </div>
+	</div>
 	<div class="layui-form-item" align="center">
 		<div id="userposition_add_data_div">
-			<table id="userposition_add_data" lay-filter="filter_userposition_add_data">
+			<table id="userposition_positionDialog_data" lay-filter="filter_userposition_positionDialog_data">
 			</table>
 			<script type="text/html" id="createTimeTpl">
                        {{new Date( d.createdDatetime ).Format('yyyy-MM-dd HH:mm:ss')}} 
@@ -39,7 +52,7 @@
 	</div>
 	
   <div id="position_add_position_div" class="hide">
-        <form method="post" class="layui-form" style="margin-top: 20px" lay-filter="filter_add_position_form">
+        <form method="post" class="layui-form" style="margin-top: 20px" lay-filter="filter_add_userposition_positionDialog_form">
             <div class="layui-form-item" >
                 <label class="layui-form-label">岗位编号<b>*</b></label>
                 <div class="layui-input-block">
@@ -52,7 +65,7 @@
                     <input type="text" name="userId" id="userId"    maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
             </div>
-            <button class="layui-btn hide" lay-submit="" lay-filter="filter_add_position_form"></button>
+            <button class="layui-btn hide" lay-submit="" lay-filter="filter_add_userposition_positionDialog_form"></button>
         </form>
     </div>
 	<script src="/plugins/layui/layui.js"></script>

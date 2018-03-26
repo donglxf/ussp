@@ -65,7 +65,7 @@ public interface HtBoaInRoleRepository
     @Query("SELECT new com.ht.ussp.uc.app.model.BoaInRoleInfo(u.roleCode, u.roleName, u.roleNameCn,  u.status, u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,u.delFlag,u.id,u.app) FROM HtBoaInRole u    WHERE  u.delFlag=0 AND u.app in (?1) GROUP BY u")
 	public Page<BoaInRoleInfo> listRoleInfoByAppPageWeb(Pageable pageable, String app);
     
-    public Page<HtBoaInRole> findByAppInAndDelFlagAndStatus(Pageable pageable, List<String> app,int delFlag,String status);
+    public Page<HtBoaInRole> findByAppInAndDelFlagAndStatusAndRoleNameCnLike(Pageable pageable, List<String> app,int delFlag,String status,String roleName);
     
 
 }

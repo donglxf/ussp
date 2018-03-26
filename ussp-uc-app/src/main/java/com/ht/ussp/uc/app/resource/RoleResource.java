@@ -120,9 +120,16 @@ public class RoleResource {
         log.debug(logStart, "pageConf: " + pageConf, sl);
         Map<String, String> query = page.getQuery();
         String userId = "";
+        String keyWord = "";
         if (query != null && query.size() > 0 && query.get("userId") != null) {
         	userId = query.get("userId");
         }
+        if (query != null && query.size() > 0 && query.get("keyWord") != null) {
+        	keyWord = "%"+query.get("keyWord")+"%";
+        }else {
+        	keyWord = "%%";
+        }
+       
         
         //1.根据用户id查询对应关联的系统 然后查找对应的角色
         List<HtBoaInUserApp>  listHtBoaInUserApp = htBoaInUserAppService.getUserAppListByUserId(userId);
@@ -136,9 +143,9 @@ public class RoleResource {
         if(appList.isEmpty()) {
         	 pageData = (Page<BoaInRoleInfo>) htBoaInRoleService.findAllByPage(pageConf,page.getQuery());
         }else {
-        	Object obj= htBoaInRoleService.findAllRoleByAppPage(pageConf,appList);
+        	Object obj= htBoaInRoleService.findAllRoleByAppPage(pageConf,appList,keyWord);
         	if(obj!=null) {
-        		pageData = (Page<BoaInRoleInfo>) htBoaInRoleService.findAllRoleByAppPage(pageConf,appList);
+        		pageData = (Page<BoaInRoleInfo>) obj;
         	}
         }
         el = System.currentTimeMillis();

@@ -16,15 +16,28 @@
 </head>
 <body>
  <!--新增表单-->
-
 	<div class="layui-form-item" align="center">
-		<div id="userapp_add_data_div">
-			<table id="userapp_add_data" lay-filter="filter_userapp_add_dataa">
+	    <div class="row-lg"  id="userapp_appDialog_table_tools">
+               <div class="pull-right col-xs-4">
+                   <div class="input-group input-group-sm row">
+                        <input type="text" class="form-control" maxlength="60" id="userapp_appDialog_search_keyword"  placeholder="请输入系统编号/系统名称"/>
+                       <div class="input-group-btn">
+                           <button type="button" class="layui-btn layui-btn-sm"  data-type="search" >
+                               <i class="fa fa-search"></i>
+                           </button>
+                       </div>
+                   </div>
+               </div>
+        </div>
+	</div>
+	<div class="layui-form-item" align="center">
+		<div class="row-lg" id="userapp_appDialog_add_data_div">
+			<table id="userapp_appDialog_add_data" lay-filter="filter_userapp_appDialog_add_dataa">
 			</table>
 			<script type="text/html" id="createTimeTpl">
-                       {{new Date( d.createdDatetime ).Format('yyyy-MM-dd HH:mm:ss')}} 
+                   {{new Date( d.createdDatetime ).Format('yyyy-MM-dd HH:mm:ss')}} 
 	        </script>
-	        <script type="text/html" id="statusTpl">
+			<script type="text/html" id="statusTpl">
                       {{#  if(d.status == '0'){ }}
                                                                     启用
                       {{#  } else { }}
@@ -32,14 +45,11 @@
                       {{#  } }}
 					</script>
 		</div>
+		<a href="###" id="a_check" class="layui-btn">选中</a> 
+		<a href="###" id="a_close" class="layui-btn">关闭</a>
 	</div>
-	<div class="layui-form-item" align="center">
-		 <a href="###" id="a_check" class="layui-btn" >选中</a> 
-		 <a href="###" id="a_close" class="layui-btn">关闭</a>
-	</div>
-	
-  <div id="role_add_role_div" class="hide">
-        <form method="post" class="layui-form" style="margin-top: 20px" lay-filter="filter_add_app_form">
+	<div class="hide">
+        <form method="post" class="layui-form" style="margin-top: 20px" lay-filter="filter_add_appDialog_app_form">
             <div class="layui-form-item" >
                 <label class="layui-form-label">系统编号<b>*</b></label>
                 <div class="layui-input-block">
@@ -52,7 +62,7 @@
                     <input type="text" name="userId" id="userId"    maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
             </div>
-            <button class="layui-btn hide" lay-submit="" lay-filter="filter_add_app_form"></button>
+            <button class="layui-btn hide" lay-submit="" lay-filter="filter_add_appDialog_app_form"></button>
         </form>
     </div>
 	<script src="/plugins/layui/layui.js"></script>

@@ -64,7 +64,7 @@ public class HtBoaInRoleService {
         return this.htBoaInRoleRepository.findAll(ex);
     }
     
-    public Object findAllRoleByAppPage(PageConf pageConf, List<String> apps) {
+    public Object findAllRoleByAppPage(PageConf pageConf, List<String> apps,String keyWord) {
     	 Sort sort = null;
          Pageable pageable = null;
          List<Order> orders = new ArrayList<Order>();
@@ -78,7 +78,7 @@ public class HtBoaInRoleService {
              pageable = new PageRequest(pageConf.getPage(), pageConf.getSize(), sort);
 
          if (null != pageable) {
-             Page<HtBoaInRole> p = this.htBoaInRoleRepository.findByAppInAndDelFlagAndStatus(pageable,apps,0,"0");
+             Page<HtBoaInRole> p = this.htBoaInRoleRepository.findByAppInAndDelFlagAndStatusAndRoleNameCnLike(pageable,apps,0,"0",keyWord);
              return p;
          } 
          return null;

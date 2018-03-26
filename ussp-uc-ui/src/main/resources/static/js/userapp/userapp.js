@@ -209,11 +209,11 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         , cols: [[
             {type: 'numbers'}
             , {field: 'app',  width: 100, title: '系统编号'}
-            , {field: 'nameCn',   title: '系统名称'}
-            , {field: 'controller', templet: '#isControllerTpl',  title: '管理员'}
+            , {field: 'nameCn', width: 200,  title: '系统名称'}
+            , {field: 'controller',width: 100, templet: '#isControllerTpl',  title: '管理员'}
             , {field: 'status', width: 100, title: '状态' ,templet: '#userapp_statusTpl'}
-            , {field: 'createOperator', width: 100, title: '创建人'}
-            , {field: 'createdDatetime', width: 200,templet: '#createTimeTpl', title: '创建时间'}
+            //, {field: 'createOperator', width: 100, title: '创建人'}
+            //, {field: 'createdDatetime', width: 200,templet: '#createTimeTpl', title: '创建时间'}
             , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#userapp_app_datatable_bar'}
         ]]
     });

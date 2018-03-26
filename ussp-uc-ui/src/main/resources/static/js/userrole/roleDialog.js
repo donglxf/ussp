@@ -8,35 +8,21 @@ layui.config({
         , form = layui.form
         , config = layui.ht_config
         ,cookie = layui.ht_cookie
-        , table = layui.table;
-    
+        , table = layui.table
+        , active = {
+                search: function () {
+                 //执行重载
+                	refreshTable($("#userrole_roleDialog_search_keyword").val());
+                }
+            };
+        
     var roleListByPageUrl=config.basePath +"role/userRolelist"; //列出所有角色记录列表信息  
     var addUserRoleListUrl=config.basePath + 'userrole/add'; //禁用/启用用户角色 /stop/{id}/{status}
     
-    var loadRoleListTable = function (keyword) {
-        if (!keyword) {
-            keyword = null;
-        }
-        var selectNodes = orgTree.getSelectedNodes();
-        if (selectNodes && selectNodes.length == 1) {
-        	 table.reload('userrole_add_data', {
-        	        page: {
-        	            curr: 1 //重新从第 1 页开始
-        	        }
-        	        , where: {
-        	        	query: {
-                  		    keyWord: keyword,
-                            orgCode: selectNodes[0]["orgCode"],
-                            userId:userId
-                       }
-        	        }
-        	   });
-        }
-    };
   //渲染用户数据表格
     table.render({
-        id: 'userrole_add_data'
-        , elem: '#userrole_add_data'
+        id: 'userrole_roleDialog_data'
+        , elem: '#userrole_roleDialog_data'
         , url: roleListByPageUrl
         , method: 'post' //如果无需自定义HTTP类型，可不加该参数
         , response: {
@@ -57,11 +43,33 @@ layui.config({
         	 {type:'checkbox'}
             , {field: 'roleCode', width: 150, title: '角色编号'}
             , {field: 'roleNameCn',  title: '角色名称'}
-            , {field: 'app',  title: '所属系统'}
+            //, {field: 'app',  title: '所属系统'}
             , {field: 'status', width: 100,templet: '#statusTpl', title: '状态'}
             , {field: 'createOperator', width: 150, title: '创建人'}
             , {field: 'createdDatetime', width: 200,templet: '#createTimeTpl', title: '创建时间'}
         ]]
+    });
+    
+    var refreshTable = function (keyword) {
+        if (!keyword) {
+            keyword = null;
+        }
+    	table.reload('userrole_roleDialog_data', {
+        	height: 'full-200'
+            , page: {
+                curr: 1 //重新从第 1 页开始
+            }
+            , where: {
+            	 query: {
+            		 keyWord: keyword
+                 }
+            }
+        });
+    };
+  //监听工具栏
+    $('#userrole_roleDialog_table_tools .layui-btn').on('click', function () {
+        var type = $(this).data('type');
+        active[type] ? active[type].call(this) : '';
     });
    
     $("#a_close").on('click',function() {
@@ -76,15 +84,15 @@ layui.config({
     			 $.each(roledata, function (name, value) {
                      $("#roleCode").val(value.roleCode);
             		 $("#userId").val(parent.userrole_userId);
-            		 form.render(null, "filter_add_role_form");
-            		 form.on('submit(filter_add_role_form)', function (data) {
+            		 form.render(null, "filter_add_userrole_roleDialog_form");
+            		 form.on('submit(filter_add_userrole_roleDialog_form)', function (data) {
                          $.ajax({
                              type: "POST",
                              url: addUserRoleListUrl,
                              data: JSON.stringify(data.field),
                              contentType: "application/json; charset=utf-8",
                              success: function (message) {
-                            	 parent.refreshRoleTable(1);
+                            	 parent.refreshUserRoleTable();
                             	 var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
                          		 parent.layer.close(index); //再执行关闭
                              },
@@ -94,7 +102,7 @@ layui.config({
                          });
                          return false;
                      });
-            		 var $submitBtn = $("button[lay-filter=filter_add_role_form]");
+            		 var $submitBtn = $("button[lay-filter=filter_add_userrole_roleDialog_form]");
                      if ($submitBtn) {
                          $submitBtn.click();
                      } else {

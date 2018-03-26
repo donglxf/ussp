@@ -16,10 +16,23 @@
 </head>
 <body>
  <!--新增表单-->
-
+<div class="layui-form-item" align="center">
+	    <div class="row-lg"  id="userrole_roleDialog_table_tools">
+               <div class="pull-right col-xs-4">
+                   <div class="input-group input-group-sm row">
+                        <input type="text" class="form-control" maxlength="60" id="userrole_roleDialog_search_keyword"  placeholder="请输入角色名称"/>
+                       <div class="input-group-btn">
+                           <button type="button" class="layui-btn layui-btn-sm"  data-type="search" >
+                               <i class="fa fa-search"></i>
+                           </button>
+                       </div>
+                   </div>
+               </div>
+        </div>
+	</div>
 	<div class="layui-form-item" align="center">
 		<div id="userrole_add_data_div">
-			<table id="userrole_add_data" lay-filter="filter_userrole_add_data">
+			<table id="userrole_roleDialog_data" lay-filter="filter_userrole_roleDialog_data">
 			</table>
 			<script type="text/html" id="createTimeTpl">
                        {{new Date( d.createdDatetime ).Format('yyyy-MM-dd HH:mm:ss')}} 
@@ -39,7 +52,7 @@
 	</div>
 	
   <div id="role_add_role_div" class="hide">
-        <form method="post" class="layui-form" style="margin-top: 20px" lay-filter="filter_add_role_form">
+        <form method="post" class="layui-form" style="margin-top: 20px" lay-filter="filter_add_userrole_roleDialog_form">
             <div class="layui-form-item" >
                 <label class="layui-form-label">角色编号<b>*</b></label>
                 <div class="layui-input-block">
@@ -52,7 +65,7 @@
                     <input type="text" name="userId" id="userId"    maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
             </div>
-            <button class="layui-btn hide" lay-submit="" lay-filter="filter_add_role_form"></button>
+            <button class="layui-btn hide" lay-submit="" lay-filter="filter_add_userrole_roleDialog_form"></button>
         </form>
     </div>
 	<script src="/plugins/layui/layui.js"></script>

@@ -7,35 +7,21 @@ layui.config({
         , form = layui.form
         , config = layui.ht_config
         ,cookie = layui.ht_cookie
-        , table = layui.table;
+        , table = layui.table
+        , active = {
+               search: function () {
+                //执行重载
+               	refreshTable($("#userapp_appDialog_search_keyword").val());
+               }
+           };
     
     var appListByPageUrl=config.basePath +"userapp/listAppByPage"; //列出所有角色记录列表信息  
     var addUserAppListUrl=config.basePath + 'userapp/add'; //禁用/启用用户角色 /stop/{id}/{status}
     
-    var loadRoleListTable = function (keyword) {
-        if (!keyword) {
-            keyword = null;
-        }
-        var selectNodes = orgTree.getSelectedNodes();
-        if (selectNodes && selectNodes.length == 1) {
-        	 table.reload('userapp_add_data', {
-        	        page: {
-        	            curr: 1 //重新从第 1 页开始
-        	        }
-        	        , where: {
-        	        	query: {
-                  		    keyWord: keyword,
-                            orgCode: selectNodes[0]["orgCode"],
-                            userId:userId
-                       }
-        	        }
-        	   });
-        }
-    };
   //渲染用户数据表格
     table.render({
-        id: 'userapp_add_data'
-        , elem: '#userapp_add_data'
+        id: 'userapp_appDialog_add_data'
+        , elem: '#userapp_appDialog_add_data'
         , url: appListByPageUrl
         , method: 'post' //如果无需自定义HTTP类型，可不加该参数
         , response: {
@@ -56,6 +42,28 @@ layui.config({
              , {field: 'createdDatetime', width: 200,templet: '#createTimeTpl', title: '创建时间'}
         ]]
     });
+    
+    var refreshTable = function (keyword) {
+        if (!keyword) {
+            keyword = null;
+        }
+    	table.reload('userapp_appDialog_add_data', {
+        	height: 'full-200'
+            , page: {
+                curr: 1 //重新从第 1 页开始
+            }
+            , where: {
+            	 query: {
+            		 keyWord: keyword
+                 }
+            }
+        });
+    };
+    //监听工具栏
+    $('#userapp_appDialog_table_tools .layui-btn').on('click', function () {
+        var type = $(this).data('type');
+        active[type] ? active[type].call(this) : '';
+    });
    
     $("#a_close").on('click',function() {
 		var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
@@ -63,21 +71,21 @@ layui.config({
 	});
     
     $("#a_check").on('click',function() {
-    	 var checkStatus = table.checkStatus('userapp_add_data');
+    	 var checkStatus = table.checkStatus('userapp_appDialog_add_data');
     	 var roledata = checkStatus.data;
     	 if(roledata.length>0){
     			 $.each(roledata, function (name, value) {
                      $("#app").val(value.app);
             		 $("#userId").val(parent.userapp_userId);
-            		 form.render(null, "filter_add_app_form");
-            		 form.on('submit(filter_add_app_form)', function (data) {
+            		 form.render(null, "filter_add_appDialog_app_form");
+            		 form.on('submit(filter_add_appDialog_app_form)', function (data) {
                          $.ajax({
                              type: "POST",
                              url: addUserAppListUrl,
                              data: JSON.stringify(data.field),
                              contentType: "application/json; charset=utf-8",
                              success: function (message) {
-                            	 parent.refreshAppTable(1);
+                            	 parent.refreshUserAppTable();
                             	 var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
                          		 parent.layer.close(index); //再执行关闭
                              },
@@ -87,7 +95,7 @@ layui.config({
                          });
                          return false;
                      });
-            		 var $submitBtn = $("button[lay-filter=filter_add_app_form]");
+            		 var $submitBtn = $("button[lay-filter=filter_add_appDialog_app_form]");
                      if ($submitBtn) {
                          $submitBtn.click();
                      } else {
