@@ -19,3 +19,8 @@ uaa:
       tokenSigningKey: xm8EV6Hy5RMFK4EEACIDAwQus
       
       
+ribbon:  
+  ReadTimeout: 10000  
+  ConnectTimeout: 10000
+  MaxAutoRetries: 1
+  MaxAutoRetriesNextServer: 1
