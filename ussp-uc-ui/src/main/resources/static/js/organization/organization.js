@@ -382,6 +382,13 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
         var type = $(this).data('type');
         active[type] ? active[type].call(this) : '';
     });
+    var $keywordInput = $("#organization_search_keyword");
+    $keywordInput.keydown(function (e) {
+        if (e.keyCode == 13) {
+            var keyWord = $keywordInput.val();
+            refreshOrgTable(keyWord);
+        }
+    });
     //刷新树的数据
    /* $('#organization_btn_refresh_tree').on('click', function (e) {
         if (organizationTree) {

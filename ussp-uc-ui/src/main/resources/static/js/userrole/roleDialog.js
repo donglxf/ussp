@@ -49,7 +49,13 @@ layui.config({
             , {field: 'createdDatetime', width: 200,templet: '#createTimeTpl', title: '创建时间'}
         ]]
     });
-    
+    var $keywordInput = $("#userrole_roleDialog_search_keyword");
+    $keywordInput.keydown(function (e) {
+        if (e.keyCode == 13) {
+            var keyWord = $keywordInput.val();
+            refreshTable(keyWord);
+        }
+    });
     var refreshTable = function (keyword) {
         if (!keyword) {
             keyword = null;

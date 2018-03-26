@@ -264,6 +264,13 @@ layui.use(['form',   'table', 'ht_config','ht_auth','upload' ], function () {
         var type = $(this).data('type');
         active[type] ? active[type].call(this) : '';
     });
+    var $keywordInput = $("#app_search_keyword");
+    $keywordInput.keydown(function (e) {
+        if (e.keyCode == 13) {
+            var keyWord = $keywordInput.val();
+            refreshTable(keyWord);
+        }
+    });
     
     ht_auth.render("app_auth");
 

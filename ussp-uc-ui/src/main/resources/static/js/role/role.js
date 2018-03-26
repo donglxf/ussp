@@ -355,7 +355,13 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth' ,'upload'],
         var type = $(this).data('type');
         active[type] ? active[type].call(this) : '';
     });
-    
+    var $keywordInput = $("#role_search_keyword");
+    $keywordInput.keydown(function (e) {
+        if (e.keyCode == 13) {
+            var keyWord = $keywordInput.val();
+            refreshTable(keyWord);
+        }
+    });
     //刷新树的数据
     $('#role_app_btn_refresh_tree').on('click', function (e) {
         if (appTree) {

@@ -596,6 +596,15 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
                 break;
         }
     });
+    
+    var $keywordInput = $("#user_search_keyword");
+    $keywordInput.keydown(function (e) {
+        if (e.keyCode == 13) {
+            var keyWord = $keywordInput.val();
+            refreshTable(keyWord);
+        }
+    });
+    
     table.on('renderComplete(filter_user_datatable)', function (obj) {
         ht_auth.render("user_auth");
     });
