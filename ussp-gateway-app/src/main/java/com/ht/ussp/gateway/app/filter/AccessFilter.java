@@ -101,10 +101,10 @@ public class AccessFilter extends ZuulFilter {
 						return null;
 					}
 					ResponseModal rm = UaaClient.validateAppJwt(tokenPayload,app);
-					if ("0000".equals(rm.getStatusCode())) {
+					if ("0000".equals(rm.getStatus_code())) {
 							ctx.setSendZuulResponse(true);
 							return null;
-					} else if ("9922".equals(rm.getStatusCode())) {
+					} else if ("9922".equals(rm.getStatus_code())) {
 						ctx.setSendZuulResponse(false);
 						try {
 							mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_VALID));
@@ -112,7 +112,7 @@ public class AccessFilter extends ZuulFilter {
 							e.printStackTrace();
 						}
 						return null;
-					} else if ("9921".equals(rm.getStatusCode())) {
+					} else if ("9921".equals(rm.getStatus_code())) {
 						ctx.setSendZuulResponse(false);
 						try {
 							mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_EXPIRED));
@@ -131,13 +131,13 @@ public class AccessFilter extends ZuulFilter {
 		// 如果请求的URL与htIgnoreApp不匹配，验证内部系统JWT
 		try {
 			ResponseModal rm = UaaClient.validateJwt(tokenPayload);
-			if ("0000".equals(rm.getStatusCode())) {
+			if ("0000".equals(rm.getStatus_code())) {
 				String str = FastJsonUtil.objectToJson(rm.getResult());
 				ValidateJwtVo vdt = FastJsonUtil.jsonToPojo(str, ValidateJwtVo.class);
 				userId = vdt.getUserId();
 				ctx.addZuulRequestHeader("userId", userId);
 				ctx.addZuulRequestHeader("orgCode", vdt.getOrgCode());
-			} else if ("9922".equals(rm.getStatusCode())) {
+			} else if ("9922".equals(rm.getStatus_code())) {
 				ctx.setSendZuulResponse(false);
 				try {
 					mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_VALID));
@@ -145,7 +145,7 @@ public class AccessFilter extends ZuulFilter {
 					e.printStackTrace();
 				}
 				return null;
-			} else if ("9921".equals(rm.getStatusCode())) {
+			} else if ("9921".equals(rm.getResult_msg())) {
 				ctx.setSendZuulResponse(false);
 				try {
 					mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_EXPIRED));

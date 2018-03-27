@@ -40,10 +40,10 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
 //        	userName=params.split(";")[1];
 //        }
         ResponseModal loginJson = userClient.validateUser(app,userName);
-        if("9902".equals(loginJson.getStatusCode())) {
+        if("9902".equals(loginJson.getStatus_code())) {
         	throw new BadCredentialsException("用户名不存在");
-        }else if(!"0000".equals(loginJson.getStatusCode())) {
-        	throw new AuthenticationCredentialsNotFoundException(loginJson.getStatusCode());
+        }else if(!"0000".equals(loginJson.getStatus_code())) {
+        	throw new AuthenticationCredentialsNotFoundException(loginJson.getStatus_code());
         }
 
         UserVo userVo=new UserVo();

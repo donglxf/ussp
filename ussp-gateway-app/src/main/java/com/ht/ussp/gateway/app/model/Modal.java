@@ -9,36 +9,36 @@ public class Modal {
 		super();
 	}
 
-	public Modal(String statusCode, String resultMsg) {
+	public Modal(String status_code, String result_msg) {
 		super();
-		this.statusCode = statusCode;	
-		this.resultMsg = resultMsg;
+		this.status_code = status_code;	
+		this.result_msg = result_msg;
 	}
 
-	private String statusCode;
+	private String status_code;
 	
-	private String resultMsg;
+	private String result_msg;
 
  
 	
-	public String getStatusCode() {
-		return statusCode;
+	public String getStatus_code() {
+		return status_code;
 	}
 
-	public void setStatusCode(String statusCode) {
-		this.statusCode = statusCode;
+	public void setStatus_code(String status_code) {
+		this.status_code = status_code;
 	}
 
-	public String getResultMsg() {
-		return resultMsg;
+	public String getResult_msg() {
+		return result_msg;
 	}
 
-	public void setResultMsg(String resultMsg) {
-		this.resultMsg = resultMsg;
+	public void setResult_msg(String result_msg) {
+		this.result_msg = result_msg;
 	}
 
 	public void setSysStatus(SysStatus ss) {
-		statusCode=ss.getStatus();
-		resultMsg=ss.getMsg();		 
+		status_code=ss.getStatus();
+		result_msg=ss.getMsg();		 
 	}
 }
