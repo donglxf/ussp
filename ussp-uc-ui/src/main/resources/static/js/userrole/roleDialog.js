@@ -84,7 +84,7 @@ layui.config({
 	});
     
     $("#a_check").on('click',function() {
-    	 var checkStatus = table.checkStatus('userrole_add_data');
+    	 var checkStatus = table.checkStatus('userrole_roleDialog_data');
     	 var roledata = checkStatus.data;
     	 if(roledata.length>0){
     			 $.each(roledata, function (name, value) {
