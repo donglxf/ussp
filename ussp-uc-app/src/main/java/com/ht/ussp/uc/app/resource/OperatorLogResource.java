@@ -35,8 +35,7 @@ public class OperatorLogResource {
     
     @ApiOperation(value = "对内：操作日志查询", notes = "列出所有操作日志列表信息")
     @ApiImplicitParam(name = "pageConf", value = "分页信息实体", required = true, dataType = "PageConf")
-    @RequestMapping(value = {
-            "/in/list" }, method = RequestMethod.POST)
+    @RequestMapping(value = { "/in/list" }, method = RequestMethod.POST)
     public ResponseModal list(@RequestBody PageConf pageConf) {
         long sl = System.currentTimeMillis(), el = 0L;
         String msg = "成功";
@@ -50,8 +49,7 @@ public class OperatorLogResource {
         return new ResponseModal("200", msg, o);
     }
 
-    protected ResponseModal exceptionReturn(String logEnd, String param,
-            List<?> list, long sl, String exInfo, int row) {
+    protected ResponseModal exceptionReturn(String logEnd, String param,  List<?> list, long sl, String exInfo, int row) {
         if (null == exInfo)
             exInfo = "";
         if (null == list || list.isEmpty()) {
