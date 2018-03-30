@@ -23,6 +23,7 @@ import com.alibaba.druid.util.StringUtils;
 import com.ht.ussp.bean.LoginUserInfoHelper;
 import com.ht.ussp.bean.MenuInfoHelper;
 import com.ht.ussp.client.dto.LoginInfoDto;
+import com.ht.ussp.common.Constants;
 import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
@@ -245,12 +246,30 @@ public class UserResource{
         if(htBoaInUser==null) {
         	HtBoaInLogin htBoaInLogin = htBoaInLoginService.findByLoginId(userName);
         	if(htBoaInLogin!=null) {
+        		    if (htBoaInLogin.getStatus() == Constants.USER_STATUS_1) {
+        	            log.debug("该用户已被禁用！");
+        	            rm.setSysStatus(SysStatus.USER_NOT_FOUND);
+        	            return rm;
+        	        }else if(htBoaInLogin.getStatus() == Constants.USER_STATUS_2) {
+        	        	 log.debug("该用户已离职！");
+         	            rm.setSysStatus(SysStatus.USER_NOT_FOUND);
+         	            return rm;
+        	        }else if(htBoaInLogin.getStatus() == Constants.USER_STATUS_4) {
+        	        	 log.debug("该用户已被冻结！");
+         	            rm.setSysStatus(SysStatus.USER_NOT_FOUND);
+         	            return rm;
+        	        }else if(htBoaInLogin.getStatus() == Constants.USER_STATUS_5) {
+        	        	 log.debug("该用户已被锁定！");
+         	            rm.setSysStatus(SysStatus.USER_HAS_LOCKED);
+         	            return rm;
+        	        }
+        			
         		htBoaInUser = htBoaInUserService.findByUserId(htBoaInLogin.getUserId());
         	}
         }
           
         if (LogicUtil.isNull(htBoaInUser) || LogicUtil.isNullOrEmpty(htBoaInUser.getUserId())) {
-            rm.setSysStatus((SysStatus.USER_NOT_FOUND));
+            rm.setSysStatus((SysStatus.INVALID_USER));
             return rm;
         } else if (htBoaInUser.getDelFlag() == 1) {
             log.debug("该用户已被删除！");
@@ -358,7 +377,7 @@ public class UserResource{
             loginInfo.setLoginId(userMessageVo.getLoginId()); //作为用户的登录账号，修改为不是自动生成
             loginInfo.setCreateOperator(loginUserId);
             loginInfo.setUpdateOperator(loginUserId);
-            loginInfo.setStatus("0");
+            loginInfo.setStatus(Constants.USER_STATUS_0);
             loginInfo.setPassword(EncryptUtil.passwordEncrypt("123456"));
             loginInfo.setFailedCount(0);
             loginInfo.setRootOrgCode(userMessageVo.getOrgCode());

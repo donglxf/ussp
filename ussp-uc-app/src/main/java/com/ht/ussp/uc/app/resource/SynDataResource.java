@@ -248,7 +248,7 @@ public class SynDataResource {
             l.setRootOrgCode(u.getRootOrgCode());
             l.setCreateOperator("自动同步");
             l.setUpdateOperator("自动同步");
-            l.setStatus("0");
+            l.setStatus(Constants.USER_STATUS_0);
             l.setFailedCount(0);
             l.setDelFlag(0);
             loginList.add(l);
@@ -558,7 +558,7 @@ public class SynDataResource {
                 	userContrastVo.setBmEmail(htBoaInBmUser.getEmail());
                 	userContrastVo.setBmMobile(htBoaInBmUser.getMobile());
                 	userContrastVo.setBmJobNumber(htBoaInBmUser.getJobNumber());
-                	List<HtBoaInContrast> listorgcontrast = listHtBoaInContrast.stream().filter(hc -> hc.getBmBusinessId().equals(htBoaInBmUser.getUserId())).collect(Collectors.toList());
+                	List<HtBoaInContrast> listorgcontrast = listHtBoaInContrast.stream().filter(hc -> htBoaInBmUser.getUserId().equals(hc.getBmBusinessId())).collect(Collectors.toList());
     			    if(listorgcontrast!=null && !listorgcontrast.isEmpty()) {
     			    	HtBoaInContrast htBoaInContrast = listorgcontrast.get(0);
     			    	userContrastVo.setUserId(htBoaInContrast.getUcBusinessId());

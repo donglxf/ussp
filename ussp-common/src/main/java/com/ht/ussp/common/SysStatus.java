@@ -13,11 +13,11 @@ public enum SysStatus {
 	
 	METHOD_NOT_SUPPORTED("9900","不支持该请求方式"),
 	INVALID_USER("9901","用户名或密码无效"),
-	USER_NOT_FOUND("9902","用户不存在"),
+	USER_NOT_FOUND("9902","用户状态异常"),
 	USER_HAS_DELETED("9903","您的用户已被删除"),
-	USER_NOT_RELATE_APP("9904","该用户未与任何系统关联"),
+	USER_NOT_RELATE_APP("9904","该用户未与系统关联"),
 	USER_NOT_MATCH_APP("9905","用户来源不正确"),
-	
+	USER_HAS_LOCKED("9906","您的用户已被锁定"),
 	
 	PWD("9910", "密码错误"),
 	PWD_ISNULL("9911", "密码为空"),

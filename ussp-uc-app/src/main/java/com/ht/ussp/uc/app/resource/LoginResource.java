@@ -2,32 +2,40 @@ package com.ht.ussp.uc.app.resource;
 
 import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ht.ussp.bean.LoginUserInfoHelper;
+import com.alibaba.druid.util.StringUtils;
+import com.ht.ussp.common.Constants;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
+import com.ht.ussp.uc.app.domain.HtBoaInOperatorLog;
 import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResetPwd;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.service.HtBoaInLoginService;
+import com.ht.ussp.uc.app.service.HtBoaInOperatorLogService;
 import com.ht.ussp.uc.app.service.HtBoaInPwdHistService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 
 /**
@@ -52,7 +60,7 @@ public class LoginResource {
     @Autowired
     private HtBoaInPwdHistService htBoaInPwdHistService;
     @Autowired
-    private LoginUserInfoHelper loginUserInfoHelper;
+    private HtBoaInOperatorLogService htBoaInOperatorLogService;
 
     @SuppressWarnings("unchecked")
     @ApiOperation(value = "对内：忘记密码/重置密码", notes = "用户通过用户的手机号、邮箱和历史密码信息进行密码重置")
@@ -122,4 +130,35 @@ public class LoginResource {
         return null;
     }
 
+    @GetMapping("/updateFailCount")
+    @ApiOperation(value = "登录成功，更新用户登录信息")
+    public void updateFailCount(@RequestParam("userId")String userId, @RequestParam("failedCount")int failedCount,@RequestParam("app") String app) {
+    	if(StringUtils.isEmpty(userId)) {
+    		return;
+    	} 
+    	try {
+    		HtBoaInLogin htBoaInLogin = htBoaInLoginService.findByUserId(userId);
+        	if(htBoaInLogin!=null) {
+        		htBoaInLogin.setFailedCount(failedCount);
+        		if(failedCount>20) {
+        			htBoaInLogin.setStatus(Constants.USER_STATUS_5);
+        		}
+        		htBoaInLoginService.update(htBoaInLogin);
+        		HtBoaInOperatorLog u = new HtBoaInOperatorLog();
+        		u.setActionName("login");
+        		u.setActionTime(new Date());
+        		u.setApp(app);
+    			u.setResult(failedCount+"");
+    			if(failedCount>0) {
+    			   u.setResult(1+"");
+    			}
+        		u.setUserId(userId);
+        		htBoaInOperatorLogService.add(u);
+        	}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	
+    }
+    
 }

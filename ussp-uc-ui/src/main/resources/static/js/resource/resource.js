@@ -147,7 +147,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                         }
                     })
                     form.render(null, "resource_" + type + "_add_data_form");
-                    form.on('radio()',function(){
+                    form.on('radio(resource_add_restype)',function(){
                     	if(this.value=="group"){
                     		$("input[name=resContent]", layero).val("");
                     		$("input[name=resContent]", layero).attr("disabled",true); 

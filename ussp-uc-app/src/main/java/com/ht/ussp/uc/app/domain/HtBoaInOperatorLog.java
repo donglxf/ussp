@@ -28,7 +28,10 @@ public class HtBoaInOperatorLog implements Serializable {
     @ApiModelProperty(value = "ID")
     @Id
     @Column(name = "ID", unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    
+    
 
     @ApiModelProperty(value = "用户ID")
     @Column(name="USER_ID")

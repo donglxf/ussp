@@ -1,8 +1,19 @@
 package com.ht.ussp.uc.app.domain;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import lombok.Data;
 
 
 /**
@@ -11,6 +22,7 @@ import java.util.Date;
  * @Description: 登录信息表
  * @date 2018年1月5日 下午2:49:28
  */
+@Data
 @Entity
 @Table(name = "HT_BOA_IN_LOGIN")
 @NamedQuery(name = "HtBoaInLogin.findAll", query = "SELECT h FROM HtBoaInLogin h")
@@ -62,7 +74,7 @@ public class HtBoaInLogin implements Serializable {
     private String rootOrgCode;
 
     @Column(name = "STATUS")
-    private String status;
+    private int status;
 
     @Column(name = "UPDATE_OPERATOR")
     private String updateOperator;
@@ -73,124 +85,6 @@ public class HtBoaInLogin implements Serializable {
     public HtBoaInLogin() {
     }
 
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getCreateOperator() {
-        return this.createOperator;
-    }
-
-    public void setCreateOperator(String createOperator) {
-        this.createOperator = createOperator;
-    }
-
-    public Date getCreatedDatetime() {
-        return this.createdDatetime;
-    }
-
-    public void setCreatedDatetime(Date createdDatetime) {
-        this.createdDatetime = createdDatetime;
-    }
-
-    public int getDelFlag() {
-        return this.delFlag;
-    }
-
-    public void setDelFlag(int delFlag) {
-        this.delFlag = delFlag;
-    }
-
-    public Date getEffectiveDate() {
-        return this.effectiveDate;
-    }
-
-    public void setEffectiveDate(Date effectiveDate) {
-        this.effectiveDate = effectiveDate;
-    }
-
-    public int getFailedCount() {
-        return this.failedCount;
-    }
-
-    public void setFailedCount(int failedCount) {
-        this.failedCount = failedCount;
-    }
-
-    public int getJpaVersion() {
-        return this.jpaVersion;
-    }
-
-    public void setJpaVersion(int jpaVersion) {
-        this.jpaVersion = jpaVersion;
-    }
-
-    public Date getLastModifiedDatetime() {
-        return this.lastModifiedDatetime;
-    }
-
-    public void setLastModifiedDatetime(Date lastModifiedDatetime) {
-        this.lastModifiedDatetime = lastModifiedDatetime;
-    }
-
-    public String getLoginId() {
-        return this.loginId;
-    }
-
-    public void setLoginId(String loginId) {
-        this.loginId = loginId;
-    }
-
-    public String getPassword() {
-        return this.password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Date getPwdExpDate() {
-        return this.pwdExpDate;
-    }
-
-    public void setPwdExpDate(Date pwdExpDate) {
-        this.pwdExpDate = pwdExpDate;
-    }
-
-    public String getRootOrgCode() {
-        return this.rootOrgCode;
-    }
-
-    public void setRootOrgCode(String rootOrgCode) {
-        this.rootOrgCode = rootOrgCode;
-    }
-
-    public String getStatus() {
-        return this.status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getUpdateOperator() {
-        return this.updateOperator;
-    }
-
-    public void setUpdateOperator(String updateOperator) {
-        this.updateOperator = updateOperator;
-    }
-
-    public String getUserId() {
-        return this.userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+    
 
 }

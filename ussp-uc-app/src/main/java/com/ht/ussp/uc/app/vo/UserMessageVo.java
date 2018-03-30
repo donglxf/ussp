@@ -9,14 +9,14 @@
  */
 package com.ht.ussp.uc.app.vo;
 
+import java.io.Serializable;
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
-import java.math.BigInteger;
-import java.util.Date;
 
 /**
  * 用户管理数据对象<br>
@@ -59,8 +59,8 @@ public class UserMessageVo implements Serializable {
     // 最后修改时间
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date lastModifiedDatetime;
-    // 用户状态 0正常 1禁用 2密码初始化 4冻结 5锁定
-    private String status;
+    // 用户状态 0 正常  1禁用 2离职  4冻结 5锁定
+    private int status;
     //密码错误次数
     private Integer failedCount;
     //失效时间

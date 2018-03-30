@@ -34,4 +34,11 @@ public class Constants {
 	public static final int DEL_0=0;// 系统 用户 角色 机构 删除标记： 0：正常  1:已删除
 	public static final int DEL_1=1;// 系统 用户 角色 机构 删除标记： 0：正常  1:已删除
 	
+	
+	public static final int USER_STATUS_0 =0;// 系统 用户 0 正常  1禁用 2离职  4冻结 5锁定
+	public static final int USER_STATUS_1 =1;// 系统 用户 0 正常  1禁用 2离职  4冻结 5锁定
+	public static final int USER_STATUS_2 =2;// 系统 用户 0 正常  1禁用 2离职  4冻结 5锁定
+	public static final int USER_STATUS_4 =4;// 系统 用户 0 正常  1禁用 2离职  4冻结 5锁定
+	public static final int USER_STATUS_5 =5;// 系统 用户 0 正常  1禁用 2离职  4冻结 5锁定
+	
 }

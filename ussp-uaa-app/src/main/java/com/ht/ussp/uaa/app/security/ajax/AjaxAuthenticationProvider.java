@@ -1,5 +1,6 @@
 package com.ht.ussp.uaa.app.security.ajax;
 
+import org.codehaus.plexus.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -9,7 +10,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import com.ht.ussp.common.Constants;
+import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.uaa.app.feignClient.UserClient;
 import com.ht.ussp.uaa.app.model.ResponseModal;
 import com.ht.ussp.uaa.app.vo.UserVo;
@@ -39,10 +43,17 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
 //        	 app=params.split(";")[0];
 //        	userName=params.split(";")[1];
 //        }
+        if(StringUtils.isEmpty(app)) {
+        	throw new BadCredentialsException(SysStatus.USER_NOT_RELATE_APP.getStatus());
+        }
+        
         ResponseModal loginJson = userClient.validateUser(app,userName);
-        if("9902".equals(loginJson.getStatus_code())) {
-        	throw new BadCredentialsException("用户名不存在");
-        }else if(!"0000".equals(loginJson.getStatus_code())) {
+        if(StringUtils.isNotEmpty(loginJson.getStatus_code())) {
+        	if(loginJson.getStatus_code().startsWith("99")) {
+        		throw new BadCredentialsException(loginJson.getStatus_code());
+        	}
+        }
+        if(!"0000".equals(loginJson.getStatus_code())) {
         	throw new AuthenticationCredentialsNotFoundException(loginJson.getStatus_code());
         }
 
@@ -56,9 +67,13 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
 //		String hashPass = encode.encode(presentPassword);
 //		logger.info("加密后的密码为："+hashPass);
         if(!EncryptUtil.matches(presentPassword,userVo.getPassword())) {
+        	//增加错误次数
+        	int failcount = userVo.getFailedCount()+1;
+        	userClient.updateFailCount(userVo.getUserId(),failcount,app);
                   throw new BadCredentialsException("您输入的密码不正确!");
         }
-
+        //登录成功则还原错误次数
+    	userClient.updateFailCount(userVo.getUserId()==null?"":userVo.getUserId(),0,app);
         //获取用户角色编码
 //        if("N".equals(userVo.getController())) {
 //        	 ResponseModal roleCodes = userClient.getRoleCodes(userVo.getUserId());
