@@ -15,11 +15,13 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
         , appAndResourceTree //组织机构树控件
         , selectTableData = {}//table选中的行数据
         , getNewResCodeUrl = config.basePath + 'resource/rescode/load'
+        ,areas=['400px', '450px']
         , active = {
         add: function (type, relevanceType) { //弹出用户新增弹出框
             var nodes = appAndResourceTree.getSelectedNodes(),
                 selectData;
             layer.close(addDialog);
+            areas=['400px', '450px']
             var title;
             switch (type) {
                 case "menu":
@@ -68,6 +70,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                         layer.alert("请选择正确的菜单作为父菜单。");
                         return false;
                     }
+                    areas=['500px', '550px'];
                     break;
                 case "api":
                     if (relevanceType) {
@@ -89,7 +92,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
             }
             addDialog = layer.open({
                 type: 1,
-                area: ['400px', '450px'],
+                area:areas,
                 shadeClose: true,
                 title: title,
                 content: $("#resource_" + type + "_add_data_div").html(),
@@ -144,8 +147,25 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                         }
                     })
                     form.render(null, "resource_" + type + "_add_data_form");
+                    form.on('radio()',function(){
+                    	if(this.value=="group"){
+                    		$("input[name=resContent]", layero).val("");
+                    		$("input[name=resContent]", layero).attr("disabled",true); 
+                    	}else if(this.value=="view"){
+                    		$("input[name=resContent]", layero).attr("disabled",false); 
+                    	}
+                    	
+                    });
                     form.on("submit(resource_" + type + "_add_data_form)", function (data) {
-                        data.field.resType = type;
+                    	if("menu"!=type){
+                    		data.field.resType = type;
+                    	}
+                    	if("menu"==type){
+                    		if(!data.field.resType){
+                    			layer.alert("请选择菜单类型");
+                    			return false;
+                    		}
+                    	}
                         $.ajax({
                             type: "POST",
                             url: config.basePath + "resource/add",
@@ -455,10 +475,11 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                     , {field: 'resContent', cellMinWidth: 110, minWidth: 110, title: '菜单链接', event: 'rowClick'}
                     , {field: 'fontIcon', align: 'center', width: 60, title: '图标', templet: "#resource_menu_font_icon_laytpl", event: 'rowClick'}
                     , {field: 'sequence', align: 'center', width: 60, title: '顺序', event: 'rowClick'}
+                    , {field: 'resType', align: 'center', width: 100, title: '菜单类型',templet: "#resource_menu_restype_laytpl", event: 'rowClick'}
                     , {field: 'resParent', width: 100, title: '父菜单编号', event: 'rowClick'}
                     , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl", event: 'rowClick'}
-                    , {field: 'updateOperator', width: 100, title: '更新人', event: 'rowClick'}
-                    , {field: 'lastModifiedDatetime', width: 150, title: '更新时间', event: 'rowClick'}
+                    //, {field: 'updateOperator', width: 100, title: '更新人', event: 'rowClick'}
+                   // , {field: 'lastModifiedDatetime', width: 150, title: '更新时间', event: 'rowClick'}
                     , {fixed: 'right', width: 250, title: '操作', align: 'center', toolbar: '#resource_menu_table_btn', event: 'rowClick'}
                 ]];
                 break;
@@ -625,7 +646,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                 if (result["returnCode"] == "0000") {
                     viewDialog = layer.open({
                         type: 1,
-                        area: ['400px', '450px'],
+                        area: ['500px', '550px'],
                         shadeClose: true,
                         title: "查看资源",
                         content: $("#resource_" + type + "_add_data_div").html(),
@@ -647,7 +668,14 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                                     $input.attr("readonly", "readonly");
                                     $input.val(value);
                                 }
+                                if("resType"==name){
+                                  	 if(value){
+                                  		 $("input:radio[name='resType'][value="+value+"]", layero).attr("checked",true);
+                                  		 $("input:radio[name='resType']", layero).attr("disabled",true);
+                                  	 }
+                                  }
                             });
+                            form.render(null, "resource_menu_add_data_form");
                         }
                     })
                 } else {
@@ -675,7 +703,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                 if (result["returnCode"] == "0000") {
                     editDialog = layer.open({
                         type: 1,
-                        area: ['400px', '450px'],
+                        area: ['500px', '550px'],
                         shadeClose: true,
                         title: "修改资源信息",
                         content: $("#resource_" + type + "_add_data_div").html(),
@@ -706,6 +734,12 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                                 if ($input && $input.length == 1) {
                                     $input.val(value);
                                 }
+                                if("resType"==name){
+                                 	 if(value){
+                                 		 $("input:radio[name='resType'][value="+value+"]", layero).attr("checked",true);
+                                 	 }
+                             		 $("input:radio[name='resType']", layero).attr("disabled",true);
+                                 }
                             });
                             form.render(null, "resource_" + type + "_add_data_form");
                             form.on("submit(resource_" + type + "_add_data_form)", function (data) {
@@ -727,7 +761,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                                                 apiTableLoad = false;
                                             }
                                             renderTable(type);
-                                            layer.alert("资源修改成功。");
+                                            layer.alert("资源修改成功");
                                         }
                                     },
                                     error: function (result) {
@@ -822,6 +856,11 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
     table.on('tool(resource_custom_datatable)', function (obj) {
         tableToolEvent(obj, "custom")
     });
+   
+    $('input[type=radio][name=resType]').on('change', function () {
+    	alert(this.value);
+    });
+    
     //菜单和模块tab页切换事件
     element.on('tab(resource_top_tab)', function (data) {
         switch (data.index) {
@@ -890,6 +929,9 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                 break;
         }
     });
+    
+   
+    
     var nodeList = [];
     //搜索树的数据
     $('#user_search_tree_org').bind('input', function (e) {

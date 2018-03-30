@@ -297,6 +297,13 @@
                 </div>
             </div>
             <div class="layui-form-item">
+                <label class="layui-form-label">菜单类型<b>*</b></label>
+                <div class="layui-input-block">
+				    <input type="radio" name="resType" value="group" title="菜单组">
+				    <input type="radio" name="resType" value="view" title="菜单">
+                </div>
+            </div>
+            <div class="layui-form-item" id="divrescontent">
                 <label class="layui-form-label">菜单链接 </label>
                 <div class="layui-input-block">
                     <input type="text" name="resContent" autocomplete="off" class="layui-input layui-input-sm">
@@ -636,5 +643,13 @@
     <script type="text/html" id="resource_menu_font_icon_laytpl">
         <i class="fa {{d.fontIcon}}" aria-hidden="true"></i>
     </script>
+    <script type="text/html" id="resource_menu_restype_laytpl">
+       {{#  if(d.resType == 'view'){ }}
+            菜单
+            {{#  } else if(d.resType == 'group') { }}
+            菜单组
+            {{#  } }}
+    </script>
+    
     <script src="/js/resource/resource.js?v=1.2"></script>
 </div>
