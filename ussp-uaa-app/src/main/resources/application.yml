@@ -1,10 +1,8 @@
 server:
   port: 30136
-  
-  undertow:
-    io-threads: 4
-    worker-threads: 1000
-  
+#  undertow: 
+#    io-threads: 5
+#    worker-threads: 150
 spring:
   jackson:
     time-zone: Asia/Chongqing
@@ -24,3 +22,4 @@ ribbon:
   ConnectTimeout: 10000
   MaxAutoRetries: 1
   MaxAutoRetriesNextServer: 1
+  
