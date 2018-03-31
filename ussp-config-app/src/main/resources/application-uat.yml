@@ -9,12 +9,11 @@ spring:
     username: guest
     password: guest
     virtual-host: /
-
-  cloud: 
+  cloud:
+    bus:
+      trace:
+        enabled: true
     config:
-      bus:
-        trace:
-          enabled: true
       server:
         git:
           uri: http://10.100.8.57/root/config.git
