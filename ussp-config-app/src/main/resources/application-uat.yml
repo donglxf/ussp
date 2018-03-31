@@ -9,6 +9,7 @@ spring:
     username: guest
     password: guest
     virtual-host: /
+
   cloud: 
     config:
       bus:
@@ -16,7 +17,7 @@ spring:
           enabled: true
       server:
         git:
-          uri: http://120.79.193.248/root/config.git
+          uri: http://10.100.8.57/root/config.git
           search-paths: /*
           username: root
           password: tuandai888
