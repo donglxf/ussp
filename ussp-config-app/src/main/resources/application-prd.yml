@@ -9,18 +9,17 @@ spring:
     username: admin
     password: tuandai888
     virtual-host: /data/rabbitmq-server
-  cloud: 
+  cloud:
+    bus:
+      trace:
+        enabled: true
     config:
-      bus:
-        trace:
-          enabled: true
       server:
         git:
           uri: http://10.100.1.82/root/config.git
           search-paths: /*
           username: root
           password: tuandai888
-
 eureka:
   instance:
     prefer-ip-address: true
