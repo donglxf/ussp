@@ -220,7 +220,7 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
 					});
 			  }
 			  if(isExist=="1"){
-				  return "用户名已存在或不可用";
+				  return "用户登录ID已存在或不可用";
 			  } 
 		  },
 		//校验手机号是否已经存在
@@ -331,7 +331,7 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
         var selectNodes = userOrgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
             table.reload('user_datatable', {
-                height: 'full-672',
+                height: 'full-673',
                 page: {
                     curr: 1 //重新从第 1 页开始
                 }
@@ -342,7 +342,7 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
             });
         }else{
         	table.reload('user_datatable', {
-                height: 'full-672',
+                height: 'full-673',
                 page: {
                     curr: 1 //重新从第 1 页开始
                 }
@@ -429,19 +429,20 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
         , limit : 5
         , limits :[5, 10, 20, 30, 40, 50]
         , page: true
-        , height: 'full-672'
+        , height: 'full-673'
         , cols: [[
             {type: 'numbers',event: 'rowClick'}
             , {field: 'userId', width: 110, title: '用户编号',event: 'rowClick'}
-            , {field: 'userName', width: 150, title: '用户姓名',event: 'rowClick'}
+            , {field: 'userName',   title: '用户姓名',event: 'rowClick'}
             , {field: 'jobNumber', width: 100, title: '工号',event: 'rowClick'}
+            , {field: 'loginId',   title: '登录ID',event: 'rowClick'}
             , {field: 'mobile', width: 120, title: '手机',event: 'rowClick'}
-            , {field: 'email', width: 150, title: '邮箱'}
+            , {field: 'email',   title: '邮箱'}
             //, {field: 'idNo', minWidth: 100, title: '身份证',event: 'rowClick'}
-            , {field: 'orgName', minWidth: 60, title: '所属机构',event: 'rowClick'}
+            , {field: 'orgName',   title: '所属机构',event: 'rowClick'}
             , {field: 'status', width: 60, title: '状态', templet: "#user_status_laytpl",event: 'rowClick'}
            // , {field: 'updateOperator', width: 100, title: '更新人'}
-            , {field: 'lastModifiedDatetime', width: 150, title: '更新时间',event: 'rowClick'}
+           // , {field: 'lastModifiedDatetime', width: 150, title: '更新时间',event: 'rowClick'}
             , {fixed: 'right', width: 230, title: '操作', align: 'center', toolbar: '#user_datatable_bar'}
         ]]
     });
@@ -554,6 +555,18 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
                         if (result["returnCode"] == "0000") {
                           layer.close(index);
                        	  layer.msg("密码重置成功");
+                        } else {
+                            layer.msg(result.codeDesc);
+                        }
+                    });
+            	 });
+            }else if (obj.event === 'restate') {
+            	layer.confirm("确认恢复用户状态？", function (index) {
+            		$.post(config.basePath + "login/changUserState?userId=" + data.userId+"&status=0", null, function (result) {
+                        if (result["returnCode"] == "0000") {
+                          layer.close(index);
+                       	  layer.msg("恢复用户状态成功");
+                       	  refreshTable();
                         } else {
                             layer.msg(result.codeDesc);
                         }

@@ -74,7 +74,7 @@ public class HtBoaInLogin implements Serializable {
     private String rootOrgCode;
 
     @Column(name = "STATUS")
-    private int status;
+    private String status;
 
     @Column(name = "UPDATE_OPERATOR")
     private String updateOperator;

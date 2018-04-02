@@ -29,7 +29,7 @@
 				</div>
 				<div class="pull-right col-xs-4 row">
 					<div class="input-group input-group-sm">
-						<input type="search" class="form-control" id="user_search_keyword" placeholder="请输入用户名/工号/手机号" />
+						<input type="search" class="form-control" id="user_search_keyword" placeholder="请输入用户名/登录ID/工号/手机号" />
 						<div class="input-group-btn">
 							<button type="button" class="layui-btn layui-btn-sm" data-type="search">
 								<i class="fa fa-search"></i>
@@ -43,18 +43,30 @@
 				</table>
 				<script type="text/html" id="user_datatable_bar">
                 <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" ht-auth="detail">查看</a>
-                <a class="layui-btn layui-btn-xs" lay-event="edit" ht-auth="edit">编辑</a>
+               
+                 {{#  if(d.status == '1'){ }}
+                 <a class="layui-btn   layui-btn-xs" lay-event="restate" ht-auth="restate">恢复</a>
+                {{#  } else if(d.status == '4') { }}
+                <a class="layui-btn   layui-btn-xs" lay-event="restate" ht-auth="restate">恢复</a>
+                {{#  } else if(d.status == '5') { }}
+               <a class="layui-btn   layui-btn-xs" lay-event="restate" ht-auth="restate">恢复</a>
+                {{#  } else { }}
+                 <a class="layui-btn layui-btn-xs" lay-event="edit" ht-auth="edit">编辑</a>
+                {{#  } }}
                 <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" ht-auth="del">删除</a>
                 <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="resetpwd" ht-auth="resetpwd" >重置密码</a>
+               
             </script>
 				<script type="text/html" id="user_status_laytpl">
-                {{#  if(d.status === '0'){ }}
+                {{#  if(d.status == '0'){ }}
                 正常
-                {{#  } else if(d.status === '1') { }}
+                {{#  } else if(d.status == '1') { }}
                 禁用
-                {{#  } else if(d.status === '4') { }}
+                {{#  } else if(d.status == '2') { }}
+               离职
+                {{#  } else if(d.status == '4') { }}
                 冻结
-                {{#  } else if(d.status === '5') { }}
+                {{#  } else if(d.status == '5') { }}
                 锁定
                 {{#  } else { }}
                 {{ d.status }}
@@ -179,7 +191,7 @@
 					</div>
 				</div>
 				<div class="layui-form-item">
-					<label class="layui-form-label">用户名<b>*</b></label>
+					<label class="layui-form-label">登录ID<b>*</b></label>
 					<div class="layui-input-block">
 						<input type="text" name="loginId" lay-verify="required|checkExistLoginId" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
 					</div>
@@ -237,7 +249,7 @@
 					</div>
 				</div>
 				<div class="layui-form-item">
-					<label class="layui-form-label">用户名<b>*</b></label>
+					<label class="layui-form-label"><b>*</b></label>
 					<div class="layui-input-block">
 						<input type="text" name="loginId" lay-verify="required" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
 					</div>
@@ -297,7 +309,7 @@
 				</div>
 				<div class="layui-form-item">
 					<div class="layui-inline">
-						<label class="layui-form-label">用户名</label>
+						<label class="layui-form-label">登录ID</label>
 						<div class="layui-input-inline">
 							<input type="text" name="loginId" readonly class="layui-input layui-input-sm">
 						</div>

@@ -60,7 +60,7 @@ public class UserMessageVo implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date lastModifiedDatetime;
     // 用户状态 0 正常  1禁用 2离职  4冻结 5锁定
-    private int status;
+    private String status;
     //密码错误次数
     private Integer failedCount;
     //失效时间

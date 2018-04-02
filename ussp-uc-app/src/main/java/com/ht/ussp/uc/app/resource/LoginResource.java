@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.druid.util.StringUtils;
 import com.ht.ussp.common.Constants;
+import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInOperatorLog;
 import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
@@ -157,5 +159,24 @@ public class LoginResource {
 		}
     	
     }
+    
+    @ApiOperation(value = "修改用户状态")
+    @PostMapping("/changUserState")
+    public Result changUserState(@RequestParam("userId")String userId,@RequestParam("status")String status) {
+    	if(StringUtils.isEmpty(userId)) {
+    		return Result.buildFail();
+    	} 
+    	try {
+    		HtBoaInLogin htBoaInLogin = htBoaInLoginService.findByUserId(userId);
+        	if(htBoaInLogin!=null) {
+        		htBoaInLogin.setStatus(status);
+        		htBoaInLoginService.update(htBoaInLogin);
+        	}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	return Result.buildSuccess();
+    }
+    
     
 }

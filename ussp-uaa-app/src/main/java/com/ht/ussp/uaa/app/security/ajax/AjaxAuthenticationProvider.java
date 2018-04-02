@@ -68,7 +68,7 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
 //		logger.info("加密后的密码为："+hashPass);
         if(!EncryptUtil.matches(presentPassword,userVo.getPassword())) {
         	//增加错误次数
-        	int failcount = userVo.getFailedCount()+1;
+        	Integer failcount = userVo.getFailedCount()+1;
         	userClient.updateFailCount(userVo.getUserId(),failcount,app);
                   throw new BadCredentialsException("您输入的密码不正确!");
         }
