@@ -33,7 +33,7 @@ public interface UserClient {
 	 * @param failcount
 	 */
 	@RequestMapping(value = "/login/updateFailCount")
-	public void updateFailCount(@RequestParam("userId")String userId, @RequestParam("failedCount")int failedCount,@RequestParam("app")String app);
+	public void updateFailCount(@RequestParam("userId")String userId, @RequestParam("failedCount")Integer failedCount,@RequestParam("app")String app);
 	
 }
 

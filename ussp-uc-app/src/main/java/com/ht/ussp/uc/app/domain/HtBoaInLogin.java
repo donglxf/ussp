@@ -49,7 +49,7 @@ public class HtBoaInLogin implements Serializable {
     private Date effectiveDate;
 
     @Column(name = "FAILED_COUNT")
-    private int failedCount;
+    private Integer failedCount;
 
     @Column(name = "JPA_VERSION")
     private int jpaVersion;

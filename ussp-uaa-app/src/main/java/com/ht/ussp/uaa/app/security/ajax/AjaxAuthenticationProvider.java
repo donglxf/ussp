@@ -73,7 +73,7 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
                   throw new BadCredentialsException("您输入的密码不正确!");
         }
         //登录成功则还原错误次数
-    	userClient.updateFailCount(userVo.getUserId()==null?"":userVo.getUserId(),0,app);
+    	userClient.updateFailCount(userVo.getUserId()==null?"0":userVo.getUserId(),0,app);
         //获取用户角色编码
 //        if("N".equals(userVo.getController())) {
 //        	 ResponseModal roleCodes = userClient.getRoleCodes(userVo.getUserId());
