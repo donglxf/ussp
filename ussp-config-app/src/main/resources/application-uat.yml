@@ -4,11 +4,11 @@ spring:
   application:
     name: ussp-config-app
   rabbitmq:
-    host: 10.100.8.57
-    port: 5672
-    username: guest
-    password: guest
-    virtual-host: /
+    host: ${RABBITMQ_HOST:10.100.8.57}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    virtual-host: ${RABBITMQ_VIRTUAL_HOST:/}
   cloud:
     bus:
       trace:
@@ -16,10 +16,10 @@ spring:
     config:
       server:
         git:
-          uri: http://10.100.8.57/root/config.git
-          search-paths: /*
-          username: root
-          password: tuandai888
+          uri: http://${GIT_URI_IP:10.100.8.57}/root/config.git
+          search-paths: ${GIT_SEARCH_PATH:/*}
+          username: ${GIT_USERNAME:root}
+          password: ${GIT_PASSWORD:tuandai888}
 
 eureka:
   instance:
