@@ -24,6 +24,7 @@ public enum SysStatus {
 	PWD_INVALID("9912", "密码不正确"),
 	PWD_EQUAL("9913", "和原密码相同"),
 	PWD_LOCKING("9914","错误登录次数过多，账户24小时之内已被锁定"),
+	PWD_FIRST_MODIFY("0009","密码太简单，请重新设置"),
 	
 	NO_ROLE("9920","该用户没关联角色"),
 	TOKEN_IS_EXPIRED("9921","TOKEN过期"),

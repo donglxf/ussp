@@ -24,6 +24,7 @@ import com.ht.ussp.uaa.app.jwt.JwtToken;
 import com.ht.ussp.uaa.app.jwt.JwtTokenFactory;
 import com.ht.ussp.uaa.app.model.ResponseModal;
 import com.ht.ussp.uaa.app.vo.UserVo;
+import com.ht.ussp.util.FastJsonUtil;
 
 /**
  * 
@@ -45,14 +46,19 @@ public class AjaxAwareAuthenticationSuccessHandler implements AuthenticationSucc
 		this.tokenFactory = tokenFactory;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {
-		UserVo userVo = (UserVo) authentication.getPrincipal();
+		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, String> tokenMap = new HashMap<String, String>();
+		map=FastJsonUtil.objectToPojo(authentication.getPrincipal(),HashMap.class);
+		String code=map.get("code").toString();
+		UserVo userVo=FastJsonUtil.objectToPojo(map.get("userVo"),UserVo.class);
 		JwtToken accessToken = tokenFactory.createAccessJwtToken(userVo);
 		JwtToken refreshToken = tokenFactory.createRefreshToken(userVo);
-
-		Map<String, String> tokenMap = new HashMap<String, String>();
+		
+		tokenMap.put("code", code);
 		tokenMap.put("token", accessToken.getToken());
 		tokenMap.put("refreshToken", refreshToken.getToken());
 
