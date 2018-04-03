@@ -10,9 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import com.ht.ussp.common.Constants;
 import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.uaa.app.feignClient.UserClient;
 import com.ht.ussp.uaa.app.model.ResponseModal;
