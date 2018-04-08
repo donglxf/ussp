@@ -209,10 +209,21 @@
                     if (data && data["token"] != null & data["token"] != "") {
                         cookie.setToken(data["token"]);
                         cookie.setRefreshToken(data["refreshToken"]);
-                        top.location.href = config.indexPath;
+                        //top.location.href = config.indexPath; 
+                        if(data.code=='0009'){
+                         	layer.confirm('您的密码过于简单，需要重新设置密码', {
+                         		  btn: ['确认'] 
+                         		}, function(index, layero){
+                         			top.location.href = config.changePwdPath+"\?token="+data["token"]+"&urls="+config.loginPath;
+                             		//top.location.href ="http://ip:30111/uc-ui/passwrod?token=&url=http://xxx:login.html"
+                         		});
+                    	    }else{
+                    	    	top.location.href = config.indexPath; 
+                    	    }
+                   	    	
                     } else {
                         layer.alert("登录失败，请联系管理员");
-                    }
+                    }  
                 },
                 error: function (xhr, exception, errorThrown) {
                     if (xhr.status == '401' || xhr.status == '403') {

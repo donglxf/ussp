@@ -77,3 +77,7 @@ UCClient新增两个接口：
 
 ### 0.0.15
 1、LoginUserInfoHelper 新增getUserInfoByUserId 根据userId获取用户信息 ,若userId不为空则按userId查询,userId为空则根据bmUserId查询,
+
+### 0.0.17
+1.新增外部系统修改密码，以及修改登录状态码
+2.修复新增菜单出错

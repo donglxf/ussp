@@ -21,4 +21,8 @@ public class ChangePwd {
     
     @ApiModelProperty(value = "旧密码", dataType = "string", example = "123456.")
     String oldPwd;
+    
+    @ApiModelProperty(value = "token", dataType = "string")
+    String token;
+    
 }

@@ -15,6 +15,10 @@ layui.use(['form',   'table' ,'ht_config'], function () {
 				  if(oldPwd==newPwd){
 					  return "新密码不能与旧密码相同";
 				  }
+				  var reg = /^[a-zA-Z]\w{5,17}$/;
+				  if (!reg.test(newPwd)) {
+					  return "以字母开头，长度在6-18之间，只能包含字符、数字和下划线";
+				  }
 			  }
 		  },
 		  confirmPwd : function(value) {

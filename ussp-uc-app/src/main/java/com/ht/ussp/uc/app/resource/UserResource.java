@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.druid.util.StringUtils;
 import com.ht.ussp.bean.LoginUserInfoHelper;
-import com.ht.ussp.bean.MenuInfoHelper;
 import com.ht.ussp.client.dto.LoginInfoDto;
 import com.ht.ussp.common.Constants;
 import com.ht.ussp.common.SysStatus;
@@ -29,16 +28,19 @@ import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInContrast;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
+import com.ht.ussp.uc.app.domain.HtBoaInOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.domain.HtBoaInUserRole;
 import com.ht.ussp.uc.app.feignclients.EipClient;
+import com.ht.ussp.uc.app.feignclients.UaaClient;
 import com.ht.ussp.uc.app.model.ChangePwd;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
 import com.ht.ussp.uc.app.service.HtBoaInContrastService;
 import com.ht.ussp.uc.app.service.HtBoaInLoginService;
+import com.ht.ussp.uc.app.service.HtBoaInOrgService;
 import com.ht.ussp.uc.app.service.HtBoaInPwdHistService;
 import com.ht.ussp.uc.app.service.HtBoaInUserAppService;
 import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
@@ -49,8 +51,10 @@ import com.ht.ussp.uc.app.vo.PageVo;
 import com.ht.ussp.uc.app.vo.ResetPwdUser;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
 import com.ht.ussp.uc.app.vo.UserVo;
+import com.ht.ussp.uc.app.vo.ValidateJwtVo;
 import com.ht.ussp.util.BeanUtils;
 import com.ht.ussp.util.EncryptUtil;
+import com.ht.ussp.util.FastJsonUtil;
 import com.ht.ussp.util.LogicUtil;
 
 import io.swagger.annotations.ApiImplicitParam;
@@ -82,13 +86,13 @@ public class UserResource{
     @Autowired
 	private EipClient eipClient;
     @Autowired
+    private UaaClient uaaClient;
+    @Autowired
    	private LoginUserInfoHelper loginUserInfoHelper;
     @Autowired
-   	private MenuInfoHelper menuInfoHelper;
-    
-    @Autowired
    	private HtBoaInContrastService htBoaInContrastService;
-    
+    @Autowired
+    private HtBoaInOrgService htBoaInOrgService;
     
     
     @ApiOperation(value = "对内：用户个人信息查询", notes = "已登录用户查看自己的个人信息")
@@ -146,40 +150,6 @@ public class UserResource{
         return new ResponseModal("200", msg, u1 );
     }
 
-    @ApiOperation(value = "对内：修改密码", notes = "修改密码")
-    @RequestMapping(value = {"/in/changePwd"}, method = RequestMethod.POST)
-    public ResponseModal changePwd(@RequestBody ChangePwd changePwd, @RequestHeader("userId") String userId) {
-        long sl = System.currentTimeMillis(), el = 0L;
-        ResponseModal r = null;
-        String msg = "成功";
-        String logHead = "修改密码：login/in/changePwd param-> {}";
-        String logStart = logHead + " | START:{}";
-        String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.debug(logStart, changePwd.toString(), sl);
-
-        HtBoaInLogin u = htBoaInLoginService.findByUserId(userId);
-        //验证原密码是否正确
-        /*if (!u.getPassword().equals(EncryptUtil.passwordEncrypt(changePwd.getOldPwd()))) {
-            return new ResponseModal("500", "原密码输入不正确");
-        }*/
-        if(!EncryptUtil.matches(changePwd.getOldPwd(),u.getPassword())) {
-        	return new ResponseModal("500", "原密码输入不正确");
-        }
-        String newPassWordEncrypt = EncryptUtil.passwordEncrypt(changePwd.getNewPwd());
-        u.setPassword(newPassWordEncrypt);
-
-        //记录历史密码
-        HtBoaInPwdHist htBoaInPwdHist = new HtBoaInPwdHist();
-        htBoaInPwdHist.setUserId(u.getUserId());
-        htBoaInPwdHist.setPassword(newPassWordEncrypt);
-        htBoaInPwdHist.setPwdCreTime(new Timestamp(System.currentTimeMillis()));
-        htBoaInPwdHist.setLastModifiedDatetime(new Date());
-        htBoaInLoginService.update(u);
-        htBoaInPwdHistService.add(htBoaInPwdHist);
-        el = System.currentTimeMillis();
-        log.debug(logEnd, "resetPwd: " + changePwd, msg, el, el - sl);
-        return new ResponseModal("200", "成功");
-    }
 
     @ApiOperation(value = "对内：根据UserId查询用户角色", notes = "根据UserId查询用户角色")
     @RequestMapping(value = {"/listUserRoleByPage"}, method = RequestMethod.GET)
@@ -277,14 +247,14 @@ public class UserResource{
         } else {
             BeanUtils.deepCopy(htBoaInUser, userVo);
         }
-
+        
         // 验证用户与系统是否匹配,匹配返回controller
         String controller = htBoaInUserAppService.findUserAndAppInfo(htBoaInUser.getUserId(), app);
         if (!LogicUtil.isNullOrEmpty(controller)) {
             userVo.setController(controller);
         } else {
             log.debug("用户来源不正确！");
-            rm.setSysStatus(SysStatus.USER_NOT_MATCH_APP);
+            rm.setSysStatus(SysStatus.USER_NOT_RELATE_APP);
             return rm;
 
         }
@@ -293,38 +263,18 @@ public class UserResource{
         if (LogicUtil.isNotNull((htBoaInLogin))) {
             BeanUtils.deepCopy(htBoaInLogin, userVo);
         }
-
+        //是否首次登录，首次登录需要强制修改密码 (未修改过密码需要首次修改密码才可以使用)
+        List<HtBoaInPwdHist>   listHtBoaInPwdHist=htBoaInPwdHistService.findByUserId(htBoaInUser.getUserId());
+        if(listHtBoaInPwdHist==null||listHtBoaInPwdHist.isEmpty()) {
+        	 rm.setSysStatus(SysStatus.PWD_FIRST_MODIFY);
+        }else {
+        	 rm.setSysStatus(SysStatus.SUCCESS);
+        }
         userVo.setApp(app);
-        rm.setSysStatus(SysStatus.SUCCESS);
         rm.setResult(userVo);
         return rm;
     }
 
-//    /**
-//	 *
-//	 * @Title: getRoleCodes
-//	 * @Description: 获取用户角色编码
-//	 * @return ResponseModal
-//	 * @throws
-//	 * @author wim qiuwenwu@hongte.info
-//	 * @date 2018年1月18日 下午6:29:59
-//	 */
-//	@GetMapping("/getRoleCodes")
-//	@ApiOperation(value = "获取用户角色编码")
-//	public ResponseModal getRoleCodes(@RequestParam(value = "userId", required = true) String userId) {
-//		ResponseModal rm = new ResponseModal();
-//		List<String> roleCodes = new ArrayList<>();
-//		roleCodes=htBoaInUserRoleService.getAllRoleCodes(userId);
-//		if (roleCodes.isEmpty()) {
-//			rm.setSysStatus(SysStatus.NO_ROLE);
-//			return rm;
-//		} else {
-//			rm.setSysStatus(SysStatus.SUCCESS);
-//			rm.setResult(roleCodes);
-//			return rm;
-//		}
-//
-//	}
 
     /**
      * 用户信息分页查询<br>
@@ -356,7 +306,7 @@ public class UserResource{
         	/*String userId = user.getUserId();//作为用户的登录账号，修改为不是自动生成
             user.setUserId(userId);*/
             HtBoaInUser user = new HtBoaInUser();
-            user.setDataSource(1);
+            user.setDataSource(Constants.USER_DATASOURCE_1);
             user.setEmail(userMessageVo.getEmail());
             user.setIsOrgUser(1);
             user.setJobNumber(userMessageVo.getJobNumber());
@@ -464,6 +414,41 @@ public class UserResource{
         }
         return Result.buildFail();
     }
+    
+    @ApiOperation(value = "对内：修改密码", notes = "修改密码")
+    @RequestMapping(value = {"/in/changePwd"}, method = RequestMethod.POST)
+    public ResponseModal changePwd(@RequestBody ChangePwd changePwd, @RequestHeader("userId") String userId) {
+        long sl = System.currentTimeMillis(), el = 0L;
+        ResponseModal r = null;
+        String msg = "成功";
+        String logHead = "修改密码：login/in/changePwd param-> {}";
+        String logStart = logHead + " | START:{}";
+        String logEnd = logHead + " {} | END:{}, COST:{}";
+        log.debug(logStart, changePwd.toString(), sl);
+
+        HtBoaInLogin u = htBoaInLoginService.findByUserId(userId);
+        //验证原密码是否正确
+        /*if (!u.getPassword().equals(EncryptUtil.passwordEncrypt(changePwd.getOldPwd()))) {
+            return new ResponseModal("500", "原密码输入不正确");
+        }*/
+        if(!EncryptUtil.matches(changePwd.getOldPwd(),u.getPassword())) {
+        	return new ResponseModal("500", "原密码输入不正确");
+        }
+        String newPassWordEncrypt = EncryptUtil.passwordEncrypt(changePwd.getNewPwd());
+        u.setPassword(newPassWordEncrypt);
+
+        //记录历史密码
+        HtBoaInPwdHist htBoaInPwdHist = new HtBoaInPwdHist();
+        htBoaInPwdHist.setUserId(u.getUserId());
+        htBoaInPwdHist.setPassword(newPassWordEncrypt);
+        htBoaInPwdHist.setPwdCreTime(new Timestamp(System.currentTimeMillis()));
+        htBoaInPwdHist.setLastModifiedDatetime(new Date());
+        htBoaInLoginService.update(u);
+        htBoaInPwdHistService.add(htBoaInPwdHist);
+        el = System.currentTimeMillis();
+        log.debug(logEnd, "resetPwd: " + changePwd, msg, el, el - sl);
+        return new ResponseModal("200", "成功");
+    }
 
     @ApiOperation(value = "对内，获取用户登录信息")
     @GetMapping(value = "/getLoginUserInfo")
@@ -484,6 +469,71 @@ public class UserResource{
     	}
         return htBoaInUserService.queryUserInfo(userId,app);
     }
+    
+    @ApiOperation(value = "外部系统获取用户信息")
+    @PostMapping("/getUserForOther")
+    public Result getUserForOther(String token) {
+    	 ResponseModal rm = uaaClient.validateJwt("Bearer "+token);
+         ValidateJwtVo vdj = new ValidateJwtVo();
+         vdj = FastJsonUtil.objectToPojo(rm.getResult(), ValidateJwtVo.class);
+         if(vdj==null) {
+         	return Result.buildFail();
+         }
+         if(!StringUtils.isEmpty(vdj.getUserId())) {
+        	 HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(vdj.getUserId());
+        	 UserMessageVo userMessageVo = new UserMessageVo();
+        	 userMessageVo.setUserId(htBoaInUser.getUserId());
+        	 userMessageVo.setUserName(htBoaInUser.getUserName());
+        	 userMessageVo.setId(htBoaInUser.getId());
+        	 userMessageVo.setEmail(htBoaInUser.getEmail());
+        	 userMessageVo.setMobile(htBoaInUser.getMobile());
+        	 userMessageVo.setOrgCode(htBoaInUser.getOrgCode());
+        	 userMessageVo.setJobNumber(htBoaInUser.getJobNumber());
+        	 List<HtBoaInOrg> listOrg = htBoaInOrgService.findByOrgCode(htBoaInUser.getOrgCode());
+        	 if(listOrg!=null&&!listOrg.isEmpty()) {
+        		 userMessageVo.setOrgName(listOrg.get(0).getOrgNameCn());
+        	 }
+        	 HtBoaInLogin htBoaInLogin = htBoaInLoginService.findByUserId(htBoaInUser.getUserId());
+        	 if(htBoaInLogin!=null) {
+        		 userMessageVo.setLoginId(htBoaInLogin.getLoginId());
+        	 }
+        	 return Result.buildSuccess(userMessageVo);
+         }
+        return Result.buildFail(rm.getStatus_code(), rm.getResult_msg());
+    }
+    
+    @ApiOperation(value = "外部系统更新用户信息")
+    @PostMapping("/updateUserForOther")
+    public Result updateUserForOther(@RequestParam("token")  String token,@RequestBody SelfBoaInUserInfo selfBoaInUserInfo) {
+    	 ResponseModal rm = uaaClient.validateJwt(token);
+         ValidateJwtVo vdj = (ValidateJwtVo) rm.getResult();
+         
+         if(StringUtils.isEmpty(selfBoaInUserInfo.getUserId())) {
+        	 return Result.buildFail();
+         }
+         if(!selfBoaInUserInfo.getUserId().equals(vdj.getUserId())) {
+        	 return Result.buildFail();
+         }
+         HtBoaInUser u = htBoaInUserService.findByUserId(selfBoaInUserInfo.getUserId());
+         if (selfBoaInUserInfo.getOrgCode() != null && "" != selfBoaInUserInfo.getOrgCode()) {
+             u.setOrgCode(selfBoaInUserInfo.getOrgCode());
+         }
+         if (selfBoaInUserInfo.getRootOrgCode() != null && "" != selfBoaInUserInfo.getRootOrgCode()) {
+             u.setRootOrgCode(selfBoaInUserInfo.getRootOrgCode());
+         }
+         if (selfBoaInUserInfo.getIdNo() != null && "" != selfBoaInUserInfo.getIdNo()) {
+             u.setIdNo(selfBoaInUserInfo.getIdNo());
+         }
+         u.setEmail(selfBoaInUserInfo.getEmail());
+         u.setMobile(selfBoaInUserInfo.getMobile());
+         u.setUserName(selfBoaInUserInfo.getUserName());
+         htBoaInUserService.update(u);
+
+         HtBoaInUser u1 = htBoaInUserService.findByUserId(selfBoaInUserInfo.getUserId());
+         
+         return Result.buildSuccess(u1);
+    }
+    
     
     @ApiOperation(value = "重置密码并发邮件")
     @PostMapping(value = "/sendEmailRestPwd")

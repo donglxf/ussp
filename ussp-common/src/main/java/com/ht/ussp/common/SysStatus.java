@@ -12,7 +12,7 @@ public enum SysStatus {
 	
 	
 	METHOD_NOT_SUPPORTED("9900","不支持该请求方式"),
-	INVALID_USER("9901","用户名或密码无效"),
+	INVALID_USER("9901","用户名或密码错误"),
 	USER_NOT_FOUND("9902","用户状态异常"),
 	USER_HAS_DELETED("9903","您的用户已被删除"),
 	USER_NOT_RELATE_APP("9904","该用户未与系统关联"),

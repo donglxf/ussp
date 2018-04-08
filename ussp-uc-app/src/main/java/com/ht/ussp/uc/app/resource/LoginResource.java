@@ -27,6 +27,7 @@ import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInOperatorLog;
 import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
+import com.ht.ussp.uc.app.feignclients.UaaClient;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResetPwd;
 import com.ht.ussp.uc.app.model.ResponseModal;
@@ -49,8 +50,7 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(value = "/login")
 public class LoginResource {
 
-    private static final Logger log = LoggerFactory
-            .getLogger(LoginResource.class);
+    private static final Logger log = LoggerFactory .getLogger(LoginResource.class);
 
     @Autowired
     private HtBoaInUserService htBoaInUserService;
@@ -60,6 +60,10 @@ public class LoginResource {
     private HtBoaInPwdHistService htBoaInPwdHistService;
     @Autowired
     private HtBoaInOperatorLogService htBoaInOperatorLogService;
+    @Autowired
+    private UaaClient uaaClient;
+    
+    
 
     @SuppressWarnings("unchecked")
     @ApiOperation(value = "对内：忘记密码/重置密码", notes = "用户通过用户的手机号、邮箱和历史密码信息进行密码重置")
@@ -94,8 +98,7 @@ public class LoginResource {
         HtBoaInLogin u = new HtBoaInLogin();
         u.setUserId(htBoaInUser.getUserId());
         List<HtBoaInLogin> htBoaInLoginList = htBoaInLoginService.findAll(u);
-        r = exceptionReturn(logEnd, "resetPwd: " + resetPwd, htBoaInLoginList,
-                sl, "用户登录信息", 1);
+        r = exceptionReturn(logEnd, "resetPwd: " + resetPwd, htBoaInLoginList,  sl, "用户登录信息", 1);
         if (null != r)
             return r;
         u = htBoaInLoginList.get(0);
@@ -178,5 +181,5 @@ public class LoginResource {
     	return Result.buildSuccess();
     }
     
-    
+  
 }

@@ -22,23 +22,20 @@ import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
 import com.ht.ussp.uc.app.service.HtBoaInContrastService;
 import com.ht.ussp.uc.app.service.HtBoaInLoginService;
-import com.ht.ussp.uc.app.service.HtBoaInPwdHistService;
 import com.ht.ussp.uc.app.service.HtBoaInUserAppService;
-import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.vo.LoginInfoVo;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
 import com.ht.ussp.util.EncryptUtil;
 
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 
  
 @RestController
-@RequestMapping(value = "/userServer")
+@RequestMapping(value = "/userFeignServer")
 @Log4j2
-public class UserServerResource{
+public class UserFeignServer{
 
     @Autowired
     private HtBoaInUserService htBoaInUserService;
@@ -47,12 +44,7 @@ public class UserServerResource{
     @Autowired
     private HtBoaInLoginService htBoaInLoginService;
     @Autowired
-    private HtBoaInUserRoleService htBoaInUserRoleService;
-    @Autowired
-    private HtBoaInPwdHistService htBoaInPwdHistService;
-    @Autowired
    	private HtBoaInContrastService htBoaInContrastService;
-    
     
     @ApiOperation(value = "根据userId查询用户信息")
     @RequestMapping(value = {"/getUserByUserId"}, method = RequestMethod.GET)
@@ -80,11 +72,11 @@ public class UserServerResource{
      * @author 谭荣巧
      * @Date 2018/1/14 12:08
      */
-    @PostMapping(value = "/add")
-    public Result addAsync(@RequestBody UserMessageVo userMessageVo, @RequestHeader("userId") String loginUserId) {
+    @GetMapping(value = "/addUser")
+    public Result addAsync(@RequestBody UserMessageVo userMessageVo, @RequestHeader("userId") String loginUserId, @RequestHeader("app") String app) {
         if (userMessageVo != null) {
             HtBoaInUser user = new HtBoaInUser();
-            user.setDataSource(1);
+            user.setDataSource(Constants.USER_DATASOURCE_3);
             user.setEmail(userMessageVo.getEmail());
             user.setIsOrgUser(1);
             user.setJobNumber(userMessageVo.getJobNumber());
@@ -118,8 +110,6 @@ public class UserServerResource{
         return Result.buildFail();
     }
     
-   
-
     public Result updateAsync(@RequestBody UserMessageVo userMessageVo, @RequestHeader("userId") String loginUserId) {
         if (userMessageVo != null) {
         	HtBoaInUser htBoaInUser = null;
@@ -173,13 +163,7 @@ public class UserServerResource{
         }
         return Result.buildFail();
     }
-
-    @ApiOperation(value = "对内，获取用户登录信息")
-    @GetMapping(value = "/getLoginUserInfo")
-    public LoginInfoVo getLoginUserInfo(@RequestParam("userId") String userId,@RequestParam("app") String app) {
-        return htBoaInUserService.queryUserInfo(userId,app);
-    }
-
+ 
     @ApiOperation(value = "获取指定userId用户信息")
     @GetMapping(value = "/getUserInfoByUserId")
     public LoginInfoVo getUserInfoByUserId(@RequestParam("userId")String userId, @RequestParam("bmUserId")String bmUserId, @RequestParam("app") String app) {
@@ -195,7 +179,6 @@ public class UserServerResource{
     }
     
     @ApiOperation(value = "校验数据的重复性  返回true：可用  false：不可用")
-    @PostMapping(value = "/checkUserExist")
     public Result checkUserExist(String jobnum,String mobile,String email,String loginid) {
     	HtBoaInUser htBoaInUser = null;
     	if(jobnum!=null) {
@@ -219,4 +202,21 @@ public class UserServerResource{
         }
     }
  
+    @ApiOperation(value = "修改用户状态 用户状态 0 正常  1禁用 2离职  4冻结 5锁定")
+    @PostMapping("/changUserState")
+    public Result changUserState(@RequestParam("userId")String userId,@RequestParam("status")String status) {
+    	if(StringUtils.isEmpty(userId)) {
+    		return Result.buildFail();
+    	} 
+    	try {
+    		HtBoaInLogin htBoaInLogin = htBoaInLoginService.findByUserId(userId);
+        	if(htBoaInLogin!=null) {
+        		htBoaInLogin.setStatus(status);
+        		htBoaInLoginService.update(htBoaInLogin);
+        	}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	return Result.buildSuccess();
+    }
 }
