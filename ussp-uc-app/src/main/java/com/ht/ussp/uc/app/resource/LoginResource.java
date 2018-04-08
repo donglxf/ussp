@@ -22,12 +22,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.druid.util.StringUtils;
 import com.ht.ussp.common.Constants;
+import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInOperatorLog;
 import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.feignclients.UaaClient;
+import com.ht.ussp.uc.app.model.ChangePwd;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResetPwd;
 import com.ht.ussp.uc.app.model.ResponseModal;
@@ -35,6 +37,9 @@ import com.ht.ussp.uc.app.service.HtBoaInLoginService;
 import com.ht.ussp.uc.app.service.HtBoaInOperatorLogService;
 import com.ht.ussp.uc.app.service.HtBoaInPwdHistService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
+import com.ht.ussp.uc.app.vo.ValidateJwtVo;
+import com.ht.ussp.util.EncryptUtil;
+import com.ht.ussp.util.FastJsonUtil;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -181,5 +186,42 @@ public class LoginResource {
     	return Result.buildSuccess();
     }
     
-  
+    @ApiOperation(value = "修改密码")
+    @RequestMapping(value = {"/changePwd"}, method = RequestMethod.POST)
+    public Result changePwd(@RequestBody ChangePwd changePwd) {
+        long sl = System.currentTimeMillis(), el = 0L;
+        String msg = "成功";
+        String logHead = "修改密码：login/in/changePwd param-> {}";
+        String logStart = logHead + " | START:{}";
+        String logEnd = logHead + " {} | END:{}, COST:{}";
+        log.debug(logStart, changePwd.toString(), sl);
+        
+        ResponseModal rm = uaaClient.validateJwt("Bearer "+changePwd.getToken());
+        ValidateJwtVo vdj = new ValidateJwtVo();
+        vdj = FastJsonUtil.objectToPojo(rm.getResult(), ValidateJwtVo.class);
+        if(vdj==null) {
+        	return Result.buildFail();
+        }
+        HtBoaInLogin u = htBoaInLoginService.findByUserId(vdj.getUserId());
+        //验证原密码是否正确
+        if(!EncryptUtil.matches(changePwd.getOldPwd(),u.getPassword())) {
+        	return Result.buildFail(SysStatus.PWD_INVALID.getStatus(),"原密码输入不正确");
+        }
+        
+        //记录历史密码
+        HtBoaInPwdHist htBoaInPwdHist = new HtBoaInPwdHist();
+        htBoaInPwdHist.setUserId(u.getUserId());
+        htBoaInPwdHist.setPassword(u.getPassword());
+        htBoaInPwdHist.setPwdCreTime(new Timestamp(System.currentTimeMillis()));
+        htBoaInPwdHist.setLastModifiedDatetime(new Date());
+        
+        String newPassWordEncrypt = EncryptUtil.passwordEncrypt(changePwd.getNewPwd());
+        u.setPassword(newPassWordEncrypt);
+        htBoaInLoginService.update(u);
+        
+        htBoaInPwdHistService.add(htBoaInPwdHist);
+        el = System.currentTimeMillis();
+        log.debug(logEnd, "resetPwd: " + changePwd, msg, el, el - sl);
+        return Result.buildSuccess();
+    }
 }
