@@ -86,11 +86,13 @@ layui.config({
    					layer.confirm('修改成功,请重新登录！', {
                		  btn: ['确认'] 
                		}, function(index, layero){
-               		  location.href=urls;
+               			cookie.deleteToken();
+                        cookie.deleteRefreshToken();
+               		    location.href=urls;
                		});
    					// layer.alert("修改成功");
-   					 cookie.deleteToken();
-   	                 cookie.deleteRefreshToken();
+   					/* cookie.deleteToken();
+   	                 cookie.deleteRefreshToken();*/
    				 }
    			}
    		});

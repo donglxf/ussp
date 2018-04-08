@@ -541,7 +541,7 @@ public class UserResource{
     public Result sendEmailRestPwd(String userId) {
     	EmailVo emailVo = new EmailVo();
     	emailVo.setSubject("重置密码");
-    	String newPassWord = EncryptUtil.genRandomNum(6).toUpperCase();
+    	String newPassWord = "123456";//EncryptUtil.genRandomNum(6).toUpperCase();
     	String newPassWordEncrypt = EncryptUtil.passwordEncrypt(newPassWord);
     	if(userId!=null && userId!="" && userId.length()>0) {
     		HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(userId);
@@ -561,8 +561,8 @@ public class UserResource{
     		to.add(htBoaInUser.getEmail());
     		emailVo.setTo(to);
     		try {
-    			Result result =  eipClient.sendEmail(emailVo);
-    			log.debug("发送邮件："+result);
+    			//Result result =  eipClient.sendEmail(emailVo);
+    			//log.debug("发送邮件："+result);
 			} catch (Exception e) {
 				log.debug("发送邮件Exception："+e.getMessage());
 			}
@@ -579,7 +579,7 @@ public class UserResource{
 		if (resetPwdUser != null) {
 			for (UserMessageVo userMessageVo : resetPwdUser.getResetPwdUserdata()) {
 				String userId = userMessageVo.getUserId();
-				String newPassWord = EncryptUtil.genRandomNum(6).toLowerCase();
+				String newPassWord ="123456";// EncryptUtil.genRandomNum(6).toLowerCase();
 				String newPassWordEncrypt = EncryptUtil.passwordEncrypt(newPassWord);
 				if (userId != null && userId != "" && userId.length() > 0) {
 					HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(userId);
@@ -600,12 +600,12 @@ public class UserResource{
 					to.add(htBoaInUser.getEmail());
 					emailVo.setBcc("leiricong@hongte.info");
 					emailVo.setTo(to);
-					try {
+					/*try {
 		    			Result result =  eipClient.sendEmail(emailVo);
 		    			log.debug("发送邮件："+result);
 					} catch (Exception e) {
 						log.debug("发送邮件Exception："+e.getMessage());
-					}
+					}*/
 				}
 			}
 		}
