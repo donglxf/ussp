@@ -46,8 +46,8 @@ public class UserFeignServer{
     @Autowired
    	private HtBoaInContrastService htBoaInContrastService;
     
-    @ApiOperation(value = "根据userId查询用户信息")
-    @RequestMapping(value = {"/getUserByUserId"}, method = RequestMethod.GET)
+    @ApiOperation(value = "根据userId查询当前用户信息")
+    @PostMapping(value = "/getUserByUserId")
     public ResponseModal getUserByUserId(@RequestHeader("userId") String userId) {
         long sl = System.currentTimeMillis(), el = 0L;
         String msg = "成功";
@@ -72,7 +72,7 @@ public class UserFeignServer{
      * @author 谭荣巧
      * @Date 2018/1/14 12:08
      */
-    @GetMapping(value = "/addUser")
+    @PostMapping(value = "/addUser")
     public Result addAsync(@RequestBody UserMessageVo userMessageVo, @RequestHeader("userId") String loginUserId, @RequestHeader("app") String app) {
         if (userMessageVo != null) {
             HtBoaInUser user = new HtBoaInUser();
@@ -110,6 +110,8 @@ public class UserFeignServer{
         return Result.buildFail();
     }
     
+    @ApiOperation(value = "更新用户信息")
+    @PostMapping(value = "/updateUser")
     public Result updateAsync(@RequestBody UserMessageVo userMessageVo, @RequestHeader("userId") String loginUserId) {
         if (userMessageVo != null) {
         	HtBoaInUser htBoaInUser = null;
@@ -165,7 +167,7 @@ public class UserFeignServer{
     }
  
     @ApiOperation(value = "获取指定userId用户信息")
-    @GetMapping(value = "/getUserInfoByUserId")
+    @PostMapping(value = "/getUserInfoByUserId")
     public LoginInfoVo getUserInfoByUserId(@RequestParam("userId")String userId, @RequestParam("bmUserId")String bmUserId, @RequestParam("app") String app) {
     	if(StringUtils.isEmpty(userId)) {
     		List<HtBoaInContrast> listHtBoaInContrast= htBoaInContrastService.getHtBoaInContrastListByBmUserId(bmUserId,"20");
