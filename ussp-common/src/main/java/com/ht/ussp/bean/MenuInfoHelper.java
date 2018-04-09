@@ -104,6 +104,7 @@ public class MenuInfoHelper {
 	public Result updateMenu(String resCode,String resNameCn, String resContent, String fontIcon, String[] roles,String apps) {
 		if (ucClient == null) {
 			log.warn("无法更新菜单，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
+			return Result.buildFail("", "ucClient==null");
 		}
 		try {
 			apps = StringUtils.isEmpty(apps)?app:apps;

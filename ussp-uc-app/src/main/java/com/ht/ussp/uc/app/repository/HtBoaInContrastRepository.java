@@ -9,11 +9,11 @@
  */
 package com.ht.ussp.uc.app.repository;
 
-import com.ht.ussp.uc.app.domain.HtBoaInContrast;
-
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.ht.ussp.uc.app.domain.HtBoaInContrast;
 
 /**
  * 对照表持久层<br>
@@ -31,4 +31,5 @@ public interface HtBoaInContrastRepository extends JpaRepository<HtBoaInContrast
 	List<HtBoaInContrast> findByType(String type);
 
 	List<HtBoaInContrast> findByDdBusinessIdAndType(String ddBusinessId, String type);
+    
 }

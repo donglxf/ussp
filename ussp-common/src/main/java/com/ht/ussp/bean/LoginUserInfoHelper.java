@@ -128,6 +128,7 @@ public class LoginUserInfoHelper {
 		try {
 			userId = userId == null ? "" : userId;
 			bmUserId = bmUserId == null ? "" : bmUserId;
+			app = app == null ? "" : app;
 			return ucClient.getUserInfoByUserId(userId, bmUserId,app);
 		} catch (Exception ex) {
 			log.error("获取登录信息发生异常。", ex);

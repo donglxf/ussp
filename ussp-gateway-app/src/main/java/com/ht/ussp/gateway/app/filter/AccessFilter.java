@@ -21,8 +21,6 @@ import com.ht.ussp.util.PatternUtil;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 
-import lombok.extern.log4j.Log4j2;
-
 /**
  * 
  * @ClassName: AccessFilter
@@ -30,7 +28,6 @@ import lombok.extern.log4j.Log4j2;
  * @author wim qiuwenwu@hongte.info
  * @date 2018年3月12日 上午11:50:44
  */
-@Log4j2
 public class AccessFilter extends ZuulFilter {
 
 	@Value("${ht.ignoreUrl.app}")

@@ -96,6 +96,7 @@ public class RefreshTokenEndpoint {
 
 	@RequestMapping(value = "/validateJwt")
 	public ResponseModal validateJwt(@RequestParam("tokenPayload") String tokenPayload,HttpServletResponse response){
+		response.setCharacterEncoding("UTF-8");
 		ResponseModal rm=new ResponseModal();
 		Jws<Claims> jwsClaims;
 		String userId;

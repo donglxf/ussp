@@ -10,7 +10,9 @@ server:
 spring:
   profiles: local
 ht.config.ui:
-  gatewayUrl: http://localhost:30111/
+  gatewayUrl: http://192.168.13.227:30111/
+  changePasswordUrl: http://192.168.13.227:30131/html/user/changePwdOther.html
+  changeUserInfoUrl: http://192.168.13.227:30131/html/user/changeUserInfoOther.html
 #  instanceId: tanrq-PC:ussp-uc-app:30126
 
 ---
@@ -18,13 +20,15 @@ spring:
   profiles: dev
 ht.config.ui:
   gatewayUrl: http://172.16.200.110:30111/
-
+  changePasswordUrl: http://172.16.200.110:30131/html/user/changePwdOther.html
+  changeUserInfoUrl: http://172.16.200.110:30131/html/user/changeUserInfoOther.html
 ---
 spring:
   profiles: sit
 ht.config.ui:
   gatewayUrl: http://172.16.200.112:30111/
-
+  changePasswordUrl: http://172.16.200.112:30131/html/user/changePwdOther.html
+  changeUserInfoUrl: http://172.16.200.112:30131/html/user/changeUserInfoOther.html
 ---
 spring:
   profiles: uat
@@ -33,8 +37,9 @@ server:
   port: ${SERVER_PORT}
 
 ht.config.ui:
-  gatewayUrl: http://120.79.47.252:30111/
-
+  gatewayUrl: http://47.106.46.65:30111/
+  changePasswordUrl: http://47.106.46.65:30131/html/user/changePwdOther.html
+  changeUserInfoUrl: http://47.106.46.65:30131/html/user/changeUserInfoOther.html
 ---
 spring:
   profiles: prd
@@ -44,3 +49,5 @@ server:
 
 ht.config.ui:
   gatewayUrl: http://120.78.25.128:30111/
+  changePasswordUrl: http://120.78.25.128:30131/html/user/changePwdOther.html
+  changeUserInfoUrl: http://120.78.25.128:30131/html/user/changeUserInfoOther.html

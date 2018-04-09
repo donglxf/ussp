@@ -44,7 +44,28 @@ public class AjaxAwareAuthenticationFailureHandler implements AuthenticationFail
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		
 		if (e instanceof BadCredentialsException) {
-			mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.INVALID_USER));
+			String es= e.getMessage();
+			if(e!=null) {
+				if(SysStatus.INVALID_USER.getStatus().equals(es)) {
+					mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.INVALID_USER));
+				}else if(SysStatus.METHOD_NOT_SUPPORTED.getStatus().equals(es)) {
+					mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.METHOD_NOT_SUPPORTED));
+				}else if(SysStatus.USER_NOT_FOUND.getStatus().equals(es)) {
+					mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.USER_NOT_FOUND));
+				}else if(SysStatus.USER_HAS_DELETED.getStatus().equals(es)) {
+					mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.USER_HAS_DELETED));
+				}else if(SysStatus.USER_NOT_RELATE_APP.getStatus().equals(es)) {
+					mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.USER_NOT_RELATE_APP));
+				}else if(SysStatus.USER_NOT_MATCH_APP.getStatus().equals(es)) {
+					mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.USER_NOT_MATCH_APP));
+				}else if(SysStatus.NO_ROLE.getStatus().equals(es)) {
+					mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.NO_ROLE));
+				}else if(SysStatus.METHOD_NOT_SUPPORTED.getStatus().equals(es)) {
+					mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.METHOD_NOT_SUPPORTED));
+				}else {
+					mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.INVALID_USER));
+				}
+			}
 		} else
 			if (e instanceof JwtExpiredTokenException) {
 				mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.TOKEN_IS_EXPIRED));

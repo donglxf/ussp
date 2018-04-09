@@ -19,19 +19,26 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.ussp.common.Constants;
+import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.DdDept;
 import com.ht.ussp.uc.app.domain.DdDeptUser;
+import com.ht.ussp.uc.app.domain.HtBoaInBmOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInBmUser;
 import com.ht.ussp.uc.app.domain.HtBoaInContrast;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
+import com.ht.ussp.uc.app.model.BoaInRoleInfo;
+import com.ht.ussp.uc.app.model.PageConf;
+import com.ht.ussp.uc.app.service.HtBoaInBmOrgService;
 import com.ht.ussp.uc.app.service.HtBoaInBmUserService;
 import com.ht.ussp.uc.app.service.HtBoaInContrastService;
 import com.ht.ussp.uc.app.service.HtBoaInLoginService;
@@ -39,7 +46,9 @@ import com.ht.ussp.uc.app.service.HtBoaInOrgService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.service.SynDataService;
 import com.ht.ussp.uc.app.vo.PageVo;
+import com.ht.ussp.uc.app.vo.UserContrastVo;
 
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 
  
@@ -59,6 +68,9 @@ public class SynDataResource {
     private SynDataService synDataService;
     @Autowired
     private HtBoaInLoginService htBoaInLoginService;
+    @Autowired
+    private HtBoaInBmOrgService htBoaInBmOrgService;
+    
     
     /**
      * 获取钉钉用户数据
@@ -236,7 +248,7 @@ public class SynDataResource {
             l.setRootOrgCode(u.getRootOrgCode());
             l.setCreateOperator("自动同步");
             l.setUpdateOperator("自动同步");
-            l.setStatus("0");
+            l.setStatus(Constants.USER_STATUS_0);
             l.setFailedCount(0);
             l.setDelFlag(0);
             loginList.add(l);
@@ -507,4 +519,88 @@ public class SynDataResource {
         }
         return newOrgList;
     }
+    
+    @ApiOperation(value = "获取关联的用户信息，信贷用户信息")
+    @PostMapping(value = "/queryAllUserContrast")
+    public PageResult<UserContrastVo> queryAllUserContrast(PageVo page) {
+    	PageResult result = new PageResult();
+    	PageConf pageConf = new PageConf();
+    	pageConf.setPage(page.getPage());
+    	pageConf.setSearch(page.getKeyWord());
+    	pageConf.setSize(page.getLimit());
+    	List list = new ArrayList<>();
+    	list.add("orgCode");
+    	pageConf.setSortNames(list);
+    	result = synDataService.findAllByPage(pageConf);
+    	return result;
+    }
+    
+    @ApiOperation(value = "获取信贷用户信息")
+    @PostMapping(value = "/queryBmUser")
+    public PageResult<UserContrastVo> queryBmUser(PageVo page) {
+    	PageResult result = new PageResult();
+    	PageConf pageConf = new PageConf();
+    	pageConf.setPage(page.getPage());
+    	pageConf.setSearch(page.getKeyWord());
+    	pageConf.setSize(page.getLimit());
+    	result = (PageResult) htBoaInBmUserService.findAllByPage(pageConf);
+    	List<UserContrastVo> listUserContrastVo= new ArrayList<UserContrastVo>();
+    	if(result!=null) {
+    		List<HtBoaInBmUser> listData = (List<HtBoaInBmUser>) result.getData();
+    		if(listData!=null && !listData.isEmpty()) {
+    			List<HtBoaInContrast> listHtBoaInContrast = htBoaInContrastService.getHtBoaInContrastListByType("20");
+    			List<HtBoaInBmOrg> bmOrgList =htBoaInBmOrgService.getHtBoaInBmOrgList();
+    			for(HtBoaInBmUser htBoaInBmUser : listData) {
+    				UserContrastVo userContrastVo = new UserContrastVo();
+                	userContrastVo.setBmUserId(htBoaInBmUser.getUserId());
+                	userContrastVo.setBmUserName(htBoaInBmUser.getUserName());
+                	userContrastVo.setBmOrgCode(htBoaInBmUser.getOrgCode());
+                	userContrastVo.setBmEmail(htBoaInBmUser.getEmail());
+                	userContrastVo.setBmMobile(htBoaInBmUser.getMobile());
+                	userContrastVo.setBmJobNumber(htBoaInBmUser.getJobNumber());
+                	List<HtBoaInContrast> listorgcontrast = listHtBoaInContrast.stream().filter(hc -> htBoaInBmUser.getUserId().equals(hc.getBmBusinessId())).collect(Collectors.toList());
+    			    if(listorgcontrast!=null && !listorgcontrast.isEmpty()) {
+    			    	HtBoaInContrast htBoaInContrast = listorgcontrast.get(0);
+    			    	userContrastVo.setUserId(htBoaInContrast.getUcBusinessId());
+    			    }
+    			    List<HtBoaInBmOrg> listorgbm = bmOrgList.stream().filter(hc -> hc.getOrgCode().equals(htBoaInBmUser.getOrgCode())).collect(Collectors.toList());
+	               	 if(listorgbm!=null && !listorgbm.isEmpty()) {
+	               		 HtBoaInBmOrg  o = listorgbm.get(0);
+	               		 userContrastVo.setBmOrgName(o.getOrgNameCn());
+	               	 }
+    				listUserContrastVo.add(userContrastVo);
+    			}
+    		}
+    		result.setData(listUserContrastVo);
+    	}
+    	return result;
+    }
+    
+    
+    @ApiOperation(value = "解除关联")
+    @PostMapping(value = "/removeBmUser")
+    public Result removeBmUser(long id) {
+    	synDataService.removeBmUserById(id);
+    	return Result.buildSuccess();
+    }
+    
+    @ApiOperation(value = "关联信贷用户信息")
+    @PostMapping(value = "/addBmUser")
+    public Result addBmUser(String uc_userId,String bm_userId,@RequestHeader("userId") String userId) {
+    	HtBoaInContrast htBoaInContrast =null;
+    	if(StringUtils.isNotEmpty(uc_userId)&&StringUtils.isNotEmpty(bm_userId)) {
+    		htBoaInContrast = synDataService.findByUcBusinessIdAndType(uc_userId, "20");
+        	if(htBoaInContrast==null) {
+        		htBoaInContrast = new HtBoaInContrast();
+        	} 
+        	htBoaInContrast.setUcBusinessId(uc_userId);
+        	htBoaInContrast.setBmBusinessId(bm_userId);
+        	htBoaInContrast.setType("20");
+        	htBoaInContrast.setContrast(userId);
+        	htBoaInContrast.setStatus("0");
+        	synDataService.addBmUser(htBoaInContrast);
+    	}
+    	return Result.buildSuccess();
+    }
+    
 }

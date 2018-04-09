@@ -21,6 +21,7 @@ layui.define(['laytpl', 'laypage', 'layer', 'form'], function (exports) {
         , table = {
             config: {
                 checkName: 'LAY_CHECKED' //是否选中状态的字段名
+                ,radioName: 'LAY_RadioCHECKED' //是否选中状态的字段名
                 , indexName: 'LAY_TABLE_INDEX' //下标索引名
             } //全局配置项
             , cache: {} //数据缓存
@@ -99,6 +100,9 @@ layui.define(['laytpl', 'laypage', 'layer', 'form'], function (exports) {
                 , '" {{#if(item2.align){}}align="{{item2.align}}"{{#}}}>'
                 , '{{# if(item2.type === "checkbox"){ }}' //复选框
                 , '<input type="checkbox" name="layTableCheckbox" lay-skin="primary" lay-filter="layTableAllChoose" {{# if(item2[d.data.checkName]){ }}checked{{# }; }}>'
+                 /*, '{{# } else if(item2.type ==="radio"){ }}'
+                  ,'<input type="radio" name="layTableRadio" lay-skin="primary" lay-filter="layTableAllChooseR" {{# if(item2[d.data.radioName]){ }}checked{{# }; }}>'*/
+                 
                 , '{{# } else { }}'
                 , '<span>{{item2.title||""}}</span>'
                 , '{{# if(!(item2.colspan > 1) && item2.sort){ }}'
@@ -537,7 +541,6 @@ layui.define(['laytpl', 'laypage', 'layer', 'form'], function (exports) {
                                 var tplData = $.extend(true, {
                                     LAY_INDEX: numbers
                                 }, item1);
-
                                 //渲染复选框列视图
                                 if (item3.type === 'checkbox') {
                                     return '<input type="checkbox" name="layTableCheckbox" lay-skin="primary" ' + function () {
@@ -551,6 +554,16 @@ layui.define(['laytpl', 'laypage', 'layer', 'form'], function (exports) {
                                     }() + '>';
                                 } else if (item3.type === 'numbers') { //渲染序号
                                     return numbers;
+                                }else if (item3.type === 'radio') { //渲染序号
+                                   return '<input type="radio" name="layTableRadio" lay-skin="primary" '+ function(){
+                 
+										                  var radioName = table.config.radioName;
+										                  if(item3[radioName]){
+										                    item1[radioName] = item3[radioName];
+										                    return item3[radioName] ? 'checked' : ''; 
+										                  }
+										                  return item1[radioName] ? 'checked' : '';                   
+										                }() +'>';
                                 }
 
                                 //解析工具列模板
@@ -653,6 +666,7 @@ layui.define(['laytpl', 'laypage', 'layer', 'form'], function (exports) {
     //渲染表单
     Class.prototype.renderForm = function (type) {
         form.render(type, 'LAY-table-' + this.index);
+        form.render("radio",'LAY-table-'+ this.index);//渲染表单中radio
     }
 
     //数据排序
@@ -1009,6 +1023,38 @@ layui.define(['laytpl', 'laypage', 'layer', 'form'], function (exports) {
                 , type: isAll ? 'all' : 'one'
             });
         });
+        
+        //单选框选择
+    that.elem.on('click', 'input[name="layTableRadio"]+', function(){
+      var radio = $(this).prev()
+      ,childs = that.layBody.find('input[name="layTableRadio"]')
+      ,index = radio.parents('tr').eq(0).data('index')
+      ,checked = radio[0].checked
+      , isAll = radio.attr('lay-filter') === 'layTableAllChooseR';
+        //全选
+        if (isAll) {
+            childs.each(function (i, item) {
+                item.checked = checked;
+                that.setCheckData(i, checked);
+            });
+            that.syncCheckAll();
+            that.renderForm('radio');
+        } else {
+            that.setCheckData(index, checked);
+            that.syncCheckAll();
+        }
+     
+        //that.setCheckData(index, checked);
+        //that.syncCheckAll();
+
+      layui.event.call(this, MOD_NAME, 'radio(' + filter + ')', {
+                checked: checked
+                , data: table.cache[that.key] ? (table.cache[that.key][index] || {}) : {}
+                , type: isAll ? 'all' : 'one'
+            });
+            
+           
+    });   
 
         //行事件
         that.layBody.on('mouseenter', 'tr', function () {
@@ -1276,6 +1322,29 @@ layui.define(['laytpl', 'laypage', 'layer', 'form'], function (exports) {
         };
     };
 
+ //表格单选框选中状态
+  table.radioStatus = function(id){
+    var nums = 0
+            , invalidNum = 0
+            , arr = []
+            , data = table.cache[id] || [];
+        //计算全选个数
+        layui.each(data, function (i, item) {
+            if (item.constructor === Array) {
+                invalidNum++; //无效数据，或已删除的
+                return;
+            }
+            if (item[table.config.checkName]) {
+                nums++;
+                arr.push(table.clearCacheKey(item));
+            }
+        });
+        return {
+            data: arr //选中的数据
+            , isAll: data.length ? (nums === (data.length - invalidNum)) : false //是否全选
+        };
+  };
+  
     //表格重载
     thisTable.config = {};
     table.reload = function (id, options) {
@@ -1296,6 +1365,7 @@ layui.define(['laytpl', 'laypage', 'layer', 'form'], function (exports) {
     table.clearCacheKey = function (data) {
         data = $.extend({}, data);
         delete data[table.config.checkName];
+        delete data[table.config.radioName];    
         delete data[table.config.indexName];
         return data;
     };

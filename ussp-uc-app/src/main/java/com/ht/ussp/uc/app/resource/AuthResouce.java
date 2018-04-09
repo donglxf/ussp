@@ -275,7 +275,7 @@ public class AuthResouce {
                         userVo.setController(controller);
                     } else {
                         log.info("用户来源不正确！");
-                        rm.setSysStatus(SysStatus.USER_NOT_MATCH_APP);
+                        rm.setSysStatus(SysStatus.USER_NOT_RELATE_APP);
                         return rm;
                     }
 

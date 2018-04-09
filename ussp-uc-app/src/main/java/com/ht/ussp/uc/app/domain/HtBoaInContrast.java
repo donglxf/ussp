@@ -29,7 +29,7 @@ public class HtBoaInContrast implements Serializable {
     @Id
     @Column(name = "id", unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
     @Column(name = "bm_business_id")
     private String bmBusinessId;

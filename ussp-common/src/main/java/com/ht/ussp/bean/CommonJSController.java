@@ -31,6 +31,10 @@ public class CommonJSController {
     private String instanceId;
     @Value("${ht.config.ui.unInstanceId:}")
     private String unInstanceId;
+    @Value("${ht.config.ui.changePasswordUrl:}")
+    private String changePasswordUrl;
+    @Value("${ht.config.ui.changeUserInfoUrl:}")
+    private String changeUserInfoUrl;
 
     @GetMapping(value = "/config.js", produces = "application/javascript")
     public String config() {
@@ -38,6 +42,8 @@ public class CommonJSController {
         config.append("var gatewayUrl='").append(gatewayUrl).append("';");
         config.append("var instanceId='").append(instanceId).append("';");
         config.append("var unInstanceId='").append(unInstanceId).append("';");
+        config.append("var changePasswordUrl='").append(changePasswordUrl).append("';");
+        config.append("var changeUserInfoUrl='").append(changeUserInfoUrl).append("';");
         return config.toString();
     }
 }

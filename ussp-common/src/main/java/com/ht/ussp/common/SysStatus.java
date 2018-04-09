@@ -12,18 +12,19 @@ public enum SysStatus {
 	
 	
 	METHOD_NOT_SUPPORTED("9900","不支持该请求方式"),
-	INVALID_USER("9901","用户名或密码无效"),
-	USER_NOT_FOUND("9902","用户不存在"),
+	INVALID_USER("9901","用户名或密码错误"),
+	USER_NOT_FOUND("9902","用户状态异常"),
 	USER_HAS_DELETED("9903","您的用户已被删除"),
-	USER_NOT_RELATE_APP("9904","该用户未与任何系统关联"),
+	USER_NOT_RELATE_APP("9904","该用户未与系统关联"),
 	USER_NOT_MATCH_APP("9905","用户来源不正确"),
-	
+	USER_HAS_LOCKED("9906","您的用户已被锁定"),
 	
 	PWD("9910", "密码错误"),
 	PWD_ISNULL("9911", "密码为空"),
 	PWD_INVALID("9912", "密码不正确"),
 	PWD_EQUAL("9913", "和原密码相同"),
 	PWD_LOCKING("9914","错误登录次数过多，账户24小时之内已被锁定"),
+	PWD_FIRST_MODIFY("0009","密码太简单，请重新设置"),
 	
 	NO_ROLE("9920","该用户没关联角色"),
 	TOKEN_IS_EXPIRED("9921","TOKEN过期"),

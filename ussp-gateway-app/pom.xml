@@ -132,7 +132,7 @@
 		<dependency>
 			<groupId>com.ht.ussp</groupId>
 			<artifactId>ussp-common</artifactId>
-			<version>0.0.16</version>
+			<version>0.0.17</version>
 		</dependency>
 	</dependencies>
 
@@ -160,7 +160,6 @@
 			<plugin>
                     <groupId>pl.project13.maven</groupId>
                     <artifactId>git-commit-id-plugin</artifactId>
-                    <version>${git-commit-id-plugin.version}</version>
                 </plugin>
 
 			<!-- Docker maven plugin -->

@@ -15,6 +15,18 @@
     <link rel="stylesheet" href="/css/app.css" media="all"/>
     <link rel="stylesheet" href="/css/themes/default.css" media="all" id="skin" kit-skin/>
     <link rel="stylesheet" href="/css/ht.css" media="all"/>
+     <style type="text/css">
+    .laytable-cell-radio.layui-table-cell{
+      padding:0 5px 0 15px;
+    }
+    .laytable-cell-radio span{
+      display: none;
+    }
+    .laytable-cell-radio .layui-form-radio{
+      padding-right: 0;
+      margin:0;
+    }
+  </style>
 </head>
 
 <body class="kit-theme">
@@ -77,8 +89,7 @@
                            data-options="{url:'/html/user/userInfo.html',icon:'&#xe658;',title:'基本资料',id:'966'}"><span>基本资料</span></a>
                     </dd>
                     <dd>
-                        <a href="javascript:;" kit-target
-                           data-options="{url:'/html/user/changePwd.html',icon:'&#xe658;',title:'修改密码',id:'967'}"><span>修改密码</span></a>
+                        <a href="javascript:;"   id="changePwd"  ><span>修改密码</span></a>
                     </dd>
                 </dl>
             </li>
@@ -200,6 +211,20 @@
                 if (result.result) {
                     $("#userName").html(result.result.userName);
                 }
+            });
+            
+            $("#changePwd").on("click", function () {
+            	  layer.open({
+                     type: 2,
+                     area: ['35%', '50%'],
+                     maxmin: true,
+                     shadeClose: true,
+                     title: "修改密码",
+                     content: config.changePwdPath+"\?token="+cookie.getToken()+"&urls="+config.loginPath,
+                     success: function (layero, index) {
+                    	 
+                     }
+                 })
             });
         });
     });

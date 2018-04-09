@@ -75,14 +75,14 @@ public interface HtBoaInUserRepository extends JpaSpecificationExecutor<HtBoaInU
             "FROM HtBoaInUser hbiUser ,HtBoaInLogin login  ,HtBoaInOrg org " +
             "WHERE hbiUser.userId=login.userId " +
             "AND hbiUser.orgCode=org.orgCode " +
-            "AND (hbiUser.userName LIKE %?2% OR hbiUser.mobile LIKE %?2% OR hbiUser.jobNumber LIKE %?2% OR ?2 is null OR ?2='') " +
+            "AND (hbiUser.userName LIKE %?2% OR hbiUser.mobile LIKE %?2% OR hbiUser.jobNumber LIKE %?2% OR login.loginId LIKE %?2% OR ?2 is null OR ?2='') " +
             "AND hbiUser.delFlag = 0 " +
             "AND hbiUser.orgCode =?1 " +
             "AND ?1<>'' AND ?1 is not null "
             , countQuery = "SELECT " +
             "COUNT(hbiUser.id) " +
-            "FROM HtBoaInUser hbiUser " +
-            "WHERE (hbiUser.userName LIKE %?2% OR hbiUser.mobile LIKE %?2% OR hbiUser.jobNumber LIKE %?2% OR ?2 is null OR ?2='') " +
+            "FROM HtBoaInUser hbiUser ,HtBoaInLogin login " +
+            "WHERE hbiUser.userId=login.userId  AND (hbiUser.userName LIKE %?2% OR hbiUser.mobile LIKE %?2% OR hbiUser.jobNumber LIKE %?2% OR login.loginId LIKE %?2% OR  ?2 is null OR ?2='') " +
             "AND hbiUser.delFlag = 0 " +
             "AND hbiUser.orgCode =?1 " +
             "AND ?1<>'' AND ?1 is not null"
@@ -112,12 +112,12 @@ public interface HtBoaInUserRepository extends JpaSpecificationExecutor<HtBoaInU
              "login.loginId,hbiUser.orgPath,hbiUser.rootOrgCode,hbiUser.userId)" +
             "FROM HtBoaInUser hbiUser ,HtBoaInLogin login   " +
             "WHERE hbiUser.userId=login.userId " +
-            "AND (hbiUser.userName LIKE %?1% OR hbiUser.mobile LIKE %?1% OR hbiUser.jobNumber LIKE %?1% OR ?1 is null OR ?1='') " +
+            "AND (hbiUser.userName LIKE %?1% OR hbiUser.mobile LIKE %?1% OR hbiUser.jobNumber LIKE %?1% OR login.loginId LIKE %?1% OR ?1 is null OR ?1='') " +
             "AND hbiUser.delFlag = 0 " 
             , countQuery = "SELECT " +
             "COUNT(hbiUser.id) " +
-            "FROM HtBoaInUser hbiUser " +
-            "WHERE (hbiUser.userName LIKE %?1% OR hbiUser.mobile LIKE %?1% OR hbiUser.jobNumber LIKE %?1% OR ?1 is null OR ?1='') " +
+            "FROM HtBoaInUser hbiUser ,HtBoaInLogin login  " +
+            "WHERE  hbiUser.userId=login.userId  AND  (hbiUser.userName LIKE %?1% OR hbiUser.mobile LIKE %?1% OR hbiUser.jobNumber LIKE %?1% OR login.loginId LIKE %?1% OR ?1 is null OR ?1='') " +
             "AND hbiUser.delFlag = 0 " 
     )
     Page<UserMessageVo> queryUserPageAll(String keyWord, Pageable pageable);

@@ -1,5 +1,7 @@
 package com.ht.ussp.uc.app.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
@@ -15,5 +17,7 @@ public interface HtBoaInPwdHistRepository
         extends JpaRepository<HtBoaInPwdHist, Long> {
 
     public HtBoaInPwdHist findById(Long id);
+
+	public List<HtBoaInPwdHist> findByUserId(String userId);
 
 }

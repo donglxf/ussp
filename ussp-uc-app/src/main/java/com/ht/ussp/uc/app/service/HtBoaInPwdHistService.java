@@ -25,6 +25,10 @@ public class HtBoaInPwdHistService {
     public HtBoaInPwdHist findById(Long id) {
         return this.htBoaInPwdHistRepository.findById(id);
     }
+    
+    public List<HtBoaInPwdHist> findByUserId(String userId) {
+    	return this.htBoaInPwdHistRepository.findByUserId(userId);
+    }
 
     public List<HtBoaInPwdHist> findAll(HtBoaInPwdHist u) {
         ExampleMatcher matcher = ExampleMatcher.matching();

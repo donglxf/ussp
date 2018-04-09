@@ -1,43 +1,67 @@
 <div class="layui-fluid" lay-filter="syndata_auth">
-    <div class="col-xs-10" id="syndata_content" >
-        <div class="layui-tab view_tab" lay-filter="resource_top_tab">
+    <div class="col-xs-11" id="syndata_content" style="margin-left: 15px">
+        <div class="layui-tab view_tab" lay-filter="syndata_top_tab">
             <ul class="layui-tab-title">
                 <li class="layui-this">用户</li>
                 <li>机构</li>
             </ul>
             <div class="layui-tab-content">
                 <div class="layui-tab-item layui-show">
-                    <div class="row-lg">
+                  <div class="row-lg">
+                        <div class="row row-lg">
                         <div class="toolbarBtn btn-group">
-                            <button class="layui-btn layui-btn-sm" title="获取钉钉用户数据" data-type="syndatadd"  >
-                               获取钉钉用户数据
-                            </button>
-                            <button class="layui-btn layui-btn-sm " title="获取信贷用户数据" data-type="reset" >
-                                获取信贷用户数据
-                            </button>
+                            <button class="layui-btn layui-btn-sm" title="获取钉钉用户数据" data-type="syndatadd" ht-auth="syndatadd"  > 获取钉钉用户数据 </button>
+                            <button class="layui-btn layui-btn-sm " title="获取信贷用户数据" data-type="reset" ht-auth="syndatadd" > 获取信贷用户数据  </button>
+                        </div>
+                        
+                            <div class="pull-right col-xs-4">
+                                <div class="input-group input-group-sm row">
+                                    <input type="search" class="form-control" id="syndata_user_search_keyword" placeholder="请输入用户名/工号/手机号" />
+                                    <div class="input-group-btn">
+                                        <button type="button" class="layui-btn layui-btn-sm" data-type="searchContrast"  > <i class="fa fa-search"></i> </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row row-lg">
+                            <table id="syndata_user_datatable" lay-filter="syndata_user_datatable"   >
+                            </table>
+                            <script type="text/html" id="syndata_user_datatable_bar">
+                                  {{#  if(d.bmUserId != ''&&d.bmUserId != null){ }}
+                                    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="delete">解除</a>
+                                  {{#  } else { }}
+                                        <a class="layui-btn  layui-btn-xs" lay-event="add">关联信贷用户</a>
+                                    {{#  } }}
+                           </script>
                         </div>
                     </div>
-                   <div class="row-lg">
-                            <table id="resource_menu_datatable" lay-filter="resource_menu_datatable"
-                                   class="disableCheckAll">
-                            </table>
-                        </div>
+                  <div class="row-lg">
+                               <div class="row row-lg">
+                                   <div class="pull-right col-xs-4">
+                                       <div class="input-group input-group-sm row">
+                                           <input type="search" class="form-control" id="syndata_bm_user_search_keyword" placeholder="请输入信贷用户名/手机号" />
+                                           <div class="input-group-btn">
+                                               <button type="button" class="layui-btn layui-btn-sm"  data-type="searchBM">
+                                                   <i class="fa fa-search"></i>
+                                               </button>
+                                           </div>
+                                       </div>
+                                   </div>
+                               </div>
+                               <div class="row row-lg">
+                                   <table id="syndata_bm_user_datatable" lay-filter="syndata_bm_user_datatable" > </table>
+                               </div>
+                    </div>
                 </div>
                 <div class="layui-tab-item">
                     <div class="row-lg">
                         <div class="toolbarBtn btn-group">
-                            <div class="toolbarBtn btn-group">
-                                <button class="layui-btn layui-btn-sm" title="保存" data-type="save" data-res-type="module">
-                                    保存
-                                </button>
-                                <button class="layui-btn layui-btn-sm layui-btn-primary" title="重置" data-type="reset" data-res-type="module">
-                                    重置
-                                </button>
-                            </div>
-                        </div>
+                               <!--  <button class="layui-btn layui-btn-sm" title="保存" data-type="save" > 保存 </button>
+                                <button class="layui-btn layui-btn-sm layui-btn-primary" title="重置" data-type="reset"  > 重置  </button> -->
+                         </div>
                     </div>
                     <div class="row-lg">
-                        <div id="roleRes_module_grid" class="grid layui-form layui-border-box layui-table-view"></div>
+                        <div id="roleRes_module_grid222" class="grid layui-form layui-border-box layui-table-view"></div>
                     </div>
                 </div>
             </div>

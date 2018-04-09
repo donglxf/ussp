@@ -22,6 +22,7 @@ layui.define(function (exports) {
         , basePath1: base + "xxx/" //如果访问多个微服务，请自行扩展
         , loginPath: "/login.html"
         , indexPath: "/"
+        , changePwdPath: changePasswordUrl
         , loadMenuUrl: base + "uc/auth/loadMenu"
         , loadBtnAndTabUrl: base + "uc/auth/loadBtnAndTab"
         , loginUrl: base + "uaa/auth/login"
