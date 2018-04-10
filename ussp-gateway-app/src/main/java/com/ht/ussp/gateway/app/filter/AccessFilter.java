@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.netflix.zuul.filters.ZuulProperties;
 
+import com.esotericsoftware.minlog.Log;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.gateway.app.feignClients.RoleClient;
@@ -58,6 +59,7 @@ public class AccessFilter extends ZuulFilter {
 
 	@Override
 	public Object run() {
+		
 		RequestContext ctx = RequestContext.getCurrentContext();
 		ctx.getResponse().setCharacterEncoding("UTF-8");
 		HttpServletRequest request = ctx.getRequest();
@@ -66,6 +68,7 @@ public class AccessFilter extends ZuulFilter {
 		String tokenPayload = request.getHeader("Authorization");
 		String app = request.getHeader("app");
 		String validateUrl = getUrl(uri);
+		Log.info("----------validateUrl------------"+validateUrl);
 		// 不鉴权的URL直接路由
 		if (isIgnoreUrl(uri, htIgnoreUrlWeb)) {
 			return null;
@@ -81,7 +84,6 @@ public class AccessFilter extends ZuulFilter {
 			return null;
 		}
 		String userId = null;
-
 		// 如果系统级别URL不为空，进行系统级别鉴权
 		if (!StringUtils.isEmpty(htIgnoreApp)) {
 			String[] htIgnoreAppUrls = htIgnoreApp.split(",");
@@ -124,9 +126,9 @@ public class AccessFilter extends ZuulFilter {
 				
 			}
 		}
-		
 		// 如果请求的URL与htIgnoreApp不匹配，验证内部系统JWT
 		try {
+			Log.info("----------tokenPayload------------"+tokenPayload);
 			ResponseModal rm = UaaClient.validateJwt(tokenPayload);
 			if ("0000".equals(rm.getStatus_code())) {
 				String str = FastJsonUtil.objectToJson(rm.getResult());
@@ -152,13 +154,13 @@ public class AccessFilter extends ZuulFilter {
 				return null;
 			}
 		} catch (Exception ex) {
+			 Log.error("-----------ex----------", ex);;
 			try {
 				mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.FAIL));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		
 		ctx.getResponse().setHeader("Content-type", "application/json;charset=UTF-8");
 		ctx.setSendZuulResponse(true);
 		ctx.setResponseStatusCode(200);
@@ -166,6 +168,7 @@ public class AccessFilter extends ZuulFilter {
 		if (isIgnoreUrl(uri, htIgnoreUrlHttp)) {
 			return null;
 		}
+		Log.info("----------validate api start------------");
 		// 验证api权限
 		String api_key = String.format("%s:%s:%s", userId, app, "api");
 		if (StringUtils.isEmpty(userId) || StringUtils.isEmpty(app) || !roleClient.isHasAuth(api_key, validateUrl)) {
