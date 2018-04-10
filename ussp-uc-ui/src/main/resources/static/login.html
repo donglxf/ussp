@@ -162,7 +162,7 @@
                 </div>
                 <footer>
                     <p>
-                        2018 © <a href="#" style="color: white; font-size: 18px;" target="_blank">鸿特信息</a>
+                        2018 © <a href="http://www.hongte.info" style="color: white; font-size: 18px;" target="_blank">鸿特信息</a>
                     </p>
                 </footer>
             </div>
@@ -211,7 +211,7 @@
                         cookie.setRefreshToken(data["refreshToken"]);
                         //top.location.href = config.indexPath; 
                         if(data.code=='0009'){
-                         	layer.confirm('您的密码过于简单，需要重新设置密码', {
+                         	layer.confirm('初次登录，请重新设置密码。', {
                          		  btn: ['确认'] 
                          		}, function(index, layero){
                          			top.location.href = config.changePwdPath+"\?token="+data["token"]+"&urls="+config.loginPath;

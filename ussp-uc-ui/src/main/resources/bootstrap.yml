@@ -10,9 +10,9 @@ server:
 spring:
   profiles: local
 ht.config.ui:
-  gatewayUrl: http://192.168.13.227:30111/
-  changePasswordUrl: http://192.168.13.227:30131/html/user/changePwdOther.html
-  changeUserInfoUrl: http://192.168.13.227:30131/html/user/changeUserInfoOther.html
+  gatewayUrl: http://localhost:30111/
+  changePasswordUrl: http://localhost:30131/html/user/changePwdOther.html
+  changeUserInfoUrl: http://localhost:30131/html/user/changeUserInfoOther.html
 #  instanceId: tanrq-PC:ussp-uc-app:30126
 
 ---
