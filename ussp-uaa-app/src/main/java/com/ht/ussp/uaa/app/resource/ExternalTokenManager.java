@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -33,13 +32,11 @@ import com.ht.ussp.uaa.app.config.WebSecurityConfig;
 import com.ht.ussp.uaa.app.exception.InvalidJwtToken;
 import com.ht.ussp.uaa.app.exception.JwtExpiredTokenException;
 import com.ht.ussp.uaa.app.jwt.AccessJwtToken;
-import com.ht.ussp.uaa.app.jwt.JwtToken;
 import com.ht.ussp.uaa.app.jwt.RawAccessJwtToken;
 import com.ht.ussp.uaa.app.jwt.RefreshToken;
 import com.ht.ussp.uaa.app.jwt.TokenExtractor;
 import com.ht.ussp.uaa.app.jwt.TokenVerifier;
 import com.ht.ussp.uaa.app.model.ResponseModal;
-import com.ht.ussp.uaa.app.vo.UserVo;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -130,9 +127,10 @@ public class ExternalTokenManager {
 		} catch (JwtExpiredTokenException expiredEx) {
 			rm.setSysStatus(SysStatus.TOKEN_IS_EXPIRED);
 			log.info("----token expired----");
-		} catch (Exception ex) {
-			log.info("validateAppjwt exception....." + ex);
-		}
+		}catch (AuthenticationServiceException asEx) {
+			rm.setSysStatus(SysStatus.ERROR_PARAM);
+			log.info("----invalid token's header----");
+        }
 		return rm;
 	}
 
