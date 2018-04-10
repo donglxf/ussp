@@ -125,6 +125,9 @@ public class ExternalTokenManager {
 		}else if(StringUtils.isBlank(bmUserId)) {
 			throw new IllegalArgumentException("Cannot create JWT Token without bmUserId");
 
+		}else if (tokenTime.intValue()<=0) {
+			throw new IllegalArgumentException("tokenTime must greater than 0");
+
 		}else if (refreshtime.intValue()<=0) {
 			throw new IllegalArgumentException("refreshtime must greater than 0");
 
