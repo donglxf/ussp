@@ -39,6 +39,10 @@ a, a:hover {
 
 .layui-form .layui-form-label {
     width: 110px;
+    padding: 0px 9px 0px 0px;
+    text-align: right;
+    line-height: 30px;
+    height: 30px;
     margin-bottom: 0px;
 }
 
@@ -64,6 +68,9 @@ a, a:hover {
 /*弹出框样式*/
 .layui-layer-content {
     padding: 10px;
+}
+.layui-layer-content iframe{
+    margin: -10px;
 }
 
 /*功能页面内部tab*/

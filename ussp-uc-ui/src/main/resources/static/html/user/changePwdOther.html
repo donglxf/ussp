@@ -20,6 +20,7 @@
             background-color: #0b496c;
             width: 100%;
             min-width: 680px;
+            margin-bottom: 20px !important;
         }
         h2{
             width: 680px;
@@ -34,7 +35,6 @@
             overflow: visible;
             text-align: left;
             margin: 0 auto;
-            margin-top: 50px !important;
             position: relative;
             z-index: 10;
         }
@@ -49,7 +49,9 @@
         .layui-form-item {
             margin-bottom: 15px;
         }
-
+        label{
+            line-height: normal;
+        }
         input[readonly] {
             background: #D0D0D0;
         }
@@ -62,7 +64,7 @@
     </style>
 </head>
 <body>
-<header>
+<header id="header" style="display: none">
     <h2 title="密码修改">密码修改</h2>
 </header>
 <section class="layui-fluid" id="changePwd_div">
@@ -111,13 +113,23 @@
         </div>
     </form>
 </section>
-<footer>
+<footer id="footer" style="display: none">
     <div class="layui-fluid">
         2018 © <a href="http://www.hongte.info" target="_blank">鸿特信息</a>
     </div>
 </footer>
-<script src="/plugins/layui/layui.js"></script>
 <script src="/js/common.js"></script>
+<script type="text/javascript">
+    var isall = getvl("isall");
+    if(isall=="false"){
+        document.getElementById("header").remove();
+        document.getElementById("footer").remove();
+    }else{
+        document.getElementById("header").style.display="block";
+        document.getElementById("footer").style.display="block";
+    }
+</script>
+<script src="/plugins/layui/layui.js"></script>
 <script src="/common/config.js"></script>
 <script src="/js/user/changePwdOther.js"></script>
 </body>

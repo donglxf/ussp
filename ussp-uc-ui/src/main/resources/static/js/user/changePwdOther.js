@@ -30,7 +30,9 @@ layui.config({
                             }
                         });
                     } else {
-                        location.href = urls;
+                        if (urls) {
+                            location.href = urls;
+                        }
                     }
                 }
             });

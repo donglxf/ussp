@@ -216,11 +216,11 @@
             $("#changePwd").on("click", function () {
             	  layer.open({
                      type: 2,
-                     area: ['35%', '50%'],
+                     area: ['750px', '500px'],
                      maxmin: true,
                      shadeClose: true,
                      title: "修改密码",
-                     content: config.changePwdPath+"\?token="+cookie.getToken()+"&urls="+config.loginPath,
+                     content: config.changePwdPath+"?token="+cookie.getToken()+"&urls="+config.loginPath+"&isall=false",
                      success: function (layero, index) {
                     	 
                      }
