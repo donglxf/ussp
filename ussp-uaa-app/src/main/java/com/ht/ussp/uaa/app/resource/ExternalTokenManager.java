@@ -117,8 +117,8 @@ public class ExternalTokenManager {
 	 */
 	@PostMapping(value = "/createUCToken")
 	@ApiOperation(value = "创建UCToken")
-	public void createUCToken(String userId,String bmUserId,Integer tokenTime,Integer refreshTime,HttpServletResponse response) {
-
+	public ResponseModal createUCToken(String userId,String bmUserId,Integer tokenTime,Integer refreshTime,HttpServletResponse response) {
+		ResponseModal rm=new ResponseModal();
 		if (StringUtils.isBlank(userId)) {
 			throw new IllegalArgumentException("Cannot create JWT Token without userId");
 
@@ -154,20 +154,11 @@ public class ExternalTokenManager {
 						.atZone(ZoneId.systemDefault()).toInstant()))
 				.signWith(SignatureAlgorithm.HS512, jwtSettings.getTokenSigningKey()).compact();
 		log.info("uc's token and refreshToken has created sucessful");
-		tokenMap.put("code", SysStatus.SUCCESS.getStatus());
 		tokenMap.put("token", token);
 		tokenMap.put("refreshToken", refreshToken);
-		
-		response.setStatus(HttpStatus.OK.value());
-		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-		try {
-			mapper.writeValue(response.getWriter(), tokenMap);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
+		rm.setSysStatus(SysStatus.SUCCESS);
+		rm.setResult(tokenMap);
+		return rm;
 	}
-
-	
 	
 }
