@@ -63,4 +63,16 @@ public final class RefreshToken implements JwtToken {
     public String getOrgCode() {
     	return claims.getBody().get("orgCode").toString();
     }
+    
+    public String getBmUserId() {
+    	return claims.getBody().get("bmUserId").toString();
+    }
+    
+    public Integer getTokenTime() {
+    	return Integer.valueOf(claims.getBody().get("tokenTime").toString());
+    }
+    
+    public Integer getRefreshTime() {
+    	return Integer.valueOf(claims.getBody().get("refreshTime").toString());
+    }
 }
