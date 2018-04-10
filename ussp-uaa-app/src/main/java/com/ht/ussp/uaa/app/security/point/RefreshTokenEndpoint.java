@@ -119,6 +119,9 @@ public class RefreshTokenEndpoint {
 		}catch (JwtExpiredTokenException expiredEx) {
 			rm.setSysStatus(SysStatus.TOKEN_IS_EXPIRED);
 			log.info("----token expired----");
+        }catch (AuthenticationServiceException asEx) {
+			rm.setSysStatus(SysStatus.ERROR_PARAM);
+			log.info("----invalid token's header----");
         }
 		return rm;
 	}

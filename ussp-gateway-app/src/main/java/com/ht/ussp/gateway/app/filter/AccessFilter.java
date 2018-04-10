@@ -89,6 +89,7 @@ public class AccessFilter extends ZuulFilter {
 			String[] htIgnoreAppUrls = htIgnoreApp.split(",");
 			for (String htIgnoreAppUrl : htIgnoreAppUrls) {
 				if (PatternUtil.compile(htIgnoreAppUrl).match(uri)) {
+					Log.info("----------validate SYSTEM LEVEL JWT START------------");
 					//app不能为空
 					if (StringUtils.isEmpty(app)) {
 						ctx.setSendZuulResponse(false);
@@ -101,6 +102,7 @@ public class AccessFilter extends ZuulFilter {
 					}
 					ResponseModal rm = UaaClient.validateAppJwt(tokenPayload,app);
 					if ("0000".equals(rm.getStatus_code())) {
+						Log.info("----------validate SYSTEM LEVEL JWT SUCCESSFUL------------");
 							ctx.setSendZuulResponse(true);
 							return null;
 					} else if ("9922".equals(rm.getStatus_code())) {
@@ -128,7 +130,7 @@ public class AccessFilter extends ZuulFilter {
 		}
 		// 如果请求的URL与htIgnoreApp不匹配，验证内部系统JWT
 		try {
-			Log.info("----------tokenPayload------------"+tokenPayload);
+			Log.info("----------validate JWT START------------"+tokenPayload);
 			ResponseModal rm = UaaClient.validateJwt(tokenPayload);
 			if ("0000".equals(rm.getStatus_code())) {
 				String str = FastJsonUtil.objectToJson(rm.getResult());
@@ -136,7 +138,8 @@ public class AccessFilter extends ZuulFilter {
 				userId = vdt.getUserId();
 				ctx.addZuulRequestHeader("userId", userId);
 				ctx.addZuulRequestHeader("orgCode", vdt.getOrgCode());
-			} else if ("9922".equals(rm.getStatus_code())) {
+				Log.info("----------validate JWT SUCCESSFUL------------");
+			} else if ("9922".equals(rm.getStatus_code())||"9997".equals(rm.getStatus_code())) {
 				ctx.setSendZuulResponse(false);
 				try {
 					mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_VALID));
@@ -154,7 +157,7 @@ public class AccessFilter extends ZuulFilter {
 				return null;
 			}
 		} catch (Exception ex) {
-			 Log.error("-----------ex----------", ex);;
+			ex.printStackTrace();
 			try {
 				mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.FAIL));
 			} catch (IOException e) {
@@ -180,6 +183,7 @@ public class AccessFilter extends ZuulFilter {
 			}
 			return null;
 		}
+		Log.info("----------validate api END------------");
 		return null;
 	}
 
