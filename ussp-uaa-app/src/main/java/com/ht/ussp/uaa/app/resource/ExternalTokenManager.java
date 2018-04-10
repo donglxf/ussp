@@ -151,6 +151,7 @@ public class ExternalTokenManager {
 						.atZone(ZoneId.systemDefault()).toInstant()))
 				.signWith(SignatureAlgorithm.HS512, jwtSettings.getTokenSigningKey()).compact();
 		log.info("uc's token and refreshToken has created sucessful");
+		tokenMap.put("code", SysStatus.SUCCESS.getStatus());
 		tokenMap.put("token", token);
 		tokenMap.put("refreshToken", refreshToken);
 		
