@@ -117,7 +117,7 @@ public class ExternalTokenManager {
 	 */
 	@PostMapping(value = "/createUCToken")
 	@ApiOperation(value = "创建UCToken")
-	public void createUCToken(String userId,String bmUserId,Integer tokenTime,Integer refreshtime,HttpServletResponse response) {
+	public void createUCToken(String userId,String bmUserId,Integer tokenTime,Integer refreshTime,HttpServletResponse response) {
 
 		if (StringUtils.isBlank(userId)) {
 			throw new IllegalArgumentException("Cannot create JWT Token without userId");
@@ -128,7 +128,7 @@ public class ExternalTokenManager {
 		}else if (tokenTime.intValue()<=0) {
 			throw new IllegalArgumentException("tokenTime must greater than 0");
 
-		}else if (refreshtime.intValue()<=0) {
+		}else if (refreshTime.intValue()<=0) {
 			throw new IllegalArgumentException("refreshtime must greater than 0");
 
 		}
@@ -139,7 +139,7 @@ public class ExternalTokenManager {
 		Claims claims = Jwts.claims().setSubject("UC jwt token");
 		claims.put("userId", userId);
 		claims.put("bmUserId", bmUserId);
-		claims.put("refreshtime", refreshtime);
+		claims.put("refreshtime", refreshTime);
 		String token = Jwts.builder().setClaims(claims).setIssuer(jwtSettings.getTokenIssuer())
 				.setIssuedAt(Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant()))
 				.setExpiration(Date.from(currentTime.plusMinutes(tokenTime)
@@ -150,7 +150,7 @@ public class ExternalTokenManager {
 		String refreshToken = Jwts.builder().setClaims(claims).setIssuer(jwtSettings.getTokenIssuer())
 				.setId(UUID.randomUUID().toString())
 				.setIssuedAt(Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant()))
-				.setExpiration(Date.from(currentTime.plusMinutes(refreshtime)
+				.setExpiration(Date.from(currentTime.plusMinutes(refreshTime)
 						.atZone(ZoneId.systemDefault()).toInstant()))
 				.signWith(SignatureAlgorithm.HS512, jwtSettings.getTokenSigningKey()).compact();
 		log.info("uc's token and refreshToken has created sucessful");
