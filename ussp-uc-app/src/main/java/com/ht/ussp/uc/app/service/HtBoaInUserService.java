@@ -1,6 +1,7 @@
 package com.ht.ussp.uc.app.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInBmUser;
@@ -29,9 +31,11 @@ import com.ht.ussp.uc.app.repository.HtBoaInLoginRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInOrgRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInUserAppRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInUserRepository;
+import com.ht.ussp.uc.app.vo.BmUserVo;
 import com.ht.ussp.uc.app.vo.LoginInfoVo;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
 import com.ht.ussp.util.BeanUtils;
+import com.ht.ussp.util.EncryptUtil;
 import com.ht.ussp.util.LogicUtil;
 
 /**
@@ -219,7 +223,7 @@ public class HtBoaInUserService {
     	//查看userId是否被占用
     	HtBoaInUser htBoaInUser = findByUserId(userId);
     	if(htBoaInUser!=null) {
-    		userId = String.format("%s%s%s%s%s", "01", isOrgUser, "1", "1", generateNumber(5));
+    		userId = String.format("%s%s%s%s%s", "01", isOrgUser, "1", "1", generateNumber(6));
     	}
     	user.setUserId(userId);
         htBoaInUserRepository.save(user);
@@ -228,6 +232,103 @@ public class HtBoaInUserService {
         return true;
     }
    
+    /**
+     * 新增信贷用户信息<br>
+     *
+     */
+    @Transactional
+    public HtBoaInContrast saveBmUserInfo(BmUserVo bmuservo) {
+    	 HtBoaInUser htBoaInUser = null;
+    	 HtBoaInContrast htBoaInContrast = null;
+    	 List<HtBoaInContrast> listHtBoaInContrast = htBoaInContrastRepository.findByBmBusinessIdAndType(bmuservo.getBmUserId(), "20");
+    	//查看是否存在用户，如果存在用户则不用新增用户
+    	 if(listHtBoaInContrast!=null&&!listHtBoaInContrast.isEmpty()) {
+    		 htBoaInContrast = listHtBoaInContrast.get(0);
+    		 if(htBoaInContrast!=null) {
+    			 htBoaInUser = htBoaInUserRepository.findByUserId(htBoaInContrast.getUcBusinessId());
+    		 }
+    	 }
+    	 if(htBoaInUser==null) {
+    		 htBoaInUser = htBoaInUserRepository.findByEmail(bmuservo.getEmail());
+    	 }
+    	 if(htBoaInUser==null) {
+    		 htBoaInUser = htBoaInUserRepository.findByMobile(bmuservo.getMobile());
+    	 }
+    	 if(htBoaInUser==null) {
+    		    String userId = "";
+    		    int isOrgUser = 1;
+				HtBoaInUser user = new HtBoaInUser();
+				user.setDataSource(Constants.USER_DATASOURCE_3);
+				user.setEmail(bmuservo.getEmail());
+				user.setIsOrgUser(1);
+				user.setJobNumber(bmuservo.getJobNumber());
+				user.setMobile(bmuservo.getMobile());
+				user.setOrgCode(bmuservo.getOrgCode());
+				user.setUserName(bmuservo.getUserName());
+				user.setIdNo(bmuservo.getIdNo());
+				user.setRootOrgCode("D01");
+				user.setUserType("10");
+				user.setDelFlag(0);
+				user.setCreatedDatetime(new Date());
+				user.setLastModifiedDatetime(new Date());
+
+				HtBoaInLogin loginInfo = new HtBoaInLogin();
+				loginInfo.setLoginId(bmuservo.getBmUserId()); // 作为用户的登录账号，修改为不是自动生成
+				loginInfo.setStatus(Constants.USER_STATUS_0);
+				loginInfo.setPassword(EncryptUtil.passwordEncrypt("123456"));
+				loginInfo.setFailedCount(0);
+				loginInfo.setRootOrgCode(bmuservo.getOrgCode());
+				loginInfo.setDelFlag(0);
+				loginInfo.setCreatedDatetime(new Date());
+				loginInfo.setLastModifiedDatetime(new Date());
+
+    	    	if (user.getJobNumber() != null && user.getJobNumber().contains("HX-")) {
+    	            userId = String.format("%s%s%s%s%s", "01", 1, "1", "1", user.getJobNumber().replace("HX-", ""));
+    	        } else {
+    	        	isOrgUser = 0;
+    	            userId = String.format("%s%s%s%s%s", "01", 0, "1", "1", generateNumber(5));
+    	        }
+    	    	//查看userId是否被占用
+    	    	HtBoaInUser htBoaInUsers = findByUserId(userId);
+    	    	if(htBoaInUsers!=null) {
+    	    		userId = String.format("%s%s%s%s%s", "01", isOrgUser, "1", "1", generateNumber(6));
+    	    	}
+    	    	user.setUserId(userId);
+    	    	htBoaInUser =  htBoaInUserRepository.saveAndFlush(user);
+    	    	loginInfo.setUserId(userId);
+    	        htBoaInLoginRepository.save(loginInfo);
+    	 }
+    	
+        //添加bmUser
+        HtBoaInBmUser htBoaInBmUser = htBoaInBmUserRepository.findByUserId(bmuservo.getBmUserId());
+        if(htBoaInBmUser==null) { //不存在，则添加
+        	htBoaInBmUser = new HtBoaInBmUser();
+        	htBoaInBmUser.setUserId(bmuservo.getBmUserId());
+        	htBoaInBmUser.setEmail(bmuservo.getEmail());
+        	htBoaInBmUser.setJobNumber(bmuservo.getJobNumber());
+        	htBoaInBmUser.setMobile(bmuservo.getMobile());
+        	htBoaInBmUser.setOrgCode(bmuservo.getOrgCode());
+        	htBoaInBmUser.setUserName(bmuservo.getUserName());
+        	htBoaInBmUser.setIdNo(bmuservo.getIdNo());
+        	htBoaInBmUser.setDelFlag(0);
+        	htBoaInBmUser.setCreatedDatetime(new Date());
+        	htBoaInBmUser.setLastModifiedDatetime(new Date());
+        	htBoaInBmUser = htBoaInBmUserRepository.saveAndFlush(htBoaInBmUser);
+        }
+        //添加关系
+        if(listHtBoaInContrast==null || listHtBoaInContrast.isEmpty()) {
+        	htBoaInContrast = new HtBoaInContrast();
+        	htBoaInContrast.setBmBusinessId(bmuservo.getBmUserId());
+        	htBoaInContrast.setType("20");
+        	htBoaInContrast.setContrast("信贷添加");
+        	htBoaInContrast.setContrastDatetime(new Date());
+        	htBoaInContrast.setStatus("0");
+        	htBoaInContrast.setUcBusinessId(htBoaInUser.getUserId());
+        	htBoaInContrast.setContrastDatetime(new Date());
+        	htBoaInContrast = htBoaInContrastRepository.saveAndFlush(htBoaInContrast);
+        }
+        return htBoaInContrast;
+    }
     
     private String generateNumber(int length) {
         String no = "";

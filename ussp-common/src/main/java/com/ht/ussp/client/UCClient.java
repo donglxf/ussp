@@ -67,6 +67,16 @@ public interface UCClient {
     LoginInfoDto getUserInfoByUserId(@RequestParam("userId")String userId, @RequestParam("bmUserId")String bmUserId, @RequestParam("app") String app);
 
     /**
+     * 根据userId获取bmUserId
+     * @param userId
+     * @param bmUserId
+     * @param app
+     * @return
+     */
+    @GetMapping(value = "/user/getUserListByTime")
+    List<LoginInfoDto> getUserListByTime(@RequestParam("startTime")String startTime, @RequestParam("endTime")String endTime);
+    
+    /**
      * @return Result
      * @throws
      * @Title: getCustomResouce
@@ -96,6 +106,15 @@ public interface UCClient {
      */
     @GetMapping(value = "/org/getOrgInfoByCode")
     HtBoaInOrgDto getOrgInfoByCode(@RequestParam("orgCode") String orgCode);
+    
+    /**
+     * 获取指定时间范围内更新的机构信息
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    @GetMapping(value = "/org/getOrgListByTime")
+	List<HtBoaInOrgDto> getOrgListByTime(@RequestParam("startTime")String startTime, @RequestParam("endTime")String endTime);
 
     /**
      * 通过机构编码获取下级机构信息

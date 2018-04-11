@@ -23,6 +23,7 @@ layui.define(function (exports) {
         , loginPath: "/login.html"
         , indexPath: "/"
         , changePwdPath: changePasswordUrl
+        , changeUserInfoUrl: changeUserInfoUrl
         , loadMenuUrl: base + "uc/auth/loadMenu"
         , loadBtnAndTabUrl: base + "uc/auth/loadBtnAndTab"
         , loginUrl: base + "uaa/auth/login"

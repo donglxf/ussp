@@ -207,23 +207,21 @@
                 },
                 success: function (data) {
                     if (data && data["token"] != null & data["token"] != "") {
-                        cookie.setToken(data["token"]);
-                        cookie.setRefreshToken(data["refreshToken"]);
-                        //top.location.href = config.indexPath; 
-                        if(data.code=='0009'){
-                         	layer.confirm('初次登录，请重新设置密码。', {
-                         		  btn: ['确认'] 
+                        if(data.code=='0000'){
+                        	cookie.setToken(data["token"]);
+                            cookie.setRefreshToken(data["refreshToken"]);
+                   	    	top.location.href = config.indexPath; 
+                   	    	return false;
+                        }else if(data.code=='0009'){
+                         	layer.confirm('您得密码为初始密码，请重新设置密码后再登录。', {
+                         		btn: ['确认'] 
                          		}, function(index, layero){
-                         			top.location.href = config.changePwdPath+"\?token="+data["token"]+"&urls="+config.loginPath;
-                             		//top.location.href ="http://ip:30111/uc-ui/passwrod?token=&url=http://xxx:login.html"
+                         			top.location.href = config.changePwdPath+"?token="+data["token"]+"&urls="+config.loginPath;
                          		});
-                    	    }else{
-                    	    	top.location.href = config.indexPath; 
-                    	    }
-                   	    	
-                    } else {
-                        layer.alert("登录失败，请联系管理员");
-                    }  
+                         	return false;
+                   	    }
+                    }
+                    layer.alert("登录失败，请联系管理员。");
                 },
                 error: function (xhr, exception, errorThrown) {
                     if (xhr.status == '401' || xhr.status == '403') {

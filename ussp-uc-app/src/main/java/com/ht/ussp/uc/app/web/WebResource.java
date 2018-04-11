@@ -13,24 +13,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.druid.util.StringUtils;
-import com.ht.ussp.bean.LoginUserInfoHelper;
 import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
-import com.ht.ussp.uc.app.feignclients.EipClient;
 import com.ht.ussp.uc.app.feignclients.UaaClient;
 import com.ht.ussp.uc.app.model.ChangePwd;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
-import com.ht.ussp.uc.app.service.HtBoaInContrastService;
 import com.ht.ussp.uc.app.service.HtBoaInLoginService;
 import com.ht.ussp.uc.app.service.HtBoaInOrgService;
 import com.ht.ussp.uc.app.service.HtBoaInPwdHistService;
-import com.ht.ussp.uc.app.service.HtBoaInUserAppService;
-import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
 import com.ht.ussp.uc.app.vo.ValidateJwtVo;
@@ -54,21 +49,11 @@ public class WebResource{
     @Autowired
     private HtBoaInUserService htBoaInUserService;
     @Autowired
-    private HtBoaInUserAppService htBoaInUserAppService;
-    @Autowired
     private HtBoaInLoginService htBoaInLoginService;
-    @Autowired
-    private HtBoaInUserRoleService htBoaInUserRoleService;
     @Autowired
     private HtBoaInPwdHistService htBoaInPwdHistService;
     @Autowired
-	private EipClient eipClient;
-    @Autowired
     private UaaClient uaaClient;
-    @Autowired
-   	private LoginUserInfoHelper loginUserInfoHelper;
-    @Autowired
-   	private HtBoaInContrastService htBoaInContrastService;
     @Autowired
     private HtBoaInOrgService htBoaInOrgService;
     
@@ -142,7 +127,7 @@ public class WebResource{
     public Result changePwd(@RequestBody ChangePwd changePwd) {
         long sl = System.currentTimeMillis(), el = 0L;
         String msg = "成功";
-        String logHead = "修改密码：login/in/changePwd param-> {}";
+        String logHead = "修改密码：changePwd param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.debug(logStart, changePwd.toString(), sl);

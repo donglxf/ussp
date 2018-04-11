@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.ht.ussp.client.UCClient;
 import com.ht.ussp.client.dto.BoaInRoleInfoDto;
+import com.ht.ussp.client.dto.HtBoaInOrgDto;
 import com.ht.ussp.client.dto.LoginInfoDto;
 import com.ht.ussp.client.dto.ResDto;
 
@@ -172,5 +173,20 @@ public class LoginUserInfoHelper {
         }
     }
 	
-	
+    /**
+     * 获取指定时间范围内更新的用户信息<br>
+     * startTime YYYY-MM-dd HH:mm:ss
+     * endTime YYYY-MM-dd HH:mm:ss
+     */
+    public List<LoginInfoDto> getUserListByTime(String startTime,String endTime) {
+        if (ucClient == null) {
+            log.warn("无法获取指定时间范围内更新的用户信息，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
+        }
+        try {
+            return ucClient.getUserListByTime(startTime,endTime);
+        } catch (Exception ex) {
+            log.error("通过机构编码获取下级机构信息发生异常。", ex);
+            return null;
+        }
+    }
 }         

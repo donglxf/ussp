@@ -142,6 +142,7 @@ public class UserResource{
         u.setEmail(selfBoaInUserInfo.getEmail());
         u.setMobile(selfBoaInUserInfo.getMobile());
         u.setUserName(selfBoaInUserInfo.getUserName());
+        u.setLastModifiedDatetime(new Date());
         htBoaInUserService.update(u);
 
         HtBoaInUser u1 = htBoaInUserService.findByUserId(selfBoaInUserInfo.getUserId());
@@ -320,6 +321,8 @@ public class UserResource{
             user.setCreateOperator(loginUserId);
             user.setUpdateOperator(loginUserId);
             user.setDelFlag(0);
+            user.setCreatedDatetime(new Date());
+            user.setLastModifiedDatetime(new Date());
             
             HtBoaInLogin loginInfo = new HtBoaInLogin();
            // loginInfo.setLoginId(UUID.randomUUID().toString().replace("-", ""));
@@ -332,6 +335,8 @@ public class UserResource{
             loginInfo.setFailedCount(0);
             loginInfo.setRootOrgCode(userMessageVo.getOrgCode());
             loginInfo.setDelFlag(0);
+            loginInfo.setCreatedDatetime(new Date());
+            loginInfo.setLastModifiedDatetime(new Date());
             boolean isAdd = htBoaInUserService.saveUserInfoAndLoginInfo(user, loginInfo);
             if (isAdd) {
                 return Result.buildSuccess();
@@ -415,41 +420,6 @@ public class UserResource{
         return Result.buildFail();
     }
     
-    @ApiOperation(value = "对内：修改密码", notes = "修改密码")
-    @RequestMapping(value = {"/in/changePwd"}, method = RequestMethod.POST)
-    public ResponseModal changePwd(@RequestBody ChangePwd changePwd, @RequestHeader("userId") String userId) {
-        long sl = System.currentTimeMillis(), el = 0L;
-        ResponseModal r = null;
-        String msg = "成功";
-        String logHead = "修改密码：login/in/changePwd param-> {}";
-        String logStart = logHead + " | START:{}";
-        String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.debug(logStart, changePwd.toString(), sl);
-
-        HtBoaInLogin u = htBoaInLoginService.findByUserId(userId);
-        //验证原密码是否正确
-        /*if (!u.getPassword().equals(EncryptUtil.passwordEncrypt(changePwd.getOldPwd()))) {
-            return new ResponseModal("500", "原密码输入不正确");
-        }*/
-        if(!EncryptUtil.matches(changePwd.getOldPwd(),u.getPassword())) {
-        	return new ResponseModal("500", "原密码输入不正确");
-        }
-        String newPassWordEncrypt = EncryptUtil.passwordEncrypt(changePwd.getNewPwd());
-        u.setPassword(newPassWordEncrypt);
-
-        //记录历史密码
-        HtBoaInPwdHist htBoaInPwdHist = new HtBoaInPwdHist();
-        htBoaInPwdHist.setUserId(u.getUserId());
-        htBoaInPwdHist.setPassword(newPassWordEncrypt);
-        htBoaInPwdHist.setPwdCreTime(new Timestamp(System.currentTimeMillis()));
-        htBoaInPwdHist.setLastModifiedDatetime(new Date());
-        htBoaInLoginService.update(u);
-        htBoaInPwdHistService.add(htBoaInPwdHist);
-        el = System.currentTimeMillis();
-        log.debug(logEnd, "resetPwd: " + changePwd, msg, el, el - sl);
-        return new ResponseModal("200", "成功");
-    }
-
     @ApiOperation(value = "对内，获取用户登录信息")
     @GetMapping(value = "/getLoginUserInfo")
     public LoginInfoVo getLoginUserInfo(@RequestParam("userId") String userId,@RequestParam("app") String app) {
@@ -469,71 +439,6 @@ public class UserResource{
     	}
         return htBoaInUserService.queryUserInfo(userId,app);
     }
-    
-    @ApiOperation(value = "外部系统获取用户信息")
-    @PostMapping("/getUserForOther")
-    public Result getUserForOther(String token) {
-    	 ResponseModal rm = uaaClient.validateJwt("Bearer "+token);
-         ValidateJwtVo vdj = new ValidateJwtVo();
-         vdj = FastJsonUtil.objectToPojo(rm.getResult(), ValidateJwtVo.class);
-         if(vdj==null) {
-         	return Result.buildFail();
-         }
-         if(!StringUtils.isEmpty(vdj.getUserId())) {
-        	 HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(vdj.getUserId());
-        	 UserMessageVo userMessageVo = new UserMessageVo();
-        	 userMessageVo.setUserId(htBoaInUser.getUserId());
-        	 userMessageVo.setUserName(htBoaInUser.getUserName());
-        	 userMessageVo.setId(htBoaInUser.getId());
-        	 userMessageVo.setEmail(htBoaInUser.getEmail());
-        	 userMessageVo.setMobile(htBoaInUser.getMobile());
-        	 userMessageVo.setOrgCode(htBoaInUser.getOrgCode());
-        	 userMessageVo.setJobNumber(htBoaInUser.getJobNumber());
-        	 List<HtBoaInOrg> listOrg = htBoaInOrgService.findByOrgCode(htBoaInUser.getOrgCode());
-        	 if(listOrg!=null&&!listOrg.isEmpty()) {
-        		 userMessageVo.setOrgName(listOrg.get(0).getOrgNameCn());
-        	 }
-        	 HtBoaInLogin htBoaInLogin = htBoaInLoginService.findByUserId(htBoaInUser.getUserId());
-        	 if(htBoaInLogin!=null) {
-        		 userMessageVo.setLoginId(htBoaInLogin.getLoginId());
-        	 }
-        	 return Result.buildSuccess(userMessageVo);
-         }
-        return Result.buildFail(rm.getStatus_code(), rm.getResult_msg());
-    }
-    
-    @ApiOperation(value = "外部系统更新用户信息")
-    @PostMapping("/updateUserForOther")
-    public Result updateUserForOther(@RequestParam("token")  String token,@RequestBody SelfBoaInUserInfo selfBoaInUserInfo) {
-    	 ResponseModal rm = uaaClient.validateJwt(token);
-         ValidateJwtVo vdj = (ValidateJwtVo) rm.getResult();
-         
-         if(StringUtils.isEmpty(selfBoaInUserInfo.getUserId())) {
-        	 return Result.buildFail();
-         }
-         if(!selfBoaInUserInfo.getUserId().equals(vdj.getUserId())) {
-        	 return Result.buildFail();
-         }
-         HtBoaInUser u = htBoaInUserService.findByUserId(selfBoaInUserInfo.getUserId());
-         if (selfBoaInUserInfo.getOrgCode() != null && "" != selfBoaInUserInfo.getOrgCode()) {
-             u.setOrgCode(selfBoaInUserInfo.getOrgCode());
-         }
-         if (selfBoaInUserInfo.getRootOrgCode() != null && "" != selfBoaInUserInfo.getRootOrgCode()) {
-             u.setRootOrgCode(selfBoaInUserInfo.getRootOrgCode());
-         }
-         if (selfBoaInUserInfo.getIdNo() != null && "" != selfBoaInUserInfo.getIdNo()) {
-             u.setIdNo(selfBoaInUserInfo.getIdNo());
-         }
-         u.setEmail(selfBoaInUserInfo.getEmail());
-         u.setMobile(selfBoaInUserInfo.getMobile());
-         u.setUserName(selfBoaInUserInfo.getUserName());
-         htBoaInUserService.update(u);
-
-         HtBoaInUser u1 = htBoaInUserService.findByUserId(selfBoaInUserInfo.getUserId());
-         
-         return Result.buildSuccess(u1);
-    }
-    
     
     @ApiOperation(value = "重置密码并发邮件")
     @PostMapping(value = "/sendEmailRestPwd")
@@ -622,7 +527,7 @@ public class UserResource{
 
     @ApiOperation(value = "校验数据的重复性 true：可用  false：不可用")
     @PostMapping(value = "/checkUserExist")
-    public Result checkUserExist(String jobnum,String mobile,String email,String loginid) {
+    public Result checkUserExist(String jobnum,String mobile,String email,String loginid,String userId) {
     	HtBoaInUser htBoaInUser = null;
     	if(jobnum!=null) {
     		htBoaInUser = htBoaInUserService.findByJobNumber(jobnum);
@@ -635,13 +540,23 @@ public class UserResource{
     		if(htBoaInLogin==null) {
     	       return Result.buildSuccess();
             }else {
-         	   return Result.buildFail();
+            	userId = userId==null?"":userId;
+            	if(userId.equals(htBoaInLogin.getUserId())) {
+            		return Result.buildSuccess();
+            	}else {
+            		return Result.buildFail();
+            	}
             }
     	}
 		if(htBoaInUser==null) {
 	       return Result.buildSuccess();
         }else {
-     	   return Result.buildFail();
+        	userId = userId==null?"":userId;
+        	if(userId.equals(htBoaInUser.getUserId())) {
+        		return Result.buildSuccess();
+        	}else {
+        		return Result.buildFail();
+        	}
         }
     }
   

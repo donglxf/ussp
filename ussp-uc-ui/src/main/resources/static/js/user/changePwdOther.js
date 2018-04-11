@@ -18,7 +18,6 @@ layui.config({
                 type: "POST",
                 url: userBaseInfoUrl + "?token=" + token,
                 contentType: 'application/json;charset=utf-8',
-                // data: {"token":token},
                 async: false,
                 success: function (result) {
                     if (result && result["returnCode"] == "0000") {
@@ -68,9 +67,8 @@ layui.config({
         },
     });
 
-    var userBaseInfoUrl = config.basePath + "user/getUserForOther"; //查看登录用户信息
-    var editUserBaseInfoUrl = config.basePath + "user/in/selfinfo/set"; //查看登录用户信息
-    var changePwdUrl = config.basePath + "login/changePwd"; //修改密码
+    var userBaseInfoUrl = config.basePath + "web/getUserForOther"; //查看登录用户信息
+    var changePwdUrl = config.basePath + "web/changePwd"; //修改密码
 
     // 监听提交
     form.on('submit(changePwd_filter_modify_form)', function (data) {

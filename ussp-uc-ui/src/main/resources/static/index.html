@@ -85,8 +85,8 @@
                 </a>
                 <dl class="layui-nav-child">
                     <dd>
-                        <a href="javascript:;" kit-target
-                           data-options="{url:'/html/user/userInfo.html',icon:'&#xe658;',title:'基本资料',id:'966'}"><span>基本资料</span></a>
+                       <a href="javascript:;"   id="userInfo"  ><span>基本资料</span></a>
+                        <!-- <a href="javascript:;" kit-target  data-options="{url:'/html/user/userInfo.html',icon:'&#xe658;',title:'基本资料',id:'966'}"><span>基本资料</span></a> -->
                     </dd>
                     <dd>
                         <a href="javascript:;"   id="changePwd"  ><span>修改密码</span></a>
@@ -226,6 +226,20 @@
                      }
                  })
             });
+            $("#userInfo").on("click", function () {
+          	  layer.open({
+                   type: 2,
+                   area: ['750px', '600px'],
+                   maxmin: true,
+                   shadeClose: true,
+                   title: "修改用户信息",
+                   content: config.changeUserInfoUrl+"?token="+cookie.getToken(),
+                   success: function (layero, index) {
+                  	 
+                   }
+               })
+          });
+            
         });
     });
 </script>

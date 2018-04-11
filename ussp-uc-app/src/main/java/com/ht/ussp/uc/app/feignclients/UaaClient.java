@@ -1,6 +1,7 @@
 package com.ht.ussp.uc.app.feignclients;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -21,5 +22,8 @@ public interface UaaClient {
 	 */
 	@RequestMapping(value = "/validateJwt")
 	public ResponseModal validateJwt(@RequestParam("tokenPayload") String tokenPayload);
+	
+	@PostMapping(value = "/external/createUCToken")
+	public ResponseModal createUCToken(@RequestParam("userId")String userId,@RequestParam("bmUserId")String bmUserId,@RequestParam("tokenTime")Integer tokenTime,@RequestParam("refreshTime")Integer refreshtime);
 	 
 }

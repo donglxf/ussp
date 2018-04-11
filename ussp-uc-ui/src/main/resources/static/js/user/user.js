@@ -186,7 +186,7 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
 			  var isExist="1";
 			  if(value){
 					  $.ajax({
-						  url : config.basePath + "user/checkUserExist?jobnum=" + value,
+						  url : config.basePath + "user/checkUserExist?jobnum=" + value+"&userId="+$("#userId").val(),
 						type : 'POST',
 						async : false,
 						success : function(result) {
@@ -207,7 +207,7 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
 			  var isExist="1";
 			  if(value){
 					  $.ajax({
-						  url : config.basePath + "user/checkUserExist?loginid=" + value,
+						  url : config.basePath + "user/checkUserExist?loginid=" + value+"&userId="+$("#userId").val(),
 						type : 'POST',
 						async : false,
 						success : function(result) {
@@ -228,7 +228,7 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
 			  var isExist="1";
 			  if(value){
 					  $.ajax({
-						  url : config.basePath + "user/checkUserExist?mobile=" + value,
+						  url : config.basePath + "user/checkUserExist?mobile=" + value+"&userId="+$("#userId").val(),
 						type : 'POST',
 						async : false,
 						success : function(result) {
@@ -249,7 +249,7 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
 			  var isExist="";
 			  if(value){
 					  $.ajax({
-						url : config.basePath + "user/checkUserExist?email=" + value,
+						url : config.basePath + "user/checkUserExist?email=" + value+"&userId="+$("#userId").val(),
 						type : 'POST',
 						async : false,
 						success : function(result) {
