@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.ht.ussp.bean.LoginUserInfoHelper;
 import com.ht.ussp.bean.OrgInfoHelper;
 import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
@@ -93,6 +94,9 @@ public class OrgResource {
     
     @Autowired
     private OrgInfoHelper orgInfoHelper;
+    
+    @Autowired
+    private LoginUserInfoHelper loginUserInfoHelper;
     
 
     /**
@@ -266,6 +270,12 @@ public class OrgResource {
         return htBoaInOrgService.findByParentOrgCode(parentOrgCode);
     }
     
+    @ApiOperation(value = "根据时间获取指定时间机构信息")
+    @GetMapping(value = "/getOrgListByTime")
+    public List<HtBoaInOrg> getOrgListByTime(@RequestParam("startTime")String startTime, @RequestParam("endTime")String endTime) {
+        return htBoaInOrgService.getOrgListByTime(startTime,endTime);
+    }
+    
     /**
      * 获取用户所属机构类型信息 (10:公司 20:中心 30:片区 40:分公司 50部门 60小组)
      *  资源类型枚举值：OrgTypeEnum.ORG_TYPE_COMPANY.getReturnCode()
@@ -280,6 +290,8 @@ public class OrgResource {
 
     @PostMapping(value = "/testGetOrgInfoByOrgType")
     public Result testGetOrgInfoByOrgType() {
+    	loginUserInfoHelper.getUserListByTime("2018-03-08 16:10:10", "2018-04-08 16:10:10");
+    	orgInfoHelper.getOrgListByTime("2018-03-08 16:10:10", "2018-04-08 16:10:10");
     	return Result.buildSuccess(orgInfoHelper.getOrgInfoByOrgType("D01100501","20"));
     }  
     

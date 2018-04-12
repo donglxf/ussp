@@ -34,7 +34,6 @@ import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.domain.HtBoaInUserRole;
 import com.ht.ussp.uc.app.feignclients.EipClient;
 import com.ht.ussp.uc.app.feignclients.UaaClient;
-import com.ht.ussp.uc.app.model.ChangePwd;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
@@ -51,10 +50,8 @@ import com.ht.ussp.uc.app.vo.PageVo;
 import com.ht.ussp.uc.app.vo.ResetPwdUser;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
 import com.ht.ussp.uc.app.vo.UserVo;
-import com.ht.ussp.uc.app.vo.ValidateJwtVo;
 import com.ht.ussp.util.BeanUtils;
 import com.ht.ussp.util.EncryptUtil;
-import com.ht.ussp.util.FastJsonUtil;
 import com.ht.ussp.util.LogicUtil;
 
 import io.swagger.annotations.ApiImplicitParam;
@@ -474,6 +471,13 @@ public class UserResource{
     	}
     	return Result.buildSuccess(); 
     }
+    
+    @ApiOperation(value = "根据时间获取指定时间机构信息")
+    @GetMapping(value = "/getUserListByTime")
+    public List<HtBoaInUser> getUserListByTime(@RequestParam("startTime")String startTime, @RequestParam("endTime")String endTime) {
+        return htBoaInUserService.getUserListByTime(startTime,endTime);
+    }
+    
     
 	@ApiOperation(value = "批量重置密码并发邮件")
 	@PostMapping(value = "/sendEmailRestPwdBatch")

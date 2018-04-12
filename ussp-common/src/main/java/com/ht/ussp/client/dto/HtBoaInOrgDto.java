@@ -1,6 +1,5 @@
 package com.ht.ussp.client.dto;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import lombok.AllArgsConstructor;

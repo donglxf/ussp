@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.ht.ussp.uc.app.domain.HtBoaInOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
@@ -189,5 +190,7 @@ public interface HtBoaInUserRepository extends JpaSpecificationExecutor<HtBoaInU
 
 	HtBoaInUser findByEmail(String email);
 
+	@Query(value="select * from HT_BOA_IN_USER where LAST_MODIFIED_DATETIME BETWEEN ?1 AND ?2",nativeQuery=true)
+	List<HtBoaInUser> getUserListByTime(String startTime, String endTime);
     
 }

@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.ht.ussp.client.UCClient;
 import com.ht.ussp.client.dto.BoaInRoleInfoDto;
-import com.ht.ussp.client.dto.HtBoaInOrgDto;
 import com.ht.ussp.client.dto.LoginInfoDto;
 import com.ht.ussp.client.dto.ResDto;
 
@@ -185,7 +184,7 @@ public class LoginUserInfoHelper {
         try {
             return ucClient.getUserListByTime(startTime,endTime);
         } catch (Exception ex) {
-            log.error("通过机构编码获取下级机构信息发生异常。", ex);
+            log.error("获取指定时间范围内更新的用户信息发生异常。", ex);
             return null;
         }
     }

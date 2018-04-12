@@ -113,7 +113,7 @@ public class OrgInfoHelper {
         try {
             return ucClient.getOrgListByTime(startTime,endTime);
         } catch (Exception ex) {
-            log.error("通过机构编码获取下级机构信息发生异常。", ex);
+            log.error("无法获取指定时间范围内更新的机构信息发生异常。", ex);
             return null;
         }
     }

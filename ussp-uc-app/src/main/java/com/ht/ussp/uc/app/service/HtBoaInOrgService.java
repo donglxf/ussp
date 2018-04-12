@@ -155,6 +155,11 @@ public class HtBoaInOrgService {
 		}
 	}
 
+    public List<HtBoaInOrg> getOrgListByTime(String startTime, String endTime) {
+		return this.htBoaInOrgRepository.getByLastModifiedDatetime(startTime,endTime);
+	}
+    
+    
 
     public XSSFWorkbook exportOrgExcel() {
         XSSFWorkbook book = null;
@@ -353,5 +358,4 @@ public class HtBoaInOrgService {
 		}
 	}
 
-	
 }
