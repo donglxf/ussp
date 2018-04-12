@@ -92,8 +92,9 @@ public class WebResource{
     @ApiOperation(value = "外部系统更新用户信息")
     @PostMapping("/updateUserForOther")
     public Result updateUserForOther(@RequestParam("token")  String token,@RequestBody SelfBoaInUserInfo selfBoaInUserInfo) {
-    	 ResponseModal rm = uaaClient.validateJwt(token);
-         ValidateJwtVo vdj = (ValidateJwtVo) rm.getResult();
+    	 ResponseModal rm = uaaClient.validateJwt("Bearer "+token);
+    	 ValidateJwtVo vdj = new ValidateJwtVo();
+         vdj = FastJsonUtil.objectToPojo(rm.getResult(), ValidateJwtVo.class);
          
          if(StringUtils.isEmpty(selfBoaInUserInfo.getUserId())) {
         	 return Result.buildFail();

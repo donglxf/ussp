@@ -130,7 +130,7 @@ layui.config({
 		$.ajax({
 			cache : true,
 			type : "POST",
-			url : editUserBaseInfoUrl,
+			url : editUserBaseInfoUrl + "?token=" + token,
 			data: JSON.stringify(data.field),
             contentType: "application/json; charset=utf-8",
 			async : false,
