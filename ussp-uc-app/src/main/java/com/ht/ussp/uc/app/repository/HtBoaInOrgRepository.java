@@ -45,6 +45,9 @@ public interface HtBoaInOrgRepository
 
     @Query(value="select * from HT_BOA_IN_ORG where LAST_MODIFIED_DATETIME BETWEEN ?1 AND ?2",nativeQuery=true)
 	public List<HtBoaInOrg> getByLastModifiedDatetime(String startTime, String endTime);
+
+    @Query(value = "SELECT MAX(org_code) from ht_boa_in_org where parent_org_code=?1", nativeQuery = true)
+	public String getMaxOrgCode(String parentOrgCode);
     
     
 /*    @Query("SELECT new com.ht.ussp.uc.app.model.BoaInOrgInfo (u.orgCode, u.orgName, u.orgNameCn, u.parentOrgCode, u.rootOrgCode, u.orgPath, u.orgType, u.sequence,  u.createOperator) FROM HtBoaInOrg u  WHERE  u.orgCode LIKE ?1 OR u.orgName LIKE ?1 OR u.orgNameCn LIKE ?1    GROUP BY u")

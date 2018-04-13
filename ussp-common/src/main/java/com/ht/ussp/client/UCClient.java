@@ -184,6 +184,9 @@ public interface UCClient {
 	@GetMapping(value = "/resource/getMenus")
 	Result getMenus(@RequestParam("app")String app,@RequestParam("resType")String resType);
 
+	@GetMapping(value = "/system/getAllApp")
+	Result getAllApp();
+
 
 }
 

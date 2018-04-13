@@ -78,4 +78,6 @@ public interface HtBoaInAppRepository extends JpaRepository<HtBoaInApp, Long> {
 
     List<HtBoaInApp> findByApp(String app);
 
+	public List<HtBoaInApp> findByStatus(String status);
+
 }

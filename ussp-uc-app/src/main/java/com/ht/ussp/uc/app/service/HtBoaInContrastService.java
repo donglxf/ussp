@@ -32,6 +32,10 @@ public class HtBoaInContrastService {
         return htBoaInContrastRepository.save(htBoaInContrastList);
     }
     
+    public HtBoaInContrast add(HtBoaInContrast htBoaInContrast) {
+        return htBoaInContrastRepository.saveAndFlush(htBoaInContrast);
+    }
+    
     public List<HtBoaInContrast> getHtBoaInContrastList() {
         return htBoaInContrastRepository.findAll();
     }
@@ -42,6 +46,10 @@ public class HtBoaInContrastService {
     
     public List<HtBoaInContrast> getHtBoaInContrastListByDdBusinessId(String ddBusinessId,String type) {
         return htBoaInContrastRepository.findByDdBusinessIdAndType(ddBusinessId, type);
+    }
+    
+    public HtBoaInContrast getHtBoaInContrastListByUcBusinessId(String ucBusinessId,String type) {
+        return htBoaInContrastRepository.findByUcBusinessIdAndType(ucBusinessId, type);
     }
     
     public List<HtBoaInContrast> getHtBoaInContrastListByType( String type) {

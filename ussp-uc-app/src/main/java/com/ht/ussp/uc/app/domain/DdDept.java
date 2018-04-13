@@ -15,8 +15,6 @@ import javax.persistence.TemporalType;
 
 import lombok.Data;
 
-
- 
 @Entity
 @Data
 @Table(name="DD_DEPT")
@@ -28,33 +26,23 @@ public class DdDept implements Serializable {
 	@Column(name = "ID", unique = true, nullable = false)
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
-
-	@Column(name="CREATE_OPERATOR")
-	private String createOperator;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="CREATED_DATETIME")
-	private Date createdDatetime;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="LAST_MODIFIED_DATETIME")
-	private Date lastModifiedDatetime;
-
-	@Column(name="DEPTID")
+	
+	@Column(name="dept_id")
 	private String deptId;
 
-	@Column(name="DEPTNAME")
+	@Column(name="DEPT_NAME")
 	private String deptName;
 
-	@Column(name="PARENTID")
+	@Column(name="parent_dept_id")
 	private String parentId;
-
-	@Column(name="UPDATE_OPERATOR")
-	private String updateOperator;
-
-	@Column(name="ORG_PATH")
-	private String orgPath;
 	
+	@Column(name="level")
+	private Integer level;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="create_datetime")
+	private Date creatDatetime;
+
 	@Column(name="ORDERS")
 	private String orders;
 	

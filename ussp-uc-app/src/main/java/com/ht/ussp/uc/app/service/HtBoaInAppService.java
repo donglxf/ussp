@@ -38,7 +38,9 @@ public class HtBoaInAppService {
     public HtBoaInApp findById(Long id) {
         return htBoaInAppRepository.findById(id);
     }
-
+    public List<HtBoaInApp> findAllApp(String status) {
+		return htBoaInAppRepository.findByStatus(status);
+	}
     /**
      * 加载系统与权限资源的组合树数据<br>
      *
@@ -55,6 +57,7 @@ public class HtBoaInAppService {
         }
         return aaaList;
     }
+    
 
     public Object findAllByPage(PageConf pageConf, Map<String, String> query) {
         Sort sort = null;
@@ -158,4 +161,5 @@ public class HtBoaInAppService {
 			e.printStackTrace();
 		}
 	}
+
 }

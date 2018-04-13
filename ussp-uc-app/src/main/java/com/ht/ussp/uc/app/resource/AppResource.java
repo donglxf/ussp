@@ -56,18 +56,13 @@ public class AppResource {
 
     @Autowired
     private HtBoaInAppService htBoaInAppService;
-
-    @ApiOperation("查询系统信息")
-    @RequestMapping(value = {"/{id}"}, method = RequestMethod.GET)
-    public ResponseModal getHtBoaInApp(@PathVariable Long id) {
-        ResponseModal rm = new ResponseModal();
-        HtBoaInApp htBoaInApp = htBoaInAppService.findById(id);
-        rm.setStatus_code("200");
-        rm.setResult(htBoaInApp);
-        log.debug("====htBoaInApp====" + htBoaInApp);
-        return rm;
-    }
     
+    @ApiOperation(value = "查询所有系统信息")
+    @RequestMapping(value = {"/getAllApp" }, method = RequestMethod.POST)
+    public Result<List<HtBoaInApp>> getAllApp() {
+        return Result.buildSuccess(htBoaInAppService.findAllApp("0"));
+    }
+ 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @ApiOperation(value = "对内：系统记录查询")
     @RequestMapping(value = {"/list" }, method = RequestMethod.POST)

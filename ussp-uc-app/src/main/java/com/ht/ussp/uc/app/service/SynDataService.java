@@ -51,12 +51,6 @@ public class SynDataService {
     @Autowired
     private HtBoaInOrgService htBoaInOrgService;
     
-    
-    
-    public List<HtBoaInContrast> findListByType(String type) {
-    	return htBoaInContrastRepository.findByType(type);
-    }
-    
     public HtBoaInContrast findByUcBusinessIdAndType(String userId,String type) {
     	return htBoaInContrastRepository.findByUcBusinessIdAndType(userId, type);
     }

@@ -21,6 +21,7 @@ import com.ht.ussp.client.UCClient;
 import com.ht.ussp.client.dto.BoaInRoleInfoDto;
 import com.ht.ussp.client.dto.LoginInfoDto;
 import com.ht.ussp.client.dto.ResDto;
+import com.ht.ussp.core.Result;
 
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
@@ -186,6 +187,21 @@ public class LoginUserInfoHelper {
         } catch (Exception ex) {
             log.error("获取指定时间范围内更新的用户信息发生异常。", ex);
             return null;
+        }
+    }
+    
+    /**
+     * 获取所有用户系统
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    public Result getAllApp() {
+        try {
+            return ucClient.getAllApp();
+        } catch (Exception ex) {
+            log.error("获取指定时间范围内更新的用户信息发生异常。", ex);
+            return Result.buildFail("获取指定时间范围内更新的用户信息发生异常。",ex.getMessage());
         }
     }
 }         
