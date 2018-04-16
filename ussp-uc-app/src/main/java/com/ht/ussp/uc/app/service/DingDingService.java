@@ -17,10 +17,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.ht.ussp.uc.app.domain.DdDept;
 import com.ht.ussp.uc.app.domain.DdDeptOperator;
 import com.ht.ussp.uc.app.domain.DdUser;
-import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
+import com.ht.ussp.uc.app.domain.DdUserOperator;
 import com.ht.ussp.uc.app.repository.DdDeptOperatorRepository;
 import com.ht.ussp.uc.app.repository.DdDeptRepository;
 import com.ht.ussp.uc.app.repository.DdDeptUserRepository;
+import com.ht.ussp.uc.app.repository.DdUserOperatorRepository;
 import com.ht.ussp.util.HttpClientUtil;
 
 @Service
@@ -35,6 +36,10 @@ public class DingDingService {
 	
 	@Autowired
     private DdDeptOperatorRepository ddDeptOperatorRepository;
+	
+	@Autowired
+    private DdUserOperatorRepository ddUserOperatorRepository;
+	
 	
 
 	/**
@@ -141,9 +146,19 @@ public class DingDingService {
 		return ddDeptOperatorRepository.save(ddDeptOperatorList);
 	}
 	
+	public List<DdUserOperator> saveUserOperator(List<DdUserOperator> ddUserOperatorList) {
+		ddUserOperatorRepository.deleteAll();
+		return ddUserOperatorRepository.save(ddUserOperatorList);
+	}
+	
 	public List<DdDeptOperator>  updateDeptOperator(List<DdDeptOperator> ddDeptOperatorList) {
 		return ddDeptOperatorRepository.save(ddDeptOperatorList);
 	}
+	
+	public List<DdUserOperator>  updateUserOperator(List<DdUserOperator> ddUserOperatorList) {
+		return ddUserOperatorRepository.save(ddUserOperatorList);
+	}
+	
 	
 	public DdDeptOperator saveDeptOperator(DdDeptOperator ddDeptOperator) {
 		return ddDeptOperatorRepository.saveAndFlush(ddDeptOperator);
@@ -153,6 +168,12 @@ public class DingDingService {
         ExampleMatcher matcher = ExampleMatcher.matching();
         Example<DdDeptOperator> ex = Example.of(u, matcher);
 		return ddDeptOperatorRepository.findAll(ex, new Sort(new Order("level")));
+	}
+	
+	public List<DdUserOperator> getDdUserOperator(DdUserOperator u) {
+        ExampleMatcher matcher = ExampleMatcher.matching();
+        Example<DdUserOperator> ex = Example.of(u, matcher);
+		return ddUserOperatorRepository.findAll(ex);
 	}
 	
     public static void main(String[] args) {

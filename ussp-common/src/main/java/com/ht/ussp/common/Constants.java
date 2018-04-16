@@ -41,8 +41,9 @@ public class Constants {
 	public static final String USER_STATUS_4 ="4";// 系统 用户 0 正常  1禁用 2离职  4冻结 5锁定
 	public static final String USER_STATUS_5 ="5";// 系统 用户 0 正常  1禁用 2离职  4冻结 5锁定
 	
-	public static final int USER_DATASOURCE_1 =1;// 数据来源(1：用户权限系统；2：钉钉同步;3:信贷系统)
-	public static final int USER_DATASOURCE_2 =2;// 数据来源(1：用户权限系统；2：钉钉同步;3:信贷系统)
-	public static final int USER_DATASOURCE_3 =3;// 数据来源(1：用户权限系统；2：钉钉同步;3:信贷系统)
+	// 数据来源(1：用户权限系统；2：钉钉同步;3:信贷系统)
+	public static final int USER_DATASOURCE_1 =1;// 1：用户权限系统 
+	public static final int USER_DATASOURCE_2 =2;// 2：钉钉同步 
+	public static final int USER_DATASOURCE_3 =3;// 3:信贷系统
 	
 }
