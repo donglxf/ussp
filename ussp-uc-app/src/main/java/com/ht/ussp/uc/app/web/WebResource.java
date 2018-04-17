@@ -154,8 +154,10 @@ public class WebResource{
         
         String newPassWordEncrypt = EncryptUtil.passwordEncrypt(changePwd.getNewPwd());
         u.setPassword(newPassWordEncrypt);
+        if("1".equals(u.getStatus())) {
+    		u.setStatus("0");
+    	}
         htBoaInLoginService.update(u);
-        
         htBoaInPwdHistService.add(htBoaInPwdHist);
         el = System.currentTimeMillis();
         log.debug(logEnd, "resetPwd: " + changePwd, msg, el, el - sl);
