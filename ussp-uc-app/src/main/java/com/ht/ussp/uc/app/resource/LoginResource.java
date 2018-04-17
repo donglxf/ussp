@@ -22,14 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.druid.util.StringUtils;
 import com.ht.ussp.common.Constants;
-import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInOperatorLog;
 import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
-import com.ht.ussp.uc.app.feignclients.UaaClient;
-import com.ht.ussp.uc.app.model.ChangePwd;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResetPwd;
 import com.ht.ussp.uc.app.model.ResponseModal;
@@ -37,9 +34,6 @@ import com.ht.ussp.uc.app.service.HtBoaInLoginService;
 import com.ht.ussp.uc.app.service.HtBoaInOperatorLogService;
 import com.ht.ussp.uc.app.service.HtBoaInPwdHistService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
-import com.ht.ussp.uc.app.vo.ValidateJwtVo;
-import com.ht.ussp.util.EncryptUtil;
-import com.ht.ussp.util.FastJsonUtil;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -65,10 +59,6 @@ public class LoginResource {
     private HtBoaInPwdHistService htBoaInPwdHistService;
     @Autowired
     private HtBoaInOperatorLogService htBoaInOperatorLogService;
-    @Autowired
-    private UaaClient uaaClient;
-    
-    
 
     @SuppressWarnings("unchecked")
     @ApiOperation(value = "对内：忘记密码/重置密码", notes = "用户通过用户的手机号、邮箱和历史密码信息进行密码重置")

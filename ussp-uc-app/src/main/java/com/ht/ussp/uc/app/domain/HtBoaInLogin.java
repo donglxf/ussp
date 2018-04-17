@@ -73,6 +73,7 @@ public class HtBoaInLogin implements Serializable {
     @Column(name = "ROOT_ORG_CODE")
     private String rootOrgCode;
 
+    //状态: 0 正常 1初始密码 
     @Column(name = "STATUS")
     private String status;
 

@@ -218,10 +218,6 @@ public class UserResource{
         	            log.debug("该用户已被禁用！");
         	            rm.setSysStatus(SysStatus.USER_NOT_FOUND);
         	            return rm;
-        	        }else if(htBoaInLogin.getStatus() == Constants.USER_STATUS_2) {
-        	        	 log.debug("该用户已离职！");
-         	            rm.setSysStatus(SysStatus.USER_NOT_FOUND);
-         	            return rm;
         	        }else if(htBoaInLogin.getStatus() == Constants.USER_STATUS_4) {
         	        	 log.debug("该用户已被冻结！");
          	            rm.setSysStatus(SysStatus.USER_NOT_FOUND);
@@ -235,6 +231,12 @@ public class UserResource{
         		htBoaInUser = htBoaInUserService.findByUserId(htBoaInLogin.getUserId());
         	}
         }
+        
+       if(htBoaInUser.getStatus() == Constants.USER_STATUS_2) {
+       	    log.debug("该用户已离职！");
+            rm.setSysStatus(SysStatus.USER_NOT_FOUND);
+            return rm;
+       }
           
         if (LogicUtil.isNull(htBoaInUser) || LogicUtil.isNullOrEmpty(htBoaInUser.getUserId())) {
             rm.setSysStatus((SysStatus.INVALID_USER));
@@ -258,16 +260,22 @@ public class UserResource{
         }
         // 获取用户登录信息
         HtBoaInLogin htBoaInLogin = htBoaInLoginService.findByUserId(htBoaInUser.getUserId());
-        if (LogicUtil.isNotNull((htBoaInLogin))) {
-            BeanUtils.deepCopy(htBoaInLogin, userVo);
-        }
+		if (LogicUtil.isNotNull((htBoaInLogin))) {
+			BeanUtils.deepCopy(htBoaInLogin, userVo);
+			if ("1".equals(htBoaInLogin.getStatus())) { //初始化密码
+				rm.setSysStatus(SysStatus.PWD_FIRST_MODIFY);
+			} else {
+				rm.setSysStatus(SysStatus.SUCCESS);
+			}
+		}
         //是否首次登录，首次登录需要强制修改密码 (未修改过密码需要首次修改密码才可以使用)
-        List<HtBoaInPwdHist>   listHtBoaInPwdHist=htBoaInPwdHistService.findByUserId(htBoaInUser.getUserId());
+        /*List<HtBoaInPwdHist>   listHtBoaInPwdHist=htBoaInPwdHistService.findByUserId(htBoaInUser.getUserId());
         if(listHtBoaInPwdHist==null||listHtBoaInPwdHist.isEmpty()) {
         	 rm.setSysStatus(SysStatus.PWD_FIRST_MODIFY);
         }else {
         	 rm.setSysStatus(SysStatus.SUCCESS);
-        }
+        }*/
+        
         userVo.setApp(app);
         rm.setResult(userVo);
         return rm;
@@ -318,6 +326,7 @@ public class UserResource{
             user.setCreateOperator(loginUserId);
             user.setUpdateOperator(loginUserId);
             user.setDelFlag(0);
+            user.setStatus("0");
             user.setCreatedDatetime(new Date());
             user.setLastModifiedDatetime(new Date());
             

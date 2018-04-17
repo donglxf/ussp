@@ -68,7 +68,7 @@ public interface HtBoaInUserRepository extends JpaSpecificationExecutor<HtBoaInU
             "hbiUser.createdDatetime," +
             "hbiUser.updateOperator," +
             "hbiUser.lastModifiedDatetime," +
-            "login.status," +
+            "hbiUser.status," +
             "login.failedCount," +
             "login.pwdExpDate," +
             "login.effectiveDate," +
@@ -106,7 +106,7 @@ public interface HtBoaInUserRepository extends JpaSpecificationExecutor<HtBoaInU
             "hbiUser.createdDatetime," +
             "hbiUser.updateOperator," +
             "hbiUser.lastModifiedDatetime," +
-            "login.status," +
+            "hbiUser.status," +
             "login.failedCount," +
             "login.pwdExpDate," +
             "login.effectiveDate," +
@@ -152,7 +152,7 @@ public interface HtBoaInUserRepository extends JpaSpecificationExecutor<HtBoaInU
             "hbiUser.createdDatetime," +
             "hbiUser.updateOperator," +
             "hbiUser.lastModifiedDatetime," +
-            "login.status," +
+            "hbiUser.status," +
             "login.failedCount," +
             "login.pwdExpDate," +
             "login.effectiveDate,"

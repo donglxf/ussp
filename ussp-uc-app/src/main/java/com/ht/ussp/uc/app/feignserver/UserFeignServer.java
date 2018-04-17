@@ -123,7 +123,7 @@ public class UserFeignServer{
         	 }
         	HtBoaInUser htBoaInUser =  htBoaInUserService.findByUserId(htBoaInContrast.getUcBusinessId());
         	if(htBoaInUser!=null) {
-        		//htBoaInUser.setStatus(status);
+        		htBoaInUser.setStatus(status);
         		htBoaInUserService.update(htBoaInUser);
         	}
 		} catch (Exception e) {
@@ -206,6 +206,7 @@ public class UserFeignServer{
             user.setUserType("10");
             user.setCreateOperator(loginUserId);
             user.setUpdateOperator(loginUserId);
+            user.setStatus("0");
             user.setDelFlag(0);
             
             HtBoaInLogin loginInfo = new HtBoaInLogin();
