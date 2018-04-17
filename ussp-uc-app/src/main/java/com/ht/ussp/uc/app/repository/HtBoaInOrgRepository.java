@@ -43,7 +43,7 @@ public interface HtBoaInOrgRepository
     @Query(value="select * from HT_BOA_IN_ORG where LAST_MODIFIED_DATETIME BETWEEN ?1 AND ?2",nativeQuery=true)
 	public List<HtBoaInOrg> getByLastModifiedDatetime(String startTime, String endTime);
 
-    @Query(value = "SELECT MAX(org_code) from ht_boa_in_org where parent_org_code=?1", nativeQuery = true)
+    @Query(value = "SELECT MAX(org_code) from HT_BOA_IN_ORG where parent_org_code=?1", nativeQuery = true)
 	public String getMaxOrgCode(String parentOrgCode);
     
     
