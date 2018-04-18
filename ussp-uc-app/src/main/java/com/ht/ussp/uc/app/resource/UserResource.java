@@ -28,7 +28,6 @@ import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInContrast;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
-import com.ht.ussp.uc.app.domain.HtBoaInOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.domain.HtBoaInUserRole;
@@ -231,7 +230,10 @@ public class UserResource{
         		htBoaInUser = htBoaInUserService.findByUserId(htBoaInLogin.getUserId());
         	}
         }
-        
+        if(htBoaInUser==null) {
+            rm.setSysStatus(SysStatus.NO_RESULT);
+            return rm;
+		}
        if(htBoaInUser.getStatus() == Constants.USER_STATUS_2) {
        	    log.debug("该用户已离职！");
             rm.setSysStatus(SysStatus.USER_NOT_FOUND);

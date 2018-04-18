@@ -79,13 +79,13 @@
             <div class="layui-form-item" >
                 <label class="layui-form-label">工号<b>*</b></label>
                 <div class="layui-input-block ">
-                    <input type="text" name="jobNumber" lay-verify="required|checkExistJobNum"   autocomplete="off" lay-verType="tips" class="layui-input" >
+                    <input type="text" name="jobNumber" lay-verify="required" readonly  autocomplete="off" lay-verType="tips" class="layui-input" >
                 </div>
             </div>
             <div class="layui-form-item">
 					<label class="layui-form-label">登录ID<b>*</b></label>
 					<div class="layui-input-block">
-						<input type="text" name="loginId" lay-verify="required|checkExistLoginId" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+						<input type="text" name="loginId" lay-verify="required" readonly autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
 					</div>
 			</div>
             <div class="layui-form-item">
@@ -104,12 +104,6 @@
                 <label class="layui-form-label">邮箱<b>*</b></label>
                 <div class="layui-input-block">
                     <input type="text" name="email" lay-verify="required|email" autocomplete="off" lay-verType="tips" class=" layui-input" >
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">身份证</label>
-                <div class="layui-input-block">
-                    <input type="text" name="idNo" lay-verify="identity" autocomplete="off" lay-verType="tips"  class=" layui-input" >
                 </div>
             </div>
             <div class="layui-form-item">

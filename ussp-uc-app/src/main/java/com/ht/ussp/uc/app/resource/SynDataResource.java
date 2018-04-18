@@ -79,7 +79,7 @@ public class SynDataResource {
 	@RequestMapping(value = {"/downDingDingData" }, method = RequestMethod.POST)
     public Result getDownDD() {
     	dingDingService.getDD();
-    	Log.debug("下载完成！");
+    	log.debug("下载完成！");
         return Result.buildSuccess();
     }
     
@@ -293,7 +293,7 @@ public class SynDataResource {
     		ddUserOperatorList.add(ddUserOperator);
     	}
     	dingDingService.saveUserOperator(ddUserOperatorList);
-    	Log.debug("数据整理完成！");
+    	log.debug("数据整理完成！");
         return Result.buildSuccess();
 	}
     
@@ -458,7 +458,7 @@ public class SynDataResource {
     			dingDingService.updateDeptOperator(synDeptList);
     		}
     	}
-    	Log.debug("机构同步转换完成！");
+    	log.debug("机构同步转换完成！");
         return Result.buildSuccess();
     }
     
@@ -599,7 +599,7 @@ public class SynDataResource {
             listHtBoaInUser.add(u);
             
             HtBoaInLogin l = new HtBoaInLogin();
-            l.setLoginId(u.getUserId());
+            l.setLoginId(ddAddUser.getUserId());
             l.setUserId(userId);
             l.setRootOrgCode(u.getRootOrgCode());
             l.setCreateOperator("自动同步");
@@ -702,7 +702,7 @@ public class SynDataResource {
 		if(synDeptList!=null&&!synDeptList.isEmpty()) {
 			dingDingService.updateUserOperator(synDeptList);
 		}
-		Log.debug("机构同步转换完成！");
+		log.debug("用户同步转换完成！");
     	return Result.buildSuccess();
     }
     

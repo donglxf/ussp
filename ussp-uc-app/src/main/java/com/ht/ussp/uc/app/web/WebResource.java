@@ -103,15 +103,25 @@ public class WebResource{
         	 return Result.buildFail();
          }
          HtBoaInUser u = htBoaInUserService.findByUserId(selfBoaInUserInfo.getUserId());
+         if(u==null) {
+        	 return Result.buildFail();
+         }
          if (selfBoaInUserInfo.getOrgCode() != null && "" != selfBoaInUserInfo.getOrgCode()) {
              u.setOrgCode(selfBoaInUserInfo.getOrgCode());
          }
          if (selfBoaInUserInfo.getRootOrgCode() != null && "" != selfBoaInUserInfo.getRootOrgCode()) {
              u.setRootOrgCode(selfBoaInUserInfo.getRootOrgCode());
          }
-         if (selfBoaInUserInfo.getIdNo() != null && "" != selfBoaInUserInfo.getIdNo()) {
-             u.setIdNo(selfBoaInUserInfo.getIdNo());
+         if(!StringUtils.isEmpty(selfBoaInUserInfo.getEmail())) {
+        	 if(!checkUserExist(null, null, selfBoaInUserInfo.getEmail(), null, u.getUserId())) {
+        		 return Result.buildFail("email已经存在","email已经存在");
+        	 }
          }
+		 if(!StringUtils.isEmpty(selfBoaInUserInfo.getMobile())) {
+			 if(!checkUserExist(null, selfBoaInUserInfo.getMobile(), null, null, u.getUserId())) {
+        		 return Result.buildFail("手机号已经存在","手机号已经存在");
+        	 } 
+		 }
          u.setEmail(selfBoaInUserInfo.getEmail());
          u.setMobile(selfBoaInUserInfo.getMobile());
          u.setUserName(selfBoaInUserInfo.getUserName());
@@ -122,6 +132,38 @@ public class WebResource{
          return Result.buildSuccess(u1);
     }
     
+    public boolean checkUserExist(String jobnum,String mobile,String email,String loginid,String userId) {
+    	HtBoaInUser htBoaInUser = null;
+    	if(jobnum!=null) {
+    		htBoaInUser = htBoaInUserService.findByJobNumber(jobnum);
+    	}else if(mobile!=null) {
+    		htBoaInUser = htBoaInUserService.findByMobile(mobile);
+    	}else if(email!=null) {
+    		htBoaInUser = htBoaInUserService.findByEmail(email);
+    	}else if(loginid!=null) {
+    		HtBoaInLogin htBoaInLogin = htBoaInLoginService.findByLoginId(loginid);
+    		if(htBoaInLogin==null) {
+    	       return true;
+            }else {
+            	userId = userId==null?"":userId;
+            	if(userId.equals(htBoaInLogin.getUserId())) {
+            		return true;
+            	}else {
+            		return false;
+            	}
+            }
+    	}
+		if(htBoaInUser==null) {
+			return true;
+        }else {
+        	userId = userId==null?"":userId;
+        	if(userId.equals(htBoaInUser.getUserId())) {
+        		return true;
+        	}else {
+        		return false;
+        	}
+        }
+    }
     
     @ApiOperation(value = "修改密码")
     @RequestMapping(value = {"/changePwd"}, method = RequestMethod.POST)

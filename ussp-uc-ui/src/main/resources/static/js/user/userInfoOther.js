@@ -3,7 +3,7 @@
 layui.config({
     base: '/plugins/layui/extend/modules/',
     version: false
-}).use(['app', 'message', 'ht_ajax', 'ht_cookie', 'ht_auth'],function () {
+}).use(['app', 'message', 'ht_cookie'], function () {
 	var token = getvl("token");
     var $ = layui.jquery
         , form = layui.form
@@ -135,12 +135,17 @@ layui.config({
             contentType: "application/json; charset=utf-8",
 			async : false,
 			success : function(result) {
-				layer.confirm('保存成功', {
-             		btn: ['确认'] 
-             		}, function(index, layero){
-             			var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-       				    parent.layer.close(index); //再执行关闭 
-             		});
+				if (result["returnCode"] == "0000") {
+					layer.alert("保存成功");
+					/*layer.confirm('保存成功', {
+	             		btn: ['确认'] 
+	             		}, function(index, layero){
+	             			var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+	       				    parent.layer.close(index); //再执行关闭 
+	             		});*/
+			    } else{
+			    	layer.alert(result["msg"]);
+			    }
 				 
 			}
 		});
