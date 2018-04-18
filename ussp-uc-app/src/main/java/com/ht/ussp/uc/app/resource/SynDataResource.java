@@ -490,6 +490,9 @@ public class SynDataResource {
     	List<String> userIdList = new ArrayList<>();
     	List<String> mobileList = new ArrayList<>();//相同的人
     	for (DdUserOperator ddAddUser : addDeptList) {
+    		if(StringUtils.isEmpty(ddAddUser.getEmail())) {
+    			ddAddUser.setEmail(null);
+			}
     		//查看是否存在用户，如果存在用户则不用新增用户
     		HtBoaInUser htBoaInUser = null; 
 	       	 if(htBoaInUser==null) {
