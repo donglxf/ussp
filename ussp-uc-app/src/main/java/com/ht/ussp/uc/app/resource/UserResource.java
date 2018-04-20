@@ -338,7 +338,7 @@ public class UserResource{
             loginInfo.setLoginId(userMessageVo.getLoginId()); //作为用户的登录账号，修改为不是自动生成
             loginInfo.setCreateOperator(loginUserId);
             loginInfo.setUpdateOperator(loginUserId);
-            loginInfo.setStatus(Constants.USER_STATUS_0);
+            loginInfo.setStatus(Constants.USER_STATUS_1);
             loginInfo.setPassword(EncryptUtil.passwordEncrypt("123456"));
             loginInfo.setFailedCount(0);
             loginInfo.setRootOrgCode(userMessageVo.getOrgCode());
