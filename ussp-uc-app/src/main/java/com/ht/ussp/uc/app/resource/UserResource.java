@@ -26,6 +26,7 @@ import com.ht.ussp.common.Constants;
 import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
+import com.ht.ussp.uc.app.domain.HtBoaInBmUser;
 import com.ht.ussp.uc.app.domain.HtBoaInContrast;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
@@ -36,6 +37,7 @@ import com.ht.ussp.uc.app.feignclients.UaaClient;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
+import com.ht.ussp.uc.app.service.HtBoaInBmUserService;
 import com.ht.ussp.uc.app.service.HtBoaInContrastService;
 import com.ht.ussp.uc.app.service.HtBoaInLoginService;
 import com.ht.ussp.uc.app.service.HtBoaInOrgService;
@@ -89,7 +91,8 @@ public class UserResource{
    	private HtBoaInContrastService htBoaInContrastService;
     @Autowired
     private HtBoaInOrgService htBoaInOrgService;
-    
+    @Autowired
+    private HtBoaInBmUserService htBoaInBmUserService;
     
     @ApiOperation(value = "对内：用户个人信息查询", notes = "已登录用户查看自己的个人信息")
     @ApiImplicitParam(name = "userId", value = "用户ID", required = true, paramType = "path", dataType = "int")
@@ -437,6 +440,7 @@ public class UserResource{
     @ApiOperation(value = "对内，获取用户信息")
     @GetMapping(value = "/getUserInfoByUserId")
     public LoginInfoVo getUserInfoByUserId(@RequestParam("userId")String userId, @RequestParam("bmUserId")String bmUserId, @RequestParam("app") String app) {
+    	LoginInfoVo loginInfoVo = null;
     	if(StringUtils.isEmpty(userId)) {
     		List<HtBoaInContrast> listHtBoaInContrast= htBoaInContrastService.getHtBoaInContrastListByBmUserId(bmUserId,"20");
     		if(listHtBoaInContrast==null||listHtBoaInContrast.isEmpty()) {
@@ -444,8 +448,23 @@ public class UserResource{
     		}else {
     			userId=listHtBoaInContrast.get(0).getUcBusinessId();
     		}
+    		loginInfoVo = htBoaInUserService.queryUserInfo(userId,app);
+    		if(!StringUtils.isEmpty(bmUserId)) {
+    			if(loginInfoVo==null) {
+    				List<HtBoaInBmUser> listHtBoaInBmUser = htBoaInBmUserService.getHtBoaInBmUserByUserId(bmUserId);
+    				if(listHtBoaInBmUser!=null && !listHtBoaInBmUser.isEmpty()) {
+    					loginInfoVo = new LoginInfoVo();
+    					loginInfoVo.setBmOrgCode(listHtBoaInBmUser.get(0).getOrgCode());
+    					loginInfoVo.setBmUserId(bmUserId);
+    					loginInfoVo.setEmail(listHtBoaInBmUser.get(0).getEmail());
+    					loginInfoVo.setJobNumber(listHtBoaInBmUser.get(0).getJobNumber());
+    					loginInfoVo.setUserName(listHtBoaInBmUser.get(0).getUserName());
+    					loginInfoVo.setMobile(listHtBoaInBmUser.get(0).getMobile());
+    				}
+    	    	}
+    		}
     	}
-        return htBoaInUserService.queryUserInfo(userId,app);
+        return loginInfoVo;
     }
     
     @ApiOperation(value = "重置密码并发邮件")

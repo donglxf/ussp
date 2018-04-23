@@ -110,4 +110,7 @@ public class HtBoaInBmUserService {
         return result;
     }
 
+    public List<HtBoaInBmUser> getHtBoaInBmUserByUserId(String userId) {
+        return htBoaInBmUserRepository.findByUserId(userId);
+    }
 }
