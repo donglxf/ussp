@@ -46,6 +46,15 @@ public class HtBoaInBmUserService {
         return htBoaInBmUserRepository.findAll();
     }
     
+    /**
+     * status 1正常 0离职
+     * @param status
+     * @return
+     */
+    public List<HtBoaInBmUser> getHtBoaInBmUserListByStatus(String status) {
+        return htBoaInBmUserRepository.findByStatus(status);
+    }
+    
     
     public PageResult<HtBoaInBmUser> findAllByPage(PageConf pageConf) {
     	PageResult result = new PageResult();

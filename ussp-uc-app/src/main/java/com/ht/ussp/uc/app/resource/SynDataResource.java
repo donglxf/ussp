@@ -17,12 +17,17 @@ import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInBmOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInBmUser;
 import com.ht.ussp.uc.app.domain.HtBoaInContrast;
+import com.ht.ussp.uc.app.domain.HtBoaInLogin;
+import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.service.DingDingService;
 import com.ht.ussp.uc.app.service.HtBoaInBmOrgService;
 import com.ht.ussp.uc.app.service.HtBoaInBmUserService;
 import com.ht.ussp.uc.app.service.HtBoaInContrastService;
+import com.ht.ussp.uc.app.service.HtBoaInLoginService;
+import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.service.SynDataService;
+import com.ht.ussp.uc.app.vo.BmUserVo;
 import com.ht.ussp.uc.app.vo.PageVo;
 import com.ht.ussp.uc.app.vo.UserContrastVo;
 
@@ -45,6 +50,10 @@ public class SynDataResource {
     private HtBoaInBmOrgService htBoaInBmOrgService;
     @Autowired
     private DingDingService dingDingService;
+    @Autowired
+    private HtBoaInUserService htBoaInUserService;
+    @Autowired
+    private HtBoaInLoginService htBoaInLoginService;
     
     
     /**
@@ -113,6 +122,30 @@ public class SynDataResource {
     	return Result.buildSuccess();
     }
     
+    
+	@ApiOperation("信贷用户转换为UC用户")
+	@RequestMapping(value = {"/convertBmUser" }, method = RequestMethod.POST)
+	public Result convertBmUser() { 
+		//1.获取所有信贷用户  2.通过手机号,email验证关联 信贷用户与UC用户  4.如果信贷用户在UC不存在，则在UC创建一个,挂靠到未知机构
+		List<HtBoaInBmUser> listHtBoaInBmUser=htBoaInBmUserService.getHtBoaInBmUserListByStatus("1");
+		List<HtBoaInUser> listHtBoaInUser=htBoaInUserService.findAll();
+		List<HtBoaInLogin> listHtBoaInLogin =htBoaInLoginService.findAll();
+		List<HtBoaInContrast> listHtBoaInContrast =htBoaInContrastService.getHtBoaInContrastListByType("20");
+		for(HtBoaInBmUser htBoaInBmUser : listHtBoaInBmUser) {
+			BmUserVo bmUserVo = new BmUserVo();
+			bmUserVo.setBmOrgCode(htBoaInBmUser.getOrgCode());
+			bmUserVo.setBmOrgName("");
+			bmUserVo.setEmail(htBoaInBmUser.getEmail());
+			bmUserVo.setJobNumber(htBoaInBmUser.getJobNumber());
+			bmUserVo.setStatus("0");
+			bmUserVo.setUserName(htBoaInBmUser.getUserName());
+			bmUserVo.setBmUserId(htBoaInBmUser.getUserId());
+			bmUserVo.setMobile(htBoaInBmUser.getMobile());
+			htBoaInUserService.saveBmUserInfo(bmUserVo, listHtBoaInUser, listHtBoaInLogin, listHtBoaInBmUser, listHtBoaInContrast);
+		}
+    	log.debug("信贷用户转换为UC用户完成！");
+        return Result.buildSuccess();
+	}
     
     
     @SuppressWarnings({ "rawtypes", "unchecked" })

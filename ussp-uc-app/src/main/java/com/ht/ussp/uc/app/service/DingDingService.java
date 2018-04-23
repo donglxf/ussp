@@ -278,7 +278,7 @@ public class DingDingService {
         	}
         	for(HtBoaInContrast delHtBoaInContrast : ddDelOrgList) {
         		HtBoaInOrg delOrg =  htBoaInOrgList.stream().filter(org -> delHtBoaInContrast.getUcBusinessId().equals(org.getOrgCode())).findFirst().get();
-        		if(delOrg.getDelFlag()==0) { //已经删除的不在处理
+        		if(delOrg.getDelFlag()==0 && "2".equals(delOrg.getDataSource()+"")) { //已经删除的不在处理
         			DdDeptOperator addDDDeptOperator = new DdDeptOperator();
             		addDDDeptOperator.setDeptId(delHtBoaInContrast.getUcBusinessId()); //保存uc待删除的org_code
             		addDDDeptOperator.setCreatDatetime(new Date());
@@ -343,7 +343,7 @@ public class DingDingService {
     	
     	for(HtBoaInContrast delHtBoaInContrast : ddDelUserList) {
     		HtBoaInUser delUser =  htBoaInUserList.stream().filter(user -> delHtBoaInContrast.getUcBusinessId().equals(user.getUserId())).findFirst().get();
-    		if((delUser.getDelFlag()==0|| "2".equals(delUser.getStatus()))&& "2".equals(delUser.getDataSource()+"")) { //已经删除(离职)的不在处理
+    		if(delUser.getDelFlag()==0 && "0".equals(delUser.getStatus())&& "2".equals(delUser.getDataSource()+"")) { //已经删除(离职)的不在处理
     			DdUserOperator ddUserOperator = new DdUserOperator();
         		ddUserOperator.setUserId(delHtBoaInContrast.getUcBusinessId());
         		ddUserOperator.setCreatDatetime(new Date());
@@ -435,7 +435,7 @@ public class DingDingService {
 		        newOrg.setRootOrgCode("D01");
                 newOrg.setOrgPath(parentOrg.getOrgPath()+"/"+newOrgCode);
                 newOrg.setOrgNameCn(ddDeptOperator.getDeptName());
-                newOrg.setDataSource(3);
+                newOrg.setDataSource(Constants.USER_DATASOURCE_2);
                 newOrg.setSequence(0);
                 if(newOrgCode.length()>2&&!"D01".equals(newOrgCode)) {
                 	newOrg.setSequence(Integer.parseInt(newOrgCode.substring(newOrgCode.length()-2, newOrgCode.length())));
@@ -735,7 +735,6 @@ public class DingDingService {
     	for (DdUserOperator ddUpdateUser : updateUserList) {
     		HtBoaInUser u = null; 
     		try {
-    			System.out.println("===> "+ddUpdateUser.getUserId());
     			HtBoaInContrast htBoaInContrastUser = htBoaInContrastListUser.stream().filter(user -> ddUpdateUser.getUserId().equals(user.getDdBusinessId())).findFirst().get();
     			Optional<HtBoaInUser> htBoaInUserOptional = htBoaInUserList.stream().filter(ucUser ->ucUser.getUserId().equals(htBoaInContrastUser.getUcBusinessId())).findFirst();
     			if (htBoaInUserOptional != null && htBoaInUserOptional.isPresent()) {
@@ -744,7 +743,6 @@ public class DingDingService {
     				} catch (Exception e) {
     					e.printStackTrace();
     				}
-
     			}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -947,5 +945,4 @@ public class DingDingService {
 			e.printStackTrace();
 		}
 	}
-
 }

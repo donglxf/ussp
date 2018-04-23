@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
@@ -237,22 +238,56 @@ public class HtBoaInUserService {
      *
      */
     @Transactional
-    public HtBoaInContrast saveBmUserInfo(BmUserVo bmuservo) {
+    public HtBoaInContrast saveBmUserInfo(BmUserVo bmuservo,List<HtBoaInUser> listHtBoaInUser,List<HtBoaInLogin> listHtBoaInLogin,List<HtBoaInBmUser> listHtBoaInBmUser, List<HtBoaInContrast> listHtBoaInContrast) {
     	 HtBoaInUser htBoaInUser = null;
     	 HtBoaInContrast htBoaInContrast = null;
-    	 List<HtBoaInContrast> listHtBoaInContrast = htBoaInContrastRepository.findByBmBusinessIdAndType(bmuservo.getBmUserId(), "20");
+    	 if(null==listHtBoaInContrast) {
+    		 listHtBoaInContrast = htBoaInContrastRepository.findByBmBusinessIdAndType(bmuservo.getBmUserId(), "20");
+    	 }
     	//查看是否存在用户，如果存在用户则不用新增用户
     	 if(listHtBoaInContrast!=null&&!listHtBoaInContrast.isEmpty()) {
     		 htBoaInContrast = listHtBoaInContrast.get(0);
-    		 if(htBoaInContrast!=null) {
-    			 htBoaInUser = htBoaInUserRepository.findByUserId(htBoaInContrast.getUcBusinessId());
+    		 HtBoaInContrast htBoaInContrast2 = htBoaInContrast;
+    		 if(htBoaInContrast2!=null) {
+    			 if(StringUtils.isNotEmpty(htBoaInContrast2.getUcBusinessId())) {
+    				 Optional<HtBoaInUser>  htBoaInUserOptional =listHtBoaInUser.stream().filter(user ->htBoaInContrast2.getUcBusinessId().equals(user.getUserId())).findFirst();
+        			 if(htBoaInUserOptional!=null) {
+        				 htBoaInUser = htBoaInUserOptional.get();
+        			 }
+    			 }
     		 }
+    	 }else {
+    		 htBoaInUser = htBoaInUserRepository.findByUserId(htBoaInContrast.getUcBusinessId());
+		 }
+    	 if(htBoaInUser==null) {
+	    	if(StringUtils.isNotEmpty(bmuservo.getEmail())) {
+	    			 if(listHtBoaInUser!=null&&!listHtBoaInUser.isEmpty()) {
+		    			 Optional<HtBoaInUser>  htBoaInUserOptional =listHtBoaInUser.stream().filter(user ->bmuservo.getEmail().equals(user.getEmail())).findFirst();
+		    			 if(htBoaInUserOptional!=null) {
+		    				 htBoaInUser = htBoaInUserOptional.get();
+	    			 }else {
+	    				 List<HtBoaInUser> listHtBoaInUsertemp = htBoaInUserRepository.findByEmail(bmuservo.getEmail());
+	    				 if(listHtBoaInUsertemp!=null&&!listHtBoaInUsertemp.isEmpty()) {
+	    					 htBoaInUser = listHtBoaInUsertemp.get(0);
+	    				 }
+	    			 }
+	    		 }
+    		 } 
     	 }
     	 if(htBoaInUser==null) {
-    		 htBoaInUser = htBoaInUserRepository.findByEmail(bmuservo.getEmail());
-    	 }
-    	 if(htBoaInUser==null) {
-    		 htBoaInUser = htBoaInUserRepository.findByMobile(bmuservo.getMobile());
+			if (StringUtils.isNotEmpty(bmuservo.getMobile())) {
+				if (listHtBoaInUser != null && !listHtBoaInUser.isEmpty()) {
+					Optional<HtBoaInUser>  htBoaInUserOptional =listHtBoaInUser.stream().filter(user ->bmuservo.getMobile().equals(user.getMobile())).findFirst();
+	    			 if(htBoaInUserOptional!=null) {
+	    				 htBoaInUser = htBoaInUserOptional.get();
+	    			 }
+				}else {
+					List<HtBoaInUser> listHtBoaInUsertemp = htBoaInUserRepository.findByMobile(bmuservo.getMobile());
+					if (listHtBoaInUsertemp != null && !listHtBoaInUsertemp.isEmpty()) {
+						htBoaInUser = listHtBoaInUsertemp.get(0);
+					}
+				}
+			}
     	 }
     	 if(htBoaInUser==null) {
     		    String userId = "";
@@ -272,16 +307,6 @@ public class HtBoaInUserService {
 				user.setCreatedDatetime(new Date());
 				user.setLastModifiedDatetime(new Date());
 
-				HtBoaInLogin loginInfo = new HtBoaInLogin();
-				loginInfo.setLoginId(bmuservo.getBmUserId()); // 作为用户的登录账号，修改为不是自动生成
-				loginInfo.setStatus(Constants.USER_STATUS_0);
-				loginInfo.setPassword(EncryptUtil.passwordEncrypt("123456"));
-				loginInfo.setFailedCount(0);
-				loginInfo.setRootOrgCode(bmuservo.getOrgCode());
-				loginInfo.setDelFlag(0);
-				loginInfo.setCreatedDatetime(new Date());
-				loginInfo.setLastModifiedDatetime(new Date());
-
     	    	if (user.getJobNumber() != null && user.getJobNumber().contains("HX-")) {
     	            userId = String.format("%s%s%s%s%s", "01", 1, "1", "1", user.getJobNumber().replace("HX-", ""));
     	        } else {
@@ -294,13 +319,43 @@ public class HtBoaInUserService {
     	    		userId = String.format("%s%s%s%s%s", "01", isOrgUser, "1", "1", generateNumber(6));
     	    	}
     	    	user.setUserId(userId);
-    	    	htBoaInUser =  htBoaInUserRepository.saveAndFlush(user);
-    	    	loginInfo.setUserId(userId);
-    	        htBoaInLoginRepository.save(loginInfo);
+    	    	htBoaInUser =  htBoaInUserRepository.save(user);
+    	    	
+    	    	
+    	    	HtBoaInLogin loginInfo = null;
+				if(listHtBoaInLogin==null) {
+					loginInfo = htBoaInLoginRepository.findByLoginId(bmuservo.getBmUserId());
+				}else {
+					Optional<HtBoaInLogin>  htBoaInLoginOptional =listHtBoaInLogin.stream().filter(login ->bmuservo.getBmUserId().equals(login.getUserId())).findFirst();
+	    			 if(htBoaInLoginOptional!=null) {
+	    				 loginInfo = htBoaInLoginOptional.get();
+	    			 }
+				}
+    	    	if(loginInfo==null) {
+					loginInfo = new HtBoaInLogin();
+					loginInfo.setStatus(Constants.USER_STATUS_0);
+					loginInfo.setPassword(EncryptUtil.passwordEncrypt("123456"));
+					loginInfo.setFailedCount(0);
+					loginInfo.setRootOrgCode(bmuservo.getOrgCode());
+					loginInfo.setDelFlag(0);
+					loginInfo.setCreatedDatetime(new Date());
+					loginInfo.setLastModifiedDatetime(new Date());
+					loginInfo.setUserId(userId);
+	    	        htBoaInLoginRepository.save(loginInfo);
+				} 
     	 }
-    	
+    	 HtBoaInBmUser htBoaInBmUser = null;
         //添加bmUser
-        HtBoaInBmUser htBoaInBmUser = htBoaInBmUserRepository.findByUserId(bmuservo.getBmUserId());
+    	 if(listHtBoaInBmUser==null) {
+    		 htBoaInBmUser = htBoaInBmUserRepository.findByUserId(bmuservo.getBmUserId());
+    	 }else {
+    		 if(StringUtils.isNotEmpty(bmuservo.getBmUserId())) {
+    			 Optional<HtBoaInBmUser>  htBoaInBmUserOptional =listHtBoaInBmUser.stream().filter(bumuser ->bmuservo.getBmUserId().equals(bumuser.getUserId())).findFirst();
+    			 if(htBoaInBmUserOptional!=null) {
+    				 htBoaInBmUser = htBoaInBmUserOptional.get();
+    			 }
+    		 }
+    	 }
         if(htBoaInBmUser==null) { //不存在，则添加
         	htBoaInBmUser = new HtBoaInBmUser();
         	htBoaInBmUser.setUserId(bmuservo.getBmUserId());
@@ -313,7 +368,7 @@ public class HtBoaInUserService {
         	htBoaInBmUser.setDelFlag(0);
         	htBoaInBmUser.setCreatedDatetime(new Date());
         	htBoaInBmUser.setLastModifiedDatetime(new Date());
-        	htBoaInBmUser = htBoaInBmUserRepository.saveAndFlush(htBoaInBmUser);
+        	htBoaInBmUser = htBoaInBmUserRepository.save(htBoaInBmUser);
         }
         //添加关系
         if(listHtBoaInContrast==null || listHtBoaInContrast.isEmpty()) {
@@ -325,7 +380,7 @@ public class HtBoaInUserService {
         	htBoaInContrast.setStatus("0");
         	htBoaInContrast.setUcBusinessId(htBoaInUser.getUserId());
         	htBoaInContrast.setContrastDatetime(new Date());
-        	htBoaInContrast = htBoaInContrastRepository.saveAndFlush(htBoaInContrast);
+        	htBoaInContrast = htBoaInContrastRepository.save(htBoaInContrast);
         }
         return htBoaInContrast;
     }
@@ -452,20 +507,34 @@ public class HtBoaInUserService {
 	}
 
 	public HtBoaInUser findByJobNumber(String jobnum) {
-		return this.htBoaInUserRepository.findByJobNumber(jobnum);
+		 HtBoaInUser htBoaInUser = null;
+		 List<HtBoaInUser> listHtBoaInUser = this.htBoaInUserRepository.findByJobNumber(jobnum);
+		 if(listHtBoaInUser!=null && !listHtBoaInUser.isEmpty()) {
+			 htBoaInUser = listHtBoaInUser.get(0);
+		 }
+		return htBoaInUser;
 	}
 
 	public HtBoaInUser findByMobile(String mobile) {
-		return this.htBoaInUserRepository.findByMobile(mobile);
+		 HtBoaInUser htBoaInUser = null;
+		 List<HtBoaInUser> listHtBoaInUser = this.htBoaInUserRepository.findByMobile(mobile);
+		 if(listHtBoaInUser!=null && !listHtBoaInUser.isEmpty()) {
+			 htBoaInUser = listHtBoaInUser.get(0);
+		 }
+		return htBoaInUser;
 	}
 
 	public HtBoaInUser findByEmail(String email) {
-		return this.htBoaInUserRepository.findByEmail(email);
+		 HtBoaInUser htBoaInUser = null;
+		 List<HtBoaInUser> listHtBoaInUser = this.htBoaInUserRepository.findByEmail(email);
+		 if(listHtBoaInUser!=null && !listHtBoaInUser.isEmpty()) {
+			 htBoaInUser = listHtBoaInUser.get(0);
+		 }
+		return htBoaInUser;
 	}
 
 	public List<HtBoaInUser> getUserListByTime(String startTime, String endTime) {
 		return this.htBoaInUserRepository.getUserListByTime(startTime,endTime);
 	}
-
 
 }

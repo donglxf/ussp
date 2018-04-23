@@ -184,11 +184,11 @@ public interface HtBoaInUserRepository extends JpaSpecificationExecutor<HtBoaInU
     )
     Page<Object[]> queryUserIsNullPwd(Pageable pageable,@Param("orgCode")String orgCode, @Param("keyWord")String keyWord);
 
-	HtBoaInUser findByJobNumber(String jobnum);
+    List<HtBoaInUser> findByJobNumber(String jobnum);
 
-	HtBoaInUser findByMobile(String mobile);
+	List<HtBoaInUser> findByMobile(String mobile);
 
-	HtBoaInUser findByEmail(String email);
+	List<HtBoaInUser> findByEmail(String email);
 
 	@Query(value="select * from HT_BOA_IN_USER where LAST_MODIFIED_DATETIME BETWEEN ?1 AND ?2",nativeQuery=true)
 	List<HtBoaInUser> getUserListByTime(String startTime, String endTime);

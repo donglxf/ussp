@@ -45,4 +45,8 @@ public class HtBoaInLoginService {
 	public void add(List<HtBoaInLogin> loginList) {
 		this.htBoaInLoginRepository.save(loginList);
 	}
+
+	public List<HtBoaInLogin> findAll() {
+		return this.htBoaInLoginRepository.findAll();
+	}
 }

@@ -147,6 +147,7 @@ public class OrgResource {
         u.setParentOrgCode(boaInOrgInfo.getParentOrgCode());
         u.setRootOrgCode(boaInOrgInfo.getRootOrgCode());
         u.setOrgPath(boaInOrgInfo.getOrgPath());
+        u.setDataSource(Constants.USER_DATASOURCE_1);
         if (boaInOrgInfo.getId() > 0) {
             u.setId(boaInOrgInfo.getId());
             u.setUpdateOperator(userId);
