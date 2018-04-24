@@ -5,18 +5,14 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.druid.util.StringUtils;
 import com.alibaba.fastjson.JSON;
-import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInContrast;
-import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.feignclients.UaaClient;
 import com.ht.ussp.uc.app.model.ResponseModal;
@@ -25,8 +21,6 @@ import com.ht.ussp.uc.app.service.HtBoaInLoginService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.vo.BmUserVo;
 import com.ht.ussp.uc.app.vo.LoginInfoVo;
-import com.ht.ussp.uc.app.vo.UserMessageVo;
-import com.ht.ussp.util.EncryptUtil;
 import com.ht.ussp.util.md5.DESC;
 import com.ht.ussp.util.md5.DecodeResult;
 
