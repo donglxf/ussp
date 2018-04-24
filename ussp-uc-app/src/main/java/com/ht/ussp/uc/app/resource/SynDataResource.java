@@ -136,6 +136,19 @@ public class SynDataResource {
     	return Result.buildSuccess();
     }
     
+    /**
+     * 用户岗位关联转换
+     * @param page
+     * @return
+     */
+    @SuppressWarnings({ "rawtypes"})
+    @ApiOperation("06-用户岗位关联转换")
+    @RequestMapping(value = {"/convertUserPosition" }, method = RequestMethod.POST)
+    public Result  convertUserPosition() { 
+    	dingDingService.convertUserPosition();
+		log.debug("用户岗位关联转换转换完成！");
+    	return Result.buildSuccess();
+    }
     
 	@ApiOperation("信贷用户转换为UC用户")
 	@RequestMapping(value = {"/convertBmUser" }, method = RequestMethod.POST)
