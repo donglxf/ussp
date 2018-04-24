@@ -298,6 +298,9 @@ public class HtBoaInUserService {
 				}
 			}
     	 }
+    	 if(StringUtils.isEmpty(bmuservo.getOrgCode())) {
+    		 bmuservo.setOrgCode("D0100");
+    	 }
     	 if(htBoaInUser==null) {
     		    String userId = "";
     		    int isOrgUser = 1;
@@ -313,6 +316,7 @@ public class HtBoaInUserService {
 				user.setRootOrgCode("D01");
 				user.setUserType("10");
 				user.setDelFlag(0);
+				user.setStatus(Constants.STATUS_0);
 				user.setCreatedDatetime(new Date());
 				user.setLastModifiedDatetime(new Date());
 
@@ -347,6 +351,7 @@ public class HtBoaInUserService {
 					loginInfo.setFailedCount(0);
 					loginInfo.setRootOrgCode(bmuservo.getOrgCode());
 					loginInfo.setDelFlag(0);
+					loginInfo.setStatus(Constants.STATUS_0);
 					loginInfo.setCreatedDatetime(new Date());
 					loginInfo.setLastModifiedDatetime(new Date());
 					loginInfo.setUserId(userId);
@@ -389,7 +394,7 @@ public class HtBoaInUserService {
         	htBoaInContrast.setType("20");
         	htBoaInContrast.setContrast("信贷添加");
         	htBoaInContrast.setContrastDatetime(new Date());
-        	htBoaInContrast.setStatus("0");
+        	htBoaInContrast.setStatus(Constants.STATUS_0);
         	htBoaInContrast.setUcBusinessId(htBoaInUser.getUserId());
         	htBoaInContrast.setContrastDatetime(new Date());
         	htBoaInContrast = htBoaInContrastRepository.save(htBoaInContrast);

@@ -55,4 +55,9 @@ public interface HtBoaInPositionRepository
      */
     List<HtBoaInPosition> findByPositionCode(String positionCode);
 
+	public List<HtBoaInPosition> findByPositionNameCnAndParentOrgCode(String positionName, String parentOrgCode);
+
+	@Query(value = "SELECT count(POSITION_code) from HT_BOA_IN_POSITION where parent_org_code=?1", nativeQuery = true)
+	public Integer getMaxPositionCode(String parentOrgCode);
+
 }

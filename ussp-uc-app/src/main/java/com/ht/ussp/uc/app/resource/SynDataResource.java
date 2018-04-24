@@ -109,6 +109,20 @@ public class SynDataResource {
     }
     
     /**
+     * 岗位转换
+     * @param page
+     * @return
+     */
+    @SuppressWarnings({ "rawtypes" })
+    @ApiOperation("04-01 将钉钉岗位转换为UC基础数据")
+	@RequestMapping(value = {"/convertPosition" }, method = RequestMethod.POST)
+    public Result convertPosition() {
+    	dingDingService.convertPosition();
+    	log.debug("岗位同步转换完成！");
+        return Result.buildSuccess();
+    }
+    
+    /**
      * 用户转换
      * @param page
      * @return

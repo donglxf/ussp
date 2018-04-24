@@ -18,8 +18,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -32,6 +30,7 @@ import com.ht.ussp.uc.app.domain.DdUserOperator;
 import com.ht.ussp.uc.app.domain.HtBoaInContrast;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInOrg;
+import com.ht.ussp.uc.app.domain.HtBoaInPosition;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.feignclients.EipClient;
 import com.ht.ussp.uc.app.repository.DdDeptOperatorRepository;
@@ -41,8 +40,6 @@ import com.ht.ussp.uc.app.repository.DdUserOperatorRepository;
 import com.ht.ussp.uc.app.vo.eip.DDGetTokenReqDto;
 import com.ht.ussp.util.EncryptUtil;
 import com.ht.ussp.util.HttpClientUtil;
-
-import io.swagger.annotations.ApiOperation;
 
 @Service
 public class DingDingService {
@@ -75,6 +72,8 @@ public class DingDingService {
 	@Autowired
     private HtBoaInContrastService htBoaInContrastService;
 	
+	@Autowired
+	private HtBoaInPositionService htBoaInPositionService;
 
 	/**
 	 * 钉钉与生产数据对照
@@ -142,17 +141,17 @@ public class DingDingService {
 		    		if(jsonDeptUsers!=null) {
 		    			for(int j=0;j<jsonDeptUsers.size();j++) {
 			    			JSONObject deptUsers = (JSONObject) jsonDeptUsers.get(j);
-			    			DdUser DdUser = new DdUser();
-			    			DdUser.setUserId(deptUsers.getString("userid"));
-			    			DdUser.setUserName(new String(deptUsers.getString("name").getBytes(),"utf-8"));
-			    			DdUser.setDeptId(depts.get("id")+"");
-			    			DdUser.setEmail(deptUsers.getString("email"));
-			    			DdUser.setMobile(deptUsers.getString("mobile"));
-			    			DdUser.setJobNumber(deptUsers.getString("jobnumber"));
-			    			DdUser.setPosition(deptUsers.getString("position"));
-			    			DdUser.setCreatDatetime(new Date());
-			    			listDdDeptUser.add(DdUser); 
-			    			//ddDeptUserRepository.saveAndFlush(DdUser);
+			    			DdUser ddUser = new DdUser();
+			    			ddUser.setUserId(deptUsers.getString("userid"));
+			    			ddUser.setUserName(new String(deptUsers.getString("name").getBytes(),"utf-8"));
+			    			ddUser.setDeptId(depts.get("id")+"");
+			    			ddUser.setEmail(deptUsers.getString("email"));
+			    			ddUser.setMobile(deptUsers.getString("mobile"));
+			    			ddUser.setJobNumber(deptUsers.getString("jobnumber"));
+			    			ddUser.setPosition(deptUsers.getString("position"));
+			    			ddUser.setCreatDatetime(new Date());
+			    			listDdDeptUser.add(ddUser); 
+			    			//ddDeptUserRepository.saveAndFlush(ddUser);
 			    		}
 		    		}
 				}
@@ -432,6 +431,9 @@ public class DingDingService {
 				}
 				newOrg.setOrgCode(newOrgCode);
 				newOrg.setParentOrgCode(parentOrg.getOrgCode());
+				if("D01".equals(parentOrg.getOrgCode())) {
+					newOrg.setOrgType("20");//中心
+				}
 		        newOrg.setRootOrgCode("D01");
                 newOrg.setOrgPath(parentOrg.getOrgPath()+"/"+newOrgCode);
                 newOrg.setOrgNameCn(ddDeptOperator.getDeptName());
@@ -511,6 +513,9 @@ public class DingDingService {
     					updateOrg.setOrgName(ddDeptOperator.getDeptName());
     					updateOrg.setOrgNameCn(ddDeptOperator.getDeptName());
     					updateOrg.setLastModifiedDatetime(new Date());
+    					if("D01".equals(listHtBoaInOrg.get(0).getParentOrgCode())) {
+    						updateOrg.setOrgType("20");//中心
+    					}
     					updateOrgList.add(updateOrg);
     				}
     				 //更新同步完成标记
@@ -528,19 +533,69 @@ public class DingDingService {
     	}
         return Result.buildSuccess();
     }
-    
+	
+	/**
+	 * P+中心机构编码+1（是否是机构内）+序号
+       1.先根据机构进行拼接岗位编码  （通过名称+机构code进行确认唯一）   机构到中心机构就可以了
+	 * @return
+	 */
+	public Result  convertPosition() { 
+		List<DdUser> listDdUser = getDDUserList(); //获取钉钉所有用户数据
+		List<HtBoaInContrast> htBoaInContrastListORG=htBoaInContrastService.getHtBoaInContrastListByType("10");//获取所有关联的机构
+		List<HtBoaInOrg> htBoaInOrgList = htBoaInOrgService.findAll();
+		
+		StringBuffer sbf = new StringBuffer();
+		for(DdUser ddUser : listDdUser) {
+			sbf.setLength(0);
+			String positionName = ddUser.getPosition();
+			if(StringUtils.isEmpty(positionName)) {
+				continue;
+			}
+			String parentOrgCode="";//所属中心
+			if(StringUtils.isNotEmpty(ddUser.getDeptId())) {
+				HtBoaInContrast htBoaInContrastOrg = htBoaInContrastListORG.stream().filter(org -> ddUser.getDeptId().equals(org.getDdBusinessId())).findFirst().get();
+				HtBoaInOrg o = htBoaInOrgList.stream().filter(org -> org.getOrgCode().equals(htBoaInContrastOrg.getUcBusinessId())).findFirst().get();
+				if(StringUtils.isNotEmpty(o.getOrgCode())) {
+					sbf.append("P");
+					if(o.getOrgCode().length()>5) {//获取中心机构编码
+						parentOrgCode = o.getOrgCode().substring(0, 5);
+					}else {
+						parentOrgCode = o.getOrgCode();
+					}
+					sbf.append(parentOrgCode);
+					sbf.append("1");
+					HtBoaInPosition htBoaInPosition = null;
+					List<HtBoaInPosition> listHtBoaInPosition2 = htBoaInPositionService.findByPositionNameCnAndParentOrgCode(positionName,parentOrgCode); //查看是否已经添加，已经添加则不在添加
+					if(listHtBoaInPosition2==null||listHtBoaInPosition2.isEmpty()) {
+						htBoaInPosition = new HtBoaInPosition();
+						htBoaInPosition.setCreatedDatetime(new Date());
+						htBoaInPosition.setCreateOperator("钉钉同步");
+						htBoaInPosition.setDelFlag(Constants.DEL_0);
+						htBoaInPosition.setLastModifiedDatetime(new Date());
+						Integer count = htBoaInPositionService.getMaxPositionCode(parentOrgCode);
+						htBoaInPosition.setPositionCode(String.format("%s%03d", sbf.toString(), count));
+						htBoaInPosition.setSequence(count);
+						htBoaInPosition.setPositionNameCn(positionName);
+						htBoaInPosition.setStatus(Constants.STATUS_0);
+						htBoaInPosition.setUpdateOperator("钉钉同步");
+						htBoaInPosition.setParentOrgCode(parentOrgCode); //所属中心
+						htBoaInPositionService.add(htBoaInPosition);
+					} 
+				}
+			}
+		}
+		return Result.buildSuccess();
+	}
     /**
      * 用户转换
      * @param page
      * @return
      */
-    @SuppressWarnings({ "rawtypes"})
-    @ApiOperation("05-将钉钉用户转换为UC用户基础数据")
-    @RequestMapping(value = {"/convertUser" }, method = RequestMethod.POST)
     public Result  convertUser() { 
     	//1.将钉钉用户添加到UC  将钉钉不存在的用户进行，修改为离职状态
     	List<HtBoaInOrg> htBoaInOrgList = htBoaInOrgService.findAll();
     	List<HtBoaInUser> htBoaInUserList= htBoaInUserService.findAll();//所有UC用户
+    	List<HtBoaInPosition> listHtBoaInPosition = htBoaInPositionService.findAll();
     	
     	List<HtBoaInContrast> htBoaInContrastListORG=htBoaInContrastService.getHtBoaInContrastListByType("10");//获取所有关联的机构
     	List<HtBoaInContrast> htBoaInContrastListUser=htBoaInContrastService.getHtBoaInContrastListByType("20");//获取所有关联的用户
@@ -611,7 +666,7 @@ public class DingDingService {
     				htBoaInUser.setMobile(ddAddUser.getMobile());
     			}
     			if(StringUtils.isNotEmpty(ddAddUser.getDeptId())) {
-    				HtBoaInContrast htBoaInContrastOrg = htBoaInContrastListORG.stream().filter(org -> org.getDdBusinessId().equals(ddAddUser.getDeptId())).findFirst().get();
+    				HtBoaInContrast htBoaInContrastOrg = htBoaInContrastListORG.stream().filter(org -> ddAddUser.getDeptId().equals(org.getDdBusinessId())).findFirst().get();
     				HtBoaInOrg o = htBoaInOrgList.stream().filter(org -> org.getOrgCode().equals(htBoaInContrastOrg.getUcBusinessId())).findFirst().get();
     				if(StringUtils.isNotEmpty(o.getOrgCode())) {
     					htBoaInUser.setOrgCode(o.getOrgCode());
@@ -675,6 +730,22 @@ public class DingDingService {
             u.setDataSource(Constants.USER_DATASOURCE_2);
             u.setLastModifiedDatetime(new Date());
             u.setStatus("0");
+            HtBoaInPosition htBoaInPosition = null;
+            String orgCode_p = o.getOrgCode();
+			//List<HtBoaInPosition> listHtBoaInPosition2 = //htBoaInPositionService.findByPositionNameCnAndParentOrgCode(positionName,parentOrgCode); //查看是否已经添加，已经添加则不在添加
+			Optional<HtBoaInPosition> optionalHtBoaInPosition = listHtBoaInPosition.stream().filter(posi -> posi.getPositionNameCn().equals(ddAddUser.getPosition()) &&orgCode_p.equals(posi.getParentOrgCode()) ).findFirst();
+			if(optionalHtBoaInPosition!=null && optionalHtBoaInPosition.isPresent()) {
+				htBoaInPosition = optionalHtBoaInPosition.get();
+			}
+			if(htBoaInPosition!=null) {
+				if(StringUtils.isEmpty(u.getPositions())) {
+					u.setPositions(htBoaInPosition.getPositionCode());
+				}else {
+					if(!u.getPositions().contains(htBoaInPosition.getPositionCode())) {
+						u.setPositions(u.getPositions()+","+htBoaInPosition.getPositionCode());
+					}
+				}
+			}
             listHtBoaInUser.add(u);
             
             HtBoaInLogin l = new HtBoaInLogin();
@@ -764,6 +835,29 @@ public class DingDingService {
     				HtBoaInOrg o = htBoaInOrgList.stream().filter(org -> org.getOrgCode().equals(htBoaInContrastOrg.getUcBusinessId())).findFirst().get();
     				if(StringUtils.isNotEmpty(o.getOrgCode())) {
     					u.setOrgCode(o.getOrgCode());
+    				}
+    				
+    				String parentOrgCode="";
+    				if(o.getOrgCode().length()>5) {//获取中心机构编码
+						parentOrgCode = o.getOrgCode().substring(0, 5);
+					}else {
+						parentOrgCode = o.getOrgCode();
+					}
+    				String orgCode_p = parentOrgCode;
+    				HtBoaInPosition htBoaInPosition = null;
+					//List<HtBoaInPosition> listHtBoaInPosition2 = //htBoaInPositionService.findByPositionNameCnAndParentOrgCode(positionName,parentOrgCode); //查看是否已经添加，已经添加则不在添加
+					Optional<HtBoaInPosition> optionalHtBoaInPosition = listHtBoaInPosition.stream().filter(posi -> posi.getPositionNameCn().equals(ddUpdateUser.getPosition()) &&orgCode_p.equals(posi.getParentOrgCode()) ).findFirst();
+					if(optionalHtBoaInPosition!=null && optionalHtBoaInPosition.isPresent()) {
+						htBoaInPosition = optionalHtBoaInPosition.get();
+					}
+    				if(htBoaInPosition!=null) {
+    					if(StringUtils.isEmpty(u.getPositions())) {
+    						u.setPositions(htBoaInPosition.getPositionCode());
+    					}else {
+    						if(!u.getPositions().contains(htBoaInPosition.getPositionCode())) {
+    							u.setPositions(u.getPositions()+","+htBoaInPosition.getPositionCode());
+    						}
+    					}
     				}
     			}
     			if(StringUtils.isNotEmpty(ddUpdateUser.getUserName())) {
