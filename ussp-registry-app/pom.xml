@@ -17,6 +17,14 @@
 		<start-class>com.ht.ussp.registry.app.RegistryApplication</start-class>
 		<maven.deploy.skip>true</maven.deploy.skip>
 		<docker.image.prefix>ussp</docker.image.prefix>
+
+		<docker-maven-plugin.version>1.0.0</docker-maven-plugin.version>
+		<docker.java.base.image>frolvlad/alpine-oraclejdk8:slim</docker.java.base.image>
+		<docker.repostory>172.16.200.101</docker.repostory>
+		<docker.registry.name>ht</docker.registry.name>
+		<docker.maintainer>xiayutai@hongte.info</docker.maintainer>
+
+		<git-commit-id-plugin.version>2.2.4</git-commit-id-plugin.version>
 	</properties>
 
 	<dependencies>
@@ -63,10 +71,10 @@
 		<finalName>ussp-registry-app</finalName>
 		<plugins>
 			<!-- Spring Boot的编译插件（选择了 JRE 版本） -->
-			<!--<plugin>-->
-				<!--<groupId>org.springframework.boot</groupId>-->
-				<!--<artifactId>spring-boot-maven-plugin</artifactId>-->
-			<!--</plugin>-->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
 			<plugin>
                 <groupId>pl.project13.maven</groupId>
                 <artifactId>git-commit-id-plugin</artifactId>
@@ -74,7 +82,7 @@
 			<plugin>
 				<groupId>com.spotify</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
-				<version>1.0.0</version>
+				<version>${docker-maven-plugin.version}</version>
 				<executions>
 					<execution>
 						<phase>deploy</phase>
