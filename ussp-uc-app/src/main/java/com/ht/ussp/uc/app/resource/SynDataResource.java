@@ -109,6 +109,20 @@ public class SynDataResource {
     }
     
     /**
+     * 岗位转换
+     * @param page
+     * @return
+     */
+    @SuppressWarnings({ "rawtypes" })
+    @ApiOperation("04-01 将钉钉岗位转换为UC基础数据")
+	@RequestMapping(value = {"/convertPosition" }, method = RequestMethod.POST)
+    public Result convertPosition() {
+    	dingDingService.convertPosition();
+    	log.debug("岗位同步转换完成！");
+        return Result.buildSuccess();
+    }
+    
+    /**
      * 用户转换
      * @param page
      * @return
@@ -122,6 +136,19 @@ public class SynDataResource {
     	return Result.buildSuccess();
     }
     
+    /**
+     * 用户岗位关联转换
+     * @param page
+     * @return
+     */
+    @SuppressWarnings({ "rawtypes"})
+    @ApiOperation("06-用户岗位关联转换")
+    @RequestMapping(value = {"/convertUserPosition" }, method = RequestMethod.POST)
+    public Result  convertUserPosition() { 
+    	dingDingService.convertUserPosition();
+		log.debug("用户岗位关联转换转换完成！");
+    	return Result.buildSuccess();
+    }
     
 	@ApiOperation("信贷用户转换为UC用户")
 	@RequestMapping(value = {"/convertBmUser" }, method = RequestMethod.POST)

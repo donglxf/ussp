@@ -108,7 +108,7 @@ public class MenuInfoHelper {
 		}
 		try {
 			apps = StringUtils.isEmpty(apps)?app:apps;
-			userId = StringUtils.isEmpty(userId)?"":userId;
+			userId = StringUtils.isEmpty(userId)?"rp":userId;
 			return ucClient.updateMenu(resCode, resNameCn, resContent, fontIcon, roles, userId,   apps);
 		} catch (Exception ex) {
 			log.error("更新菜单发生异常。", ex);

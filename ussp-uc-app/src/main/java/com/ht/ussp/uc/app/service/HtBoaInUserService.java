@@ -104,11 +104,19 @@ public class HtBoaInUserService {
         		loginInfoVo.setBmUserId(htBoaInContrast.getBmBusinessId());
         		loginInfoVo.setDdUserId(htBoaInContrast.getDdBusinessId());
         		if(StringUtils.isEmpty(loginInfoVo.getBmOrgCode())&&StringUtils.isNoneEmpty(htBoaInContrast.getBmBusinessId())) {
-            		HtBoaInBmUser htBoaInBmUser = htBoaInBmUserRepository.findByUserId(htBoaInContrast.getBmBusinessId());
-            		if(htBoaInBmUser!=null) {
-                		loginInfoVo.setBmOrgCode(htBoaInBmUser.getOrgCode());
-                	}
+        			List<HtBoaInBmUser> listHtBoaInBmUser = htBoaInBmUserRepository.findByUserId(htBoaInContrast.getBmBusinessId());
+    				if(listHtBoaInBmUser!=null && !listHtBoaInBmUser.isEmpty()) {
+    					loginInfoVo.setBmOrgCode(listHtBoaInBmUser.get(0).getOrgCode());
+    				}
         		}
+        	}else {
+        		List<HtBoaInBmUser> listHtBoaInBmUser = htBoaInBmUserRepository.findByMobile(userMessageVo.getMobile());
+				if(listHtBoaInBmUser!=null && !listHtBoaInBmUser.isEmpty()) {
+					if(loginInfoVo!=null) {
+						loginInfoVo.setBmOrgCode(listHtBoaInBmUser.get(0).getOrgCode());
+						loginInfoVo.setBmUserId(listHtBoaInBmUser.get(0).getUserId());
+					}
+				}
         	}
         	
         	//获取用户是否是系统管理员
@@ -246,24 +254,25 @@ public class HtBoaInUserService {
     	 }
     	//查看是否存在用户，如果存在用户则不用新增用户
     	 if(listHtBoaInContrast!=null&&!listHtBoaInContrast.isEmpty()) {
-    		 htBoaInContrast = listHtBoaInContrast.get(0);
+    		 Optional<HtBoaInContrast>  htBoaInContrastOptional =listHtBoaInContrast.stream().filter(contrast ->bmuservo.getBmUserId().equals(contrast.getUcBusinessId())).findFirst();
+			 if(htBoaInContrastOptional!=null&&htBoaInContrastOptional.isPresent()) {
+				 htBoaInContrast = htBoaInContrastOptional.get();
+			 }
     		 HtBoaInContrast htBoaInContrast2 = htBoaInContrast;
     		 if(htBoaInContrast2!=null) {
     			 if(StringUtils.isNotEmpty(htBoaInContrast2.getUcBusinessId())) {
     				 Optional<HtBoaInUser>  htBoaInUserOptional =listHtBoaInUser.stream().filter(user ->htBoaInContrast2.getUcBusinessId().equals(user.getUserId())).findFirst();
-        			 if(htBoaInUserOptional!=null) {
+        			 if(htBoaInUserOptional!=null&&htBoaInUserOptional.isPresent()) {
         				 htBoaInUser = htBoaInUserOptional.get();
         			 }
     			 }
     		 }
-    	 }else {
-    		 htBoaInUser = htBoaInUserRepository.findByUserId(htBoaInContrast.getUcBusinessId());
-		 }
+    	 } 
     	 if(htBoaInUser==null) {
 	    	if(StringUtils.isNotEmpty(bmuservo.getEmail())) {
 	    			 if(listHtBoaInUser!=null&&!listHtBoaInUser.isEmpty()) {
 		    			 Optional<HtBoaInUser>  htBoaInUserOptional =listHtBoaInUser.stream().filter(user ->bmuservo.getEmail().equals(user.getEmail())).findFirst();
-		    			 if(htBoaInUserOptional!=null) {
+		    			 if(htBoaInUserOptional!=null &&htBoaInUserOptional.isPresent()) {
 		    				 htBoaInUser = htBoaInUserOptional.get();
 	    			 }else {
 	    				 List<HtBoaInUser> listHtBoaInUsertemp = htBoaInUserRepository.findByEmail(bmuservo.getEmail());
@@ -278,7 +287,7 @@ public class HtBoaInUserService {
 			if (StringUtils.isNotEmpty(bmuservo.getMobile())) {
 				if (listHtBoaInUser != null && !listHtBoaInUser.isEmpty()) {
 					Optional<HtBoaInUser>  htBoaInUserOptional =listHtBoaInUser.stream().filter(user ->bmuservo.getMobile().equals(user.getMobile())).findFirst();
-	    			 if(htBoaInUserOptional!=null) {
+	    			 if(htBoaInUserOptional!=null&&htBoaInUserOptional.isPresent()) {
 	    				 htBoaInUser = htBoaInUserOptional.get();
 	    			 }
 				}else {
@@ -288,6 +297,9 @@ public class HtBoaInUserService {
 					}
 				}
 			}
+    	 }
+    	 if(StringUtils.isEmpty(bmuservo.getOrgCode())) {
+    		 bmuservo.setOrgCode("D0100");
     	 }
     	 if(htBoaInUser==null) {
     		    String userId = "";
@@ -304,6 +316,7 @@ public class HtBoaInUserService {
 				user.setRootOrgCode("D01");
 				user.setUserType("10");
 				user.setDelFlag(0);
+				user.setStatus(Constants.STATUS_0);
 				user.setCreatedDatetime(new Date());
 				user.setLastModifiedDatetime(new Date());
 
@@ -327,7 +340,7 @@ public class HtBoaInUserService {
 					loginInfo = htBoaInLoginRepository.findByLoginId(bmuservo.getBmUserId());
 				}else {
 					Optional<HtBoaInLogin>  htBoaInLoginOptional =listHtBoaInLogin.stream().filter(login ->bmuservo.getBmUserId().equals(login.getUserId())).findFirst();
-	    			 if(htBoaInLoginOptional!=null) {
+	    			 if(htBoaInLoginOptional!=null&&htBoaInLoginOptional.isPresent()) {
 	    				 loginInfo = htBoaInLoginOptional.get();
 	    			 }
 				}
@@ -338,6 +351,7 @@ public class HtBoaInUserService {
 					loginInfo.setFailedCount(0);
 					loginInfo.setRootOrgCode(bmuservo.getOrgCode());
 					loginInfo.setDelFlag(0);
+					loginInfo.setStatus(Constants.STATUS_0);
 					loginInfo.setCreatedDatetime(new Date());
 					loginInfo.setLastModifiedDatetime(new Date());
 					loginInfo.setUserId(userId);
@@ -347,11 +361,14 @@ public class HtBoaInUserService {
     	 HtBoaInBmUser htBoaInBmUser = null;
         //添加bmUser
     	 if(listHtBoaInBmUser==null) {
-    		 htBoaInBmUser = htBoaInBmUserRepository.findByUserId(bmuservo.getBmUserId());
+    		 List<HtBoaInBmUser> listHtBoaInBmUserTemp = htBoaInBmUserRepository.findByUserId(bmuservo.getBmUserId());
+    		 if(listHtBoaInBmUserTemp!=null &&!listHtBoaInBmUserTemp.isEmpty()) {
+    			 htBoaInBmUser = listHtBoaInBmUserTemp.get(0);
+    		 }
     	 }else {
     		 if(StringUtils.isNotEmpty(bmuservo.getBmUserId())) {
     			 Optional<HtBoaInBmUser>  htBoaInBmUserOptional =listHtBoaInBmUser.stream().filter(bumuser ->bmuservo.getBmUserId().equals(bumuser.getUserId())).findFirst();
-    			 if(htBoaInBmUserOptional!=null) {
+    			 if(htBoaInBmUserOptional!=null&&htBoaInBmUserOptional.isPresent()) {
     				 htBoaInBmUser = htBoaInBmUserOptional.get();
     			 }
     		 }
@@ -377,7 +394,7 @@ public class HtBoaInUserService {
         	htBoaInContrast.setType("20");
         	htBoaInContrast.setContrast("信贷添加");
         	htBoaInContrast.setContrastDatetime(new Date());
-        	htBoaInContrast.setStatus("0");
+        	htBoaInContrast.setStatus(Constants.STATUS_0);
         	htBoaInContrast.setUcBusinessId(htBoaInUser.getUserId());
         	htBoaInContrast.setContrastDatetime(new Date());
         	htBoaInContrast = htBoaInContrastRepository.save(htBoaInContrast);

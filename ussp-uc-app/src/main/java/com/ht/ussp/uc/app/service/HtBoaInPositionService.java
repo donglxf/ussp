@@ -46,6 +46,10 @@ public class HtBoaInPositionService {
         return this.htBoaInPositionRepository.findAll(ex);
     }
     
+    public List<HtBoaInPosition> findAll() {
+        return this.htBoaInPositionRepository.findAll();
+    }
+    
     public List<HtBoaInPosition> findByPositionCodeIn(Set<String> positionCodes) {
         return this.htBoaInPositionRepository.findByPositionCodeIn(positionCodes);
     }
@@ -97,8 +101,12 @@ public class HtBoaInPositionService {
         this.htBoaInPositionRepository.delete(id);;
     }
 
-	public List<HtBoaInPosition> findByPositionCode(String positionCode) {
+    public List<HtBoaInPosition> findByPositionCode(String positionCode) {
 		return this.htBoaInPositionRepository.findByPositionCode(positionCode);
+	}
+    
+    public List<HtBoaInPosition> findByPositionNameCnAndParentOrgCode(String positionNmae,String parentOrgCode) {
+		return this.htBoaInPositionRepository.findByPositionNameCnAndParentOrgCode(positionNmae,parentOrgCode);
 	}
 
 	public XSSFWorkbook exportPositionExcel() {
@@ -144,6 +152,10 @@ public class HtBoaInPositionService {
 			e.printStackTrace();
 		}
 		
+	}
+
+	public Integer getMaxPositionCode(String parentOrgCode) {
+		return htBoaInPositionRepository.getMaxPositionCode(parentOrgCode);
 	}
 
 }

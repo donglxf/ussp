@@ -91,7 +91,7 @@ public class HtBoaInUser implements Serializable {
     //状态: 0 正常  2离职
     @Column(name = "STATUS")
     private String status;
-
+    
     public HtBoaInUser() {
     }
 }

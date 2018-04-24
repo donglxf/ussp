@@ -1,4 +1,4 @@
-/*package com.ht.ussp.uc.app.scheduled;
+package com.ht.ussp.uc.app.scheduled;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,7 +10,7 @@ import com.xxl.job.core.handler.annotation.JobHandler;
 import com.xxl.job.core.log.XxlJobLogger;
 
 
-*//**
+/**
  * 任务Handler示例（Bean模式）
  * <p>
  * 开发步骤：
@@ -20,7 +20,7 @@ import com.xxl.job.core.log.XxlJobLogger;
  * 4、执行日志：需要通过 "XxlJobLogger.log" 打印执行日志；
  *
  * @author xuxueli 2015-12-19 19:43:36
- *//*
+ */
 @JobHandler(value = "GetDDTimerJobHandler01")
 @Component
 public class GetDDTimerJobHandler01 extends IJobHandler {
@@ -34,4 +34,4 @@ public class GetDDTimerJobHandler01 extends IJobHandler {
     	XxlJobLogger.log("---------------------定时任务结束--------------------->");
         return SUCCESS;
     }
-}*/
+}

@@ -17,9 +17,9 @@ import com.ht.ussp.uc.app.domain.HtBoaInBmUser;
 @Repository
 public interface HtBoaInBmUserRepository extends JpaSpecificationExecutor<HtBoaInBmUser>, JpaRepository<HtBoaInBmUser, Long> {
 
-	HtBoaInBmUser findByUserId(String bmBusinessId);
+	List<HtBoaInBmUser> findByUserId(String bmBusinessId);
 
 	List<HtBoaInBmUser> findByStatus(String status);
 
-    
+	List<HtBoaInBmUser> findByMobile(String mobile);
 }
