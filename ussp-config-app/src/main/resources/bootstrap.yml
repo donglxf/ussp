@@ -2,7 +2,7 @@ spring:
   application:
     name: ussp-config-app
   profiles:
-    active: dev
+    active: local
 server:
   port: 30106
 ---
@@ -21,12 +21,11 @@ spring:
 eureka:
   instance:
     ip-address: 172.16.200.110
-    status-page-url: http://${eureka.instance.ip-address}:${server.port}${status-page-url-path:/info}
-    health-check-url: http://${eureka.instance.ip-address}:${server.port}${health-check-url-path:/health}
+    status-page-url: http://172.16.200.110:30106/info
+    health-check-url: http://172.16.200.110:30106/health
   client:
     serviceUrl:
       defaultZone: http://172.16.200.110:30101/eureka/
-
 ---
 spring:
   profiles: sit
