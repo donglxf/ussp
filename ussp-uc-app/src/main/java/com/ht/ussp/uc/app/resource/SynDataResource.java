@@ -150,7 +150,7 @@ public class SynDataResource {
     	return Result.buildSuccess();
     }
     
-	@ApiOperation("信贷用户转换为UC用户")
+	@ApiOperation("07-信贷用户转换为UC用户")
 	@RequestMapping(value = {"/convertBmUser" }, method = RequestMethod.POST)
 	public Result convertBmUser() { 
 		//1.获取所有信贷用户  2.通过手机号,email验证关联 信贷用户与UC用户  4.如果信贷用户在UC不存在，则在UC创建一个,挂靠到未知机构

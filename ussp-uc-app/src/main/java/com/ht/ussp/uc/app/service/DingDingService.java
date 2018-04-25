@@ -539,7 +539,7 @@ public class DingDingService {
     }
 	
 	/**
-	 * P+中心机构编码+1（是否是机构内）+序号
+	 * P+中心机构编码+1（数据来源 1：uc  2钉钉   3信贷）+序号
        1.先根据机构进行拼接岗位编码  （通过名称+机构code进行确认唯一）   机构到中心机构就可以了
 	 * @return
 	 */
@@ -567,7 +567,7 @@ public class DingDingService {
 						parentOrgCode = o.getOrgCode();
 					}
 					sbf.append(parentOrgCode);
-					sbf.append("1");
+					sbf.append("2");
 					HtBoaInPosition htBoaInPosition = null;
 					List<HtBoaInPosition> listHtBoaInPosition2 = htBoaInPositionService.findByPositionNameCnAndParentOrgCode(positionName,parentOrgCode); //查看是否已经添加，已经添加则不在添加
 					if(listHtBoaInPosition2==null||listHtBoaInPosition2.isEmpty()) {
