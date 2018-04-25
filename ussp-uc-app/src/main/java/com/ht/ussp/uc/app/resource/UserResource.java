@@ -441,27 +441,26 @@ public class UserResource{
     @GetMapping(value = "/getUserInfoByUserId")
     public LoginInfoVo getUserInfoByUserId(@RequestParam("userId")String userId, @RequestParam("bmUserId")String bmUserId, @RequestParam("app") String app) {
     	LoginInfoVo loginInfoVo = null;
-    	if(StringUtils.isEmpty(userId)) {
+    	if(StringUtils.isEmpty(userId)||userId.length()==0||"null".equals(userId)) {
     		List<HtBoaInContrast> listHtBoaInContrast= htBoaInContrastService.getHtBoaInContrastListByBmUserId(bmUserId,"20");
     		if(listHtBoaInContrast==null||listHtBoaInContrast.isEmpty()) {
-    			return null;
+    			if(!StringUtils.isEmpty(bmUserId)) {
+        			if(loginInfoVo==null) {
+        				List<HtBoaInBmUser> listHtBoaInBmUser = htBoaInBmUserService.getHtBoaInBmUserByUserId(bmUserId);
+        				if(listHtBoaInBmUser!=null && !listHtBoaInBmUser.isEmpty()) {
+        					loginInfoVo = new LoginInfoVo();
+        					loginInfoVo.setBmOrgCode(listHtBoaInBmUser.get(0).getOrgCode());
+        					loginInfoVo.setBmUserId(bmUserId);
+        					loginInfoVo.setEmail(listHtBoaInBmUser.get(0).getEmail());
+        					loginInfoVo.setJobNumber(listHtBoaInBmUser.get(0).getJobNumber());
+        					loginInfoVo.setUserName(listHtBoaInBmUser.get(0).getUserName());
+        					loginInfoVo.setMobile(listHtBoaInBmUser.get(0).getMobile());
+        				}
+        	    	}
+        		}
     		}else {
     			userId=listHtBoaInContrast.get(0).getUcBusinessId();
-    		}
-    		loginInfoVo = htBoaInUserService.queryUserInfo(userId,app);
-    		if(!StringUtils.isEmpty(bmUserId)) {
-    			if(loginInfoVo==null) {
-    				List<HtBoaInBmUser> listHtBoaInBmUser = htBoaInBmUserService.getHtBoaInBmUserByUserId(bmUserId);
-    				if(listHtBoaInBmUser!=null && !listHtBoaInBmUser.isEmpty()) {
-    					loginInfoVo = new LoginInfoVo();
-    					loginInfoVo.setBmOrgCode(listHtBoaInBmUser.get(0).getOrgCode());
-    					loginInfoVo.setBmUserId(bmUserId);
-    					loginInfoVo.setEmail(listHtBoaInBmUser.get(0).getEmail());
-    					loginInfoVo.setJobNumber(listHtBoaInBmUser.get(0).getJobNumber());
-    					loginInfoVo.setUserName(listHtBoaInBmUser.get(0).getUserName());
-    					loginInfoVo.setMobile(listHtBoaInBmUser.get(0).getMobile());
-    				}
-    	    	}
+    			loginInfoVo = htBoaInUserService.queryUserInfo(userId,app);
     		}
     	}
         return loginInfoVo;
