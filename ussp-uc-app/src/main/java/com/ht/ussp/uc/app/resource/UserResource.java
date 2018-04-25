@@ -462,6 +462,8 @@ public class UserResource{
     			userId=listHtBoaInContrast.get(0).getUcBusinessId();
     			loginInfoVo = htBoaInUserService.queryUserInfo(userId,app);
     		}
+    	}else {
+    		loginInfoVo = htBoaInUserService.queryUserInfo(userId,app);
     	}
         return loginInfoVo;
     }
