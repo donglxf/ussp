@@ -10,4 +10,8 @@ public class ValidateJwtVo {
 	private String userId;
 
 	private String orgCode;
+	
+	private String jobNumber;
+	
+	private String batchNumber;
 }

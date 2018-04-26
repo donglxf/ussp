@@ -37,6 +37,7 @@ import com.ht.ussp.uaa.app.jwt.RefreshToken;
 import com.ht.ussp.uaa.app.jwt.TokenExtractor;
 import com.ht.ussp.uaa.app.jwt.TokenVerifier;
 import com.ht.ussp.uaa.app.model.ResponseModal;
+import com.ht.ussp.uaa.app.vo.ValidateJwtVo;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -284,6 +285,47 @@ public class ExternalTokenManager {
 		tokenMap.put("token", token);
 		rm.setSysStatus(SysStatus.SUCCESS);
 		rm.setResult(tokenMap);
+		return rm;
+	}
+
+	/**
+	 * 	
+	 * @Title: validateJwt 
+	 * @Description: 给薪资系统使用 -验证token 
+	 * @return ResponseModal
+	 * @throws
+	 * @author wim qiuwenwu@hongte.info 
+	 * @date 2018年4月26日 上午11:49:38
+	 */
+	@PostMapping(value = "/validateSalaryJwt")
+	public ResponseModal validateJwt(@RequestParam("tokenPayload") String tokenPayload,HttpServletResponse response){
+		response.setCharacterEncoding("UTF-8");
+		ResponseModal rm=new ResponseModal();
+		Jws<Claims> jwsClaims;
+		String jobNumber;
+		String batchNumber;
+		ValidateJwtVo vdj = new ValidateJwtVo();
+		
+		try {
+		RawAccessJwtToken accessToken = new RawAccessJwtToken(tokenExtractor.extract(tokenPayload));
+		
+		jwsClaims = accessToken.parseClaims(jwtSettings.getTokenSigningKey());
+		jobNumber = jwsClaims.getBody().get("jobNumber").toString();
+		batchNumber = jwsClaims.getBody().get("batchNumber").toString();
+		 vdj.setJobNumber(jobNumber);
+		 vdj.setBatchNumber(batchNumber);
+		 rm.setSysStatus(SysStatus.SUCCESS);
+		 rm.setResult(vdj);
+		}catch(BadCredentialsException ex) {
+			rm.setSysStatus(SysStatus.TOKEN_IS_VALID);
+			log.info("----token invalid----");
+		}catch (JwtExpiredTokenException expiredEx) {
+			rm.setSysStatus(SysStatus.TOKEN_IS_EXPIRED);
+			log.info("----token expired----");
+        }catch (AuthenticationServiceException asEx) {
+			rm.setSysStatus(SysStatus.ERROR_PARAM);
+			log.info("----invalid token's header----");
+        }
 		return rm;
 	}
 
