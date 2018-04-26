@@ -14,4 +14,6 @@ public class ValidateJwtVo {
 	private String jobNumber;
 	
 	private String batchNumber;
+	
+	private Integer sendType;
 }

@@ -259,13 +259,16 @@ public class ExternalTokenManager {
 	 */
 	@PostMapping(value = "/createSalaryToken")
 	@ApiOperation(value = "创建SalaryToken")
-	public ResponseModal createSalaryToken(String jobNumber, String batchNumber, Integer tokenTime) {
+	public ResponseModal createSalaryToken(String jobNumber, String batchNumber, Integer sendType, Integer tokenTime) {
 		ResponseModal rm = new ResponseModal();
 		if (StringUtils.isBlank(jobNumber)) {
 			throw new IllegalArgumentException("Cannot create JWT Token without jobNumber");
 
 		} else if (StringUtils.isBlank(batchNumber)) {
 			throw new IllegalArgumentException("Cannot create JWT Token without batchNumber");
+
+		} else if (tokenTime.intValue() <= 0) {
+			throw new IllegalArgumentException("tokenTime must greater than 0");
 
 		} else if (tokenTime.intValue() <= 0) {
 			throw new IllegalArgumentException("tokenTime must greater than 0");
@@ -277,6 +280,7 @@ public class ExternalTokenManager {
 		Claims claims = Jwts.claims().setSubject("Salary System jwt token");
 		claims.put("jobNumber", jobNumber);
 		claims.put("batchNumber", batchNumber);
+		claims.put("sendType", sendType);
 		String token = Jwts.builder().setClaims(claims).setIssuer(jwtSettings.getTokenIssuer())
 				.setIssuedAt(Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant()))
 				.setExpiration(Date.from(currentTime.plusMinutes(tokenTime).atZone(ZoneId.systemDefault()).toInstant()))
@@ -298,34 +302,37 @@ public class ExternalTokenManager {
 	 * @date 2018年4月26日 上午11:49:38
 	 */
 	@PostMapping(value = "/validateSalaryJwt")
-	public ResponseModal validateJwt(@RequestParam("tokenPayload") String tokenPayload,HttpServletResponse response){
+	public ResponseModal validateJwt(@RequestParam("tokenPayload") String tokenPayload, HttpServletResponse response) {
 		response.setCharacterEncoding("UTF-8");
-		ResponseModal rm=new ResponseModal();
+		ResponseModal rm = new ResponseModal();
 		Jws<Claims> jwsClaims;
 		String jobNumber;
 		String batchNumber;
+		Integer sendType;
 		ValidateJwtVo vdj = new ValidateJwtVo();
-		
+
 		try {
-		RawAccessJwtToken accessToken = new RawAccessJwtToken(tokenExtractor.extract(tokenPayload));
-		
-		jwsClaims = accessToken.parseClaims(jwtSettings.getTokenSigningKey());
-		jobNumber = jwsClaims.getBody().get("jobNumber").toString();
-		batchNumber = jwsClaims.getBody().get("batchNumber").toString();
-		 vdj.setJobNumber(jobNumber);
-		 vdj.setBatchNumber(batchNumber);
-		 rm.setSysStatus(SysStatus.SUCCESS);
-		 rm.setResult(vdj);
-		}catch(BadCredentialsException ex) {
+			RawAccessJwtToken accessToken = new RawAccessJwtToken(tokenExtractor.extract(tokenPayload));
+
+			jwsClaims = accessToken.parseClaims(jwtSettings.getTokenSigningKey());
+			jobNumber = jwsClaims.getBody().get("jobNumber").toString();
+			batchNumber = jwsClaims.getBody().get("batchNumber").toString();
+			sendType = Integer.parseInt(jwsClaims.getBody().get("sendType").toString());
+			vdj.setJobNumber(jobNumber);
+			vdj.setBatchNumber(batchNumber);
+			vdj.setSendType(sendType);
+			rm.setSysStatus(SysStatus.SUCCESS);
+			rm.setResult(vdj);
+		} catch (BadCredentialsException ex) {
 			rm.setSysStatus(SysStatus.TOKEN_IS_VALID);
 			log.info("----token invalid----");
-		}catch (JwtExpiredTokenException expiredEx) {
+		} catch (JwtExpiredTokenException expiredEx) {
 			rm.setSysStatus(SysStatus.TOKEN_IS_EXPIRED);
 			log.info("----token expired----");
-        }catch (AuthenticationServiceException asEx) {
+		} catch (AuthenticationServiceException asEx) {
 			rm.setSysStatus(SysStatus.ERROR_PARAM);
 			log.info("----invalid token's header----");
-        }
+		}
 		return rm;
 	}
 
