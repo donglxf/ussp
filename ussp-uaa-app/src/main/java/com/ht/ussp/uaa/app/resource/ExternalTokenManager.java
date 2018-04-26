@@ -37,7 +37,7 @@ import com.ht.ussp.uaa.app.jwt.RefreshToken;
 import com.ht.ussp.uaa.app.jwt.TokenExtractor;
 import com.ht.ussp.uaa.app.jwt.TokenVerifier;
 import com.ht.ussp.uaa.app.model.ResponseModal;
-import com.ht.ussp.uaa.app.vo.ValidateJwtVo;
+import com.ht.ussp.uaa.app.vo.ValidateSalaryJwtVo;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -309,7 +309,7 @@ public class ExternalTokenManager {
 		String jobNumber;
 		String batchNumber;
 		Integer sendType;
-		ValidateJwtVo vdj = new ValidateJwtVo();
+		ValidateSalaryJwtVo vdj = new ValidateSalaryJwtVo();
 
 		try {
 			RawAccessJwtToken accessToken = new RawAccessJwtToken(tokenExtractor.extract(tokenPayload));
