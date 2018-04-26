@@ -464,7 +464,7 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
                             },
                             success: function (layero) {
                                 var status = result.data.status;
-                                result.data.status = status === "0" ? "正常" : (status === "1" ? "禁用" : (status === "4" ? "冻结" : (status === "1" ? "锁定" : result.data.status)));
+                                result.data.status = status === "0" ? "正常" : (status === "2" ? "离职" : (status === "4" ? "冻结" : (status === "5" ? "锁定" : result.data.status)));
                                 $.each(result.data, function (name, value) {
                                     var $input = $("input[name=" + name + "]", layero);
                                     if ($input && $input.length == 1) {

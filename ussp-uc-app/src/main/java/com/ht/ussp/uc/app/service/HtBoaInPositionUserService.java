@@ -106,4 +106,8 @@ public class HtBoaInPositionUserService {
 	public List<BoaInPositionInfo> getPositionUser(String positionCode, String userId) {
 		return this.htBoaInPositionUserRepository.getPositionUser(positionCode,userId);
 	}
+
+	public List<HtBoaInPositionUser> findAll() {
+		return this.htBoaInPositionUserRepository.findAll();
+	}
 }

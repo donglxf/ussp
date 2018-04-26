@@ -4,13 +4,13 @@
     <parent>
         <groupId>com.ht.cloud</groupId>
         <artifactId>ht-cloud-release</artifactId>
-        <version>dev-20180111-01</version>
+        <version>dev-20180319-02</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.ht.ussp</groupId>
     <artifactId>ussp-common</artifactId>
-    <version>0.0.16</version>
+    <version>0.0.17</version>
     <name>统一服务工具包</name>
     <packaging>jar</packaging>
     <properties>

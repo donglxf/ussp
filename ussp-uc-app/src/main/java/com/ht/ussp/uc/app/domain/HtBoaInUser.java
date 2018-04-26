@@ -92,11 +92,6 @@ public class HtBoaInUser implements Serializable {
     @Column(name = "STATUS")
     private String status;
     
-    //岗位数组
-    @Column(name = "POSITIONS")
-    private String positions;
-    
-
     public HtBoaInUser() {
     }
 }
