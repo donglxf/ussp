@@ -65,9 +65,7 @@ public class SynDataResource {
 	@ApiOperation("01-下载钉钉数据（机构，用户）")
 	@RequestMapping(value = {"/downDingDingData" }, method = RequestMethod.POST)
     public Result getDownDD() {
-    	dingDingService.getDD();
-    	log.debug("下载完成！");
-        return Result.buildSuccess();
+		return dingDingService.getDD();
     }
     
 	/**
@@ -77,9 +75,7 @@ public class SynDataResource {
 	@ApiOperation("02-矫正历史错误数据")
 	@RequestMapping(value = {"/dealErrorData" }, method = RequestMethod.POST)
 	public Result dealErrorData() { 
-		dingDingService.dealErrorData();
-    	log.debug("矫正历史错误数据完成！");
-        return Result.buildSuccess();
+        return dingDingService.dealErrorData();
 	}
 	
 	/**
@@ -89,9 +85,7 @@ public class SynDataResource {
 	@ApiOperation("03-钉钉数据整理（机构，用户）")
 	@RequestMapping(value = {"/dealData" }, method = RequestMethod.POST)
 	public Result dealData() {
-		dingDingService.dealData();
-    	log.debug("数据整理完成！");
-        return Result.buildSuccess();
+        return dingDingService.dealData();
 	}
     
 	/**
@@ -103,9 +97,7 @@ public class SynDataResource {
     @ApiOperation("04-将钉钉机构转换为UC基础数据")
 	@RequestMapping(value = {"/convertOrg" }, method = RequestMethod.POST)
     public Result convertOrg() {
-    	dingDingService.convertOrg();
-    	log.debug("机构同步转换完成！");
-        return Result.buildSuccess();
+        return dingDingService.convertOrg();
     }
     
     /**
@@ -117,9 +109,7 @@ public class SynDataResource {
     @ApiOperation("04-01 将钉钉岗位转换为UC基础数据")
 	@RequestMapping(value = {"/convertPosition" }, method = RequestMethod.POST)
     public Result convertPosition() {
-    	dingDingService.convertPosition();
-    	log.debug("岗位同步转换完成！");
-        return Result.buildSuccess();
+        return dingDingService.convertPosition();
     }
     
     /**
@@ -131,9 +121,7 @@ public class SynDataResource {
     @ApiOperation("05-将钉钉用户转换为UC用户基础数据")
     @RequestMapping(value = {"/convertUser" }, method = RequestMethod.POST)
     public Result  convertUser() { 
-    	dingDingService.convertUser();
-		log.debug("用户同步转换完成！");
-    	return Result.buildSuccess();
+    	return dingDingService.convertUser();
     }
     
     /**
@@ -145,9 +133,7 @@ public class SynDataResource {
     @ApiOperation("06-用户岗位关联转换")
     @RequestMapping(value = {"/convertUserPosition" }, method = RequestMethod.POST)
     public Result  convertUserPosition() { 
-    	dingDingService.convertUserPosition();
-		log.debug("用户岗位关联转换转换完成！");
-    	return Result.buildSuccess();
+    	return dingDingService.convertUserPosition();
     }
     
 	@ApiOperation("07-信贷用户转换为UC用户")
