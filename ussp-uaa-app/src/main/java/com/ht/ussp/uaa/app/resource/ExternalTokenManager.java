@@ -288,8 +288,16 @@ public class ExternalTokenManager {
 		return rm;
 	}
 
-	
-	@RequestMapping(value = "/validateSalaryJwt")
+	/**
+	 * 	
+	 * @Title: validateJwt 
+	 * @Description: 给薪资系统使用 -验证token 
+	 * @return ResponseModal
+	 * @throws
+	 * @author wim qiuwenwu@hongte.info 
+	 * @date 2018年4月26日 上午11:49:38
+	 */
+	@PostMapping(value = "/validateSalaryJwt")
 	public ResponseModal validateJwt(@RequestParam("tokenPayload") String tokenPayload,HttpServletResponse response){
 		response.setCharacterEncoding("UTF-8");
 		ResponseModal rm=new ResponseModal();
