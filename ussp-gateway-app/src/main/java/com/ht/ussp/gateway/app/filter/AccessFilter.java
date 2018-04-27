@@ -77,7 +77,7 @@ public class AccessFilter extends ZuulFilter {
 		if (StringUtils.isEmpty(tokenPayload)) {
 			ctx.setSendZuulResponse(false);
 			try {
-				mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.APP_CANNOT_NULL));
+				mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_NULL));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
