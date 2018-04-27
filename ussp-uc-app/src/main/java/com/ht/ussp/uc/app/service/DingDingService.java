@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.esotericsoftware.minlog.Log;
 import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.DdDept;
@@ -41,7 +40,6 @@ import com.ht.ussp.uc.app.repository.DdDeptOperatorRepository;
 import com.ht.ussp.uc.app.repository.DdDeptRepository;
 import com.ht.ussp.uc.app.repository.DdDeptUserRepository;
 import com.ht.ussp.uc.app.repository.DdUserOperatorRepository;
-import com.ht.ussp.uc.app.resource.EchoResouce;
 import com.ht.ussp.uc.app.vo.eip.DDGetTokenReqDto;
 import com.ht.ussp.util.EncryptUtil;
 import com.ht.ussp.util.HttpClientUtil;
@@ -101,7 +99,7 @@ public class DingDingService {
 	public DdDept findByDDParentOrgCode(String parentId) {
 		return ddDeptRepository.findByDeptId(parentId);
 	}
-	@Transactional
+	
 	public Result getDD() {
 		String getTokenUrl="https://oapi.dingtalk.com/gettoken?corpid=dingb9594db0ecde853a35c2f4657eb6378f&corpsecret=g445dW-0hpWTXkgJGDjty01q_xulKO9EDlX_XV4AOeZaciJDsEBW14xzXNdFPxF1";
 		String getAuthUrl ="https://oapi.dingtalk.com/auth/scopes";
@@ -950,6 +948,26 @@ public class DingDingService {
         		htBoaInPositionUserService.add(listHtBoaInPositionUser);
         	}
         	log.debug("用户岗位关联转换转换完成！");
+        	return Result.buildSuccess();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Result.buildFail("9999", e.getMessage());
+		}
+	}
+    
+    /**
+     * 岗位角色关联转换 
+     * 1.根据UC角色，查找对应的信贷角色
+     * 2.查找信贷角色下的，用户
+     * 3.根据查找到的信贷角色下的用户 找到对应的uc用户，获取到UC用户的岗位
+     * 4.再把UC的角色，与UC岗位进行关联
+     * @return
+     */
+    public Result converPositionRole() {
+		try {
+			//1.查找UC信贷角色关联关系
+			//2.查找信贷角色下的信贷用户
+			log.debug("岗位角色关联转换完成！");
         	return Result.buildSuccess();
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -192,10 +192,10 @@ public class HtBoaInRoleService {
 		        u.setApp(String.valueOf(ob.get(2)));
 				u.setLastModifiedDatetime(new Date());
 				u.setCreatedDatetime(new Date());
+				u.setStatus(Constants.STATUS_0);
 				u.setDelFlag(Constants.DEL_0);
 				u.setCreateOperator(userId);
 				u = add(u);
-				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
