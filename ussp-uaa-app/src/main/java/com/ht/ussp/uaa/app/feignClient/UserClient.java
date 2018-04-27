@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ht.ussp.uaa.app.model.ResponseModal;
-import com.ht.ussp.uaa.app.vo.UserVo;
 
 /**
  * 
