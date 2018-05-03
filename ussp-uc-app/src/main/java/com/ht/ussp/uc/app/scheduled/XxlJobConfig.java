@@ -1,4 +1,4 @@
-/*package com.ht.ussp.uc.app.scheduled;
+package com.ht.ussp.uc.app.scheduled;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,18 +6,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 
 import com.xxl.job.core.executor.XxlJobExecutor;
 
-*//**
+/**
  * xxl-job config
  *
  * @author xuxueli 2017-04-28
- *//*
+ */
 @Configuration
 @ComponentScan(basePackages = "com.xxl.job.executor.service.jobhandler")
-@PropertySource(value = "classpath:xxl-job-executor.properties")//指定factory
+/*@PropertySource(value = "classpath:xxl-job-executor.properties")//指定factory*/
 public class XxlJobConfig {
     private Logger logger = LoggerFactory.getLogger(XxlJobConfig.class);
 
@@ -58,4 +57,4 @@ public class XxlJobConfig {
         return xxlJobExecutor;
     }
 
-}*/
+}

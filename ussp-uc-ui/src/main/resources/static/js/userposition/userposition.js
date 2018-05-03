@@ -87,7 +87,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
    	        , where: {
    	        	query: {
              		     keyWord: keyword,
-                       orgCode: selectNodes[0]["orgCode"],
+                       //orgCode: selectNodes[0]["orgCode"],
                        userId:userpositionUserId
                   }
    	        }
@@ -259,9 +259,9 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
              	 $.post(delUserPositionListUrl+"?id=" + data.id, null, function (result) {
                       if (result["returnCode"] == "0000") {
                     	  obj.del();
-                    	  refreshuserpositionTable();
                           layer.close(index);
                           layer.msg("删除用户岗位成功");
+                          refreshuserpositionTable();
                       } else {
                           layer.msg(result.codeDesc);
                       }

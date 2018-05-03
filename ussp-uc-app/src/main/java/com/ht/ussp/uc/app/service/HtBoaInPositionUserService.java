@@ -59,8 +59,8 @@ public class HtBoaInPositionUserService {
 		return this.htBoaInPositionUserRepository.save(u);
 	}
 
-	public void delete(HtBoaInPositionUser u) {
-		this.htBoaInPositionUserRepository.delete(u);
+	public void delete(long id) {
+		this.htBoaInPositionUserRepository.delete(id);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

@@ -30,11 +30,11 @@ public interface HtBoaInPositionRoleRepository extends JpaRepository <HtBoaInPos
     void delete(String positionCode, String roleCode);
     
     
-    @Query("SELECT new com.ht.ussp.uc.app.model.BoaInRoleInfo(u.roleCode, u.roleName, u.roleNameCn,  u.status, u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,ur.delFlag,ur.id,u.app) "
+    @Query("SELECT new com.ht.ussp.uc.app.model.BoaInRoleInfo(ur.roleCode, u.roleName, u.roleNameCn,  u.status, ur.createOperator, ur.createdDatetime, ur.updateOperator, ur.lastModifiedDatetime,ur.delFlag,ur.id,u.app) "
 			+ "FROM HtBoaInPositionRole ur ,HtBoaInRole u    WHERE  ur.roleCode = u.roleCode AND  (u.roleCode LIKE ?1 OR u.roleName LIKE ?1 OR u.roleNameCn LIKE ?1 ) and ur.positionCode=?2 GROUP BY u")
 	public Page<HtBoaInPositionRole> listPositionRoleByPageWeb(Pageable arg0, String search,String positionCode);
 
-    @Query("SELECT new com.ht.ussp.uc.app.model.BoaInRoleInfo(u.roleCode, u.roleName, u.roleNameCn,  u.status, u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,ur.delFlag,ur.id,u.app) "
+    @Query("SELECT new com.ht.ussp.uc.app.model.BoaInRoleInfo(ur.roleCode, u.roleName, u.roleNameCn,  u.status, ur.createOperator, ur.createdDatetime, ur.updateOperator, ur.lastModifiedDatetime,ur.delFlag,ur.id,u.app) "
 			+ "FROM HtBoaInPositionRole ur ,HtBoaInRole u    WHERE  ur.roleCode = u.roleCode AND  u.roleCode = ?1 and ur.positionCode=?2 GROUP BY u")
 	public List<HtBoaInPositionRole> getPositionRoleList(String roleCode, String positionCode);
 

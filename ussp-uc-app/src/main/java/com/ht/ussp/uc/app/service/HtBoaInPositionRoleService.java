@@ -50,7 +50,9 @@ public class HtBoaInPositionRoleService {
 	public HtBoaInPositionRole add(HtBoaInPositionRole u) {
 		return this.htBoaInPositionRoleRepository.saveAndFlush(u);
 	}
-
+	public List<HtBoaInPositionRole> addList(List<HtBoaInPositionRole> listHtBoaInPositionRole) {
+		return this.htBoaInPositionRoleRepository.save(listHtBoaInPositionRole);
+	}
 	public HtBoaInPositionRole update(HtBoaInPositionRole u) {
 		return this.htBoaInPositionRoleRepository.save(u);
 	}

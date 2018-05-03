@@ -246,7 +246,6 @@ layui.use(['form',   'table', 'ht_config','ht_auth','upload' ], function () {
                             },
                             error: function (message) {
                                 layer.msg("系统修改发生异常，请联系管理员。");
-                                layer.close(index);
                                 console.error(message);
                             }
                         });

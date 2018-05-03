@@ -122,16 +122,14 @@ public class UserPositionResource {
     @ApiOperation(value = "对内：删除用户岗位记录", notes = "提交角色编号，可批量删除")
     @ApiImplicitParam(name = "codes", value = "角色编号集", required = true, dataType = "Codes")
     @PostMapping(value = {"/delete" }, produces = {"application/json"})
-    public Result delete(  int id) {
+    public Result delete(  long id) {
         long sl = System.currentTimeMillis(), el = 0L;
         String msg = "成功";
-        String logHead = "角色记录删除：role/in/delete param-> {}";
+        String logHead = "用户岗位记录删除：role/in/delete param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.debug(logStart, "codes: " + id, sl);
-        HtBoaInPositionUser u = new HtBoaInPositionUser();
-        u.setId((long) id);
-        htBoaInPositionUserService.delete(u);
+        htBoaInPositionUserService.delete(id);
         el = System.currentTimeMillis();
         log.debug(logEnd, "codes: " + id, msg, el, el - sl);
         return Result.buildSuccess();

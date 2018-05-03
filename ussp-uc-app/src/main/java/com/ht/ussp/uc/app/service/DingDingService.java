@@ -19,7 +19,6 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -33,13 +32,18 @@ import com.ht.ussp.uc.app.domain.HtBoaInContrast;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInPosition;
+import com.ht.ussp.uc.app.domain.HtBoaInPositionRole;
 import com.ht.ussp.uc.app.domain.HtBoaInPositionUser;
+import com.ht.ussp.uc.app.domain.HtBoaInRoleContrast;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
+import com.ht.ussp.uc.app.domain.TbUserRole;
 import com.ht.ussp.uc.app.feignclients.EipClient;
 import com.ht.ussp.uc.app.repository.DdDeptOperatorRepository;
 import com.ht.ussp.uc.app.repository.DdDeptRepository;
 import com.ht.ussp.uc.app.repository.DdDeptUserRepository;
 import com.ht.ussp.uc.app.repository.DdUserOperatorRepository;
+import com.ht.ussp.uc.app.repository.HtBoaInPositionUserRepository;
+import com.ht.ussp.uc.app.repository.TbUserRoleRepository;
 import com.ht.ussp.uc.app.vo.eip.DDGetTokenReqDto;
 import com.ht.ussp.util.EncryptUtil;
 import com.ht.ussp.util.HttpClientUtil;
@@ -59,6 +63,9 @@ public class DingDingService {
 
 	@Autowired
 	private DdUserOperatorRepository ddUserOperatorRepository;
+	
+	@Autowired
+	private TbUserRoleRepository tbUserRoleRepository;
 
 	@Autowired
 	private EipClient eipClient;
@@ -80,6 +87,18 @@ public class DingDingService {
 	
 	@Autowired
 	private HtBoaInPositionUserService htBoaInPositionUserService;
+	
+	@Autowired
+	private HtBoaInPositionRoleService htBoaInPositionRoleService;
+	
+	@Autowired
+	private HtBoaInRoleContrastService htBoaInRoleContrastService;
+	
+	@Autowired
+	private HtBoaInPositionUserRepository htBoaInPositionUserRepository;
+	
+	
+	
 
 	/**
 	 * 钉钉与生产数据对照
@@ -963,10 +982,47 @@ public class DingDingService {
      * 4.再把UC的角色，与UC岗位进行关联
      * @return
      */
-    public Result converPositionRole() {
+	public Result converPositionRole() {
 		try {
 			//1.查找UC信贷角色关联关系
+			List<HtBoaInRoleContrast> listHtBoaInRoleContrast = htBoaInRoleContrastService.geHtBoaInRoleContrastList();
+			List<HtBoaInContrast> htBoaInContrastListUser=htBoaInContrastService.getHtBoaInContrastListByType("20");//获取所有关联的用户
+			
 			//2.查找信贷角色下的信贷用户
+			for(HtBoaInRoleContrast htBoaInRoleContrast : listHtBoaInRoleContrast) {
+				//查找信贷角色下的，用户
+				List<TbUserRole> listTbUserRole = tbUserRoleRepository.findByRoleId(htBoaInRoleContrast.getBmRoleCode());
+				for(TbUserRole tbUserRole : listTbUserRole) {
+				   if(StringUtils.isEmpty(tbUserRole.getUserId())) {
+						continue;
+				   }
+				  //根据信贷用户查找对应的UC用户信息
+				   Optional<HtBoaInContrast> optionalHtBoaInContrast = htBoaInContrastListUser.stream().filter(userContrast ->tbUserRole.getUserId().equals(userContrast.getBmBusinessId())).findFirst();
+				   if(optionalHtBoaInContrast!=null && optionalHtBoaInContrast.isPresent()) {
+					   HtBoaInContrast htBoaInContrast = optionalHtBoaInContrast.get();
+					   if(htBoaInContrast!=null && StringUtils.isNotEmpty(htBoaInContrast.getUcBusinessId())) {
+						   List<HtBoaInPositionUser>  listHtBoaInPositionUser= htBoaInPositionUserRepository.findByUserId(htBoaInContrast.getUcBusinessId());
+						   if(listHtBoaInPositionUser!=null&&!listHtBoaInPositionUser.isEmpty()) {
+							   String positionCode = listHtBoaInPositionUser.get(0).getPositionCode();
+							   if(StringUtils.isNotEmpty(positionCode)) {
+								   List<HtBoaInPositionRole>  listHtBoaInPositionRole =  htBoaInPositionRoleService.getPositionRoleList(htBoaInRoleContrast.getUcRoleCode(),positionCode);
+								   if(listHtBoaInPositionRole==null||listHtBoaInPositionRole.isEmpty()) {
+									    HtBoaInPositionRole htBoaInPositionRole = new HtBoaInPositionRole();
+										htBoaInPositionRole.setCreatedDatetime(new Date());
+										htBoaInPositionRole.setDelFlag(Constants.DEL_0);
+										htBoaInPositionRole.setLastModifiedDatetime(new Date());
+										htBoaInPositionRole.setRoleCode(htBoaInRoleContrast.getUcRoleCode());
+										htBoaInPositionRole.setPositionCode(positionCode);
+										htBoaInPositionRole.setCreateOperator("自动同步");
+										htBoaInPositionRoleService.add(htBoaInPositionRole);
+								   }
+							   }
+						   }
+					   }
+				   }
+				}
+				
+			}
 			log.debug("岗位角色关联转换完成！");
         	return Result.buildSuccess();
 		} catch (Exception e) {

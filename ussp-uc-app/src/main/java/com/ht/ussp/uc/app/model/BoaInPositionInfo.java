@@ -117,6 +117,26 @@ public class BoaInPositionInfo {
     public BoaInPositionInfo(long id,String positionCode, String positionName,
             String positionNameCn,   String orgPath,
             int sequence, String createOperator, Date createdDatetime,
+            String updateOperator, Date lastModifiedDatetime,int delFlag,String status,String pOrgCode,String pOrgNameCn) {
+        this.positionCode = positionCode;
+        this.positionName = positionName;
+        this.positionNameCn = positionNameCn;
+        this.orgPath = orgPath;
+        this.sequence = sequence;
+        this.createOperator = createOperator;
+        this.createdDatetime = createdDatetime;
+        this.updateOperator = updateOperator;
+        this.lastModifiedDatetime = lastModifiedDatetime;
+        this.delFlag = delFlag;
+        this.id = id;
+        this.status = status;
+        this.pOrgCode = pOrgCode;
+        this.pOrgNameCn = pOrgNameCn;
+    }
+
+    public BoaInPositionInfo(long id,String positionCode, String positionName,
+            String positionNameCn,   String orgPath,
+            int sequence, String createOperator, Date createdDatetime,
             String updateOperator, Date lastModifiedDatetime,int delFlag,String status,String pOrgCode) {
         this.positionCode = positionCode;
         this.positionName = positionName;
@@ -132,5 +152,4 @@ public class BoaInPositionInfo {
         this.status = status;
         this.pOrgCode = pOrgCode;
     }
-
 }

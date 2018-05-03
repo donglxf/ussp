@@ -81,7 +81,7 @@ layui.config({
 	});
     
     $("#a_check").on('click',function() {
-    	 var checkStatus = table.checkStatus('userposition_positionDialog_add_data');
+    	 var checkStatus = table.checkStatus('userposition_positionDialog_data');
     	 var postiondata = checkStatus.data;
     	 if(postiondata.length>0){
     		 $.each(postiondata, function (name, value) {
