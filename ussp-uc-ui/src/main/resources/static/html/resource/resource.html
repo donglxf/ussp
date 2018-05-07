@@ -35,6 +35,8 @@
                                 </button>
                 <button class="layui-btn layui-btn-sm" title="下载导入模板" id="down" style="display: none" onclick="location.href='/template/资源列表导入模板.xlsx'" ht-auth="down"   >下载导入模板</button>
 				<button class="layui-btn layui-btn-sm" title="导入" id="importResourceExcel" style="display: none" data-type="importResourceExcel"  ht-auth="import"    >导入</button>
+				<button class="layui-btn layui-btn-sm" title="导出系统资源" id="exportAppResource"   data-type="exportAppResource" >导出资源</button>
+				<button class="layui-btn layui-btn-sm" title="导入分析" id="importAppResourceJson"   data-type="importAppResourceJson" >导入分析</button>
                            <input type="hidden" id="checkResApp">
                             </div>
                             <div class="pull-right col-xs-4">
@@ -640,6 +642,40 @@
             </table>
         </div>
     </div>
+    <!-- 导入数据分析  -->
+     <div id="import_resource_json_data_div" class="hide">
+	     <div class="layui-form"  >
+	        <div class="layui-form-item">
+	            <label class="layui-form-label">数据来源<b>*</b></label>
+	            <div class="layui-input-block">
+	                <textarea placeholder="请输入分析数据源"   id="txtJsonDataSource"  style="height: 280px;" class="layui-textarea"></textarea>
+	            </div>
+	        </div>
+	        <div class="layui-form-item">
+	            <div class="layui-fluid" style="width: 100px">
+	                <button class="layui-btn pull-center" id="analysis_res_data" style="width:100px;" >分析</button>
+	            </div>
+	            
+	        </div>
+	    </div>
+		<div class="row-lg">
+			<form method="post" class="layui-form" lay-filter="changePwd_filter_modify_form">
+			   <input type="hidden" id="analysitResultCode" />
+				<div class="layui-form-item">
+					<label class="layui-form-label">生成脚本</label>
+					<div class="layui-input-block">
+						<textarea  readonly id="txtAnalysitResult"  style="height: 280px;"  class="layui-textarea"></textarea>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">回滚脚本</label>
+					<div class="layui-input-block">
+					    <textarea  readonly id="txtAnalysitResultBack"  style="height: 280px;"  class="layui-textarea"></textarea>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
     <script type="text/html" id="resource_menu_font_icon_laytpl">
         <i class="fa {{d.fontIcon}}" aria-hidden="true"></i>
     </script>

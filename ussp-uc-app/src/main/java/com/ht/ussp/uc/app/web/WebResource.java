@@ -1,10 +1,18 @@
 package com.ht.ussp.uc.app.web;
 
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +25,9 @@ import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInOrg;
+import com.ht.ussp.uc.app.domain.HtBoaInPublish;
 import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
+import com.ht.ussp.uc.app.domain.HtBoaInResource;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.feignclients.UaaClient;
 import com.ht.ussp.uc.app.model.ChangePwd;
@@ -25,12 +35,15 @@ import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
 import com.ht.ussp.uc.app.service.HtBoaInLoginService;
 import com.ht.ussp.uc.app.service.HtBoaInOrgService;
+import com.ht.ussp.uc.app.service.HtBoaInPublishService;
 import com.ht.ussp.uc.app.service.HtBoaInPwdHistService;
+import com.ht.ussp.uc.app.service.HtBoaInResourceService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
 import com.ht.ussp.uc.app.vo.ValidateJwtVo;
 import com.ht.ussp.util.EncryptUtil;
 import com.ht.ussp.util.FastJsonUtil;
+import com.ht.ussp.util.JsonUtil;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
@@ -53,9 +66,15 @@ public class WebResource{
     @Autowired
     private HtBoaInPwdHistService htBoaInPwdHistService;
     @Autowired
+    private HtBoaInResourceService htBoaInResourceService;
+    @Autowired
     private UaaClient uaaClient;
     @Autowired
     private HtBoaInOrgService htBoaInOrgService;
+    @Autowired
+    private HtBoaInPublishService htBoaInPublishService;
+    
+    
     
     @ApiOperation(value = "外部系统获取用户信息")
     @PostMapping("/getUserForOther")
@@ -206,4 +225,115 @@ public class WebResource{
         return Result.buildSuccess();
     }
     
+    @GetMapping("/exportResource")
+    public void exportResource(HttpServletRequest request, HttpServletResponse response,@RequestParam("app")  String app) {
+		try {
+			request.setCharacterEncoding("UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
+		// 导出txt文件
+		response.setContentType("text/plain");
+		String fileName =app+"_resource.json";
+		try {
+			response.setHeader("Content-Disposition", "attachment; filename=" + java.net.URLEncoder.encode(fileName, "UTF-8") );// 导出中文名称
+		} catch (Exception e2) {
+			e2.printStackTrace();
+		}
+		BufferedOutputStream buff = null;
+		StringBuffer write = new StringBuffer();
+		ServletOutputStream outSTr = null;
+		try {
+			outSTr = response.getOutputStream();// 建立
+			buff = new BufferedOutputStream(outSTr);
+			List<HtBoaInResource> listHtBoaInResource=htBoaInResourceService.getAllByApp(app);
+			write.append(JsonUtil.obj2Str(listHtBoaInResource));
+			buff.write(write.toString().getBytes("UTF-8"));
+			buff.flush();
+			buff.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		} finally {
+			try {
+				buff.close();
+				outSTr.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+    
+     
+    /**
+     * 
+     * @param request
+     * @param response
+     * @param type 1 升级脚本  2 回滚脚本
+     * @param resultDataCode 数据解析版本
+     */
+    @GetMapping("/downAnalysisResData")
+    public void downAnalysisResData(HttpServletRequest request, HttpServletResponse response,@RequestParam("type")  String type,@RequestParam("resultDataCode")  String resultDataCode) {
+		try {
+			request.setCharacterEncoding("UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
+		List<HtBoaInPublish> listHtBoaInPublish = htBoaInPublishService.getHtBoaInPublishListByPublishCode(resultDataCode);
+		HtBoaInPublish htBoaInPublish = new HtBoaInPublish();
+		if(listHtBoaInPublish!=null&&!listHtBoaInPublish.isEmpty()) {
+			htBoaInPublish = listHtBoaInPublish.get(0);
+		}
+		if(htBoaInPublish==null) {
+			return;
+		}
+		String publishSql = htBoaInPublish.getPublishSql();
+		String fallBackSql = htBoaInPublish.getFallBackSql();
+		String fileName = resultDataCode;
+		if(StringUtils.isEmpty(type)) {
+			return ;
+		}else {
+			if("1".equals(type)) {
+				fileName = htBoaInPublish.getPublishFileName();
+			}else if("2".equals(type)) {
+				fileName = htBoaInPublish.getFallBackFileName();
+			}
+		}
+		// 导出txt文件
+		response.setContentType("text/plain");
+		try {
+			response.setHeader("Content-Disposition", "attachment; filename=" + java.net.URLEncoder.encode(fileName, "UTF-8") );// 导出中文名称
+		} catch (Exception e2) {
+			e2.printStackTrace();
+		}
+		
+		BufferedOutputStream buff = null;
+		StringBuffer write = new StringBuffer();
+		ServletOutputStream outSTr = null;
+		try {
+			outSTr = response.getOutputStream();// 建立
+			buff = new BufferedOutputStream(outSTr);
+			if("1".equals(type)) {
+				write.append(publishSql);
+			}else if("2".equals(type)) {
+				write.append(fallBackSql);
+			}
+			buff.write(write.toString().getBytes("UTF-8"));
+			buff.flush();
+			buff.close();
+			if("1".equals(type)) {
+				htBoaInPublish.setIsdown("1");
+				htBoaInPublish.setUpdateDatetime(new Date());
+				htBoaInPublishService.save(htBoaInPublish);
+			}
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		} finally {
+			try {
+				buff.close();
+				outSTr.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

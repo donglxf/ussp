@@ -291,7 +291,65 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
             }
             var keyword = $("#resource_" + type + "_search_keyword").val();
             renderTable(type, undefined, keyword);
-        }
+        },
+        //导出对应系统资源数据
+        exportAppResource:function(){
+        	var nodes = appAndResourceTree.getSelectedNodes();
+        	if (nodes.length == 0) {
+                layer.alert("请先在左边选择一个系统");
+                return;
+            }
+        	window.location.href=config.basePath + 'web/exportResource?app='+nodes[0]["app"];
+        },
+        importAppResourceJson:function(){
+        	layer.close(addDialog);
+            addDialog = layer.open({
+                type: 1,
+                area: ['900px', '800px'],
+                maxmin: true,
+                shadeClose: false,
+                title: "导入数据分析",
+                content: $("#import_resource_json_data_div").html(),
+                btn: ['下载升级脚本','下载回滚脚本', '关闭'],
+                yes: function (index, layero) {
+                	window.location.href=config.basePath + 'web/downAnalysisResData?type=1&resultDataCode='+$('#analysitResultCode', layero).val();//升级脚本
+                },
+                btn2: function (index, layero) {
+                	window.location.href=config.basePath + 'web/downAnalysisResData?type=2&resultDataCode='+$('#analysitResultCode', layero).val(); //回滚脚本
+                	return false;
+                },
+                success: function (layero, index) {
+                    $('#analysis_res_data', layero).on('click', function () {
+                    	var txtJsonDataSource = $('#txtJsonDataSource', layero).val();
+                    	if(txtJsonDataSource){
+                    		//验证是否json格式
+                    		 if(isJSON(txtJsonDataSource)){
+                    			 $.ajax({
+                                     type: "POST",
+                                     url: config.basePath + 'resource/analysisResData',
+                                     data: {
+                                    	 jsonData: txtJsonDataSource,
+                                     },
+                                     success: function (result) {
+                                    	 $('#txtAnalysitResult', layero).val(result["data"]["resultData"]);
+                                    	 $('#txtAnalysitResultBack', layero).val(result["data"]["resultDataBack"]);
+                                    	 $('#analysitResultCode', layero).val(result["data"]["resultDataCode"]);
+                                     },
+                                     error: function (result) {
+                                         layer.msg("数据分析发生异常，请联系管理员。");
+                                         console.error(result);
+                                     }
+                                 });
+                    		 }else{
+                    			 layer.msg("请输入正确的json格式数据源");
+                    		 }
+                    	}else{
+                    		layer.msg("请输入数据源");
+                    	}
+                    });
+                }
+            })
+        },
     };
     upload.render({
 		elem: '#importResourceExcel'
@@ -358,6 +416,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                     	 $("#down").show();
                     	 $("#checkResApp").val(treeNode["code"]);
                     	 $("#importResourceExcel").html("导入"+treeNode["name"]);
+                    	 $("#exportAppResource").attr("title","导出"+treeNode["name"]+"资源");
                     	 $("#importResourceExcel").show();
                     }else{
                     	$("#down").hide();
@@ -908,6 +967,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
             relevanceType = $(this).data('relevance-type');
         active[type] ? active[type].call(this, resType, relevanceType) : '';
     });
+  
     //监听树的工具栏
     $('#resource_tree .btn').on('click', function () {
         var type = $(this).data('type');
@@ -952,6 +1012,23 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                 appAndResourceTree.expandNode(appAndResourceTree.getNodeByParam("code", nodeList[i]["parentCode"]), true, false, null, null);
             }
         }
+    }
+    
+    function isJSON(str) {
+        if (typeof str == 'string') {
+            try {
+                var obj=JSON.parse(str);
+                if(typeof obj == 'object' && obj ){
+                    return true;
+                }else{
+                    return false;
+                }
+            } catch(e) {
+                console.error('error：'+str+'!!!'+e);
+                return false;
+            }
+        }
+        console.error('It is not a string!')
     }
 
     //渲染权限按钮

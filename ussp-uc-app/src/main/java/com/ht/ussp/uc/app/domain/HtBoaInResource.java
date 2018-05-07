@@ -3,10 +3,20 @@ package com.ht.ussp.uc.app.domain;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.ht.ussp.uc.app.vo.ResVo;
+
+import lombok.Data;
 
 
 /**
@@ -15,6 +25,7 @@ import com.ht.ussp.uc.app.vo.ResVo;
  * @Description: 资源信息表
  * @date 2018年1月5日 下午2:52:34
  */
+@Data
 @Entity
 @Table(name = "HT_BOA_IN_RESOURCE")
 @NamedQuery(name = "HtBoaInResource.findAll", query = "SELECT h FROM HtBoaInResource h")
@@ -38,10 +49,10 @@ public class HtBoaInResource implements Serializable {
     private Date createdDatetime;
 
     @Column(name = "DEL_FLAG")
-    private int delFlag;
+    private Integer delFlag;
 
     @Column(name = "JPA_VERSION")
-    private int jpaVersion;
+    private Integer jpaVersion;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     @Temporal(TemporalType.TIMESTAMP)
@@ -77,8 +88,9 @@ public class HtBoaInResource implements Serializable {
     private String resType;
 
     @Column(name = "SEQUENCE")
-    private int sequence;
+    private Integer sequence;
 
+    //状态（1，禁用，0，启用，2，隐藏 ）
     @Column(name = "STATUS")
     private String status;
 
@@ -86,158 +98,6 @@ public class HtBoaInResource implements Serializable {
     private String updateOperator;
 
     public HtBoaInResource() {
-    }
-
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getApp() {
-        return this.app;
-    }
-
-    public void setApp(String app) {
-        this.app = app;
-    }
-
-    public String getCreateOperator() {
-        return this.createOperator;
-    }
-
-    public void setCreateOperator(String createOperator) {
-        this.createOperator = createOperator;
-    }
-
-    public Date getCreatedDatetime() {
-        return this.createdDatetime;
-    }
-
-    public void setCreatedDatetime(Date createdDatetime) {
-        this.createdDatetime = createdDatetime;
-    }
-
-    public int getDelFlag() {
-        return this.delFlag;
-    }
-
-    public void setDelFlag(int delFlag) {
-        this.delFlag = delFlag;
-    }
-
-    public int getJpaVersion() {
-        return this.jpaVersion;
-    }
-
-    public void setJpaVersion(int jpaVersion) {
-        this.jpaVersion = jpaVersion;
-    }
-
-    public Date getLastModifiedDatetime() {
-        return this.lastModifiedDatetime;
-    }
-
-    public void setLastModifiedDatetime(Date lastModifiedDatetime) {
-        this.lastModifiedDatetime = lastModifiedDatetime;
-    }
-
-    public String getRemark() {
-        return this.remark;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark;
-    }
-
-    public String getResCode() {
-        return this.resCode;
-    }
-
-    public void setResCode(String resCode) {
-        this.resCode = resCode;
-    }
-
-    public String getResContent() {
-        return this.resContent;
-    }
-
-    public void setResContent(String resContent) {
-        this.resContent = "".equals(resContent) ? null : resContent;
-    }
-
-    public byte[] getResIcon() {
-        return this.resIcon;
-    }
-
-    public void setResIcon(byte[] resIcon) {
-        this.resIcon = resIcon;
-    }
-
-    public String getResName() {
-        return this.resName;
-    }
-
-    public void setResName(String resName) {
-        this.resName = resName;
-    }
-
-    public String getResNameCn() {
-        return this.resNameCn;
-    }
-
-    public void setResNameCn(String resNameCn) {
-        this.resNameCn = resNameCn;
-    }
-
-    public String getResParent() {
-        return this.resParent;
-    }
-
-    public void setResParent(String resParent) {
-        this.resParent = "".equals(resParent) ? null : resParent;
-    }
-
-    public String getResType() {
-        return this.resType;
-    }
-
-    public void setResType(String resType) {
-        this.resType = resType;
-    }
-
-    public int getSequence() {
-        return this.sequence;
-    }
-
-    public void setSequence(int sequence) {
-        this.sequence = sequence;
-    }
-
-    public String getStatus() {
-        return this.status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getUpdateOperator() {
-        return this.updateOperator;
-    }
-
-    public void setUpdateOperator(String updateOperator) {
-        this.updateOperator = updateOperator;
-    }
-
-    public String getFontIcon() {
-        return fontIcon;
-    }
-
-    public void setFontIcon(String fontIcon) {
-        this.fontIcon = fontIcon;
     }
 
 }

@@ -40,6 +40,7 @@ import com.ht.ussp.uc.app.service.HtBoaInRoleResService;
 import com.ht.ussp.uc.app.vo.AppAndResourceVo;
 import com.ht.ussp.uc.app.vo.RelevanceApiVo;
 import com.ht.ussp.uc.app.vo.ResourcePageVo;
+import com.ht.ussp.util.JsonUtil;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
@@ -361,5 +362,21 @@ public class ResResource {
         }
         return Result.buildSuccess();
     }
-
+    
+    /**
+     * json数据分析
+     * @param request
+     * @param response
+     */
+    @PostMapping(value = "/analysisResData")
+    public Result analysisResData(@RequestHeader("userId") String userId ,@RequestParam("jsonData")String jsonData) {
+        try { 
+        	List<HtBoaInResource> listHtBoaInResource = JsonUtil.json2List(jsonData, HtBoaInResource.class);
+        	//进行数据分析，生成脚本
+        	return htBoaInResourceService.analysisResData(listHtBoaInResource);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.buildFail(e.getLocalizedMessage(),e.getMessage());
+        }
+    }
 }

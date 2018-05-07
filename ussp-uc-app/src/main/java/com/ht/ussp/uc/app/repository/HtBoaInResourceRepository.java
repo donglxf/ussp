@@ -76,4 +76,6 @@ public interface HtBoaInResourceRepository extends JpaSpecificationExecutor<HtBo
 	List<HtBoaInResource> findByAppAndResType(String app, String resType);
 	
 	List<HtBoaInResource> findByRemarkLikeAndResTypeAndApp(String remark, String resType,String app);
+	
+	List<HtBoaInResource> findByApp(String app);
 }

@@ -1,10 +1,15 @@
 package com.ht.ussp.uc.app.service;
 
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
@@ -22,10 +27,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
+import com.ht.ussp.core.Result;
 import com.ht.ussp.core.ReturnCodeEnum;
+import com.ht.ussp.uc.app.domain.HtBoaInPublish;
 import com.ht.ussp.uc.app.domain.HtBoaInResource;
 import com.ht.ussp.uc.app.domain.HtBoaInRoleRes;
 import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
+import com.ht.ussp.uc.app.repository.HtBoaInPublishRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInResourceRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInRoleRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInRoleResRepository;
@@ -51,7 +59,10 @@ public class HtBoaInResourceService {
     private HtBoaInRoleRepository htBoaInRoleRepository;
     @Autowired
     private HtBoaInRoleResRepository htBoaInRoleResRepository;
-
+    @Autowired
+    private HtBoaInPublishRepository htBoaInPublishRepository;
+    
+    
     public List<ResVo> queryResForN(List<String> res_code, List<String> res_type, String app) {
         return htBoaInResourceRepository.queryResForN(res_code, res_type, app);
     }
@@ -208,6 +219,12 @@ public class HtBoaInResourceService {
         return htBoaInResourceRepository.findByAppAndStatusInAndDelFlag(app, new String[]{"0", "2"}, 0);
     }
 
+    /**
+     * 加载系统所有资源<br>
+     */
+    public List<HtBoaInResource> getAllByApp(String app) {
+        return htBoaInResourceRepository.findByApp(app);
+    }
     /**
      * 通过父编码获取资源个数，用于构造资源编号<br>
      *
@@ -448,4 +465,334 @@ public class HtBoaInResourceService {
             e.printStackTrace();
         }
     }
+
+    /**
+     * 
+     * @param sourceListHtBoaInResource  来源数据 (删除，dev删除了的而生产正在使用？？)
+     * @return
+     */
+	public Result analysisResData(List<HtBoaInResource> sourceListHtBoaInResource) {
+		Map<String,String> backMap = new HashMap<String,String>();
+		StringBuffer  sbf = new StringBuffer(); //升级脚本
+		StringBuffer  fallbacksbf = new StringBuffer(); //回滚脚本
+		boolean isAnais = false; //是否生成了升级脚本  false没有  true生成了脚本
+		String enter = "\r\n"; 
+		List<HtBoaInResource> needAdd = new ArrayList<HtBoaInResource>();
+		needAdd.addAll(sourceListHtBoaInResource);
+		List<HtBoaInResource> needUpdate = new ArrayList<HtBoaInResource>();
+		List<HtBoaInResource> needDel = new ArrayList<HtBoaInResource>();
+		
+		List<HtBoaInResource> sourceParentRes = new ArrayList<HtBoaInResource>();  //父节点不为空
+		List<HtBoaInResource> sourceParentNullRes = new ArrayList<HtBoaInResource>();//父节点为空
+		
+		List<HtBoaInResource> targetParentRes = new ArrayList<HtBoaInResource>();  //父节点不为空
+		List<HtBoaInResource> targetParentNullRes = new ArrayList<HtBoaInResource>();//父节点为空
+		
+		String app = "";
+		
+		if(sourceListHtBoaInResource!=null&&!sourceListHtBoaInResource.isEmpty()) {
+			app=sourceListHtBoaInResource.get(0).getApp();
+			String app2=sourceListHtBoaInResource.get(sourceListHtBoaInResource.size()-1).getApp();
+			if(!StringUtils.isEmpty(app)&&!StringUtils.isEmpty(app2)) {
+				if(!app.equals(app2)) {
+					return Result.buildFail("9999", "数据中存在不同系统的数据");
+				}
+			}
+			sbf.append("-- ");
+			sbf.append(app);
+			sbf.append("系统升级脚本 "+enter);
+			List<HtBoaInResource> targetListHtBoaInResource = htBoaInResourceRepository.findByApp(app);//目标数据
+			needDel.addAll(targetListHtBoaInResource);
+			if(targetListHtBoaInResource!=null&&!targetListHtBoaInResource.isEmpty()) {
+				for(HtBoaInResource sourceHtBoaInResource : sourceListHtBoaInResource) {
+					if(!StringUtils.isEmpty(sourceHtBoaInResource.getResCode())) {
+						if(StringUtils.isEmpty(sourceHtBoaInResource.getResParent())) {//父节点为空
+							sourceParentNullRes.add(sourceHtBoaInResource); 
+						}else {//父节点不为空
+							sourceParentRes.add(sourceHtBoaInResource);
+						}
+					}
+				}
+				for(HtBoaInResource targetHtBoaInResource : targetListHtBoaInResource) {
+					if(StringUtils.isEmpty(targetHtBoaInResource.getResParent())) {//父节点为空
+						targetParentNullRes.add(targetHtBoaInResource); 
+					}else {//父节点不为空
+						targetParentRes.add(targetHtBoaInResource);
+					}
+				}
+				
+				for(HtBoaInResource sourceHtBoaInResource : sourceParentNullRes) {
+					List<HtBoaInResource> sameHtBoaInResource = targetParentNullRes.stream().filter(targetRes -> sourceHtBoaInResource.getResCode().equals(targetRes.getResCode())).collect(Collectors.toList());
+					needUpdate.addAll(sameHtBoaInResource);//两边都有的数据，则需要更新
+					needAdd.removeAll(sameHtBoaInResource);//src库多出的数据，得到目标库需要新增的数据（去除两边都有的）
+					if(sameHtBoaInResource!=null && !sameHtBoaInResource.isEmpty()) {
+						if(sourceHtBoaInResource.getResCode().equals(sameHtBoaInResource.get(0).getResCode())) {
+							needAdd.remove(sourceHtBoaInResource);//src库多出的数据，得到目标库需要新增的数据（去除两边都有的）
+						}
+					}
+					needDel.removeAll(sameHtBoaInResource);//目标库多出的数据，得到目标库需要删除的数据（去除两边都有的）
+				}
+				
+				for(HtBoaInResource sourceHtBoaInResource : sourceParentRes) {
+					List<HtBoaInResource> sameHtBoaInResource = targetParentRes.stream().filter(targetRes -> sourceHtBoaInResource.getResCode().equals(targetRes.getResCode())&& sourceHtBoaInResource.getResParent().equals(targetRes.getResParent())).collect(Collectors.toList());
+					needUpdate.addAll(sameHtBoaInResource);//两边都有的数据，则需要更新
+					needAdd.removeAll(sameHtBoaInResource);//src库多出的数据，得到目标库需要新增的数据（去除两边都有的）
+					if(sameHtBoaInResource!=null && !sameHtBoaInResource.isEmpty()) {
+						if(sourceHtBoaInResource.getResCode().equals(sameHtBoaInResource.get(0).getResCode())) {
+							needAdd.remove(sourceHtBoaInResource);//src库多出的数据，得到目标库需要新增的数据（去除两边都有的）
+						}
+					}
+					needDel.removeAll(sameHtBoaInResource);//目标库多出的数据，得到目标库需要删除的数据（去除两边都有的）
+				}
+				
+				if(needDel!=null&&!needDel.isEmpty()) {
+					sbf.append("-- 需要删除的数据  请确认生产是否需要删除 "+enter);
+					fallbacksbf.append("-- 回滚删除的数据 "+enter);
+					for(HtBoaInResource delHtBoaInResource : needDel) {
+						if("0".equals((delHtBoaInResource.getDelFlag()+""))) {
+							sbf.append("UPDATE HT_BOA_IN_RESOURCE SET DEL_FLAG='1' WHERE APP='"+app+"' AND RES_CODE='"+delHtBoaInResource.getResCode()+"';"+enter);
+							fallbacksbf.append("UPDATE HT_BOA_IN_RESOURCE SET DEL_FLAG='0' WHERE APP='"+app+"' AND RES_CODE='"+delHtBoaInResource.getResCode()+"';"+enter);
+							isAnais = true;
+						}
+					}
+				}
+				
+				if(needAdd!=null&&!needAdd.isEmpty()) {
+					sbf.append("-- 需要添加的数据 "+enter);
+					fallbacksbf.append("-- 回滚添加的数据 "+enter);
+					for(HtBoaInResource addHtBoaInResource : needAdd) {
+						sbf.append("INSERT INTO `HT_BOA_IN_RESOURCE` (`RES_CODE`, `RES_NAME_CN`, `SEQUENCE`, `RES_TYPE`, `RES_PARENT`, `REMARK`, `STATUS`, `RES_ICON`, `FONT_ICON`, `RES_CONTENT`, `APP`, `JPA_VERSION`, `DEL_FLAG`) VALUES (");
+						sbf.append("'"+addHtBoaInResource.getResCode()+"',");
+						sbf.append("'"+addHtBoaInResource.getResNameCn()+"',");
+						sbf.append("'"+addHtBoaInResource.getSequence()+"',");
+						sbf.append("'"+addHtBoaInResource.getResType()+"',");
+						sbf.append("'"+addHtBoaInResource.getResParent()+"',");
+						sbf.append("'"+addHtBoaInResource.getRemark()+"',");
+						sbf.append("'"+addHtBoaInResource.getStatus()+"',");
+						sbf.append((addHtBoaInResource.getResIcon()==null?null:"'"+addHtBoaInResource.getResIcon()+"'")+",");
+						sbf.append((addHtBoaInResource.getFontIcon()==null?null:"'"+addHtBoaInResource.getFontIcon()+"'")+",");
+						sbf.append("'"+addHtBoaInResource.getResContent()+"',");
+						sbf.append("'"+addHtBoaInResource.getApp()+"',");
+						sbf.append("'"+addHtBoaInResource.getJpaVersion()+"',");
+						sbf.append("'"+addHtBoaInResource.getDelFlag()+"'");
+						sbf.append(");"+enter);
+						fallbacksbf.append("DELETE FROM  HT_BOA_IN_RESOURCE WHERE RES_CODE='"+addHtBoaInResource.getResCode()+"' AND RES_PARENT='"+addHtBoaInResource.getResParent()+"'"+" AND APP='"+addHtBoaInResource.getApp()+"'"+";"+enter);
+						isAnais = true;
+					}
+				}
+				
+				if(needUpdate!=null&&!needUpdate.isEmpty()) {
+					sbf.append("-- 需要更新的数据 "+enter);
+					fallbacksbf.append("-- 回滚更新的数据 "+enter);
+					for(HtBoaInResource updateHtBoaInResource : needUpdate) { //target
+						Optional<HtBoaInResource> optionalHtBoaInResource = null;
+						if(StringUtils.isEmpty(updateHtBoaInResource.getResParent())) {//父节点为空
+							optionalHtBoaInResource = sourceParentNullRes.stream().filter(targetRes -> updateHtBoaInResource.getResCode().equals(targetRes.getResCode())).findFirst();
+						}else {//父节点不为空
+							optionalHtBoaInResource = sourceParentRes.stream().filter(targetRes -> updateHtBoaInResource.getResCode().equals(targetRes.getResCode())&& updateHtBoaInResource.getResParent().equals(targetRes.getResParent())).findFirst();
+						}
+						
+						HtBoaInResource sourceHtBoaInResource = null;
+						if(optionalHtBoaInResource!=null && optionalHtBoaInResource.isPresent()) {
+							sourceHtBoaInResource = optionalHtBoaInResource.get();
+						}
+						if(sourceHtBoaInResource!=null) {
+							boolean isUpdate = false;
+							StringBuffer sbfUpdate = new StringBuffer();
+							StringBuffer fallBacksbfUpdate = new StringBuffer();
+							sbfUpdate.append("UPDATE HT_BOA_IN_RESOURCE SET RES_CODE=RES_CODE ,");
+							fallBacksbfUpdate.append("UPDATE HT_BOA_IN_RESOURCE SET RES_CODE=RES_CODE ,");
+							
+							if(StringUtils.isEmpty(updateHtBoaInResource.getResNameCn())) {
+								if(!StringUtils.isEmpty(sourceHtBoaInResource.getResNameCn())) {
+									sbfUpdate.append(" RES_NAME_CN="+((sourceHtBoaInResource.getResNameCn()==null?null:"'"+sourceHtBoaInResource.getResNameCn()+"'"))+",");
+									fallBacksbfUpdate.append(" RES_NAME_CN="+((updateHtBoaInResource.getResNameCn()==null?null:"'"+updateHtBoaInResource.getResNameCn()+"'"))+",");
+									isUpdate = true;
+								}
+							}else {
+								if(!updateHtBoaInResource.getResNameCn().equals(sourceHtBoaInResource.getResNameCn())) {
+									sbfUpdate.append(" RES_NAME_CN="+((sourceHtBoaInResource.getResNameCn()==null?null:"'"+sourceHtBoaInResource.getResNameCn()+"'"))+",");
+									fallBacksbfUpdate.append(" RES_NAME_CN="+((updateHtBoaInResource.getResNameCn()==null?null:"'"+updateHtBoaInResource.getResNameCn()+"'"))+",");
+									isUpdate = true;
+								}
+							}
+							if(StringUtils.isEmpty(updateHtBoaInResource.getSequence())) {
+								if(!StringUtils.isEmpty(sourceHtBoaInResource.getSequence())) {
+									sbfUpdate.append(" SEQUENCE="+sourceHtBoaInResource.getSequence()+",");
+									fallBacksbfUpdate.append(" SEQUENCE="+updateHtBoaInResource.getSequence()+",");
+									isUpdate = true;
+								}
+							}else {
+								if(!(updateHtBoaInResource.getSequence()).equals((sourceHtBoaInResource.getSequence()))) {
+									if(!StringUtils.isEmpty(sourceHtBoaInResource.getSequence())) {
+										sbfUpdate.append(" SEQUENCE="+sourceHtBoaInResource.getSequence()+",");
+										fallBacksbfUpdate.append(" SEQUENCE="+updateHtBoaInResource.getSequence()+",");
+										isUpdate = true;
+									}
+								}
+							}
+							if(StringUtils.isEmpty(updateHtBoaInResource.getResType())) {
+								if(!StringUtils.isEmpty(sourceHtBoaInResource.getResType())) {
+									sbfUpdate.append(" RES_TYPE="+((sourceHtBoaInResource.getResType()==null?null:"'"+sourceHtBoaInResource.getResType()+"'"))+",");
+									fallBacksbfUpdate.append(" RES_TYPE="+((updateHtBoaInResource.getResType()==null?null:"'"+updateHtBoaInResource.getResType()+"'"))+",");
+									isUpdate = true;
+								}
+							}else {
+								if(!updateHtBoaInResource.getResType().equals(sourceHtBoaInResource.getResType())) {
+									sbfUpdate.append(" RES_TYPE="+((sourceHtBoaInResource.getResType()==null?null:"'"+sourceHtBoaInResource.getResType()+"'"))+",");
+									fallBacksbfUpdate.append(" RES_TYPE="+((updateHtBoaInResource.getResType()==null?null:"'"+updateHtBoaInResource.getResType()+"'"))+",");
+									isUpdate = true;
+								}
+							}
+							if(StringUtils.isEmpty(updateHtBoaInResource.getResParent())) {
+								if(!StringUtils.isEmpty(sourceHtBoaInResource.getResParent())) {
+									sbfUpdate.append(" RES_PARENT="+((sourceHtBoaInResource.getResParent()==null?null:"'"+sourceHtBoaInResource.getResParent()+"'"))+",");
+									fallBacksbfUpdate.append(" RES_PARENT="+((updateHtBoaInResource.getResParent()==null?null:"'"+updateHtBoaInResource.getResParent()+"'"))+",");
+									isUpdate = true;
+								}
+							}else {
+								if(!updateHtBoaInResource.getResParent().equals(sourceHtBoaInResource.getResParent())) {
+									sbfUpdate.append(" RES_PARENT="+((sourceHtBoaInResource.getResParent()==null?null:"'"+sourceHtBoaInResource.getResParent()+"'"))+",");
+									fallBacksbfUpdate.append(" RES_PARENT="+((updateHtBoaInResource.getResParent()==null?null:"'"+updateHtBoaInResource.getResParent()+"'"))+",");
+									isUpdate = true;
+								}
+							}
+							if(StringUtils.isEmpty(updateHtBoaInResource.getRemark())) {
+								if(!StringUtils.isEmpty(sourceHtBoaInResource.getRemark())) {
+									sbfUpdate.append(" REMARK="+((sourceHtBoaInResource.getRemark()==null?null:"'"+sourceHtBoaInResource.getRemark()+"'"))+",");
+									fallBacksbfUpdate.append(" REMARK="+((updateHtBoaInResource.getRemark()==null?null:"'"+updateHtBoaInResource.getRemark()+"'"))+",");
+									isUpdate = true;
+								}
+							}else {
+								if(!updateHtBoaInResource.getRemark().equals(sourceHtBoaInResource.getRemark())) {
+									sbfUpdate.append(" REMARK="+((sourceHtBoaInResource.getRemark()==null?null:"'"+sourceHtBoaInResource.getRemark()+"'"))+",");
+									fallBacksbfUpdate.append(" REMARK="+((updateHtBoaInResource.getRemark()==null?null:"'"+updateHtBoaInResource.getRemark()+"'"))+",");
+									isUpdate = true;
+								}
+							}
+							if(StringUtils.isEmpty(updateHtBoaInResource.getStatus())) {
+								if(!StringUtils.isEmpty(sourceHtBoaInResource.getStatus())) {
+									sbfUpdate.append(" STATUS="+((sourceHtBoaInResource.getStatus()==null?null:"'"+sourceHtBoaInResource.getStatus()+"'"))+",");
+									fallBacksbfUpdate.append(" STATUS="+((updateHtBoaInResource.getStatus()==null?null:"'"+updateHtBoaInResource.getStatus()+"'"))+",");
+									isUpdate = true;
+								}
+							}else {
+								if(!updateHtBoaInResource.getStatus().equals(sourceHtBoaInResource.getStatus())) {
+									sbfUpdate.append(" STATUS="+((sourceHtBoaInResource.getStatus()==null?null:"'"+sourceHtBoaInResource.getStatus()+"'"))+",");
+									fallBacksbfUpdate.append(" STATUS="+((updateHtBoaInResource.getStatus()==null?null:"'"+updateHtBoaInResource.getStatus()+"'"))+",");
+									isUpdate = true;
+								}
+							}
+							if(StringUtils.isEmpty(updateHtBoaInResource.getResIcon())) {
+								if(!StringUtils.isEmpty(sourceHtBoaInResource.getResIcon())) {
+									sbfUpdate.append(" RES_ICON="+((sourceHtBoaInResource.getResIcon()==null?null:"'"+sourceHtBoaInResource.getResIcon()+"'"))+",");
+									fallBacksbfUpdate.append(" RES_ICON="+((updateHtBoaInResource.getResIcon()==null?null:"'"+updateHtBoaInResource.getResIcon()+"'"))+",");
+									isUpdate = true;
+								}
+							}else {
+								if(!updateHtBoaInResource.getResIcon().equals(sourceHtBoaInResource.getResIcon())) {
+									sbfUpdate.append(" RES_ICON="+((sourceHtBoaInResource.getResIcon()==null?null:"'"+sourceHtBoaInResource.getResIcon()+"'"))+",");
+									fallBacksbfUpdate.append(" RES_ICON="+((updateHtBoaInResource.getResIcon()==null?null:"'"+updateHtBoaInResource.getResIcon()+"'"))+",");
+									isUpdate = true;
+								}
+							}
+							if(StringUtils.isEmpty(updateHtBoaInResource.getFontIcon())) {
+								if(!StringUtils.isEmpty(sourceHtBoaInResource.getFontIcon())) {
+									sbfUpdate.append(" FONT_ICON="+((sourceHtBoaInResource.getFontIcon()==null?null:"'"+sourceHtBoaInResource.getFontIcon()+"'"))+",");
+									fallBacksbfUpdate.append(" FONT_ICON="+((updateHtBoaInResource.getFontIcon()==null?null:"'"+updateHtBoaInResource.getFontIcon()+"'"))+",");
+									isUpdate = true;
+								}
+							}else {
+								if(!updateHtBoaInResource.getFontIcon().equals(sourceHtBoaInResource.getFontIcon())) {
+									sbfUpdate.append(" FONT_ICON="+((sourceHtBoaInResource.getFontIcon()==null?null:"'"+sourceHtBoaInResource.getFontIcon()+"'"))+",");
+									fallBacksbfUpdate.append(" FONT_ICON="+((updateHtBoaInResource.getFontIcon()==null?null:"'"+updateHtBoaInResource.getFontIcon()+"'"))+",");
+									isUpdate = true;
+								}
+							}
+							if(StringUtils.isEmpty(updateHtBoaInResource.getResContent())) {
+								if(!StringUtils.isEmpty(sourceHtBoaInResource.getResContent())) {
+									sbfUpdate.append(" RES_CONTENT="+((sourceHtBoaInResource.getResContent()==null?null:"'"+sourceHtBoaInResource.getResContent()+"'"))+",");
+									fallBacksbfUpdate.append(" RES_CONTENT="+((updateHtBoaInResource.getResContent()==null?null:"'"+updateHtBoaInResource.getResContent()+"'"))+",");
+									isUpdate = true;
+								}
+							}else {
+								if(!updateHtBoaInResource.getResContent().equals(sourceHtBoaInResource.getResContent())) {
+									sbfUpdate.append(" RES_CONTENT="+((sourceHtBoaInResource.getResContent()==null?null:"'"+sourceHtBoaInResource.getResContent()+"'"))+",");
+									fallBacksbfUpdate.append(" RES_CONTENT="+((updateHtBoaInResource.getResContent()==null?null:"'"+updateHtBoaInResource.getResContent()+"'"))+",");
+									isUpdate = true;
+								}
+							}
+							if(StringUtils.isEmpty(updateHtBoaInResource.getDelFlag())) {
+								if(!StringUtils.isEmpty(sourceHtBoaInResource.getDelFlag())) {
+									sbfUpdate.append(" DEL_FLAG="+sourceHtBoaInResource.getDelFlag());
+									fallBacksbfUpdate.append(" DEL_FLAG="+updateHtBoaInResource.getDelFlag());
+									isUpdate = true;
+								}
+							}else {
+								if(!(updateHtBoaInResource.getDelFlag()).equals((sourceHtBoaInResource.getDelFlag()))) {
+									if(!StringUtils.isEmpty(sourceHtBoaInResource.getDelFlag())) {
+										sbfUpdate.append(" DEL_FLAG="+sourceHtBoaInResource.getDelFlag());
+										fallBacksbfUpdate.append(" DEL_FLAG="+updateHtBoaInResource.getDelFlag());
+										isUpdate = true;
+									}
+								}
+							}
+							sbfUpdate.append(" RES_CODE=RES_CODE ");
+							sbfUpdate.append(" WHERE APP='"+app+"' AND RES_CODE='"+updateHtBoaInResource.getResCode()+"';"+enter);
+							fallBacksbfUpdate.append(" RES_CODE=RES_CODE ");
+							fallBacksbfUpdate.append(" WHERE APP='"+app+"' AND RES_CODE='"+updateHtBoaInResource.getResCode()+"';"+enter);
+							if(isUpdate) {
+								sbf.append(sbfUpdate);
+								fallbacksbf.append(fallBacksbfUpdate);
+								isAnais = true;
+							}
+						}
+					}
+				}
+			}else { //全量
+				if(sourceListHtBoaInResource!=null&&!sourceListHtBoaInResource.isEmpty()) {
+					sbf.append("-- 需要添加的数据 "+enter);
+					fallbacksbf.append("-- 回滚添加的数据 "+enter);
+					for(HtBoaInResource addHtBoaInResource : sourceListHtBoaInResource) {
+						sbf.append("INSERT INTO `HT_BOA_IN_RESOURCE` (`RES_CODE`, `RES_NAME_CN`, `SEQUENCE`, `RES_TYPE`, `RES_PARENT`, `REMARK`, `STATUS`, `RES_ICON`, `FONT_ICON`, `RES_CONTENT`, `APP`, `JPA_VERSION`, `DEL_FLAG`) VALUES (");
+						sbf.append("'"+addHtBoaInResource.getResCode()+"',");
+						sbf.append("'"+addHtBoaInResource.getResNameCn()+"',");
+						sbf.append("'"+addHtBoaInResource.getSequence()+"',");
+						sbf.append("'"+addHtBoaInResource.getResType()+"',");
+						sbf.append("'"+addHtBoaInResource.getResParent()+"',");
+						sbf.append("'"+addHtBoaInResource.getRemark()+"',");
+						sbf.append("'"+addHtBoaInResource.getStatus()+"',");
+						sbf.append((addHtBoaInResource.getResIcon()==null?null:"'"+addHtBoaInResource.getResIcon()+"'")+",");
+						sbf.append((addHtBoaInResource.getFontIcon()==null?null:"'"+addHtBoaInResource.getFontIcon()+"'")+",");
+						sbf.append("'"+addHtBoaInResource.getResContent()+"',");
+						sbf.append("'"+addHtBoaInResource.getApp()+"',");
+						sbf.append("'"+addHtBoaInResource.getJpaVersion()+"',");
+						sbf.append("'"+addHtBoaInResource.getDelFlag()+"'");
+						sbf.append(");"+enter);
+						fallbacksbf.append("DELETE FROM  HT_BOA_IN_RESOURCE WHERE RES_CODE='"+addHtBoaInResource.getResCode()+"' AND RES_PARENT='"+addHtBoaInResource.getResParent()+"'"+" AND APP='"+addHtBoaInResource.getApp()+"'"+";"+enter);
+						isAnais = true;
+					}
+				}
+			}
+		}
+		SimpleDateFormat sdf  = new  SimpleDateFormat("yyyyMMddHHmmss");
+		String resultDataCode = sdf.format(new Date());
+		backMap.put("resultData", sbf.toString());
+		backMap.put("resultDataBack", fallbacksbf.toString());
+		backMap.put("resultDataCode",resultDataCode );//解析版本编码
+		if(isAnais) { //生成了升级脚本则存入数据库
+			HtBoaInPublish htBoaInPublish = new HtBoaInPublish();
+			htBoaInPublish.setPublishCode(resultDataCode);
+			htBoaInPublish.setPublishFileName(app+"_resource_"+resultDataCode);
+			htBoaInPublish.setFallBackFileName(app+"_resource_fallback_"+resultDataCode);
+			htBoaInPublish.setPublishSql(sbf.toString());
+			htBoaInPublish.setFallBackSql(fallbacksbf.toString());
+			htBoaInPublish.setApp(app);
+			htBoaInPublish.setCreatedDatetime(new Date());
+			htBoaInPublish.setUpdateDatetime(new Date());
+			htBoaInPublish.setIsdown("0");
+			htBoaInPublishRepository.save(htBoaInPublish);
+		}
+		return Result.buildSuccess(backMap);
+	}
 }

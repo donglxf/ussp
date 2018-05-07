@@ -324,7 +324,7 @@ public class UserResource{
             user.setMobile(userMessageVo.getMobile());
             user.setOrgCode(userMessageVo.getOrgCode());
             user.setUserName(userMessageVo.getUserName());
-            user.setIdNo(userMessageVo.getIdNo());
+            user.setIdNo((StringUtils.isEmpty(userMessageVo.getIdNo())?null:userMessageVo.getIdNo()));
             user.setRootOrgCode(userMessageVo.getRootOrgCode());
             user.setOrgPath(userMessageVo.getOrgPath());
             user.setUserType("10");
@@ -419,7 +419,7 @@ public class UserResource{
             user.setMobile(userMessageVo.getMobile());
             user.setOrgCode(userMessageVo.getOrgCode());
             user.setUserName(userMessageVo.getUserName());
-            user.setIdNo(userMessageVo.getIdNo());
+            user.setIdNo((StringUtils.isEmpty(userMessageVo.getIdNo())?null:userMessageVo.getIdNo()));
             user.setRootOrgCode(userMessageVo.getRootOrgCode());
             user.setOrgPath(userMessageVo.getOrgPath());
             user.setUpdateOperator(loginUserId);
