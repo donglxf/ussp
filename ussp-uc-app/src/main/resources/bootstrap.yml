@@ -26,6 +26,15 @@ eureka:
   client:
     serviceUrl:
       defaultZone: ${EUREKA_SERVER_ADDRESS:http://localhost:30101/eureka/}
+xxl:
+  job:
+    admin.addresses: http://172.16.200.111:31801/xxl-job-admin
+    executor.appname: ussp-uc-app
+    executor.ip: 
+    executor.port: 9999
+    accessToken: 
+    executor.logpath: /data/applogs/xxl-job/jobhandler/
+    executor.logretentiondays: -1
 
 ---
 spring:
@@ -46,7 +55,15 @@ eureka:
     ip-address: 172.16.200.110
     status-page-url: http://${eureka.instance.ip-address}:${server.port}${status-page-url-path:/info}
     health-check-url: http://${eureka.instance.ip-address}:${server.port}${health-check-url-path:/health}
-
+xxl:
+  job:
+    admin.addresses: http://172.16.200.111:31801/xxl-job-admin
+    executor.appname: ussp-uc-app
+    executor.ip: 
+    executor.port: 9999
+    accessToken: 
+    executor.logpath: /data/applogs/xxl-job/jobhandler/
+    executor.logretentiondays: -1
 ---
 spring:
   profiles: sit
@@ -64,6 +81,15 @@ eureka:
     ip-address: 172.16.200.112
     status-page-url: http://${eureka.instance.ip-address}:${server.port}${status-page-url-path:/info}
     health-check-url: http://${eureka.instance.ip-address}:${server.port}${health-check-url-path:/health}
+xxl:
+  job:
+    admin.addresses: http://172.16.200.113:31801/xxl-job-admin
+    executor.appname: ussp-uc-app
+    executor.ip: 
+    executor.port: 9999
+    accessToken: 
+    executor.logpath: /data/applogs/xxl-job/jobhandler/
+    executor.logretentiondays: -1    
 ---
 spring:
   profiles: uat
@@ -79,6 +105,16 @@ eureka:
     serviceUrl:
       defaultZone: ${EUREKA_SERVER_ADDRESS}
 
+xxl:
+  job:
+    admin.addresses: http://120.79.128.28:31801/xxl-job-admin
+    executor.appname: ussp-uc-app
+    executor.ip: 
+    executor.port: 9999
+    accessToken: 
+    executor.logpath: /data/applogs/xxl-job/jobhandler/
+    executor.logretentiondays: -1      
+
 ---
 spring:
   profiles: prd
@@ -93,3 +129,12 @@ eureka:
   client:
     serviceUrl:
       defaultZone: ${EUREKA_SERVER_ADDRESS}
+xxl:
+  job:
+    admin.addresses: http://39.108.59.169:31801/xxl-job-admin
+    executor.appname: ussp-uc-app
+    executor.ip: 
+    executor.port: 9999
+    accessToken: 
+    executor.logpath: /data/applogs/xxl-job/jobhandler/
+    executor.logretentiondays: -1      
