@@ -562,7 +562,7 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
             	 });
             }else if (obj.event === 'restate') {
             	layer.confirm("确认恢复用户状态？", function (index) {
-            		$.post(config.basePath + "login/changUserState?userId=" + data.userId+"&status=0", null, function (result) {
+            		$.post(config.basePath + "user/changUserState?userId=" + data.userId+"&status=0", null, function (result) {
                         if (result["returnCode"] == "0000") {
                           layer.close(index);
                        	  layer.msg("恢复用户状态成功");

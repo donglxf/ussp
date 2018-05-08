@@ -594,6 +594,24 @@ public class UserResource{
         	}
         }
     }
+    
+    @ApiOperation(value = "修改用户登录状态")
+    @PostMapping("/changUserState")
+    public Result changUserState(@RequestParam("userId")String userId,@RequestParam("status")String status) {
+    	if(StringUtils.isEmpty(userId)) {
+    		return Result.buildFail();
+    	} 
+    	try {
+    		HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(userId);
+        	if(htBoaInUser!=null) {
+        		htBoaInUser.setStatus(status);
+        		htBoaInUserService.update(htBoaInUser);
+        	}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	return Result.buildSuccess();
+    }
   
     @PostMapping(value = "/getDtoUserInfo")
     public Result getDtoUserInfo() {

@@ -158,7 +158,7 @@ public class LoginResource {
     	
     }
     
-    @ApiOperation(value = "修改用户状态")
+    @ApiOperation(value = "修改用户登录状态")
     @PostMapping("/changUserState")
     public Result changUserState(@RequestParam("userId")String userId,@RequestParam("status")String status) {
     	if(StringUtils.isEmpty(userId)) {
