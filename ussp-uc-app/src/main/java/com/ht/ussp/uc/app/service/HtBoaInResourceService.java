@@ -738,9 +738,18 @@ public class HtBoaInResourceService {
 								}
 							}
 							sbfUpdate.append(" RES_CODE=RES_CODE ");
-							sbfUpdate.append(" WHERE APP='"+app+"' AND RES_CODE='"+updateHtBoaInResource.getResCode()+"';"+enter);
+							sbfUpdate.append(" WHERE APP='"+app+"' AND RES_CODE='"+updateHtBoaInResource.getResCode()+"'");
+							if(StringUtils.isEmpty(updateHtBoaInResource.getResParent())) {
+								sbfUpdate.append(";"+enter);
+							}else {
+								sbfUpdate.append(" AND RES_PARENT='"+updateHtBoaInResource.getResParent()+"';"+enter);
+							}
 							fallBacksbfUpdate.append(" RES_CODE=RES_CODE ");
-							fallBacksbfUpdate.append(" WHERE APP='"+app+"' AND RES_CODE='"+updateHtBoaInResource.getResCode()+"';"+enter);
+							if(StringUtils.isEmpty(updateHtBoaInResource.getResParent())) {
+								fallBacksbfUpdate.append(";"+enter);
+							}else {
+								fallBacksbfUpdate.append(" AND RES_PARENT='"+updateHtBoaInResource.getResParent()+"';"+enter);
+							}
 							if(isUpdate) {
 								sbf.append(sbfUpdate);
 								fallbacksbf.append(fallBacksbfUpdate);
