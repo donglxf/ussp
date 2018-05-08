@@ -267,6 +267,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                             {type: 'numbers'}
                             , {type: 'checkbox'}
                             , {field: 'resContent', width: 300, title: 'API链接'}
+                            , {field: 'resCode', width: 200, title: 'API编号'}
                             , {field: 'resNameCn', width: 200, title: 'API名称'}
                             , {field: 'remark', title: '方法名'}
                         ]]

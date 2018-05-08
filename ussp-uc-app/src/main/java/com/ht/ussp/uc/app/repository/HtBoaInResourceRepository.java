@@ -38,10 +38,17 @@ public interface HtBoaInResourceRepository extends JpaSpecificationExecutor<HtBo
     @Query(value = "SELECT MAX(res_code) FROM HT_BOA_IN_RESOURCE WHERE APP=?1  AND ((?2='NULL' AND RES_PARENT IS NULL) OR (RES_PARENT=?2)) AND RES_TYPE in(?3) AND RES_CODE like ?4", nativeQuery = true)
     String queryMaxResCodeByAppAndParentAndType(String app, String resPanrent, List<String> resTypes, String resCodePrefix);
     
+    @Query(value = "SELECT CONCAT(?4,MAX(CONVERT(REPLACE(res_code,?4,''),SIGNED))) FROM HT_BOA_IN_RESOURCE WHERE APP=?1  AND ((?2='NULL' AND RES_PARENT IS NULL) OR (RES_PARENT=?2)) AND RES_TYPE in(?3) AND RES_CODE like concat(?4,'%')", nativeQuery = true)
+    String queryMaxResCodeByAppAndParentAndType2(String app, String resPanrent, List<String> resTypes, String resCodePrefix);
+    
+    
+    @Query(value = "SELECT res_code FROM HT_BOA_IN_RESOURCE WHERE APP=?1  AND ((?2='NULL' AND RES_PARENT IS NULL) OR (RES_PARENT=?2)) AND RES_TYPE in(?3) AND RES_CODE like ?4", nativeQuery = true)
+    List<String> queryResCodeListByAppAndParentAndType(String app, String resPanrent, List<String> resTypes, String resCodePrefix);
+    
     @Query(value = "SELECT MAX(res_code) FROM HT_BOA_IN_RESOURCE WHERE APP=?1  AND RES_TYPE in(?2) AND RES_CODE like ?3 AND RES_PARENT IS NULL", nativeQuery = true)
     String queryMaxMenuCodeByAppAndParentAndType(String app,   List<String> resTypes, String resCodePrefix);
 
-    @Query(value = "SELECT new com.ht.ussp.uc.app.vo.ApiResourceVo(id,resNameCn,resContent,remark,resParent)" +
+    @Query(value = "SELECT new com.ht.ussp.uc.app.vo.ApiResourceVo(id,resNameCn,resContent,remark,resParent,resCode)" +
             "FROM HtBoaInResource " +
             "WHERE app=?1 AND resType='api' " +
             "AND resContent IS NOT NULL AND remark IS NOT NULL " +
@@ -78,4 +85,6 @@ public interface HtBoaInResourceRepository extends JpaSpecificationExecutor<HtBo
 	List<HtBoaInResource> findByRemarkLikeAndResTypeAndApp(String remark, String resType,String app);
 	
 	List<HtBoaInResource> findByApp(String app);
+
+	List<HtBoaInResource> findByResNameCnAndResContentAndAppAndRemark(String resNameCn, String resContent, String app,String remark);
 }

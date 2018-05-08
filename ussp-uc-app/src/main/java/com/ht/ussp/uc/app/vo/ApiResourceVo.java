@@ -29,4 +29,5 @@ public class ApiResourceVo {
     private String resContent;
     private String remark;
     private String resParent;
+    private String resCode;
 }

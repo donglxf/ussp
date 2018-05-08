@@ -157,7 +157,19 @@ public class ResResource {
             if (resourceList != null && resourceList.size() > 0) {
                 return new Result().returnCode("10000").codeDesc("该资源存在下级资源，请先删除下级资源 。");
             }
-            htBoaInResourceService.delete(id);
+            //如果是api 若api是挂靠的最后一个菜单 则删除关联关系即可
+            if("api".equals(resource.getResType())) {
+            	List<HtBoaInResource> resourceList2 = htBoaInResourceService.findByResNameCnAndResContentAndAppAndRemark(resource.getResNameCn(), resource.getResContent(), resource.getApp(),resource.getRemark());
+                if(resourceList2!=null&&resourceList2.size()==1) {
+                	HtBoaInResource resourceDel = resourceList2.get(0);
+                	resourceDel.setResParent("");
+                	htBoaInResourceService.save(resourceDel);
+                }else {
+                	htBoaInResourceService.delete(id);
+                }
+            }else {
+            	htBoaInResourceService.delete(id);
+            }
         }
         return Result.buildSuccess();
     }
