@@ -17,7 +17,7 @@ public class ResVo implements Serializable {
 
     private String resNameCn;
 
-    private int sequence;
+    private Integer sequence;
 
     private String resType;
 
