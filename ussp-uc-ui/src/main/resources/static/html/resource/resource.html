@@ -35,8 +35,8 @@
                                 </button>
                 <button class="layui-btn layui-btn-sm" title="下载导入模板" id="down" style="display: none" onclick="location.href='/template/资源列表导入模板.xlsx'" ht-auth="down"   >下载导入模板</button>
 				<button class="layui-btn layui-btn-sm" title="导入" id="importResourceExcel" style="display: none" data-type="importResourceExcel"  ht-auth="import"    >导入</button>
-				<button class="layui-btn layui-btn-sm" title="导出系统资源" id="exportAppResource"   data-type="exportAppResource" >导出资源</button>
-				<button class="layui-btn layui-btn-sm" title="导入分析" id="importAppResourceJson"   data-type="importAppResourceJson" >导入分析</button>
+				<button class="layui-btn layui-btn-sm" title="导出系统资源" id="exportAppResource"   data-type="exportAppResource" >导出升级资源</button>
+				<button class="layui-btn layui-btn-sm" title="导入分析" id="importAppResourceJson"   data-type="importAppResourceJson" >导入升级资源分析</button>
                            <input type="hidden" id="checkResApp">
                             </div>
                             <div class="pull-right col-xs-4">
@@ -675,6 +675,19 @@
 				</div>
 			</form>
 		</div>
+	</div>
+	<!-- 导入数据分析  -->
+     <div id="import_resource_choice_item_div" class="hide">
+	     <div class="layui-form"  >
+	        <div class="layui-form-item">
+	            <label class="layui-form-label">升级资源:</label>
+	            <div class="layui-input-block">
+	                <input type="checkbox" name="ck_resource" value="resource" title="资源" />
+	                <input type="checkbox" name="ck_role" value="role" title="角色" />
+	                <input type="checkbox" name="ck_role_resource" value="role_resource" title="角色资源" />
+	            </div>
+	        </div>
+	    </div>
 	</div>
     <script type="text/html" id="resource_menu_font_icon_laytpl">
         <i class="fa {{d.fontIcon}}" aria-hidden="true"></i>

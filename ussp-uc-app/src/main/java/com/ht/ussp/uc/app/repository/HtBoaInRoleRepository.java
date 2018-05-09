@@ -66,6 +66,8 @@ public interface HtBoaInRoleRepository
 	public Page<BoaInRoleInfo> listRoleInfoByAppPageWeb(Pageable pageable, String app);
     
     public Page<HtBoaInRole> findByAppInAndDelFlagAndStatusAndRoleNameCnLike(Pageable pageable, List<String> app,int delFlag,String status,String roleName);
+
+	public List<HtBoaInRole> findByApp(String app);
     
 
 }
