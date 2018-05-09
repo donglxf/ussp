@@ -1,0 +1,96 @@
+server:
+  port: 30126
+spring:
+  application:
+    name: ussp-ouc-app
+  cloud:
+    config:
+      discovery:
+        service-id: ussp-config-app
+    bus:
+      enabled: false
+  profiles:
+    active: dev
+eureka:
+  instance:
+    prefer-ip-address: true
+---
+spring:
+  profiles: local
+  cloud:
+    config:
+      enabled: false
+    bus:
+      enabled: false
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER_ADDRESS:http://localhost:30101/eureka/}
+
+---
+spring:
+  application:
+    name: ussp-uc-app
+  profiles: dev
+  cloud:
+    config:
+      discovery:
+        enabled: true
+    bus:
+      enabled: true
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER_ADDRESS:http://172.16.200.110:30101/eureka/}
+  instance:
+    ip-address: 172.16.200.110
+    status-page-url: http://${eureka.instance.ip-address}:${server.port}${status-page-url-path:/info}
+    health-check-url: http://${eureka.instance.ip-address}:${server.port}${health-check-url-path:/health}
+
+---
+spring:
+  profiles: sit
+  cloud:
+    config:
+      discovery:
+        enabled: true
+    bus:
+      enabled: true
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER_ADDRESS:http://172.16.200.112:30101/eureka/}
+  instance:
+    ip-address: 172.16.200.112
+    status-page-url: http://${eureka.instance.ip-address}:${server.port}${status-page-url-path:/info}
+    health-check-url: http://${eureka.instance.ip-address}:${server.port}${health-check-url-path:/health}
+
+---
+spring:
+  profiles: uat
+  cloud:
+    config:
+      discovery:
+        enabled: true
+    bus:
+      enabled: true
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER_ADDRESS}
+
+---
+spring:
+  profiles: prd
+  cloud:
+    config:
+      discovery:
+        enabled: true
+    bus:
+      enabled: true
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER_ADDRESS}
