@@ -30,7 +30,7 @@ eureka:
 ---
 spring:
   application:
-    name: ussp-uc-app
+    name: ussp-ouc-app
   profiles: dev
   cloud:
     config:

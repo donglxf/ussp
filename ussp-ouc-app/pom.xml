@@ -8,12 +8,12 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>ussp-uc-app</artifactId>
+	<artifactId>ussp-ouc-app</artifactId>
 	<name>统一用户认证权限中心微服务</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<start-class>com.ht.ussp.uc.app.UcApplication</start-class>
+		<start-class>com.ht.ussp.ouc.app.UcApplication</start-class>
 		<maven.deploy.skip>true</maven.deploy.skip>
 	</properties>
 
@@ -135,7 +135,7 @@
 	   
 	</dependencies>
 	<build>
-		<finalName>ussp-uc-app</finalName>
+		<finalName>ussp-ouc-app</finalName>
 		<plugins>
             <plugin>
                 <groupId>pl.project13.maven</groupId>
