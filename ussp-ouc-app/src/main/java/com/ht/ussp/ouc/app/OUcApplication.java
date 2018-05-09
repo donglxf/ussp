@@ -21,7 +21,7 @@ public class OUcApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(OUcApplication.class, args);
-        log.debug("用户中心启动成功！");
+        log.debug("外部用户中心启动成功！");
 
     }
 }
