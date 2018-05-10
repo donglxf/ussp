@@ -3,8 +3,8 @@ server:
 spring:
   datasource:
     url: jdbc:mysql://172.16.200.111:3306/BOA?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
-    username: boa
-    password: ik2kvfbT
+    username: ENC(qMTHOy7guKTX5YICxkzS4w==)
+    password: ENC(MGS/Z6BFDHicpppWQjCtktQWzUSIjZN3)
     dbcp2:
       validation-query: SELECT 1
       test-while-idle: true
@@ -29,7 +29,7 @@ spring:
     database : 1
     host : 172.16.200.111
     port : 6379
-    password : hongte888
+    password : ENC(8UCAL2jFRyCVm1Erl8nJBYe0XRb7gKq4)
     timeout : 3000  #毫秒
     pool :
       max-active : 1000
@@ -50,4 +50,10 @@ ribbon:
   ConnectTimeout: 10000
   MaxAutoRetries: 1
   MaxAutoRetriesNextServer: 1
+  
+smsTime: ENC(KRVElEHdR8doNi0N8lK1ww==)
+
+jasypt:
+  encryptor: 
+    password: HTitEncryptConfigureAb  #配置文件加解密时的密钥
   
