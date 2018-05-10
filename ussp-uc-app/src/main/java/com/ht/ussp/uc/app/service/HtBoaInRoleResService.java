@@ -161,7 +161,7 @@ public class HtBoaInRoleResService {
 					fallbacksbf.append("-- 回滚删除 " + enter);
 					for (HtBoaInRoleRes delHtBoaInRoleRes : needDel) {
 						if ("0".equals((delHtBoaInRoleRes.getDelFlag() + ""))) {
-							sbf.append("UPDATE HT_BOA_IN_ROLE_RES SET DEL_FLAG='1' WHERE RES_CODE='" + delHtBoaInRoleRes.getRoleCode() + "' AND ROLE_CODE='" + delHtBoaInRoleRes.getRoleCode() + "';" + enter);
+							sbf.append("UPDATE HT_BOA_IN_ROLE_RES SET DEL_FLAG='1' WHERE RES_CODE='" + delHtBoaInRoleRes.getResCode() + "' AND ROLE_CODE='" + delHtBoaInRoleRes.getRoleCode() + "';" + enter);
 							fallbacksbf.append("UPDATE HT_BOA_IN_ROLE_RES SET DEL_FLAG='1' WHERE RES_CODE='" + delHtBoaInRoleRes.getResCode() + "' AND ROLE_CODE='" + delHtBoaInRoleRes.getRoleCode() + "';" + enter);
 							isAnais = true;
 						}
