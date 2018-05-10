@@ -8,7 +8,7 @@ spring:
     bus:
       enabled: false
   profiles:
-    active: dev
+    active: local
 eureka:
   instance:
     prefer-ip-address: true
@@ -30,6 +30,9 @@ eureka:
   client:
     serviceUrl:
       defaultZone: ${EUREKA_SERVER_ADDRESS:http://localhost:30101/eureka/}
+  instance: 
+    secure-health-check-url: http://localhost:30136/actuator/health
+    health-check-url: http://localhost:30136/actuator/health
 
 ---
 spring:
