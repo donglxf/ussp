@@ -137,6 +137,7 @@ public class ResResource {
                     break;
             }
             resource.setStatus("0");
+            resource.setResParent(StringUtils.isEmpty(resource.getResParent())?null:resource.getResParent());
             resource.setCreateOperator(userId);
             resource.setUpdateOperator(userId);
             resource.setDelFlag(0);
@@ -262,6 +263,7 @@ public class ResResource {
 		resource.setResContent(resContent);
 		resource.setFontIcon(fontIcon);
 		resource.setResParent(resParent);
+		resource.setResParent(StringUtils.isEmpty(resource.getResParent())?null:resource.getResParent());
 		resource.setApp(app);
 		String resCode = htBoaInResourceService.createMenuCode(app, resParent);
 		resource.setResCode(resCode);
