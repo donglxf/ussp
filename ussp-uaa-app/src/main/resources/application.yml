@@ -1,18 +1,17 @@
 server:
   port: 30136
-#  undertow: 
-#    io-threads: 5
-#    worker-threads: 150
+
 spring:
   jackson:
     time-zone: Asia/Chongqing
 
+#内部用户鉴权参数
 uaa:
   security:
     jwt:
       tokenExpirationTime: 29  #分钟
       refreshTokenExpTime: 720
-      appTokenTime: 365 #天
+      appTokenTime: 365 #天，系统级鉴权
       tokenIssuer: qiuwenwu@hongte.info
       tokenSigningKey: xm8EV6Hy5RMFK4EEACIDAwQus
       
