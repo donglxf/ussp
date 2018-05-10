@@ -25,4 +25,8 @@ public interface HtBoaInRoleResRepository extends JpaSpecificationExecutor<HtBoa
     List<HtBoaInRoleRes>  findByResCodeAndRoleCode(String resCode, String roleCode);
 
 	void deleteById(Long id);
+
+	@Query(value = "SELECT * FROM HT_BOA_IN_ROLE_RES WHERE ROLE_CODE IN (SELECT ROLE_CODE FROM HT_BOA_IN_ROLE WHERE APP=:app)", nativeQuery = true)
+	List<HtBoaInRoleRes> getAllByApp(@Param("app")String app);
+
 }

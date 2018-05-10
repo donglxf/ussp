@@ -300,7 +300,28 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                 layer.alert("请先在左边选择一个系统");
                 return;
             }
-        	window.location.href=config.basePath + 'web/exportResource?app='+nodes[0]["app"];
+        	layer.open({
+                type: 1,
+                area: ['500px', '300px'],
+                shadeClose: true,
+                title: "选择需要升级的资源",
+                content: $("#import_resource_choice_item_div").html(),
+                btn: ['确认', '取消'],
+                yes: function (index, layero) {
+                	var reqType = "";
+                	    $('input[type=checkbox]:checked', layero).each(function() {
+                	        reqType += $(this).val()+",";
+                	    });
+                	window.location.href=config.basePath + 'web/exportResource?app='+nodes[0]["app"]+"&reqType="+reqType;
+                },
+                btn2: function () {
+                    layer.closeAll('tips');
+                },
+                success: function (layero, index) { 
+                	form.render("checkbox");
+                }
+            });
+        	
         },
         importAppResourceJson:function(){
         	layer.close(addDialog);
@@ -348,6 +369,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                     		layer.msg("请输入数据源");
                     	}
                     });
+                    
                 }
             })
         },
