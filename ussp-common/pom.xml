@@ -10,12 +10,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.ht.ussp</groupId>
 	<artifactId>ussp-common</artifactId>
-	<version>0.0.18</version>
+	<version>0.0.19</version>
 	<name>统一服务工具包</name>
 	<packaging>jar</packaging>
-	<properties>
-		<maven.deploy.skip>true</maven.deploy.skip>
-	</properties>
+<!-- 	<properties> -->
+<!-- 		<maven.deploy.skip>true</maven.deploy.skip> -->
+<!-- 	</properties> -->
 
 	<dependencies>
 		<dependency>
