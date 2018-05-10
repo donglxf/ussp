@@ -172,11 +172,6 @@ public class HtBoaInRoleResService {
 					sbf.append("-- 添加 " + enter);
 					fallbacksbf.append("-- 回滚添加 " + enter);
 					for (HtBoaInRoleRes addHtBoaInRoleRes : needAdd) {
-						sbf.append( "INSERT INTO  `HT_BOA_IN_ROLE_RES` (  `RES_CODE`, `ROLE_CODE`,  `DEL_FLAG` ) VALUES (");
-						sbf.append("'" + addHtBoaInRoleRes.getRoleCode() + "',");
-						sbf.append("'" + addHtBoaInRoleRes.getResCode() + "',");
-						sbf.append("'" + addHtBoaInRoleRes.getDelFlag() + "'");
-						sbf.append(");" + enter);
 						Optional<HtBoaInRole> optionalHtBoaInRole= roleList.stream().filter(role-> addHtBoaInRoleRes.getRoleCode().equals(role.getRoleCode()) ).findFirst();
 						String roleName="";
 						if(optionalHtBoaInRole!=null&&optionalHtBoaInRole.isPresent()) {
@@ -184,6 +179,13 @@ public class HtBoaInRoleResService {
 								roleName = optionalHtBoaInRole.get().getRoleNameCn();
 							}
 						}
+						
+						sbf.append( "INSERT INTO  `HT_BOA_IN_ROLE_RES` (  `RES_CODE`, `ROLE_CODE`,  `DEL_FLAG` ) VALUES (");
+						sbf.append("'" + addHtBoaInRoleRes.getResCode() + "',");
+						sbf.append("'" + addHtBoaInRoleRes.getRoleCode() + "',");
+						sbf.append("'" + addHtBoaInRoleRes.getDelFlag() + "'");
+						sbf.append(");-- roleName:"+roleName+ enter);
+						
 						fallbacksbf.append( "DELETE FROM  HT_BOA_IN_ROLE_RES WHERE ROLE_CODE='" + addHtBoaInRoleRes.getRoleCode() + "' AND RES_CODE='" + addHtBoaInRoleRes.getResCode() + "'; -- roleName:"+roleName+ enter);
 						isAnais = true;
 					}
@@ -192,8 +194,8 @@ public class HtBoaInRoleResService {
 			}else { //全量添加
 				for (HtBoaInRoleRes addHtBoaInRoleRes : sourceListHtBoaInRoleRes) {
 					sbf.append( "INSERT INTO  `HT_BOA_IN_ROLE_RES` (  `RES_CODE`, `ROLE_CODE`,  `DEL_FLAG` ) VALUES (");
-					sbf.append("'" + addHtBoaInRoleRes.getRoleCode() + "',");
 					sbf.append("'" + addHtBoaInRoleRes.getResCode() + "',");
+					sbf.append("'" + addHtBoaInRoleRes.getRoleCode() + "',");
 					sbf.append("'" + addHtBoaInRoleRes.getDelFlag() + "'");
 					sbf.append(");" + enter);
 					fallbacksbf.append( "DELETE FROM  HT_BOA_IN_ROLE_RES WHERE ROLE_CODE='" + addHtBoaInRoleRes.getRoleCode() + "' AND RES_CODE='" + addHtBoaInRoleRes.getResCode() + "';" + enter);
