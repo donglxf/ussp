@@ -9,7 +9,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>ussp-ouc-app</artifactId>
-	<name>统一用户认证权限中心微服务</name>
+	<name>统一外部用户认证权限中心微服务</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
