@@ -17,13 +17,14 @@
         <module>ussp-registry-app</module>
         <module>ussp-config-app</module>
         <module>ussp-gateway-app</module>
-        <module>ussp-zipkin-server</module>
-        <module>ussp-hystrix-turbine-app</module>
+        <!-- <module>ussp-zipkin-server</module> -->
+        <!-- <module>ussp-hystrix-turbine-app</module> -->
         <module>ussp-uaa-app</module>
         <!--<module>ussp-common</module>-->
         <module>ussp-admin-app</module>
         <module>ussp-uc-ui</module>
         <module>ussp-uc-app</module>
+        <module>ussp-ouc-app</module>
     </modules>
 
     <packaging>pom</packaging>
