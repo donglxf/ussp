@@ -141,6 +141,7 @@ public class ResResource {
             resource.setCreateOperator(userId);
             resource.setUpdateOperator(userId);
             resource.setDelFlag(0);
+            resource.setJpaVersion(0);
             resource.setSequence((StringUtils.isEmpty(resource.getSequence())?0:resource.getSequence()));
             resource = htBoaInResourceService.save(resource);
             if (resource != null && !StringUtils.isEmpty(resource.getId())) {
@@ -272,6 +273,7 @@ public class ResResource {
 		resource.setCreateOperator(userId);
 		resource.setCreatedDatetime(new Date());
 		resource.setDelFlag(0);
+		resource.setJpaVersion(0);
 		resource = htBoaInResourceService.save(resource);
 		if (resource != null && !StringUtils.isEmpty(resource.getId())) {
 			for(String role :roles) {
