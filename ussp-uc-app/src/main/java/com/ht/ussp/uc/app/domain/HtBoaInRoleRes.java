@@ -1,8 +1,19 @@
 package com.ht.ussp.uc.app.domain;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import lombok.Data;
 
 
 /**
@@ -11,6 +22,7 @@ import java.util.Date;
  * @Description: 角色资源表
  * @date 2018年1月5日 下午2:57:02
  */
+@Data
 @Entity
 @Table(name = "HT_BOA_IN_ROLE_RES")
 @NamedQuery(name = "HtBoaInRoleRes.findAll", query = "SELECT h FROM HtBoaInRoleRes h")
@@ -52,86 +64,6 @@ public class HtBoaInRoleRes implements Serializable {
     private String updateOperator;
 
     public HtBoaInRoleRes() {
-    }
-
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getCreateOperator() {
-        return this.createOperator;
-    }
-
-    public void setCreateOperator(String createOperator) {
-        this.createOperator = createOperator;
-    }
-
-    public Date getCreatedDatetime() {
-        return this.createdDatetime;
-    }
-
-    public void setCreatedDatetime(Date createdDatetime) {
-        this.createdDatetime = createdDatetime;
-    }
-
-    public int getDelFlag() {
-        return this.delFlag;
-    }
-
-    public void setDelFlag(int delFlag) {
-        this.delFlag = delFlag;
-    }
-
-    public int getJpaVersion() {
-        return this.jpaVersion;
-    }
-
-    public void setJpaVersion(int jpaVersion) {
-        this.jpaVersion = jpaVersion;
-    }
-
-    public Date getLastModifiedDatetime() {
-        return this.lastModifiedDatetime;
-    }
-
-    public void setLastModifiedDatetime(Date lastModifiedDatetime) {
-        this.lastModifiedDatetime = lastModifiedDatetime;
-    }
-
-    public String getResCode() {
-        return this.resCode;
-    }
-
-    public void setResCode(String resCode) {
-        this.resCode = resCode;
-    }
-
-    public String getRoleCode() {
-        return this.roleCode;
-    }
-
-    public void setRoleCode(String roleCode) {
-        this.roleCode = roleCode;
-    }
-
-    public String getRootOrgCode() {
-        return this.rootOrgCode;
-    }
-
-    public void setRootOrgCode(String rootOrgCode) {
-        this.rootOrgCode = rootOrgCode;
-    }
-
-    public String getUpdateOperator() {
-        return this.updateOperator;
-    }
-
-    public void setUpdateOperator(String updateOperator) {
-        this.updateOperator = updateOperator;
     }
 
 }

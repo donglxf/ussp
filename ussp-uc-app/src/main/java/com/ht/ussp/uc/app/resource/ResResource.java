@@ -10,9 +10,12 @@
 package com.ht.ussp.uc.app.resource;
 
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,10 +36,13 @@ import com.ht.ussp.bean.LoginUserInfoHelper;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInResource;
+import com.ht.ussp.uc.app.domain.HtBoaInRole;
 import com.ht.ussp.uc.app.domain.HtBoaInRoleRes;
 import com.ht.ussp.uc.app.service.HtBoaInAppService;
 import com.ht.ussp.uc.app.service.HtBoaInResourceService;
 import com.ht.ussp.uc.app.service.HtBoaInRoleResService;
+import com.ht.ussp.uc.app.service.HtBoaInRoleService;
+import com.ht.ussp.uc.app.vo.AnalysisResModel;
 import com.ht.ussp.uc.app.vo.AppAndResourceVo;
 import com.ht.ussp.uc.app.vo.RelevanceApiVo;
 import com.ht.ussp.uc.app.vo.ResourcePageVo;
@@ -67,7 +73,9 @@ public class ResResource {
     
     @Autowired
     private HtBoaInRoleResService htBoaInRoleResService;
-
+    @Autowired
+    private HtBoaInRoleService htBoaInRoleService;
+    
     
 
     @PostMapping("/app/load")
@@ -383,10 +391,68 @@ public class ResResource {
      */
     @PostMapping(value = "/analysisResData")
     public Result analysisResData(@RequestHeader("userId") String userId ,@RequestParam("jsonData")String jsonData) {
-        try { 
-        	List<HtBoaInResource> listHtBoaInResource = JsonUtil.json2List(jsonData, HtBoaInResource.class);
-        	//进行数据分析，生成脚本
-        	return htBoaInResourceService.analysisResData(listHtBoaInResource);
+        try {  
+        	//JsonUtil.json2Map(jsonData);
+        	Map<String, String> analysisResult = new HashMap<>();
+        	String isAnais = "false"; // 是否生成了升级脚本 false没有 true生成了脚本
+        	String app = "";
+        	StringBuffer sbf = new  StringBuffer("");
+        	StringBuffer fallbacksbf = new  StringBuffer("");
+        	AnalysisResModel analysisResModel = JsonUtil.json2Obj(jsonData, AnalysisResModel.class);
+        	if(analysisResModel==null) {
+        		return Result.buildFail("9999","analysisResModel is null");
+        	}
+        	//资源表
+        	if(!StringUtils.isEmpty(analysisResModel.getResource())) {
+        		List<HtBoaInResource> listHtBoaInResource = JsonUtil.json2List(analysisResModel.getResource(), HtBoaInResource.class);
+            	//进行数据分析，生成脚本
+            	Map<String, String> analysisResData = htBoaInResourceService.analysisResData(listHtBoaInResource); //资源
+            	if(analysisResData!=null) {
+            		if("false".equals(isAnais)) {
+            			isAnais = analysisResData.get("isAnais");
+            		}
+            		app = analysisResData.get("app");
+            		sbf.append(analysisResData.get("resultData"));
+            		fallbacksbf.append(analysisResData.get("resultDataBack"));
+            	}
+        	} 
+        	//角色表
+        	if(!StringUtils.isEmpty(analysisResModel.getRole())) {
+        		List<HtBoaInRole> listHtBoaInRole = JsonUtil.json2List(analysisResModel.getRole(), HtBoaInRole.class);
+            	//进行数据分析，生成脚本
+            	Map<String, String> analysisRoleData = htBoaInRoleService.analysisRoleData(listHtBoaInRole); //角色
+            	if(analysisRoleData!=null) {
+            		if("false".equals(isAnais)) {
+            			isAnais = analysisRoleData.get("isAnais");
+            		}
+            		app = analysisRoleData.get("app");
+            		sbf.append(analysisRoleData.get("resultData"));
+            		fallbacksbf.append(analysisRoleData.get("resultDataBack"));
+            	}
+        	}
+        	//角色资源表
+        	if(!StringUtils.isEmpty(analysisResModel.getRoleResource())) {
+        		List<HtBoaInRoleRes> listHtBoaInRoleRes = JsonUtil.json2List(analysisResModel.getRoleResource(), HtBoaInRoleRes.class);
+            	//进行数据分析，生成脚本
+            	Map<String, String> analysisRoleResData = htBoaInRoleResService.analysisRoleResData(listHtBoaInRoleRes); //角色资源
+            	if(analysisRoleResData!=null) {
+            		if("false".equals(isAnais)) {
+            			isAnais = analysisRoleResData.get("isAnais");
+            		}
+            		app = analysisRoleResData.get("app");
+            		sbf.append(analysisRoleResData.get("resultData"));
+            		fallbacksbf.append(analysisRoleResData.get("resultDataBack"));
+            	}
+        	}
+        	if("true".equals(isAnais)) {
+        		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        		String resultDataCode = sdf.format(new Date());
+        		analysisResult.put("resultData", sbf.toString());//
+        		analysisResult.put("resultDataBack", fallbacksbf.toString());// 
+        		analysisResult.put("resultDataCode", resultDataCode);// 解析版本编码
+        		htBoaInResourceService.saveAnaisSql(resultDataCode, app, sbf.toString(), fallbacksbf.toString());
+        	}
+        	return Result.buildSuccess(analysisResult);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.buildFail(e.getLocalizedMessage(),e.getMessage());

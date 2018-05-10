@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.druid.support.json.JSONUtils;
 import com.alibaba.druid.util.StringUtils;
 import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.core.Result;
@@ -28,6 +31,8 @@ import com.ht.ussp.uc.app.domain.HtBoaInOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInPublish;
 import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
 import com.ht.ussp.uc.app.domain.HtBoaInResource;
+import com.ht.ussp.uc.app.domain.HtBoaInRole;
+import com.ht.ussp.uc.app.domain.HtBoaInRoleRes;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.feignclients.UaaClient;
 import com.ht.ussp.uc.app.model.ChangePwd;
@@ -38,6 +43,8 @@ import com.ht.ussp.uc.app.service.HtBoaInOrgService;
 import com.ht.ussp.uc.app.service.HtBoaInPublishService;
 import com.ht.ussp.uc.app.service.HtBoaInPwdHistService;
 import com.ht.ussp.uc.app.service.HtBoaInResourceService;
+import com.ht.ussp.uc.app.service.HtBoaInRoleResService;
+import com.ht.ussp.uc.app.service.HtBoaInRoleService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
 import com.ht.ussp.uc.app.vo.ValidateJwtVo;
@@ -74,6 +81,10 @@ public class WebResource{
     @Autowired
     private HtBoaInPublishService htBoaInPublishService;
     
+    @Autowired
+    private HtBoaInRoleService htBoaInRoleService;
+    @Autowired
+    private HtBoaInRoleResService htBoaInRoleResService;
     
     
     @ApiOperation(value = "外部系统获取用户信息")
@@ -226,7 +237,7 @@ public class WebResource{
     }
     
     @GetMapping("/exportResource")
-    public void exportResource(HttpServletRequest request, HttpServletResponse response,@RequestParam("app")  String app) {
+    public void exportResource(HttpServletRequest request, HttpServletResponse response,@RequestParam("app")  String app ,@RequestParam("reqType") String reqType) {
 		try {
 			request.setCharacterEncoding("UTF-8");
 		} catch (UnsupportedEncodingException e1) {
@@ -234,7 +245,7 @@ public class WebResource{
 		}
 		// 导出txt文件
 		response.setContentType("text/plain");
-		String fileName =app+"_resource.json";
+		String fileName =app+"_source_data.json";
 		try {
 			response.setHeader("Content-Disposition", "attachment; filename=" + java.net.URLEncoder.encode(fileName, "UTF-8") );// 导出中文名称
 		} catch (Exception e2) {
@@ -244,13 +255,31 @@ public class WebResource{
 		StringBuffer write = new StringBuffer();
 		ServletOutputStream outSTr = null;
 		try {
-			outSTr = response.getOutputStream();// 建立
-			buff = new BufferedOutputStream(outSTr);
-			List<HtBoaInResource> listHtBoaInResource=htBoaInResourceService.getAllByApp(app);
-			write.append(JsonUtil.obj2Str(listHtBoaInResource));
-			buff.write(write.toString().getBytes("UTF-8"));
-			buff.flush();
-			buff.close();
+			if(StringUtils.isEmpty(reqType)) {
+				return ;
+			}
+			String[] reqTypes = reqType.split(",");
+			if(reqTypes!=null&&reqTypes.length>0) {
+				outSTr = response.getOutputStream();// 建立
+				buff = new BufferedOutputStream(outSTr);
+				Map<String,String> map = new HashMap<String,String>();
+				for(String reqtype : reqTypes) {
+					if("resource".equals(reqtype)) {
+						List<HtBoaInResource> listHtBoaInResource=htBoaInResourceService.getAllByApp(app);
+						map.put("resource", JsonUtil.obj2Str(listHtBoaInResource));
+					}else if("role".equals(reqtype)) {
+						List<HtBoaInRole> listHtBoaInRole=htBoaInRoleService.getAllByApp(app);
+						map.put("role", JsonUtil.obj2Str(listHtBoaInRole));
+					}else if("role_resource".equals(reqtype)) {
+						List<HtBoaInRoleRes> listHtBoaInResource=htBoaInRoleResService.getAllByApp(app);
+						map.put("roleResource", JsonUtil.obj2Str(listHtBoaInResource));
+					}
+				}
+				write.append(JSONUtils.toJSONString(map));
+				buff.write(write.toString().getBytes("UTF-8"));
+				buff.flush();
+				buff.close();
+			}
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		} finally {
@@ -263,7 +292,6 @@ public class WebResource{
 		}
 	}
     
-     
     /**
      * 
      * @param request

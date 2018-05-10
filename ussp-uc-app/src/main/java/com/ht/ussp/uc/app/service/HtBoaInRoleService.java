@@ -3,9 +3,12 @@ package com.ht.ussp.uc.app.service;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ht.ussp.bean.ExcelBean;
@@ -201,6 +205,131 @@ public class HtBoaInRoleService {
 			e.printStackTrace();
 		}
 
+	}
+
+	public List<HtBoaInRole> getAllByApp(String app) {
+		return htBoaInRoleRepository.findByApp(app);
+	}
+
+	public Map<String, String> analysisRoleData(List<HtBoaInRole> sourceListHtBoaInRole) {
+		StringBuffer sbf = new StringBuffer(); // 升级脚本
+		StringBuffer fallbacksbf = new StringBuffer(); // 回滚脚本
+		boolean isAnais = false; // 是否生成了升级脚本 false没有 true生成了脚本
+		String enter = "\r\n";
+		String app = "";
+		List<HtBoaInRole> needAdd = new ArrayList<HtBoaInRole>();
+		needAdd.addAll(sourceListHtBoaInRole);
+		List<HtBoaInRole> needUpdate = new ArrayList<HtBoaInRole>();
+		List<HtBoaInRole> needDel = new ArrayList<HtBoaInRole>();
+		
+		if (sourceListHtBoaInRole != null && !sourceListHtBoaInRole.isEmpty()) {
+			app = sourceListHtBoaInRole.get(0).getApp();
+			sbf.append(enter+"-- "+app);
+			sbf.append("系统升级脚本 （HT_BOA_IN_ROLE 角色表 ）" + enter);
+			List<HtBoaInRole> targetListHtBoaInRole = htBoaInRoleRepository.findByApp(app);// 目标数据
+			needDel.addAll(targetListHtBoaInRole);
+			if (targetListHtBoaInRole != null && !targetListHtBoaInRole.isEmpty()) {
+				for (HtBoaInRole sourceHtBoaInRole : sourceListHtBoaInRole) {
+					List<HtBoaInRole> sameHtBoaInRole = targetListHtBoaInRole.stream() .filter(targetRole -> sourceHtBoaInRole.getRoleCode().equals(targetRole.getRoleCode())) .collect(Collectors.toList());
+					needUpdate.addAll(sameHtBoaInRole);// 两边都有的数据，则需要更新
+					needAdd.removeAll(sameHtBoaInRole);// src库多出的数据，得到目标库需要新增的数据（去除两边都有的）
+					if (sameHtBoaInRole != null && !sameHtBoaInRole.isEmpty()) {
+						if (sourceHtBoaInRole.getRoleCode().equals(sameHtBoaInRole.get(0).getRoleCode())) {
+							needAdd.remove(sourceHtBoaInRole);// src库多出的数据，得到目标库需要新增的数据（去除两边都有的）
+						}
+					}
+					needDel.removeAll(sameHtBoaInRole);// 目标库多出的数据，得到目标库需要删除的数据（去除两边都有的）
+				}
+				
+				if (needDel != null && !needDel.isEmpty()) {
+					sbf.append("-- 需要删除的数据  请确认生产是否需要删除 " + enter);
+					fallbacksbf.append("-- 回滚删除的数据 " + enter);
+					for (HtBoaInRole delHtBoaInRole : needDel) {
+						if ("0".equals((delHtBoaInRole.getDelFlag() + ""))) {
+							sbf.append("UPDATE HT_BOA_IN_ROLE SET DEL_FLAG='1' WHERE APP='" + app + "' AND ROLE_CODE='" + delHtBoaInRole.getRoleCode() + "';" + enter);
+							fallbacksbf.append("UPDATE HT_BOA_IN_ROLE SET DEL_FLAG='0' WHERE APP='" + app + "' AND ROLE_CODE='" + delHtBoaInRole.getRoleCode() + "';" + enter);
+							isAnais = true;
+						}
+					}
+				}
+
+				if (needAdd != null && !needAdd.isEmpty()) {
+					sbf.append("-- 需要添加的数据 " + enter);
+					fallbacksbf.append("-- 回滚添加的数据 " + enter);
+					for (HtBoaInRole addHtBoaInRole : needAdd) {
+						sbf.append( "INSERT INTO  `HT_BOA_IN_ROLE` (`ROLE_CODE`, `ROLE_NAME_CN`, `STATUS`, `APP`, `DEL_FLAG` ) VALUES (");
+						sbf.append("'" + addHtBoaInRole.getRoleCode() + "',");
+						sbf.append("'" + addHtBoaInRole.getRoleNameCn() + "',");
+						sbf.append("'" + addHtBoaInRole.getStatus() + "',");
+						sbf.append("'" + addHtBoaInRole.getApp() + "',");
+						sbf.append("'" + addHtBoaInRole.getDelFlag() + "'");
+						sbf.append(");" + enter);
+						fallbacksbf.append( "DELETE FROM  HT_BOA_IN_ROLE WHERE ROLE_CODE='" + addHtBoaInRole.getRoleCode() + "' AND APP='" + addHtBoaInRole.getApp() + "' AND ROLE_NAME_CN='"+addHtBoaInRole.getRoleNameCn()+ "';" + enter);
+						isAnais = true;
+					}
+				}
+
+				if (needUpdate != null && !needUpdate.isEmpty()) {
+					sbf.append("-- 需要更新的数据 " + enter);
+					fallbacksbf.append("-- 回滚更新的数据 " + enter);
+					for (HtBoaInRole updateHtBoaInRole : needUpdate) { // target
+						Optional<HtBoaInRole> optionalHtBoaInRole = null;
+						if (!StringUtils.isEmpty(updateHtBoaInRole.getRoleCode())) {// 父节点为空
+							optionalHtBoaInRole = sourceListHtBoaInRole.stream().filter( targetRole -> updateHtBoaInRole.getRoleCode().equals(targetRole.getRoleCode())).findFirst();
+						}  
+						HtBoaInRole sourceHtBoaInRole = null;
+						if (optionalHtBoaInRole != null && optionalHtBoaInRole.isPresent()) {
+							sourceHtBoaInRole = optionalHtBoaInRole.get();
+						}
+						if (sourceHtBoaInRole != null) {
+							boolean isUpdate = false;
+							StringBuffer sbfUpdate = new StringBuffer();
+							StringBuffer fallBacksbfUpdate = new StringBuffer();
+							sbfUpdate.append("UPDATE HT_BOA_IN_ROLE SET ROLE_CODE=ROLE_CODE ,");
+							fallBacksbfUpdate.append("UPDATE HT_BOA_IN_ROLE SET ROLE_CODE=ROLE_CODE ,");
+							if (!StringUtils.isEmpty(sourceHtBoaInRole.getRoleNameCn())) {
+								if(!sourceHtBoaInRole.getRoleNameCn().equals(updateHtBoaInRole.getRoleNameCn())) {
+									sbfUpdate.append( " ROLE_NAME_CN=" + ((sourceHtBoaInRole.getRoleNameCn() == null ? null : "'" + sourceHtBoaInRole.getRoleNameCn() + "'")) + ",");
+									fallBacksbfUpdate.append(" ROLE_NAME_CN=" + ((updateHtBoaInRole.getRoleNameCn() == null ? null : "'" + updateHtBoaInRole.getRoleNameCn() + "'")) + ",");
+									isUpdate = true;
+								}
+							} 
+							sbfUpdate.append(" ROLE_CODE=ROLE_CODE ");
+							fallBacksbfUpdate.append(" ROLE_CODE=ROLE_CODE ");
+							sbfUpdate.append(" WHERE ROLE_CODE='" + updateHtBoaInRole.getRoleCode() + "';"+ enter);
+							fallBacksbfUpdate.append(" WHERE ROLE_CODE='" + updateHtBoaInRole.getRoleCode() + "';"+ enter);
+							if (isUpdate) {
+								sbf.append(sbfUpdate);
+								fallbacksbf.append(fallBacksbfUpdate);
+								isAnais = true;
+							}
+						}
+					}
+				}
+				
+			}else { //全量添加
+				for (HtBoaInRole addHtBoaInRole : sourceListHtBoaInRole) {
+					sbf.append( "INSERT INTO  `HT_BOA_IN_ROLE` (`ROLE_CODE`, `ROLE_NAME_CN`, `STATUS`, `APP`, `DEL_FLAG` ) VALUES (");
+					sbf.append("'" + addHtBoaInRole.getRoleCode() + "',");
+					sbf.append("'" + addHtBoaInRole.getRoleNameCn() + "',");
+					sbf.append("'" + addHtBoaInRole.getStatus() + "',");
+					sbf.append("'" + addHtBoaInRole.getApp() + "',");
+					sbf.append("'" + addHtBoaInRole.getDelFlag() + "'");
+					sbf.append(");" + enter);
+					fallbacksbf.append( "DELETE FROM  HT_BOA_IN_ROLE WHERE ROLE_CODE='" + addHtBoaInRole.getRoleCode() + "' AND APP='" + addHtBoaInRole.getApp() + "' AND ROLE_NAME_CN='"+addHtBoaInRole.getRoleNameCn()+ "';" + enter);
+					isAnais = true;
+				}
+			}
+		}
+		if(isAnais) {
+			sbf.append("--  ====HT_BOA_IN_ROLE 角色表  end ===="+enter);
+			fallbacksbf.append("--  ====HT_BOA_IN_ROLE 角色表  end ===="+enter);
+		}
+		Map<String, String> backMap = new HashMap<String, String>();
+		backMap.put("resultData", sbf.toString());
+		backMap.put("resultDataBack", fallbacksbf.toString());
+		backMap.put("isAnais", isAnais+"");
+		return backMap;
 	}
 
 }
