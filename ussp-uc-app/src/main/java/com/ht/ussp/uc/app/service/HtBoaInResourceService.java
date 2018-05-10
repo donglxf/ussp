@@ -524,7 +524,7 @@ public class HtBoaInResourceService {
 				}
 			}
 			sbf.append(enter+"-- "+app);
-			sbf.append("系统升级脚本（HT_BOA_IN_RESOURCE 资源以及资源关系表） " + enter);
+			sbf.append("系统升级脚本（HT_BOA_IN_RESOURCE 资源表） " + enter);
 			List<HtBoaInResource> targetListHtBoaInResource = htBoaInResourceRepository.findByApp(app);// 目标数据
 			needDel.addAll(targetListHtBoaInResource);
 			if (targetListHtBoaInResource != null && !targetListHtBoaInResource.isEmpty()) {
@@ -570,8 +570,8 @@ public class HtBoaInResourceService {
 				}
 
 				if (needDel != null && !needDel.isEmpty()) {
-					sbf.append("-- 需要删除的数据  请确认生产是否需要删除 " + enter);
-					fallbacksbf.append("-- 回滚删除的数据 " + enter);
+					sbf.append("-- 删除  请确认生产是否需要删除 " + enter);
+					fallbacksbf.append("-- 回滚删除 " + enter);
 					for (HtBoaInResource delHtBoaInResource : needDel) {
 						if ("0".equals((delHtBoaInResource.getDelFlag() + ""))) {
 							sbf.append("UPDATE HT_BOA_IN_RESOURCE SET DEL_FLAG='1' WHERE APP='" + app + "' AND RES_CODE='" + delHtBoaInResource.getResCode() + "';" + enter);
@@ -582,8 +582,8 @@ public class HtBoaInResourceService {
 				}
 
 				if (needAdd != null && !needAdd.isEmpty()) {
-					sbf.append("-- 需要添加的数据 " + enter);
-					fallbacksbf.append("-- 回滚添加的数据 " + enter);
+					sbf.append("-- 添加" + enter);
+					fallbacksbf.append("-- 回滚添加 " + enter);
 					for (HtBoaInResource addHtBoaInResource : needAdd) {
 						sbf.append( "INSERT INTO `HT_BOA_IN_RESOURCE` (`RES_CODE`, `RES_NAME_CN`, `SEQUENCE`, `RES_TYPE`, `RES_PARENT`, `REMARK`, `STATUS`, `RES_ICON`, `FONT_ICON`, `RES_CONTENT`, `APP`, `JPA_VERSION`, `DEL_FLAG`) VALUES (");
 						sbf.append("'" + addHtBoaInResource.getResCode() + "',");
@@ -606,8 +606,8 @@ public class HtBoaInResourceService {
 				}
 
 				if (needUpdate != null && !needUpdate.isEmpty()) {
-					sbf.append("-- 需要更新的数据 " + enter);
-					fallbacksbf.append("-- 回滚更新的数据 " + enter);
+					sbf.append("-- 更新 " + enter);
+					fallbacksbf.append("-- 回滚更新  " + enter);
 					for (HtBoaInResource updateHtBoaInResource : needUpdate) { // target
 						Optional<HtBoaInResource> optionalHtBoaInResource = null;
 						if (StringUtils.isEmpty(updateHtBoaInResource.getResParent())) {// 父节点为空
@@ -785,8 +785,8 @@ public class HtBoaInResourceService {
 				}
 			} else { // 全量
 				if (sourceListHtBoaInResource != null && !sourceListHtBoaInResource.isEmpty()) {
-					sbf.append("-- 需要添加的数据 " + enter);
-					fallbacksbf.append("-- 回滚添加的数据 " + enter);
+					sbf.append("-- 添加 " + enter);
+					fallbacksbf.append("-- 回滚添加 " + enter);
 					for (HtBoaInResource addHtBoaInResource : sourceListHtBoaInResource) {
 						sbf.append( "INSERT INTO `HT_BOA_IN_RESOURCE` (`RES_CODE`, `RES_NAME_CN`, `SEQUENCE`, `RES_TYPE`, `RES_PARENT`, `REMARK`, `STATUS`, `RES_ICON`, `FONT_ICON`, `RES_CONTENT`, `APP`, `JPA_VERSION`, `DEL_FLAG`) VALUES (");
 						sbf.append("'" + addHtBoaInResource.getResCode() + "',");

@@ -155,8 +155,8 @@ public class HtBoaInRoleResService {
 				}
 				
 				if (needDel != null && !needDel.isEmpty()) {
-					sbf.append("-- 需要删除的数据  请确认生产是否需要删除 " + enter);
-					fallbacksbf.append("-- 回滚删除的数据 " + enter);
+					sbf.append("-- 删除  请确认生产是否需要删除 " + enter);
+					fallbacksbf.append("-- 回滚删除 " + enter);
 					for (HtBoaInRoleRes delHtBoaInRoleRes : needDel) {
 						if ("0".equals((delHtBoaInRoleRes.getDelFlag() + ""))) {
 							sbf.append("UPDATE HT_BOA_IN_ROLE_RES SET DEL_FLAG='1' WHERE RES_CODE='" + delHtBoaInRoleRes.getRoleCode() + "' AND ROLE_CODE='" + delHtBoaInRoleRes.getRoleCode() + "';" + enter);
@@ -167,8 +167,8 @@ public class HtBoaInRoleResService {
 				}
 
 				if (needAdd != null && !needAdd.isEmpty()) {
-					sbf.append("-- 需要添加的数据 " + enter);
-					fallbacksbf.append("-- 回滚添加的数据 " + enter);
+					sbf.append("-- 添加 " + enter);
+					fallbacksbf.append("-- 回滚添加 " + enter);
 					for (HtBoaInRoleRes addHtBoaInRoleRes : needAdd) {
 						sbf.append( "INSERT INTO  `HT_BOA_IN_ROLE_RES` (  `RES_CODE`, `ROLE_CODE`,  `DEL_FLAG` ) VALUES (");
 						sbf.append("'" + addHtBoaInRoleRes.getRoleCode() + "',");
