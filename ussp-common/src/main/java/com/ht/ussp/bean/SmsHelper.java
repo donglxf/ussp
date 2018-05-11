@@ -1,6 +1,7 @@
 package com.ht.ussp.bean;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 
@@ -21,10 +22,10 @@ import lombok.extern.log4j.Log4j2;
  * @date 2018年5月8日 下午3:52:39
  */
 @Log4j2
-@ControllerAdvice
+@Component
 public class SmsHelper {
 
-	@Autowired(required = false)
+	@Autowired
 	private SmsClient smsClient;
 
 	@Autowired(required = false)
@@ -46,7 +47,7 @@ public class SmsHelper {
 			flag = false;
 		}
 
-		Boolean saveSms = ucClient.saveSmsToRedis(msgReqDtoIn.getMsgTo(), msgReqDtoIn.getMsgBody().toString());
+		Boolean saveSms = ucClient.saveSmsToRedis(msgReqDtoIn.getMsgTo(), msgReqDtoIn.getMsgBody().toString(),msgReqDtoIn.getApp());
 
 		if (saveSms == false) {
 			log.error("--------保存短信失败！----------");

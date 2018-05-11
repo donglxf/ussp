@@ -188,8 +188,8 @@ public interface UCClient {
 	Result getAllApp();
 
 	
-    @GetMapping(value = "/saveSmsToRedis")
-    Boolean saveSmsToRedis(@RequestParam("userId") String telephone, @RequestParam("rescode") String msgBody);
+    @GetMapping(value = "/auth/saveSmsToRedis")
+    Boolean saveSmsToRedis(@RequestParam("telephone") String telephone, @RequestParam("msgBody") String msgBody,@RequestParam("app") String app);
 
 
 }
