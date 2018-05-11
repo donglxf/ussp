@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -23,8 +24,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.ht.ussp.bean.SmsHelper;
+import com.ht.ussp.client.SmsClient;
 import com.ht.ussp.client.dto.ApiInfoDto;
 import com.ht.ussp.client.dto.ApiResourceDto;
+import com.ht.ussp.client.dto.MsgReqDtoIn;
 import com.ht.ussp.common.Constants;
 import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.core.Result;
@@ -69,6 +73,10 @@ public class AuthResouce {
 
 	@Autowired
 	private HtBoaInUserRoleService htBoaInUserRoleService;
+	
+	@Autowired
+	private SmsHelper smsHelper;
+	 
 
 	@Value("${smsTime}")
 	private int smsTime;
@@ -581,12 +589,34 @@ public class AuthResouce {
 	}
 
 	@ApiOperation(value = "保存短信至REDIS")
-	@PostMapping("/saveSmsToRedis")
+	@GetMapping("/saveSmsToRedis")
 	public Boolean saveSmsToRedis(@RequestParam("telephone") String telephone, @RequestParam("msgBody") String msgBody,
 			@RequestParam("app") String app) {
 		Boolean flag = false;
+		try {
 		redis.opsForValue().set(app+":"+telephone, msgBody, smsTime, TimeUnit.SECONDS);
+		}catch(Exception e) {
+			log.error("----保存短信至redis异常："+e);
+			flag=false;
+		}
+		flag=true;
 		return flag;
+	}
+	
+	@ApiOperation(value = "测试发送短信")
+	@PostMapping("/TestSendSms")
+	public Boolean TestSendSms(@RequestParam("telephone") String telephone,
+			@RequestParam("app") String app) {
+			Map<String,String> map=new HashMap<String,String>();
+		MsgReqDtoIn msgReqDtoIn=new MsgReqDtoIn();
+		String RandomStr=String.valueOf((int)((Math.random()*9+1)*100000));
+		map.put("code", RandomStr);
+		msgReqDtoIn.setMsgBody(map);
+		msgReqDtoIn.setApp(app);
+		msgReqDtoIn.setMsgTo(telephone);
+		msgReqDtoIn.setMsgModelId(993748227645890562l);
+		smsHelper.sendMsg(msgReqDtoIn);
+		return true;
 	}
 	
 }
