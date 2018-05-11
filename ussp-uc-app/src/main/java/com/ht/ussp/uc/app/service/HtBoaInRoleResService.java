@@ -129,6 +129,7 @@ public class HtBoaInRoleResService {
 		List<HtBoaInRoleRes> needUpdate = new ArrayList<HtBoaInRoleRes>();
 		List<HtBoaInRoleRes> needDel = new ArrayList<HtBoaInRoleRes>();
 		
+		
 		if (sourceListHtBoaInRoleRes != null && !sourceListHtBoaInRoleRes.isEmpty()) {
 			String roleCode = sourceListHtBoaInRoleRes.get(0).getRoleCode();
 			List<HtBoaInRole> listHtBoaInRole = htBoaInRoleRepository.findByRoleCode(roleCode);
@@ -140,6 +141,7 @@ public class HtBoaInRoleResService {
 			sbf.append(enter+"-- "+app);
 			sbf.append("系统升级脚本 (HT_BOA_IN_ROLE_RES 角色资源表 )" + enter);
 			List<HtBoaInRoleRes> targetListHtBoaInRoleRes = htBoaInRoleResRepository.getAllByApp(app);// 目标数据
+			List<HtBoaInRole> roleList = htBoaInRoleRepository.findByApp(app);
 			needDel.addAll(targetListHtBoaInRoleRes);
 			if (targetListHtBoaInRoleRes != null && !targetListHtBoaInRoleRes.isEmpty()) {
 				for (HtBoaInRoleRes sourceHtBoaInRoleRes : sourceListHtBoaInRoleRes) {
@@ -159,8 +161,8 @@ public class HtBoaInRoleResService {
 					fallbacksbf.append("-- 回滚删除 " + enter);
 					for (HtBoaInRoleRes delHtBoaInRoleRes : needDel) {
 						if ("0".equals((delHtBoaInRoleRes.getDelFlag() + ""))) {
-							sbf.append("UPDATE HT_BOA_IN_ROLE_RES SET DEL_FLAG='1' WHERE RES_CODE='" + delHtBoaInRoleRes.getRoleCode() + "' AND ROLE_CODE='" + delHtBoaInRoleRes.getRoleCode() + "';" + enter);
-							fallbacksbf.append("UPDATE HT_BOA_IN_ROLE_RES SET DEL_FLAG='1' WHERE RES_CODE='" + delHtBoaInRoleRes.getRoleCode() + "' AND ROLE_CODE='" + delHtBoaInRoleRes.getRoleCode() + "';" + enter);
+							sbf.append("UPDATE HT_BOA_IN_ROLE_RES SET DEL_FLAG='1' WHERE RES_CODE='" + delHtBoaInRoleRes.getResCode() + "' AND ROLE_CODE='" + delHtBoaInRoleRes.getRoleCode() + "';" + enter);
+							fallbacksbf.append("UPDATE HT_BOA_IN_ROLE_RES SET DEL_FLAG='1' WHERE RES_CODE='" + delHtBoaInRoleRes.getResCode() + "' AND ROLE_CODE='" + delHtBoaInRoleRes.getRoleCode() + "';" + enter);
 							isAnais = true;
 						}
 					}
@@ -170,12 +172,21 @@ public class HtBoaInRoleResService {
 					sbf.append("-- 添加 " + enter);
 					fallbacksbf.append("-- 回滚添加 " + enter);
 					for (HtBoaInRoleRes addHtBoaInRoleRes : needAdd) {
+						Optional<HtBoaInRole> optionalHtBoaInRole= roleList.stream().filter(role-> addHtBoaInRoleRes.getRoleCode().equals(role.getRoleCode()) ).findFirst();
+						String roleName="";
+						if(optionalHtBoaInRole!=null&&optionalHtBoaInRole.isPresent()) {
+							if(optionalHtBoaInRole.get()!=null) {
+								roleName = optionalHtBoaInRole.get().getRoleNameCn();
+							}
+						}
+						
 						sbf.append( "INSERT INTO  `HT_BOA_IN_ROLE_RES` (  `RES_CODE`, `ROLE_CODE`,  `DEL_FLAG` ) VALUES (");
-						sbf.append("'" + addHtBoaInRoleRes.getRoleCode() + "',");
 						sbf.append("'" + addHtBoaInRoleRes.getResCode() + "',");
+						sbf.append("'" + addHtBoaInRoleRes.getRoleCode() + "',");
 						sbf.append("'" + addHtBoaInRoleRes.getDelFlag() + "'");
-						sbf.append(");" + enter);
-						fallbacksbf.append( "DELETE FROM  HT_BOA_IN_ROLE_RES WHERE ROLE_CODE='" + addHtBoaInRoleRes.getRoleCode() + "' AND RES_CODE='" + addHtBoaInRoleRes.getResCode() + "';" + enter);
+						sbf.append(");-- roleName:"+roleName+ enter);
+						
+						fallbacksbf.append( "DELETE FROM  HT_BOA_IN_ROLE_RES WHERE ROLE_CODE='" + addHtBoaInRoleRes.getRoleCode() + "' AND RES_CODE='" + addHtBoaInRoleRes.getResCode() + "'; -- roleName:"+roleName+ enter);
 						isAnais = true;
 					}
 				}
@@ -183,8 +194,8 @@ public class HtBoaInRoleResService {
 			}else { //全量添加
 				for (HtBoaInRoleRes addHtBoaInRoleRes : sourceListHtBoaInRoleRes) {
 					sbf.append( "INSERT INTO  `HT_BOA_IN_ROLE_RES` (  `RES_CODE`, `ROLE_CODE`,  `DEL_FLAG` ) VALUES (");
-					sbf.append("'" + addHtBoaInRoleRes.getRoleCode() + "',");
 					sbf.append("'" + addHtBoaInRoleRes.getResCode() + "',");
+					sbf.append("'" + addHtBoaInRoleRes.getRoleCode() + "',");
 					sbf.append("'" + addHtBoaInRoleRes.getDelFlag() + "'");
 					sbf.append(");" + enter);
 					fallbacksbf.append( "DELETE FROM  HT_BOA_IN_ROLE_RES WHERE ROLE_CODE='" + addHtBoaInRoleRes.getRoleCode() + "' AND RES_CODE='" + addHtBoaInRoleRes.getResCode() + "';" + enter);

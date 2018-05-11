@@ -25,7 +25,7 @@ public class SwaggerConfig {@Bean
     return new Docket(DocumentationType.SWAGGER_2)
             .apiInfo(apiInfo())
             .select()
-            .apis(RequestHandlerSelectors.basePackage("com.ht.ussp.uc.app"))
+            .apis(RequestHandlerSelectors.basePackage("com.ht.ussp.ouc.app"))
             .paths(PathSelectors.any())
             .build();
 }
@@ -33,7 +33,7 @@ public class SwaggerConfig {@Bean
 @SuppressWarnings("deprecation")
 private ApiInfo apiInfo() {
     return new ApiInfoBuilder()
-            .title("统一用户中心")
+            .title("统一外部用户中心")
             .contact("qiuwenwu@hongte.info")
             .version("1.0")
             .build();
