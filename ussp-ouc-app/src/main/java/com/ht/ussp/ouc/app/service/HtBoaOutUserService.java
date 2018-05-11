@@ -14,4 +14,8 @@ public class HtBoaOutUserService {
 	public HtBoaOutUser saveUser(HtBoaOutUser htBoaOutUser) {
 		return htBoaOutUserRepository.save(htBoaOutUser);
 	}
+
+	public HtBoaOutUser findByEmailOrMobile(String userName, String userName2) {
+		return htBoaOutUserRepository.findByEmailOrMobile(userName,userName2);
+	}
 }

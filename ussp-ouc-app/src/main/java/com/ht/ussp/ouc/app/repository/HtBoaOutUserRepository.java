@@ -9,5 +9,7 @@ import com.ht.ussp.ouc.app.domain.HtBoaOutUser;
 @Repository
 public interface HtBoaOutUserRepository extends JpaSpecificationExecutor<HtBoaOutUser>, JpaRepository<HtBoaOutUser, Long> {
 
+	HtBoaOutUser findByEmailOrMobile(String userName, String userName2);
+
     
 }

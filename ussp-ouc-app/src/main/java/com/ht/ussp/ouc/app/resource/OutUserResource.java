@@ -76,21 +76,13 @@ public class OutUserResource{
 	@GetMapping(value = "/validateUser")
     public Result validateUser(@RequestParam(value = "userName")String userName,@RequestParam(value = "app")String app,@RequestParam(value = "registType")String registType) {
         
-        //修改登录账号为userId mobile email 工号
-		//HtBoaOutUser htBoaOutUser = htBoaOutUserService.findByEmailOrMobile(userName,userName);
+		HtBoaOutUser htBoaOutUser = htBoaOutUserService.findByEmailOrMobile(userName,userName);
         
-          
-        // 获取用户登录信息
-      /*  HtBoaOutLogin htBoaInLogin = htBoaOutLoginService.findByUserId(htBoaOutUser.getUserId());
-		if (LogicUtil.isNotNull((htBoaInLogin))) {
-			BeanUtils.deepCopy(htBoaInLogin, userVo);
-			if ("1".equals(htBoaInLogin.getStatus())) { //初始化密码
-				rm.setSysStatus(SysStatus.PWD_FIRST_MODIFY);
-			} else {
-				rm.setSysStatus(SysStatus.SUCCESS);
-			}
+		if(htBoaOutUser==null) {
+			return Result.buildFail();
+		}else {
+			HtBoaOutLogin htBoaOutLogin = htBoaOutLoginService.findByUserId(htBoaOutUser.getUserId());
+			return Result.buildSuccess(htBoaOutLogin);
 		}
-    */
-        return Result.buildFail();
     }
 }

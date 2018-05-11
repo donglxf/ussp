@@ -9,5 +9,7 @@ import com.ht.ussp.ouc.app.domain.HtBoaOutLogin;
 @Repository
 public interface HtBoaOutLoginRepository extends JpaSpecificationExecutor<HtBoaOutLogin>, JpaRepository<HtBoaOutLogin, Long> {
 
+	HtBoaOutLogin findByUserId(String userId);
+
     
 }

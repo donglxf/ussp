@@ -14,4 +14,8 @@ public class HtBoaOutLoginService {
 	public HtBoaOutLogin saveUserLogin(HtBoaOutLogin htBoaOutLogin) {
 		return htBoaOutLoginRepository.save(htBoaOutLogin);		
 	}
+
+	public HtBoaOutLogin findByUserId(String userId) {
+		return htBoaOutLoginRepository.findByUserId(userId);
+	}
 }
