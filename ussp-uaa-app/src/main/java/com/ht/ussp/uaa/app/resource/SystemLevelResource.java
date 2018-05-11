@@ -49,14 +49,14 @@ import lombok.extern.log4j.Log4j2;
 /**
  * 
  * @ClassName: ExternalTokenManager
- * @Description: 外部系统TOKEN管理
+ * @Description: 系统级TOKEN管理
  * @author wim qiuwenwu@hongte.info
  * @date 2018年3月21日 上午8:39:05
  */
 @RestController
 @RequestMapping(value = "/external")
 @Log4j2
-public class ExternalTokenManager {
+public class SystemLevelResource {
 	@Autowired
 	@Qualifier("jwtHeaderTokenExtractor")
 	private TokenExtractor tokenExtractor;
