@@ -11,5 +11,7 @@ public interface HtBoaOutLoginRepository extends JpaSpecificationExecutor<HtBoaO
 
 	HtBoaOutLogin findByUserId(String userId);
 
+	HtBoaOutLogin findByLoginId(String loginId);
+
     
 }

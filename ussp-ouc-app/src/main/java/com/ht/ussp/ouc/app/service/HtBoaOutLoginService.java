@@ -18,4 +18,8 @@ public class HtBoaOutLoginService {
 	public HtBoaOutLogin findByUserId(String userId) {
 		return htBoaOutLoginRepository.findByUserId(userId);
 	}
+
+	public HtBoaOutLogin findByLoginId(String loginId) {
+		return htBoaOutLoginRepository.findByLoginId(loginId);
+	}
 }

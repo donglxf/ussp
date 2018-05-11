@@ -18,4 +18,12 @@ public class HtBoaOutUserService {
 	public HtBoaOutUser findByEmailOrMobile(String userName, String userName2) {
 		return htBoaOutUserRepository.findByEmailOrMobile(userName,userName2);
 	}
+
+	public HtBoaOutUser findByEmail(String userName) {
+		return htBoaOutUserRepository.findByEmail(userName);
+	}
+	
+	public HtBoaOutUser findByMobile(String userName) {
+		return htBoaOutUserRepository.findByEmailOrMobile(userName);
+	}
 }

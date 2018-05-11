@@ -15,13 +15,6 @@ import javax.persistence.TemporalType;
 
 import lombok.Data;
 
-
-/**
- * @author wim qiuwenwu@hongte.info
- * @ClassName: HtBoaInUser
- * @Description: 用户表
- * @date 2018年1月5日 下午2:57:24
- */
 @Data
 @Entity
 @Table(name = "HT_BOA_OUT_USER")
@@ -52,7 +45,7 @@ public class HtBoaOutUser implements Serializable {
     @Column(name = "STATUS")
     private String status;
 
-    //注册类型：1 手机号 2邮箱 3其他
+    //注册类型：1 手机号 2邮箱 3用户名密码
     @Column(name = "REGIST_TYPE")
     private String registType;
     
