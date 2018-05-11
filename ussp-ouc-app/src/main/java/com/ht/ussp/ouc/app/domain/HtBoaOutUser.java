@@ -45,7 +45,7 @@ public class HtBoaOutUser implements Serializable {
     @Column(name = "STATUS")
     private String status;
 
-    //注册类型：1 手机号 2邮箱 3用户名密码
+    //注册类型：sms:短信注册 email:邮箱注册 normal:用户名密码注册  qq:QQ注册  wx:微信注册
     @Column(name = "REGIST_TYPE")
     private String registType;
     
