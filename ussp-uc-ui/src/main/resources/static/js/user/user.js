@@ -183,8 +183,8 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
 	form.verify({
 		//校验工号是否已经存在
 		  checkExistJobNum : function(value) {
-			  var isExist="1";
 			  if(value){
+				  var isExist="1";
 					  $.ajax({
 						  url : config.basePath + "user/checkUserExist?jobnum=" + value+"&userId="+$("#userId").val(),
 						type : 'POST',
@@ -197,10 +197,10 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
 						    }
 						}
 					});
+					if(isExist=="1"){
+						 return "工号已存在或不可用";
+				    } 
 			  }
-			  if(isExist=="1"){
-				  return "工号已存在或不可用";
-			  } 
 		  },
 		//校验用户名是否已经存在
 		  checkExistLoginId : function(value) {

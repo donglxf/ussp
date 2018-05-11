@@ -320,7 +320,7 @@ public class UserResource{
             user.setDataSource(Constants.USER_DATASOURCE_1);
             user.setEmail(userMessageVo.getEmail());
             user.setIsOrgUser(1);
-            user.setJobNumber(userMessageVo.getJobNumber());
+            user.setJobNumber(StringUtils.isEmpty(userMessageVo.getJobNumber())?null:userMessageVo.getJobNumber());
             user.setMobile(userMessageVo.getMobile());
             user.setOrgCode(userMessageVo.getOrgCode());
             user.setUserName(userMessageVo.getUserName());
