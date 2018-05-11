@@ -3,10 +3,9 @@ package com.ht.ussp.bean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 
+import com.ht.ussp.client.OucClient;
 import com.ht.ussp.client.SmsClient;
-import com.ht.ussp.client.UCClient;
 import com.ht.ussp.client.dto.MsgReqDtoIn;
 import com.ht.ussp.client.dto.MsgResDtoOut;
 import com.ht.ussp.core.Result;
@@ -29,7 +28,7 @@ public class SmsHelper {
 	private SmsClient smsClient;
 
 	@Autowired(required = false)
-	private UCClient ucClient;
+	private OucClient OucClient;
 
 	public Boolean sendMsg(MsgReqDtoIn msgReqDtoIn) {
 		Boolean flag;
@@ -47,7 +46,7 @@ public class SmsHelper {
 			flag = false;
 		}
 
-		Boolean saveSms = ucClient.saveSmsToRedis(msgReqDtoIn.getMsgTo(), msgReqDtoIn.getMsgBody().toString(),msgReqDtoIn.getApp());
+		Boolean saveSms = OucClient.saveSmsToRedis(msgReqDtoIn.getMsgTo(), msgReqDtoIn.getMsgBody().toString(),msgReqDtoIn.getApp());
 
 		if (saveSms == false) {
 			log.error("--------保存短信失败！----------");

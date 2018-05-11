@@ -47,4 +47,10 @@ ribbon:
   MaxAutoRetriesNextServer: 1 
 
 
+smsTime: ENC(yekEzuUtWBHZI3xfTSvtRQ==)
+
+jasypt:
+  encryptor: 
+    password: HTitEncryptOutUserManager  #配置文件加解密时的密钥
+
   
