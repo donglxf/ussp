@@ -24,6 +24,6 @@ public class HtBoaOutUserService {
 	}
 	
 	public HtBoaOutUser findByMobile(String userName) {
-		return htBoaOutUserRepository.findByEmailOrMobile(userName);
+		return htBoaOutUserRepository.findByMobile(userName);
 	}
 }

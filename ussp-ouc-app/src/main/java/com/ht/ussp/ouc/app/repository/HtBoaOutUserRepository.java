@@ -11,9 +11,9 @@ public interface HtBoaOutUserRepository extends JpaSpecificationExecutor<HtBoaOu
 
 	HtBoaOutUser findByEmailOrMobile(String userName, String userName2);
 
-	HtBoaOutUser findByEmail(String userName);
+	HtBoaOutUser findByEmail(String email);
 
-	HtBoaOutUser findByEmailOrMobile(String userName);
+	HtBoaOutUser findByMobile(String mobile);
 
     
 }

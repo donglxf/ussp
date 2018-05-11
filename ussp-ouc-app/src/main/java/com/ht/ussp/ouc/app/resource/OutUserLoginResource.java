@@ -33,7 +33,7 @@ public class OutUserLoginResource{
 
 	@ApiOperation(value = "忘记密码/重置密码", notes = "registType：1 手机号 2邮箱 3用户名密码")
 	@GetMapping(value = "/resetPwd")
-    public Result resetPwd(@RequestParam(value = "userName")String userName,@RequestParam(value = "password")String password,@RequestParam(value = "app")String app,@RequestParam(value = "registType")String registType) {
+    public Result resetPwd(@RequestParam(value = "userName")String userName,@RequestParam(value = "newPassword")String newPassword,@RequestParam(value = "app")String app,@RequestParam(value = "registType")String registType) {
 		if(StringUtils.isEmpty(userName)) {
 			return Result.buildFail(); 
 		}
@@ -54,7 +54,7 @@ public class OutUserLoginResource{
 			return Result.buildFail("9999","注册类型不对【"+registType+"】"); 
 		} 
 		if(loginInfo!=null) {
-			loginInfo.setPassword(EncryptUtil.passwordEncrypt(password));
+			loginInfo.setPassword(EncryptUtil.passwordEncrypt(newPassword));
 	        loginInfo.setFailedCount(0);
 	        loginInfo.setDelFlag(0);
 	        loginInfo.setLastModifiedDatetime(new Date());
