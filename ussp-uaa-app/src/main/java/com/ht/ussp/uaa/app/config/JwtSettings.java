@@ -36,6 +36,9 @@ public class JwtSettings {
 	 * token刷新时间
 	 */
 	private Integer refreshTokenExpTime;
+	
+	
+	private Integer outUserTokenTime;
 
 	public Integer getRefreshTokenExpTime() {
 		return refreshTokenExpTime;
@@ -75,6 +78,14 @@ public class JwtSettings {
 
 	public void setAppTokenTime(Integer appTokenTime) {
 		this.appTokenTime = appTokenTime;
+	}
+
+	public Integer getOutUserTokenTime() {
+		return outUserTokenTime;
+	}
+
+	public void setOutUserTokenTime(Integer outUserTokenTime) {
+		this.outUserTokenTime = outUserTokenTime;
 	}
 	
 }

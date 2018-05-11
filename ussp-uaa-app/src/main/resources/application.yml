@@ -5,15 +5,16 @@ spring:
   jackson:
     time-zone: Asia/Chongqing
 
-#内部用户鉴权参数
+#鉴权参数
 uaa:
   security:
     jwt:
-      tokenExpirationTime: 29  #分钟
-      refreshTokenExpTime: 720
-      appTokenTime: 365 #天，系统级鉴权
+      tokenExpirationTime: 29  #内部应用token失效时间    单位：分钟
+      refreshTokenExpTime: 720  #内部应
+      appTokenTime: 365 #天，系统级鉴权token失效时间
       tokenIssuer: qiuwenwu@hongte.info
       tokenSigningKey: xm8EV6Hy5RMFK4EEACIDAwQus
+      OutUserTokenTime: 30  #外部用户token失效时间
       
       
 ribbon:  
