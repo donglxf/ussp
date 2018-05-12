@@ -110,6 +110,17 @@ public class ResResource {
     public String loadResCode(@RequestParam("app") String app, @RequestParam("parent") String parent, @RequestParam("type") String type) {
         return htBoaInResourceService.createResourceCode(app, parent, type);
     }
+    
+    /**
+     * 系统菜单组
+     *
+     */
+    @GetMapping(value = "/getMenuGroup")
+    public Result getMenuGroup(@RequestParam("app") String app, @RequestParam("resType") String resType) {
+    	List<HtBoaInResource> listHtBoaInResource = htBoaInResourceService.findByAppAndResType(app,resType);
+    	//List<HtBoaInResource> newListHtBoaInResource = listHtBoaInResource.stream().filter(res -> "0".equals(res.getStatus())).collect(Collectors.toList());
+        return Result.buildSuccess(listHtBoaInResource);
+    }
 
     /**
      * 新增资源信息<br>
@@ -201,8 +212,15 @@ public class ResResource {
             } else if ("menu".equals(resource.getResType())) {
                 resource.setResType("view");
             }
+            resource.setResParent(StringUtils.isEmpty(resource.getResParent())?null:resource.getResParent());
+            if(StringUtils.isEmpty(resource.getResCode())) {
+            	 return Result.buildFail();
+            } 
             resource.setUpdateOperator(userId);
-            resource = htBoaInResourceService.save(resource);
+            resource.setLastModifiedDatetime(new Date());
+            if(!resource.getResCode().equals(resource.getResParent())) {
+            	resource = htBoaInResourceService.save(resource);
+            }
             if (resource != null) {
                 return Result.buildSuccess();
             }

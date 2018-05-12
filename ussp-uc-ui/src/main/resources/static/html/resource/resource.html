@@ -320,20 +320,25 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">菜单顺序<b>*</b></label>
                 <div class="layui-input-block">
-                    <input type="text" name="sequence" lay-verify="required|number" autocomplete="off"
-                           lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="text" name="sequence" lay-verify="required|number" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">父菜单编号</label>
                 <div class="layui-input-block">
-                    <input type="text" name="resParent" readonly class="layui-input layui-input-sm">
+                    <input type="text" name="resParent" id="resParent" readonly class="layui-input layui-input-sm">  
+                     <!-- <select name="resParent" id="resParentGroup" class="layui-input layui-input-sm" lay-filter="resource_select_menu_group" >  </select> -->
                 </div>
+            </div>
+            <div class="hide">
+            <!-- <select id="resParentGroupNameCn" class="hide" >  </select> -->
+            <select id="resParentGroup" class="hide" >  </select>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">父菜单名称</label>
                 <div class="layui-input-block">
-                    <input type="text" name="resParentName" readonly class="layui-input layui-input-sm">
+                    <!-- <input type="text" name="resParentName" readonly class="layui-input layui-input-sm"> -->
+                    <select name="resParentName" id="resParentGroupNameCn" class="layui-input layui-input-sm" lay-filter="resource_select_menu_group" >  </select>
                 </div>
             </div>
             <div class="layui-form-item">

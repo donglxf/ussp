@@ -14,7 +14,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
         , isCutModule = false, isCutBtn = false, isCutTab = false, isCutApi = false//是否切换了模块tab
         , appAndResourceTree //组织机构树控件
         , selectTableData = {}//table选中的行数据
-        , getNewResCodeUrl = config.basePath + 'resource/rescode/load'
+        , getNewResCodeUrl = config.basePath + 'resource/rescode/load',getMenuGroupUrl = config.basePath + 'resource/getMenuGroup'
         ,areas=['400px', '450px']
         , active = {
         add: function (type, relevanceType) { //弹出用户新增弹出框
@@ -129,6 +129,10 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                             resParentName = selectData["resNameCn"];
                             break;
                     }
+                    if(resParentName){
+                    	 $("#resParentGroupNameCn", layero).empty(); 
+                         $("#resParentGroupNameCn", layero).html("<option value='"+resParent+"'>"+resParentName+"</option> ");
+                    }
                     $("input[name=app]", layero).val(app);
                     $("input[name=appName]", layero).val(appName);
                     $("input[name=resParent]", layero).val(resParent);
@@ -150,11 +154,12 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                     form.on('radio(resource_add_restype)',function(){
                     	if(this.value=="group"){
                     		$("input[name=resContent]", layero).val("");
-                    		$("input[name=resContent]", layero).attr("disabled",true); 
+                    		$("input[name=resContent]", layero).attr("disabled",true);
+                    		$("#divrescontent", layero).hide();
                     	}else if(this.value=="view"){
                     		$("input[name=resContent]", layero).attr("disabled",false); 
+                    		$("#divrescontent", layero).show();
                     	}
-                    	
                     });
                     form.on("submit(resource_" + type + "_add_data_form)", function (data) {
                     	if("menu"!=type){
@@ -744,6 +749,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                             result.data.status = (status === "0" ? "正常" : (status === "1" ? "禁用" : result.data.status));
                             result.data.appName = appName;
                             result.data.resParentName = resParentName;
+                            
                             $.each(result.data, function (name, value) {
                                 var $input = $("input[name=" + name + "]", layero);
                                 if ($input && $input.length == 1) {
@@ -754,8 +760,22 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                                   	 if(value){
                                   		 $("input:radio[name='resType'][value="+value+"]", layero).attr("checked",true);
                                   		 $("input:radio[name='resType']", layero).attr("disabled",true);
+                                  		 if("group"==value){
+                                  			$("#divrescontent", layero).hide();
+                                  		 }else{
+                                  			$("#divrescontent", layero).show();
+                                  		 }
                                   	 }
                                   }
+                                if("menu"==type){
+                                	 if("resParentName"==name){
+                                		 if(value){
+                                			 $("#resParentGroupNameCn", layero).empty(); 
+                                             $("#resParentGroupNameCn", layero).html("<option value='"+value+"'>"+value+"</option> ");
+                                		 }
+                                		 $("#resParentGroupNameCn", layero).attr("disabled",true);
+                                	 }
+                            	}
                             });
                             form.render(null, "resource_menu_add_data_form");
                         }
@@ -780,12 +800,24 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
             if (type == "btn_api" || type == 'tab_api' || type == 'module_api') {
                 type = "api";
             }
+            var all_areas=['500px', '550px'];
+            var app = "";
+            if("menu"==type){
+            	 var nodes = appAndResourceTree.getSelectedNodes();
+                 if (nodes.length == 0) {
+                     layer.alert("系统资源已刷新，请重新选择系统。");
+                     return false;
+                 }
+                 app = nodes[0]["app"];
+                 all_areas =  ['750px', '700px'];
+            }
+            
             layer.close(editDialog);
             $.post(config.basePath + 'resource/view?id=' + data.id, null, function (result) {
                 if (result["returnCode"] == "0000") {
                     editDialog = layer.open({
                         type: 1,
-                        area: ['500px', '550px'],
+                        area:all_areas,
                         shadeClose: true,
                         title: "修改资源信息",
                         content: $("#resource_" + type + "_add_data_div").html(),
@@ -816,12 +848,56 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                                 if ($input && $input.length == 1) {
                                     $input.val(value);
                                 }
-                                if("resType"==name){
-                                 	 if(value){
-                                 		 $("input:radio[name='resType'][value="+value+"]", layero).attr("checked",true);
-                                 	 }
-                             		 $("input:radio[name='resType']", layero).attr("disabled",true);
-                                 }
+                                if("menu"==type){
+                                	 if("resType"==name){
+                                     	 if(value){
+                                     		 $("input:radio[name='resType'][value="+value+"]", layero).attr("checked",true);
+                                     		 if("group"==value){
+                                       			$("#divrescontent", layero).hide();
+                                       		 }else{
+                                       			$("#divrescontent", layero).show();
+                                       		 }
+                                     	 }
+                                 		 $("input:radio[name='resType']", layero).attr("disabled",true);
+                                     }
+                                    if("resParentName"==name){
+                                    	  $.ajax({
+                                              type: "GET",
+                                              url: getMenuGroupUrl,
+                                              async: false,
+                                              data: {
+                                                  app: app,
+                                                  resType:"group"
+                                              },
+                                              contentType: "application/json; charset=utf-8",
+                                              success: function (result) {
+                                            	  //$("#resParentGroup", layero).empty(); 
+                                            	  $("#resParentGroupNameCn", layero).empty(); 
+                                            	 // var addOption="<option value=''></option>";
+                                            	  var addOptionName="<option value=''></option>";
+                                            	  $.each(result.data, function (name, v) { 
+                                            		  //addOption += " <option value='"+v.resCode+"'>"+v.resCode+"</option> ";
+                                            		  if(v.resNameCn==value){
+                                            			  addOptionName += " <option value='"+v.resCode+"' selected>"+v.resNameCn+"</option> ";
+                                            		  }else{
+                                            			  addOptionName += " <option value='"+v.resCode+"'>"+v.resNameCn+"</option> ";
+                                            		  }
+                                                  });
+                                            	  //$("#resParentGroup", layero).html(addOption);
+                                            	  $("#resParentGroupNameCn", layero).html(addOptionName);
+                                              }
+                                          });
+                                    	  $("#resParentGroupNameCn", layero).find("option[text='"+value+"']").attr("selected",true);
+                                    	  var text=$("#resParentGroupNameCn", layero).find("option:selected").text();
+                                    	  console.log(text+" ===");
+                                    	  
+                                    }
+                                    
+                                }
+                            });
+                            form.on('select(resource_select_menu_group)',function(data){
+                            	//var resParent = $("#resParentGroupNameCn", layero).find("option[value='"+data.value+"']").val();
+                            	$("input[name=resParent]", layero).val(data.value);
                             });
                             form.render(null, "resource_" + type + "_add_data_form");
                             form.on("submit(resource_" + type + "_add_data_form)", function (data) {
