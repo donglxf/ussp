@@ -207,17 +207,28 @@ public class ResResource {
     @PostMapping("/update")
     public Result updateAsync(@RequestBody HtBoaInResource resource, @RequestHeader("userId") String userId) {
         if (resource != null) {
+        	List<HtBoaInResource> listHtBoaInResource = htBoaInResourceService.findByResCodeAndApp(resource.getResCode(), resource.getApp());
+        	HtBoaInResource htBoaInResource = null;
+        	if(listHtBoaInResource!=null && !listHtBoaInResource.isEmpty()) {
+        		htBoaInResource = listHtBoaInResource.get(0);
+        	}
             if ("menu".equals(resource.getResType()) && StringUtils.isEmpty(resource.getResContent())) {
                 resource.setResType("group");
             } else if ("menu".equals(resource.getResType())) {
                 resource.setResType("view");
             }
+            if(htBoaInResource!=null) { //如果是菜单组则不能移动
+        		if("group".equals(resource.getResType())) {
+        			resource.setResParent(htBoaInResource.getResParent());
+        		}
+        	}
             resource.setResParent(StringUtils.isEmpty(resource.getResParent())?null:resource.getResParent());
             if(StringUtils.isEmpty(resource.getResCode())) {
             	 return Result.buildFail();
             } 
             resource.setUpdateOperator(userId);
             resource.setLastModifiedDatetime(new Date());
+            
             if(!resource.getResCode().equals(resource.getResParent())) {
             	resource = htBoaInResourceService.save(resource);
             }
