@@ -28,32 +28,43 @@ public class SmsHelper {
 	private SmsClient smsClient;
 
 	@Autowired(required = false)
-	private OucClient OucClient;
+	private OucClient oucClient;
 
 	public Boolean sendMsg(MsgReqDtoIn msgReqDtoIn) {
-		Boolean flag;
 		if (LogicUtil.isNull(msgReqDtoIn)) {
-			flag = false;
+			return false;
 		}
 		if (StringUtils.isEmpty(msgReqDtoIn.getMsgBody()) && StringUtils.isEmpty(msgReqDtoIn.getMsgModelId())
-				&& StringUtils.isEmpty(msgReqDtoIn.getMsgTo())&&StringUtils.isEmpty(msgReqDtoIn.getApp())) {
+				&& StringUtils.isEmpty(msgReqDtoIn.getMsgTo()) && StringUtils.isEmpty(msgReqDtoIn.getApp())) {
 			log.error("--------参数不能为空！----------");
-			flag = false;
+			return false;
 		}
 
 		Result<MsgResDtoOut> result = smsClient.sendMsg(msgReqDtoIn);
 		if (result == null || !"0000".equals(result.getReturnCode())) {
-			flag = false;
+			return false;
 		}
 
-		Boolean saveSms = OucClient.saveSmsToRedis(msgReqDtoIn.getMsgTo(), msgReqDtoIn.getMsgBody().toString(),msgReqDtoIn.getApp());
+		Boolean saveSms = oucClient.saveSmsToRedis(msgReqDtoIn.getMsgTo(), msgReqDtoIn.getMsgBody(),
+				msgReqDtoIn.getApp());
 
 		if (saveSms == false) {
 			log.error("--------保存短信失败！----------");
-			flag = false;
+			return false;
 		}
-		flag = true;
-		return flag;
+		return true;
+	}
+
+	public Boolean validateSmsCode(String telephone, String code, String app) {
+		if (StringUtils.isEmpty(code)) {
+			return false;
+		}
+		Boolean validateSmscode = oucClient.validateSmsCode(telephone, code, app);
+		if (validateSmscode == false) {
+			log.error("--------验证码有误！----------");
+			return false;
+		}
+		return true;
 	}
 
 }
