@@ -12,8 +12,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ht.ussp.bean.SmsHelper;
+import com.ht.ussp.client.dto.MsgReqDtoIn;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uaa.app.config.JwtSettings;
 import com.ht.ussp.uaa.app.feignClient.OutUserClient;
@@ -29,6 +32,9 @@ public class ExternalUserResource {
 	
 	@Autowired
 	private OutUserClient outUserClient;
+	
+	@Autowired
+	private SmsHelper smsHelper;
 	
 	@Autowired
 	private JwtSettings jwtSettings;
@@ -70,4 +76,28 @@ public class ExternalUserResource {
 		}
 		return Result.buildSuccess(map);
 	}
+	
+	@ApiOperation(value = "测试发送短信")
+	@PostMapping("/TestSendSms")
+	public Boolean TestSendSms(@RequestParam("telephone") String telephone, @RequestParam("app") String app) {
+		Map<String, String> map = new HashMap<String, String>();
+		MsgReqDtoIn msgReqDtoIn = new MsgReqDtoIn();
+		String RandomStr = String.valueOf((int) ((Math.random() * 9 + 1) * 100000));
+		map.put("code", RandomStr);
+		msgReqDtoIn.setMsgBody(map);
+		msgReqDtoIn.setApp(app);
+		msgReqDtoIn.setMsgTo(telephone);
+		msgReqDtoIn.setMsgModelId(993748227645890562l);
+		smsHelper.sendMsg(msgReqDtoIn);
+		return true;
+	}
+	
+	@ApiOperation(value = "测试验证短信")
+	@PostMapping("/validateCode")
+	public Boolean TestValidateSms(@RequestParam("telephone") String telephone,@RequestParam("code") String code, @RequestParam("app") String app) {
+		
+		Boolean flag=smsHelper.validateSmsCode(telephone, code, app);
+		return flag;
+	}
+	
 }

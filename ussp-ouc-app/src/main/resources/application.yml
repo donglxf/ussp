@@ -47,7 +47,7 @@ ribbon:
   MaxAutoRetriesNextServer: 1 
 
 
-smsTime: ENC(yekEzuUtWBHZI3xfTSvtRQ==)
+smsTime: ENC(JbWhu5x90InajOYMT2iJhw==)
 
 jasypt:
   encryptor: 

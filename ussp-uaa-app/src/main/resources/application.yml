@@ -17,13 +17,28 @@ uaa:
       OutUserTokenTime: 30  #外部用户token失效时间
       
       
+feign:
+  hystrix:
+    enabled: true
+hystrix:
+  threadpool:
+    default:
+      coreSize: 2000
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 20000
+          strategy: THREAD
+      fallback:
+         isolation:
+          semaphore:
+            maxConcurrentRequests: 1000
 ribbon:  
   ReadTimeout: 10000  
   ConnectTimeout: 10000
-  MaxAutoRetries: 1
+  MaxAutoRetries: 0
   MaxAutoRetriesNextServer: 1
-  
-feign: 
-  hystrix: 
-    enabled: true
+  ServerListRefreshInterval: 1000
   
