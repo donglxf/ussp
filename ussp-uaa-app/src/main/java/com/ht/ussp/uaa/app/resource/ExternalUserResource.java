@@ -25,58 +25,69 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 @RestController
 @RequestMapping(value = "/out")
 public class ExternalUserResource {
-	
+
 	@Autowired
 	private OutUserClient outUserClient;
-	
+
 	@Autowired
 	private SmsHelper smsHelper;
-	
+
 	@Autowired
 	private JwtSettings jwtSettings;
-	
+
 	@PostMapping(value = "/ELogin")
 	@ApiOperation(value = "创建系统级别token")
-	public Result ELogin(String app,String userName,String password,String smsCode,String type,HttpServletResponse response) {
-		Map<String,String> map=new HashMap<>();
+	public Result ELogin(String app, String userName, String password, String smsCode, String type,
+			HttpServletResponse response) {
+		Map<String, String> map = new HashMap<>();
 		if (StringUtils.isBlank(app)) {
 			throw new IllegalArgumentException("Cannot create JWT Token without app");
 
 		}
-		
+
 		if (StringUtils.isBlank(userName)) {
 			throw new IllegalArgumentException("Cannot create JWT Token without userName");
 
 		}
-		
+
 		if (StringUtils.isBlank(type)) {
 			throw new IllegalArgumentException("Cannot create JWT Token without type");
 
 		}
-		
-		Result result=outUserClient.validateUser(app, userName, password, type);
-		if("0000".equals(result.getReturnCode())){
-			String userId=result.getData().toString();
+		if ("sms".equals(type)) {
+			Boolean flag = smsHelper.validateSmsCode(userName, smsCode, app);
+			if (flag == false) {
+				Result.buildFail("9929", "短信验证码验证失败！");
+			}
+			log.info("---------flag-------"+flag);
+		}
+
+		Result result = outUserClient.validateUser(app, userName, password, type);
+		if ("0000".equals(result.getReturnCode())) {
+			String userId = result.getData().toString();
 			LocalDateTime currentTime = LocalDateTime.now();
-			Claims claims = Jwts.claims().setSubject(app+" jwt token");
+			Claims claims = Jwts.claims().setSubject(app + " jwt token");
 			claims.put("userId", userId);
 			String token = Jwts.builder().setClaims(claims).setIssuer(jwtSettings.getTokenIssuer())
 					.setIssuedAt(Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant()))
-					.setExpiration(Date.from(currentTime.plusMinutes(jwtSettings.getOutUserTokenTime()).atZone(ZoneId.systemDefault()).toInstant()))
+					.setExpiration(Date.from(currentTime.plusMinutes(jwtSettings.getOutUserTokenTime())
+							.atZone(ZoneId.systemDefault()).toInstant()))
 					.signWith(SignatureAlgorithm.HS512, jwtSettings.getTokenSigningKey()).compact();
 			map.put("token", token);
-			
-		}else {
+
+		} else {
 			map.put("code", result.getReturnCode());
 			map.put("CodeDesc", result.getCodeDesc());
 		}
 		return Result.buildSuccess(map);
 	}
-	
+
 	@ApiOperation(value = "测试发送短信")
 	@PostMapping("/TestSendSms")
 	public Boolean TestSendSms(@RequestParam("telephone") String telephone, @RequestParam("app") String app) {
@@ -91,13 +102,14 @@ public class ExternalUserResource {
 		smsHelper.sendMsg(msgReqDtoIn);
 		return true;
 	}
-	
+
 	@ApiOperation(value = "测试验证短信")
 	@PostMapping("/validateCode")
-	public Boolean TestValidateSms(@RequestParam("telephone") String telephone,@RequestParam("code") String code, @RequestParam("app") String app) {
-		
-		Boolean flag=smsHelper.validateSmsCode(telephone, code, app);
+	public Boolean TestValidateSms(@RequestParam("telephone") String telephone, @RequestParam("code") String code,
+			@RequestParam("app") String app) {
+
+		Boolean flag = smsHelper.validateSmsCode(telephone, code, app);
 		return flag;
 	}
-	
+
 }
