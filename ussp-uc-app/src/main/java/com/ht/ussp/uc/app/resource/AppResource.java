@@ -48,7 +48,7 @@ import io.swagger.annotations.ApiOperation;
  */
 
 @RestController
-@RequestMapping(value = "/apps")
+@RequestMapping(value = "/system")
 public class AppResource {
 
     private static final Logger log = LoggerFactory.getLogger(EchoResouce.class);
