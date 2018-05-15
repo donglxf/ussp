@@ -116,7 +116,7 @@ public class DingDingService {
 	}
 	
 	public DdDept findByDDParentOrgCode(String parentId) {
-		return ddDeptRepository.findByDeptId(parentId);
+		return ddDeptRepository.findByDeptId(parentId); 
 	}
 	
 	public Result getDD() {
