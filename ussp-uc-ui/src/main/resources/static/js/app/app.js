@@ -72,13 +72,13 @@ layui.use(['form',   'table', 'ht_config','ht_auth','upload' ], function () {
         }
     };
     
-    var appListByPageUrl=config.basePath +"system/list"; //列出所有系统记录列表信息  
-    var addappUrl=config.basePath +"system/add"; //添加系统信息
-    var delappUrl=config.basePath +"system/delete"; //删除系统信息
-    var statusappUrl=config.basePath +"system/stop"; //禁用
-    var checkAppCodeExistUrl = config.basePath +"system/isExistAppCode"; //校验岗位编码是否已经存在
-    var exportAppExcelUrl = config.basePath +"system/exportAppExcel"; //导出
-    var importAppExcelUrl = config.basePath +"system/importAppExcel"; //导入
+    var appListByPageUrl=config.basePath +"apps/list"; //列出所有系统记录列表信息  
+    var addappUrl=config.basePath +"apps/add"; //添加系统信息
+    var delappUrl=config.basePath +"apps/delete"; //删除系统信息
+    var statusappUrl=config.basePath +"apps/stop"; //禁用
+    var checkAppCodeExistUrl = config.basePath +"apps/isExistAppCode"; //校验岗位编码是否已经存在
+    var exportAppExcelUrl = config.basePath +"apps/exportAppExcel"; //导出
+    var importAppExcelUrl = config.basePath +"apps/importAppExcel"; //导入
     
     upload.render({
 		elem: '#importApp'
