@@ -42,7 +42,7 @@ public class ExternalUserResource {
 	private JwtSettings jwtSettings;
 
 	@PostMapping(value = "/ELogin")
-	@ApiOperation(value = "创建系统级别token")
+	@ApiOperation(value = "外部用户认证")
 	public Result ELogin(String app, String userName, String password, String smsCode, String type,
 			HttpServletResponse response) {
 		Map<String, String> map = new HashMap<>();
@@ -60,12 +60,26 @@ public class ExternalUserResource {
 			throw new IllegalArgumentException("Cannot create JWT Token without type");
 
 		}
+		// 手机号和验证码登录
 		if ("sms".equals(type)) {
 			Boolean flag = smsHelper.validateSmsCode(userName, smsCode, app);
 			if (flag == false) {
 				Result.buildFail("9929", "短信验证码验证失败！");
 			}
-			log.info("---------flag-------"+flag);
+			log.info("---------flag-------" + flag);
+		}
+
+		// 用户名密码方式登录
+		if ("normal".equals(type)) {
+			if (StringUtils.isBlank(password)) {
+				throw new IllegalArgumentException("Cannot create JWT Token without password");
+			}
+
+			Boolean flag = smsHelper.validateSmsCode(userName, smsCode, app);
+			if (flag == false) {
+				Result.buildFail("9929", "短信验证码验证失败！");
+			}
+			log.info("---------flag-------" + flag);
 		}
 
 		Result result = outUserClient.validateUser(app, userName, password, type);

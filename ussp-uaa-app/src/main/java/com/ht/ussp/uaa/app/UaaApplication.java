@@ -16,8 +16,8 @@ import org.springframework.context.annotation.ComponentScan;
 
 @EnableDiscoveryClient
 @SpringBootApplication
-@EnableFeignClients(basePackages = {"com.ht.ussp.client","com.ht.ussp.uaa.app.feignclient"})
-@ComponentScan(basePackages = {"com.ht.ussp.bean", "com.ht.ussp.uaa.app","com.ht.ussp.uaa.app.security.ajax"})
+@EnableFeignClients(basePackages = {"com.ht.ussp.client","com.ht.ussp.uaa.app.feignClient"})
+@ComponentScan(basePackages = {"com.ht.ussp.bean", "com.ht.ussp.uaa.app"})
 public class UaaApplication 
 {
     public static void main( String[] args )
