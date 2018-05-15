@@ -664,151 +664,145 @@ public class DingDingService {
         	List<String> mobileList = new ArrayList<>();//相同的人
         	
         	for (DdUserOperator ddAddUser : addDeptList) {
-        		if(StringUtils.isEmpty(ddAddUser.getEmail())) {
-        			ddAddUser.setEmail(null);
-    			}
-        		//查看是否存在用户，如果存在用户则不用新增用户
-        		HtBoaInUser htBoaInUser = null; 
-        		 if(htBoaInUser==null) {
-           			 if(StringUtils.isNotEmpty(ddAddUser.getEmail())) {
-           				//htBoaInUser = htBoaInUserList.stream().filter(ucUser ->ddAddUser.getEmail().equals(ucUser.getEmail())).findFirst().get();  //htBoaInUserService.findByEmail(ddAddUser.getEmail());
-           				Optional<HtBoaInUser> htBoaInUserOptional = htBoaInUserList.stream().filter(ucUser ->ddAddUser.getEmail().equals(ucUser.getEmail())).findFirst();
-           				if(htBoaInUserOptional!=null &&htBoaInUserOptional.isPresent()) {
-           					try {
-           						htBoaInUser = htBoaInUserOptional.get(); 
-    						} catch (Exception e) {
-    							e.printStackTrace();
-    						}
-           				}
-           			 }
-    	       	 }
-        		 if(htBoaInUser==null) {
-           			 if(StringUtils.isNotEmpty(ddAddUser.getJobNumber())) {
-           				//htBoaInUser = htBoaInUserList.stream().filter(ucUser ->ddAddUser.getEmail().equals(ucUser.getEmail())).findFirst().get();  //htBoaInUserService.findByEmail(ddAddUser.getEmail());
-           				Optional<HtBoaInUser> htBoaInUserOptional = htBoaInUserList.stream().filter(ucUser ->ddAddUser.getJobNumber().equals(ucUser.getJobNumber())).findFirst();
-           				if(htBoaInUserOptional!=null &&htBoaInUserOptional.isPresent()) {
-           					try {
-           						htBoaInUser = htBoaInUserOptional.get(); 
-    						} catch (Exception e) {
-    							e.printStackTrace();
-    						}
-           				}
-           			 }
-    	       	 }
-    	       	 if(htBoaInUser==null) {
-    	       		 if(StringUtils.isNotEmpty(ddAddUser.getMobile())) {
-    	       			//htBoaInUser = htBoaInUserList.stream().filter(ucUser ->ddAddUser.getMobile().equals(ucUser.getMobile())).findFirst().get();  
-    	       			Optional<HtBoaInUser> htBoaInUserOptional = htBoaInUserList.stream().filter(ucUser ->ddAddUser.getMobile().equals(ucUser.getMobile())).findFirst();
-    	       			if(htBoaInUserOptional!=null &&htBoaInUserOptional.isPresent()) {
-           					try {
-           						htBoaInUser = htBoaInUserOptional.get(); 
-    						} catch (Exception e) {
-    							e.printStackTrace();
-    						}
-           					
-           				}
-    	       		  // htBoaInUser = htBoaInUserService.findByMobile(ddAddUser.getMobile());
-    	       		 }
-    	       	 }
-    	       	 if(htBoaInUser!=null) {
-    	       		if(StringUtils.isNotEmpty(ddAddUser.getEmail())) {
-    	       			htBoaInUser.setEmail(ddAddUser.getEmail());
+        		try {
+
+            		if(StringUtils.isEmpty(ddAddUser.getEmail())) {
+            			ddAddUser.setEmail(null);
         			}
-        			if(StringUtils.isNotEmpty(ddAddUser.getMobile())) {
-        				htBoaInUser.setMobile(ddAddUser.getMobile());
+            		//查看是否存在用户，如果存在用户则不用新增用户
+            		HtBoaInUser htBoaInUser = null; 
+            		 if(htBoaInUser==null) {
+               			 if(StringUtils.isNotEmpty(ddAddUser.getEmail())) {
+               				Optional<HtBoaInUser> htBoaInUserOptional = htBoaInUserList.stream().filter(ucUser ->ddAddUser.getEmail().equals(ucUser.getEmail())).findFirst();
+               				if(htBoaInUserOptional!=null &&htBoaInUserOptional.isPresent()) {
+               						htBoaInUser = htBoaInUserOptional.get(); 
+               				}
+               			 }
+        	       	 }
+            		 if(htBoaInUser==null) {
+               			 if(StringUtils.isNotEmpty(ddAddUser.getJobNumber())) {
+               				//htBoaInUser = htBoaInUserList.stream().filter(ucUser ->ddAddUser.getEmail().equals(ucUser.getEmail())).findFirst().get();  //htBoaInUserService.findByEmail(ddAddUser.getEmail());
+               				Optional<HtBoaInUser> htBoaInUserOptional = htBoaInUserList.stream().filter(ucUser ->ddAddUser.getJobNumber().equals(ucUser.getJobNumber())).findFirst();
+               				if(htBoaInUserOptional!=null &&htBoaInUserOptional.isPresent()) {
+               						htBoaInUser = htBoaInUserOptional.get(); 
+               				}
+               			 }
+        	       	 }
+        	       	 if(htBoaInUser==null) {
+        	       		 if(StringUtils.isNotEmpty(ddAddUser.getMobile())) {
+        	       			//htBoaInUser = htBoaInUserList.stream().filter(ucUser ->ddAddUser.getMobile().equals(ucUser.getMobile())).findFirst().get();  
+        	       			Optional<HtBoaInUser> htBoaInUserOptional = htBoaInUserList.stream().filter(ucUser ->ddAddUser.getMobile().equals(ucUser.getMobile())).findFirst();
+        	       			if(htBoaInUserOptional!=null &&htBoaInUserOptional.isPresent()) {
+               						htBoaInUser = htBoaInUserOptional.get(); 
+               				}
+        	       		  // htBoaInUser = htBoaInUserService.findByMobile(ddAddUser.getMobile());
+        	       		 }
+        	       	 }
+        	       	 if(htBoaInUser!=null) {
+        	       		if(StringUtils.isNotEmpty(ddAddUser.getEmail())) {
+        	       			htBoaInUser.setEmail(ddAddUser.getEmail());
+            			}
+            			if(StringUtils.isNotEmpty(ddAddUser.getMobile())) {
+            				htBoaInUser.setMobile(ddAddUser.getMobile());
+            			}
+            			if(StringUtils.isNotEmpty(ddAddUser.getDeptId())) {
+            				HtBoaInContrast htBoaInContrastOrg = htBoaInContrastListORG.stream().filter(org -> ddAddUser.getDeptId().equals(org.getDdBusinessId())).findFirst().get();
+            				HtBoaInOrg o = htBoaInOrgList.stream().filter(org -> org.getOrgCode().equals(htBoaInContrastOrg.getUcBusinessId())).findFirst().get();
+            				if(StringUtils.isNotEmpty(o.getOrgCode())) {
+            					htBoaInUser.setOrgCode(o.getOrgCode());
+            				}
+            			}
+            			if(StringUtils.isNotEmpty(ddAddUser.getUserName())) {
+            				htBoaInUser.setUserName(ddAddUser.getUserName());
+            			}
+            			if(StringUtils.isNotEmpty(ddAddUser.getJobNumber())) {
+            				htBoaInUser.setJobNumber(ddAddUser.getJobNumber());
+            			}
+            			HtBoaInUser htBoaInUser2 = htBoaInUser; 
+            			HtBoaInContrast htBoaInContrastUser = null;
+            			Optional<HtBoaInContrast> optionalContrastUser = htBoaInContrastListUser.stream().filter(user ->user.getUcBusinessId().equals(htBoaInUser2.getUserId())).findFirst();
+            			if(optionalContrastUser!=null&&optionalContrastUser.isPresent()) {
+            				htBoaInContrastUser = optionalContrastUser.get();
+            				if(htBoaInContrastUser!=null) {
+            					htBoaInContrastUser.setDdBusinessId(ddAddUser.getUserId());
+                    			listHtBoaInContrasts.add(htBoaInContrastUser);
+            				}
+            			}
+            			htBoaInUser.setStatus(Constants.USER_STATUS_0);
+            			htBoaInUser.setDelFlag(Constants.DEL_0);
+            			listHtBoaInUser.add(htBoaInUser);
+            			userIdList.add(htBoaInUser.getUserId());
+            			ddAddUser.setSynFlag("1");
+                        synDeptList.add(ddAddUser);
+        	       		 continue;
+        	       	 }
+        	       	 if(StringUtils.isNotEmpty(ddAddUser.getMobile())) {
+        	       		 if(mobileList.contains(ddAddUser.getMobile())) {
+        	       			continue;
+        	       		 }
+        	       		mobileList.add(ddAddUser.getMobile());
+        	       	 }
+        	       	HtBoaInUser u = new HtBoaInUser();
+            		HtBoaInContrast htBoaInContrastOrg = htBoaInContrastListORG.stream().filter(org -> org.getDdBusinessId().equals(ddAddUser.getDeptId())).findFirst().get();
+            		HtBoaInOrg o = htBoaInOrgList.stream().filter(org -> org.getOrgCode().equals(htBoaInContrastOrg.getUcBusinessId())).findFirst().get();
+            		int isOrgUser = ddAddUser.getJobNumber()==null?0:1;
+                    String userId = generatorUserId(userIdList,o.getRootOrgCode(),  isOrgUser,2, ddAddUser.getJobNumber());
+                    u.setUserId(userId);
+                    HtBoaInUser u1 = null;// htBoaInUserService.findByUserId(userId);
+                    Optional<HtBoaInUser> htBoaInUserOptional = htBoaInUserList.stream().filter(ucUser ->u.getUserId().equals(ucUser.getUserId())).findFirst();
+        			if (htBoaInUserOptional != null && htBoaInUserOptional.isPresent()) {
+        					u1 = htBoaInUserOptional.get();
         			}
-        			if(StringUtils.isNotEmpty(ddAddUser.getDeptId())) {
-        				HtBoaInContrast htBoaInContrastOrg = htBoaInContrastListORG.stream().filter(org -> ddAddUser.getDeptId().equals(org.getDdBusinessId())).findFirst().get();
-        				HtBoaInOrg o = htBoaInOrgList.stream().filter(org -> org.getOrgCode().equals(htBoaInContrastOrg.getUcBusinessId())).findFirst().get();
-        				if(StringUtils.isNotEmpty(o.getOrgCode())) {
-        					htBoaInUser.setOrgCode(o.getOrgCode());
-        				}
-        			}
-        			if(StringUtils.isNotEmpty(ddAddUser.getUserName())) {
-        				htBoaInUser.setUserName(ddAddUser.getUserName());
-        			}
-        			if(StringUtils.isNotEmpty(ddAddUser.getJobNumber())) {
-        				htBoaInUser.setJobNumber(ddAddUser.getJobNumber());
-        			}
-        			HtBoaInUser htBoaInUser2 = htBoaInUser; 
-        			HtBoaInContrast htBoaInContrastUser = htBoaInContrastListUser.stream().filter(user ->user.getUcBusinessId().equals(htBoaInUser2.getUserId())).findFirst().get();
-        			htBoaInContrastUser.setDdBusinessId(ddAddUser.getUserId());
-        			listHtBoaInContrasts.add(htBoaInContrastUser);
-        			htBoaInUser.setStatus(Constants.USER_STATUS_0);
-        			htBoaInUser.setDelFlag(Constants.DEL_0);
-        			listHtBoaInUser.add(htBoaInUser);
-        			userIdList.add(htBoaInUser.getUserId());
-        			ddAddUser.setSynFlag("1");
+                    if(u1!=null) {
+                    	userId = generatorUserId(userIdList,o.getRootOrgCode(),  isOrgUser,3, ddAddUser.getJobNumber());
+                    }
+                    userIdList.add(userId);
+                    u.setUserId(userId);
+                    u.setUserName(ddAddUser.getUserName());
+                    u.setOrgCode(o.getOrgCode());
+                    u.setRootOrgCode(o.getRootOrgCode());
+                    u.setOrgPath(o.getOrgPath());
+                    u.setEmail(ddAddUser.getEmail());
+                    u.setMobile(ddAddUser.getMobile());
+                    u.setJobNumber(ddAddUser.getJobNumber());
+                    u.setIsOrgUser(isOrgUser);
+                    u.setDelFlag(Constants.DEL_0);
+                    u.setCreateOperator("自动同步");
+                    u.setUpdateOperator("自动同步");
+                    u.setDataSource(Constants.USER_DATASOURCE_2);
+                    u.setLastModifiedDatetime(new Date());
+                    u.setStatus("0");
+                    listHtBoaInUser.add(u);
+                    
+                    HtBoaInLogin l = new HtBoaInLogin();
+                    l.setLoginId(ddAddUser.getUserId());
+                    l.setUserId(userId);
+                    l.setRootOrgCode(u.getRootOrgCode());
+                    l.setCreateOperator("自动同步");
+                    l.setUpdateOperator("自动同步");
+                    l.setStatus(Constants.USER_STATUS_1);
+                    l.setPassword(EncryptUtil.passwordEncrypt("123456"));
+                    l.setFailedCount(0);
+                    l.setDelFlag(0);
+                    l.setLastModifiedDatetime(new Date());
+                    loginList.add(l);
+                    
+                    //添加用户与钉钉的关联
+                    HtBoaInContrast htBoaInContrast = new HtBoaInContrast();
+                    htBoaInContrast.setType("20");
+                    htBoaInContrast.setUcBusinessId(userId);
+                    htBoaInContrast.setDdBusinessId(ddAddUser.getUserId());
+                    htBoaInContrast.setContrast("自动对照");
+                    htBoaInContrast.setContrastDatetime(new Date());
+                    listHtBoaInContrasts.add(htBoaInContrast);
+                    
+                    ddAddUser.setSynFlag("1");
                     synDeptList.add(ddAddUser);
-    	       		 continue;
-    	       	 }
-    	       	 if(StringUtils.isNotEmpty(ddAddUser.getMobile())) {
-    	       		 if(mobileList.contains(ddAddUser.getMobile())) {
-    	       			continue;
-    	       		 }
-    	       		mobileList.add(ddAddUser.getMobile());
-    	       	 }
-    	       	HtBoaInUser u = new HtBoaInUser();
-        		HtBoaInContrast htBoaInContrastOrg = htBoaInContrastListORG.stream().filter(org -> org.getDdBusinessId().equals(ddAddUser.getDeptId())).findFirst().get();
-        		HtBoaInOrg o = htBoaInOrgList.stream().filter(org -> org.getOrgCode().equals(htBoaInContrastOrg.getUcBusinessId())).findFirst().get();
-        		int isOrgUser = ddAddUser.getJobNumber()==null?0:1;
-                String userId = generatorUserId(userIdList,o.getRootOrgCode(),  isOrgUser,2, ddAddUser.getJobNumber());
-                u.setUserId(userId);
-                HtBoaInUser u1 = null;// htBoaInUserService.findByUserId(userId);
-                Optional<HtBoaInUser> htBoaInUserOptional = htBoaInUserList.stream().filter(ucUser ->u.getUserId().equals(ucUser.getUserId())).findFirst();
-    			if (htBoaInUserOptional != null && htBoaInUserOptional.isPresent()) {
-    				try {
-    					u1 = htBoaInUserOptional.get();
-    				} catch (Exception e) {
-    					e.printStackTrace();
-    				}
-    			}
-                if(u1!=null) {
-                	userId = generatorUserId(userIdList,o.getRootOrgCode(),  isOrgUser,3, ddAddUser.getJobNumber());
-                }
-                userIdList.add(userId);
-                u.setUserId(userId);
-                u.setUserName(ddAddUser.getUserName());
-                u.setOrgCode(o.getOrgCode());
-                u.setRootOrgCode(o.getRootOrgCode());
-                u.setOrgPath(o.getOrgPath());
-                u.setEmail(ddAddUser.getEmail());
-                u.setMobile(ddAddUser.getMobile());
-                u.setJobNumber(ddAddUser.getJobNumber());
-                u.setIsOrgUser(isOrgUser);
-                u.setDelFlag(Constants.DEL_0);
-                u.setCreateOperator("自动同步");
-                u.setUpdateOperator("自动同步");
-                u.setDataSource(Constants.USER_DATASOURCE_2);
-                u.setLastModifiedDatetime(new Date());
-                u.setStatus("0");
-                listHtBoaInUser.add(u);
-                
-                HtBoaInLogin l = new HtBoaInLogin();
-                l.setLoginId(ddAddUser.getUserId());
-                l.setUserId(userId);
-                l.setRootOrgCode(u.getRootOrgCode());
-                l.setCreateOperator("自动同步");
-                l.setUpdateOperator("自动同步");
-                l.setStatus(Constants.USER_STATUS_1);
-                l.setPassword(EncryptUtil.passwordEncrypt("123456"));
-                l.setFailedCount(0);
-                l.setDelFlag(0);
-                l.setLastModifiedDatetime(new Date());
-                loginList.add(l);
-                
-                //添加用户与钉钉的关联
-                HtBoaInContrast htBoaInContrast = new HtBoaInContrast();
-                htBoaInContrast.setType("20");
-                htBoaInContrast.setUcBusinessId(userId);
-                htBoaInContrast.setDdBusinessId(ddAddUser.getUserId());
-                htBoaInContrast.setContrast("自动对照");
-                htBoaInContrast.setContrastDatetime(new Date());
-                listHtBoaInContrasts.add(htBoaInContrast);
-                
-                ddAddUser.setSynFlag("1");
-                synDeptList.add(ddAddUser);
-                
+                    
+				} catch (Exception e) {
+					 e.printStackTrace();
+					 continue;
+				}
         	}
         	
         	//删除用户
@@ -819,12 +813,7 @@ public class DingDingService {
         		HtBoaInUser u = null;//htBoaInUserService.findByUserId(dddelUser.getUserId());
     			Optional<HtBoaInUser> htBoaInUserOptional = htBoaInUserList.stream().filter(ucUser -> ucUser.getUserId().equals(dddelUser.getUserId())).findFirst();
     			if (htBoaInUserOptional != null && htBoaInUserOptional.isPresent()) {
-    				try {
-    					u = htBoaInUserOptional.get();
-    				} catch (Exception e) {
-    					e.printStackTrace();
-    				}
-
+    				 u = htBoaInUserOptional.get();
     			}
     			if (u != null) {
     				//u.setDelFlag(Constants.DEL_1);
@@ -832,7 +821,6 @@ public class DingDingService {
     				listHtBoaInUser.add(u);
     				dddelUser.setSynFlag("1");
     				synDeptList.add(dddelUser);
-
     			}
         	}
         	
@@ -845,11 +833,7 @@ public class DingDingService {
         			HtBoaInContrast htBoaInContrastUser = htBoaInContrastListUser.stream().filter(user -> ddUpdateUser.getUserId().equals(user.getDdBusinessId())).findFirst().get();
         			Optional<HtBoaInUser> htBoaInUserOptional = htBoaInUserList.stream().filter(ucUser ->ucUser.getUserId().equals(htBoaInContrastUser.getUcBusinessId())).findFirst();
         			if (htBoaInUserOptional != null && htBoaInUserOptional.isPresent()) {
-        				try {
-        					u = htBoaInUserOptional.get();
-        				} catch (Exception e) {
-        					e.printStackTrace();
-        				}
+        				u = htBoaInUserOptional.get();
         			}
     			} catch (Exception e) {
     				e.printStackTrace();
