@@ -1,24 +1,31 @@
 package com.ht.ussp.ouc.app.resource;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.ussp.common.Constants;
 import com.ht.ussp.common.SysStatus;
+import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.ouc.app.domain.HtBoaOutLogin;
 import com.ht.ussp.ouc.app.domain.HtBoaOutUser;
 import com.ht.ussp.ouc.app.service.HtBoaOutLoginService;
 import com.ht.ussp.ouc.app.service.HtBoaOutUserService;
+import com.ht.ussp.ouc.app.vo.PageVo;
 import com.ht.ussp.util.EncryptUtil;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 
@@ -35,6 +42,10 @@ public class OutUserResource{
 	HtBoaOutLoginService htBoaOutLoginService;
 
 	@ApiOperation(value = "用户注册", notes = "注册类型：sms:短信注册 email:邮箱注册 normal:用户名密码注册")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "userName", dataType = "String", required = true, value = "注册账号"),
+			@ApiImplicitParam(name = "password", dataType = "String", required = true, value = "密码"),
+			@ApiImplicitParam(name = "app", dataType = "String", required = true, value = "系统编码"),
+			@ApiImplicitParam(name = "registType", dataType = "String", required = true, value = "注册类型：sms:短信注册 email:邮箱注册 normal:用户名密码注册") })
 	@GetMapping(value = "/regist")
     public Result regist(@RequestParam(value = "userName")String userName,@RequestParam(value = "password")String password,@RequestParam(value = "app")String app,@RequestParam(value = "registType")String registType) {
 		if(StringUtils.isEmpty(userName)) {
@@ -90,6 +101,7 @@ public class OutUserResource{
 	        loginInfo.setPassword(EncryptUtil.passwordEncrypt(password));
 	        loginInfo.setFailedCount(0);
 	        loginInfo.setDelFlag(0);
+	        loginInfo.setStatus("0");
 	        loginInfo.setCreatedDatetime(new Date());
 	        loginInfo.setLastModifiedDatetime(new Date());
 	        loginInfo = htBoaOutLoginService.saveUserLogin(loginInfo);
@@ -99,6 +111,10 @@ public class OutUserResource{
     }
 	
 	@ApiOperation(value = "验证用户", notes = "登录type：sms:短信  email:邮箱  normal:用户名密码 ")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "userName", dataType = "String", required = true, value = "注册账号"),
+		@ApiImplicitParam(name = "password", dataType = "String", required = true, value = "密码"),
+		@ApiImplicitParam(name = "app", dataType = "String", required = true, value = "系统编码"),
+		@ApiImplicitParam(name = "type", dataType = "String", required = true, value = "登录type：sms:短信  email:邮箱  normal:用户名密码 ") })
 	@GetMapping(value = "/validateUser")
     public Result validateUser(@RequestParam(value = "userName")String userName,@RequestParam(value = "password")String password,@RequestParam(value = "app")String app,@RequestParam(value = "type")String type) {
         if("normal".equals(type)) {
@@ -128,4 +144,10 @@ public class OutUserResource{
 			}
 		}
     }
+	
+	@ApiOperation(value = "用户信息分页查询")
+	@PostMapping(value = "/loadListByPage", produces = { "application/json" })
+	public PageResult<List<HtBoaOutUser>> loadListByPage(PageVo page) {
+		return htBoaOutUserService.getUserListPage(new PageRequest(page.getPage(), page.getLimit()), page.getQuery());
+	}
 }

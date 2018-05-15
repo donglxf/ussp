@@ -19,7 +19,7 @@ layui.define(function (exports) {
         isLocal: false
         , app: "UC"
         , basePath: base + "uc/"
-        , basePath1: base + "xxx/" //如果访问多个微服务，请自行扩展
+        , baseOucPath: base + "ouc/" //如果访问多个微服务，请自行扩展
         , loginPath: "/login.html"
         , indexPath: "/"
         , changePwdPath: changePasswordUrl
