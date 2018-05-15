@@ -25,7 +25,7 @@ import com.netflix.zuul.context.RequestContext;
 /**
  * 
  * @ClassName: AccessFilter
- * @Description: 过滤改造
+ * @Description: 过滤器--鉴权
  * @author wim qiuwenwu@hongte.info
  * @date 2018年3月12日 上午11:50:44
  */

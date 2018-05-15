@@ -25,4 +25,17 @@ public interface RoleClient {
 	 */
 	@RequestMapping(value = "/auth/IsHasAuth")
 	public Boolean isHasAuth(@RequestParam("key") String key, @RequestParam("url") String url);
+	
+	/**
+	 * 
+	 * @Title: isOS 
+	 * @Description: 判断是否为外部系统 
+	 * @return Boolean
+	 * @throws
+	 * @author wim qiuwenwu@hongte.info 
+	 * @date 2018年5月15日 上午11:15:20
+	 */
+	@RequestMapping(value = "/system/isOS")
+	public Boolean isOS(@RequestParam("isOS") String isOS);
+	
 }
