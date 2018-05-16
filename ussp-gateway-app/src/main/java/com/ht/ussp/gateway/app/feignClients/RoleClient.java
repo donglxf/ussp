@@ -35,7 +35,7 @@ public interface RoleClient {
 	 * @author wim qiuwenwu@hongte.info 
 	 * @date 2018年5月15日 上午11:15:20
 	 */
-	@RequestMapping(value = "/system/isOS")
+	@RequestMapping(value = "/apps/isOS")
 	public Boolean isOS(@RequestParam("isOS") String isOS);
 	
 }
