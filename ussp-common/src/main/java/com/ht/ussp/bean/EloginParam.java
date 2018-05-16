@@ -21,9 +21,9 @@ public class EloginParam {
 	private String password;
 	
 	/**
-	 * 手机验证码
+	 * 手机验证码或图形验证码等
 	 */
-	private String smsCode;
+	private String validateCode;
 	
 	/**
 	 * 类型：normal,sms,email

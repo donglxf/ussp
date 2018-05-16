@@ -94,37 +94,22 @@ public class ExternalUserResource {
 		String userName = eloginParam.getUserName();
 		String type = eloginParam.getType();
 		String password = eloginParam.getPassword();
-		String smsCode = eloginParam.getSmsCode();
+		String validateCode = eloginParam.getValidateCode();
 
 		Map<String, String> map = new HashMap<>();
-		if (StringUtils.isBlank(app) && StringUtils.isBlank(ieme) && StringUtils.isBlank(userName)
-				&& StringUtils.isBlank(type)) {
+		if (StringUtils.isBlank(app)|| StringUtils.isBlank(ieme) || StringUtils.isBlank(userName)
+				||StringUtils.isBlank(type)||StringUtils.isBlank(password)) {
 			return Result.buildFail(SysStatus.ERROR_PARAM.getStatus(), SysStatus.ERROR_PARAM.getMsg());
 		}
 
-		// 手机号和验证码登录
-		if ("sms".equals(type)) {
-			Result result = smsHelper.validateSmsCode(userName, smsCode, app);
-			return result;
-		}
-
-		// 用户名密码方式登录
-		if ("normal".equals(type)) {
-			if (StringUtils.isBlank(password)) {
-				throw new IllegalArgumentException("Cannot create JWT Token without password");
-			}
-
-		}
 
 		Result result = outUserClient.validateUser(app, userName, password, type);
 		if ("0000".equals(result.getReturnCode())) {
 			String userId = result.getData().toString();
 
 			JwtToken accessToken = createAccessJwtToken(userId, ieme);
-			// JwtToken refreshToken = OutRefreshToken(userId);
 
 			map.put("accessToken", accessToken.getToken());
-			// map.put("refreshToken", refreshToken.getToken());
 		} else {
 			return Result.buildFail(result.getReturnCode(), result.getMsg());
 		}
@@ -170,22 +155,20 @@ public class ExternalUserResource {
 	 * @author wim qiuwenwu@hongte.info 
 	 * @date 2018年5月15日 上午11:32:21
 	 */
-	@PostMapping(value = "/OutRefreshToken")
-	@ApiOperation(value = "外部用户刷新令牌")
-	public JwtToken OutRefreshToken(String clientId, String secrect) {
-		if (StringUtils.isBlank(clientId)) {
-			throw new IllegalArgumentException("Cannot create refreshToken without clientId");
+	@PostMapping(value = "/getOutRefreshToken")
+	@ApiOperation(value = "获取外部用户刷新令牌")
+	public Result OutRefreshToken(String app,String appId, String appSecret) {
+		if (StringUtils.isBlank(app)||StringUtils.isBlank(appId)||StringUtils.isBlank(appSecret)) {
+			return Result.buildFail(SysStatus.ERROR_PARAM.getStatus(), SysStatus.ERROR_PARAM.getMsg());
 		}
 
-		if (StringUtils.isBlank(secrect)) {
-			throw new IllegalArgumentException("Cannot create refreshToken without secrect");
-		}
-
+		Map<String, String> map = new HashMap<>();
 		LocalDateTime currentTime = LocalDateTime.now();
 
 		Claims claims = Jwts.claims().setSubject("Out User refresh token");
-		claims.put("clientId", clientId);
-		claims.put("secrect", secrect);
+		claims.put("app", app);
+		claims.put("clientId", appId);
+		claims.put("secrect", appSecret);
 		String refreshToken = Jwts.builder().setClaims(claims).setIssuer(jwtSettings.getTokenIssuer())
 				.setId(UUID.randomUUID().toString())
 				.setIssuedAt(Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant()))
@@ -193,7 +176,8 @@ public class ExternalUserResource {
 						.atZone(ZoneId.systemDefault()).toInstant()))
 				.signWith(SignatureAlgorithm.HS512, jwtSettings.getTokenSigningKey()).compact();
 		log.info("Out user refreshToken has created:" + refreshToken);
-		return new AccessJwtToken(refreshToken, claims);
+		map.put("refreshToken", refreshToken);
+		return Result.buildSuccess(map);
 	}
 
 	/**
