@@ -19,4 +19,6 @@ public interface OutUserClient {
 	@RequestMapping(value = "/user/validateUser")
 	public Result validateUser(@RequestParam("app")String app,@RequestParam("userName")String userName,@RequestParam("password")String password,@RequestParam("type")String type);
 	
+	@RequestMapping(value = "/client/getClientInfo")
+	public Result getClientInfo(@RequestParam("app")String app);
 }

@@ -1,7 +1,11 @@
 package com.ht.ussp.ouc.app.domain;
 
 import java.io.Serializable;
+import java.util.Date;
+
 import javax.persistence.*;
+
+import lombok.Data;
 
 
 /**
@@ -11,6 +15,7 @@ import javax.persistence.*;
  * @author wim qiuwenwu@hongte.info
  * @date 2018年5月16日 下午5:25:05
  */
+@Data
 @Entity
 @Table(name="HT_BOA_OUT_CLIENT_DETAILS")
 @NamedQuery(name="HtBoaOutClientDetail.findAll", query="SELECT h FROM HtBoaOutClientDetail h")
@@ -18,98 +23,35 @@ public class HtBoaOutClientDetail implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
+    @Column(name = "ID", unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+	private int id;
+	
+	@Column(name = "appId")
 	private String appId;
 
+	@Column(name = "additionalInformation")
 	private String additionalInformation;
 
+	@Column(name = "appCode")
 	private String appCode;
 
+	@Column(name = "appSecret")
 	private String appSecret;
-
+	 
+	@Column(name = "autoApproveScopes")
 	private String autoApproveScopes;
-
+	 
+	@Column(name = "grantTypes")
 	private String grantTypes;
-
+	 
+	@Column(name = "redirectUrl")
 	private String redirectUrl;
 
 	@Column(name="refresh_token")
 	private String refreshToken;
-
+	
+	@Column(name = "scope")
 	private String scope;
-
-	public HtBoaOutClientDetail() {
-	}
-
-	public String getAppId() {
-		return this.appId;
-	}
-
-	public void setAppId(String appId) {
-		this.appId = appId;
-	}
-
-	public String getAdditionalInformation() {
-		return this.additionalInformation;
-	}
-
-	public void setAdditionalInformation(String additionalInformation) {
-		this.additionalInformation = additionalInformation;
-	}
-
-	public String getAppCode() {
-		return this.appCode;
-	}
-
-	public void setAppCode(String appCode) {
-		this.appCode = appCode;
-	}
-
-	public String getAppSecret() {
-		return this.appSecret;
-	}
-
-	public void setAppSecret(String appSecret) {
-		this.appSecret = appSecret;
-	}
-
-	public String getAutoApproveScopes() {
-		return this.autoApproveScopes;
-	}
-
-	public void setAutoApproveScopes(String autoApproveScopes) {
-		this.autoApproveScopes = autoApproveScopes;
-	}
-
-	public String getGrantTypes() {
-		return this.grantTypes;
-	}
-
-	public void setGrantTypes(String grantTypes) {
-		this.grantTypes = grantTypes;
-	}
-
-	public String getRedirectUrl() {
-		return this.redirectUrl;
-	}
-
-	public void setRedirectUrl(String redirectUrl) {
-		this.redirectUrl = redirectUrl;
-	}
-
-	public String getRefreshToken() {
-		return this.refreshToken;
-	}
-
-	public void setRefreshToken(String refreshToken) {
-		this.refreshToken = refreshToken;
-	}
-
-	public String getScope() {
-		return this.scope;
-	}
-
-	public void setScope(String scope) {
-		this.scope = scope;
-	}
-
+	
 }

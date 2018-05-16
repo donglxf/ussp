@@ -44,7 +44,9 @@ import com.ht.ussp.uaa.app.jwt.RefreshToken;
 import com.ht.ussp.uaa.app.jwt.TokenExtractor;
 import com.ht.ussp.uaa.app.jwt.TokenVerifier;
 import com.ht.ussp.uaa.app.model.ResponseModal;
+import com.ht.ussp.uaa.app.vo.HtBoaOutClient;
 import com.ht.ussp.uaa.app.vo.ValidateJwtVo;
+import com.ht.ussp.util.FastJsonUtil;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -161,22 +163,32 @@ public class ExternalUserResource {
 		if (StringUtils.isBlank(app)||StringUtils.isBlank(appId)||StringUtils.isBlank(appSecret)) {
 			return Result.buildFail(SysStatus.ERROR_PARAM.getStatus(), SysStatus.ERROR_PARAM.getMsg());
 		}
-
 		Map<String, String> map = new HashMap<>();
-		LocalDateTime currentTime = LocalDateTime.now();
+		Result result=outUserClient.getClientInfo(app);
+		if(result.getReturnCode().equals("9996")) {
+			return Result.buildFail(SysStatus.CLIENT_IS_VALID.getStatus(), SysStatus.CLIENT_IS_VALID.getMsg());
+		}else if(result.getReturnCode().equals("0000")) {
+			HtBoaOutClient htBoaOutClient=FastJsonUtil.jsonToPojo(FastJsonUtil.objectToJson(result.getData()), HtBoaOutClient.class);
+			
+			if(appId.equals(htBoaOutClient.getAppId())&&appSecret.equals(htBoaOutClient.getAppSecret())) {
+				LocalDateTime currentTime = LocalDateTime.now();
 
-		Claims claims = Jwts.claims().setSubject("Out User refresh token");
-		claims.put("app", app);
-		claims.put("clientId", appId);
-		claims.put("secrect", appSecret);
-		String refreshToken = Jwts.builder().setClaims(claims).setIssuer(jwtSettings.getTokenIssuer())
-				.setId(UUID.randomUUID().toString())
-				.setIssuedAt(Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant()))
-				.setExpiration(Date.from(currentTime.plusMinutes(jwtSettings.getOutRefreshTokenExpTime())
-						.atZone(ZoneId.systemDefault()).toInstant()))
-				.signWith(SignatureAlgorithm.HS512, jwtSettings.getTokenSigningKey()).compact();
-		log.info("Out user refreshToken has created:" + refreshToken);
-		map.put("refreshToken", refreshToken);
+				Claims claims = Jwts.claims().setSubject("Out User refresh token");
+				claims.put("app", app);
+				claims.put("clientId", appId);
+				claims.put("secrect", appSecret);
+				String refreshToken = Jwts.builder().setClaims(claims).setIssuer(jwtSettings.getTokenIssuer())
+						.setId(UUID.randomUUID().toString())
+						.setIssuedAt(Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant()))
+						.setExpiration(Date.from(currentTime.plusMinutes(jwtSettings.getOutRefreshTokenExpTime())
+								.atZone(ZoneId.systemDefault()).toInstant()))
+						.signWith(SignatureAlgorithm.HS512, jwtSettings.getTokenSigningKey()).compact();
+				log.info("Out user refreshToken has created:" + refreshToken);
+				map.put("refreshToken", refreshToken);
+				
+			}
+		}
+		
 		return Result.buildSuccess(map);
 	}
 
