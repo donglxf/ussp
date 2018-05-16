@@ -104,11 +104,8 @@ public class ExternalUserResource {
 
 		// 手机号和验证码登录
 		if ("sms".equals(type)) {
-			Boolean flag = smsHelper.validateSmsCode(userName, smsCode, app);
-			if (flag == false) {
-				Result.buildFail("9929", "短信验证码验证失败！");
-			}
-			log.info("---------flag-------" + flag);
+			Result result = smsHelper.validateSmsCode(userName, smsCode, app);
+			return result;
 		}
 
 		// 用户名密码方式登录
@@ -297,11 +294,12 @@ public class ExternalUserResource {
 
 	@ApiOperation(value = "测试验证短信")
 	@PostMapping("/validateCode")
-	public Boolean TestValidateSms(@RequestParam("telephone") String telephone, @RequestParam("code") String code,
+	public Result TestValidateSms(@RequestParam("telephone") String telephone, @RequestParam("code") String code,
 			@RequestParam("app") String app) {
 
-		Boolean flag = smsHelper.validateSmsCode(telephone, code, app);
-		return flag;
+		Result result = smsHelper.validateSmsCode(telephone, code, app);
+		return result;
+		
 	}
 
 }

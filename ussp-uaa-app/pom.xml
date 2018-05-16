@@ -144,7 +144,7 @@
 		<dependency>
 			<groupId>com.ht.ussp</groupId>
 			<artifactId>ussp-common</artifactId>
-			<version>0.0.25</version>
+			<version>20180515-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
