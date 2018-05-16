@@ -37,7 +37,8 @@ public enum SysStatus {
 	APP_CANNOT_NULL("9928","APP不能为空"),
 	SMS_CODE_VALID("9930","验证码无效"),
 	SMS_CODE_FAIL("9931","验证码错误"),
-	CLIENT_IS_VALID("9932","该客户端未注册"),
+	CLIENT_NOT_REGISTERED("9932","该客户端未注册"),
+	CLIENT_IS_VALID("9933","客户端信息错误"),
 
 	NO_RESULT("9996","查无数据"),
 	ERROR_PARAM("9997", "参数错误"),

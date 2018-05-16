@@ -166,7 +166,7 @@ public class ExternalUserResource {
 		Map<String, String> map = new HashMap<>();
 		Result result=outUserClient.getClientInfo(app);
 		if(result.getReturnCode().equals("9996")) {
-			return Result.buildFail(SysStatus.CLIENT_IS_VALID.getStatus(), SysStatus.CLIENT_IS_VALID.getMsg());
+			return Result.buildFail(SysStatus.CLIENT_NOT_REGISTERED.getStatus(), SysStatus.CLIENT_NOT_REGISTERED.getMsg());
 		}else if(result.getReturnCode().equals("0000")) {
 			HtBoaOutClient htBoaOutClient=FastJsonUtil.jsonToPojo(FastJsonUtil.objectToJson(result.getData()), HtBoaOutClient.class);
 			
@@ -186,7 +186,11 @@ public class ExternalUserResource {
 				log.info("Out user refreshToken has created:" + refreshToken);
 				map.put("refreshToken", refreshToken);
 				
+			}else {
+				
+				return Result.buildFail(SysStatus.CLIENT_IS_VALID.getStatus(), SysStatus.CLIENT_IS_VALID.getMsg());
 			}
+			
 		}
 		
 		return Result.buildSuccess(map);
