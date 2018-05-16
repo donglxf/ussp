@@ -8,6 +8,7 @@ import com.ht.ussp.client.OucClient;
 import com.ht.ussp.client.SmsClient;
 import com.ht.ussp.client.dto.MsgReqDtoIn;
 import com.ht.ussp.client.dto.MsgResDtoOut;
+import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.util.LogicUtil;
 
@@ -29,7 +30,16 @@ public class SmsHelper {
 
 	@Autowired(required = false)
 	private OucClient oucClient;
-
+    
+	/**
+	 * 
+	 * @Title: sendMsg 
+	 * @Description: 发送短信 
+	 * @return Boolean
+	 * @throws
+	 * @author wim qiuwenwu@hongte.info 
+	 * @date 2018年5月16日 下午4:02:06
+	 */
 	public Boolean sendMsg(MsgReqDtoIn msgReqDtoIn) {
 		if (LogicUtil.isNull(msgReqDtoIn)) {
 			return false;
@@ -55,16 +65,24 @@ public class SmsHelper {
 		return true;
 	}
 
-	public Boolean validateSmsCode(String telephone, String code, String app) {
-		if (StringUtils.isEmpty(code)) {
-			return false;
+	/**
+	 * 
+	 * @Title: validateSmsCode 
+	 * @Description: 验证短信 
+	 * @return Result
+	 * @throws
+	 * @author wim qiuwenwu@hongte.info 
+	 * @date 2018年5月16日 下午4:02:21
+	 */
+	public Result validateSmsCode(String telephone, String code, String app) {
+		if (StringUtils.isEmpty(telephone)||StringUtils.isEmpty(code)||StringUtils.isEmpty(app)) {
+			return Result.buildFail(SysStatus.ERROR_PARAM.getStatus(), SysStatus.ERROR_PARAM.getMsg());				
 		}
-		Boolean validateSmscode = oucClient.validateSmsCode(telephone, code, app);
-		if (validateSmscode == false) {
-			log.error("--------验证码有误！----------");
-			return false;
+		try {
+		Result result = oucClient.validateSmsCode(telephone, code, app);
+		return result;
+		}catch(Exception e) {
+			return Result.buildFail();
 		}
-		return true;
 	}
-
-}
+	}

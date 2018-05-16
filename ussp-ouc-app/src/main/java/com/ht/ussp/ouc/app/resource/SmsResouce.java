@@ -1,9 +1,9 @@
 package com.ht.ussp.ouc.app.resource;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -12,8 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.fastjson.JSON;
 import com.ht.ussp.bean.SmsHelper;
+import com.ht.ussp.common.SysStatus;
+import com.ht.ussp.core.Result;
 import com.ht.ussp.util.JsonUtil;
 
 import io.swagger.annotations.ApiOperation;
@@ -53,25 +54,25 @@ public class SmsResouce {
 
 	@ApiOperation(value = "验证短信验证码")
 	@GetMapping("/validateSmsCode")
-	public Boolean validateSms(@RequestParam("telephone") String telephone, @RequestParam("code") String code,
+	public Result validateSms(@RequestParam("telephone") String telephone, @RequestParam("code") String code,
 			@RequestParam("app") String app) {
-		Boolean flag = false;
-
 		try {
 			String result = redis.opsForValue().get(app + ":" + telephone);
 			Map<String, Object> map = JsonUtil.json2Map(result);
 			String redisCode = map.get("code").toString();
-			if (code.equals(redisCode)) {
-				flag = true;
+			if(StringUtils.isEmpty(redisCode)) {
+				return Result.buildFail(SysStatus.SMS_CODE_VALID.getStatus(), SysStatus.SMS_CODE_VALID.getMsg());				
+			}else if (!code.equals(redisCode)) {
+				
+				return Result.buildFail(SysStatus.SMS_CODE_FAIL.getStatus(), SysStatus.SMS_CODE_FAIL.getMsg());
 			} else {
-				flag = false;
-				return flag;
+				return Result.buildSuccess();
 			}
 		} catch (Exception e) {
-			log.error("----验证短信失败：" + e);
-			flag = false;
+			log.error("连接----redis异常-----：" + e);
+			return Result.buildFail();	
 		}
-		return flag;
+		
 	}
 
 }

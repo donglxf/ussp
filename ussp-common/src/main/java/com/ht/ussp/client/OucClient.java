@@ -1,10 +1,10 @@
 package com.ht.ussp.client;
 
-import java.util.Map;
-
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import com.ht.ussp.core.Result;
 
 /**
  * 
@@ -37,6 +37,6 @@ public interface OucClient {
 	 * @date 2018年5月14日 上午11:11:10
 	 */
 	@GetMapping(value = "/sms/validateSmsCode")
-	Boolean validateSmsCode(@RequestParam("telephone") String telephone, @RequestParam("code") String code,@RequestParam("app") String app);
+	Result validateSmsCode(@RequestParam("telephone") String telephone, @RequestParam("code") String code,@RequestParam("app") String app);
 
 }
