@@ -1,18 +1,22 @@
 package com.ht.ussp.ouc.app.resource;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.ouc.app.domain.HtBoaOutLogin;
+import com.ht.ussp.ouc.app.domain.HtBoaOutPwdHist;
 import com.ht.ussp.ouc.app.domain.HtBoaOutUser;
 import com.ht.ussp.ouc.app.service.HtBoaOutLoginService;
+import com.ht.ussp.ouc.app.service.HtBoaOutPwdHistService;
 import com.ht.ussp.ouc.app.service.HtBoaOutUserService;
 import com.ht.ussp.util.EncryptUtil;
 
@@ -27,12 +31,14 @@ public class OutUserLoginResource{
  
 	@Autowired
 	HtBoaOutUserService htBoaOutUserService;
-	
 	@Autowired
 	HtBoaOutLoginService htBoaOutLoginService;
+	@Autowired
+	HtBoaOutPwdHistService htBoaOutPwdHistService;
+	
 
 	@ApiOperation(value = "忘记密码/重置密码", notes = "registType：1 手机号 2邮箱 3用户名密码")
-	@GetMapping(value = "/resetPwd")
+	@PostMapping(value = "/resetPwd")
     public Result resetPwd(@RequestParam(value = "userName")String userName,@RequestParam(value = "newPassword")String newPassword,@RequestParam(value = "app")String app,@RequestParam(value = "registType")String registType) {
 		if(StringUtils.isEmpty(userName)) {
 			return Result.buildFail(); 
@@ -64,4 +70,32 @@ public class OutUserLoginResource{
 			return Result.buildFail("9999","找不到相关用户信息");
 		}
     }
+	
+	@ApiOperation(value = "修改密码")
+	@PostMapping(value = "/changePwd")
+	public Result changePwd(@RequestParam(value = "userId")String userId,@RequestParam(value = "oldPassword")String oldPassword, @RequestParam(value = "newPassword")String newPassword) {
+		long sl = System.currentTimeMillis(), el = 0L;
+		HtBoaOutLogin u = htBoaOutLoginService.findByUserId(userId);
+		// 验证原密码是否正确
+		if (!EncryptUtil.matches(oldPassword, u.getPassword())) {
+			return Result.buildFail(SysStatus.PWD_INVALID.getStatus(), "原密码输入不正确");
+		}
+
+		// 记录历史密码
+		HtBoaOutPwdHist htBoaOutPwdHist = new HtBoaOutPwdHist();
+		htBoaOutPwdHist.setUserId(u.getUserId());
+		htBoaOutPwdHist.setPassword(u.getPassword());
+		htBoaOutPwdHist.setPwdCreTime(new Timestamp(System.currentTimeMillis()));
+		htBoaOutPwdHist.setLastModifiedDatetime(new Date());
+
+		String newPassWordEncrypt = EncryptUtil.passwordEncrypt(newPassword);
+		u.setPassword(newPassWordEncrypt);
+		if ("1".equals(u.getStatus())) {
+			u.setStatus("0");
+		}
+		htBoaOutLoginService.saveUserLogin(u);
+		htBoaOutPwdHistService.save(htBoaOutPwdHist);
+		el = System.currentTimeMillis();
+		return Result.buildSuccess();
+	}
 }

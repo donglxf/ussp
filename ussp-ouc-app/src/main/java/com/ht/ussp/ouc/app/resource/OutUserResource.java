@@ -27,6 +27,7 @@ import com.ht.ussp.util.EncryptUtil;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
 import lombok.extern.log4j.Log4j2;
 
 
@@ -41,12 +42,13 @@ public class OutUserResource{
 	@Autowired
 	HtBoaOutLoginService htBoaOutLoginService;
 
-	@ApiOperation(value = "用户注册", notes = "注册类型：sms:短信注册 email:邮箱注册 normal:用户名密码注册")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "userName", dataType = "String", required = true, value = "注册账号"),
-			@ApiImplicitParam(name = "password", dataType = "String", required = true, value = "密码"),
-			@ApiImplicitParam(name = "app", dataType = "String", required = true, value = "系统编码"),
-			@ApiImplicitParam(name = "registType", dataType = "String", required = true, value = "注册类型：sms:短信注册 email:邮箱注册 normal:用户名密码注册") })
-	@GetMapping(value = "/regist")
+	@ApiOperation(value = "用户注册", notes = "返回userId")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "userName", paramType = "query",dataType = "String", required = true, value = "注册账号"),
+			@ApiImplicitParam(name = "password", paramType = "query",dataType = "String", required = true, value = "密码"),
+			@ApiImplicitParam(name = "app", paramType = "query",dataType = "String", required = true, value = "系统编码"),
+			@ApiImplicitParam(name = "registType", paramType = "query",dataType = "String", required = true, value = "注册类型：sms:短信验证码注册 email:邮箱注册 normal:用户名密码注册") })
+	@ApiResponse(code=0,  message = "userId")
+	@PostMapping(value = "/regist")
     public Result regist(@RequestParam(value = "userName")String userName,@RequestParam(value = "password")String password,@RequestParam(value = "app")String app,@RequestParam(value = "registType")String registType) {
 		if(StringUtils.isEmpty(userName)) {
 			return Result.buildFail(); 
@@ -69,7 +71,11 @@ public class OutUserResource{
 				return Result.buildFail("9999","邮箱已被注册"); 
 			}
 		}else if("normal".equals(registType)) {
-			htBoaOutUser.setUserName(userName);
+			HtBoaOutLogin loginInfo = htBoaOutLoginService.findByLoginId(userName);
+			if(loginInfo!=null) {
+				return Result.buildFail("9999","用户名已存在"); 
+			}
+			htBoaOutUser.setUserName(userName); 
 		}else {
 			return Result.buildFail("9999","注册类型不对【"+registType+"】"); 
 		}
@@ -111,14 +117,14 @@ public class OutUserResource{
     }
 	
 	@ApiOperation(value = "验证用户", notes = "登录type：sms:短信  email:邮箱  normal:用户名密码 ")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "userName", dataType = "String", required = true, value = "注册账号"),
-		@ApiImplicitParam(name = "password", dataType = "String", required = true, value = "密码"),
-		@ApiImplicitParam(name = "app", dataType = "String", required = true, value = "系统编码"),
-		@ApiImplicitParam(name = "type", dataType = "String", required = true, value = "登录type：sms:短信  email:邮箱  normal:用户名密码 ") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "userName", paramType = "query",dataType = "String", required = true, value = "注册账号"),
+		@ApiImplicitParam(name = "password", paramType = "query",dataType = "String", required = true, value = "密码"),
+		@ApiImplicitParam(name = "app",paramType = "query",dataType = "String", required = true, value = "系统编码"),
+		@ApiImplicitParam(name = "type", paramType = "query",dataType = "String", required = true, value = "登录type：sms:短信验证  email:邮箱  normal:用户名密码 ") })
 	@GetMapping(value = "/validateUser")
     public Result validateUser(@RequestParam(value = "userName")String userName,@RequestParam(value = "password")String password,@RequestParam(value = "app")String app,@RequestParam(value = "type")String type) {
         if("normal".equals(type)) {
-        	HtBoaOutLogin htBoaOutLogin = htBoaOutLoginService.findByUserId(userName);
+        	HtBoaOutLogin htBoaOutLogin = htBoaOutLoginService.findByLoginId(userName);
         	if(htBoaOutLogin!=null) {
         		 //验证原密码是否正确
                 if(!EncryptUtil.matches(password,htBoaOutLogin.getPassword())){
