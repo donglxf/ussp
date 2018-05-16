@@ -20,13 +20,14 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ht.ussp.bean.EloginParam;
 import com.ht.ussp.bean.SmsHelper;
 import com.ht.ussp.client.dto.MsgReqDtoIn;
 import com.ht.ussp.common.SysStatus;
@@ -76,25 +77,31 @@ public class ExternalUserResource {
 	@Autowired
 	private ObjectMapper mapper;
 
+	/**
+	 * 
+	 * @Title: ELogin 
+	 * @Description: 外部用户认证，ieme是手机序列号，如果是pc端，传mac地址 
+	 * @return Result
+	 * @throws
+	 * @author wim qiuwenwu@hongte.info 
+	 * @date 2018年5月16日 下午2:16:20
+	 */
 	@PostMapping(value = "/ELogin")
 	@ApiOperation(value = "外部用户认证")
-	public Result ELogin(String app, String userName, String password, String smsCode, String type,
-			HttpServletResponse response) {
+	public Result ELogin(@RequestBody EloginParam eloginParam, HttpServletResponse response) {
+		String app = eloginParam.getApp();
+		String ieme = eloginParam.getIeme();
+		String userName = eloginParam.getUserName();
+		String type = eloginParam.getType();
+		String password = eloginParam.getPassword();
+		String smsCode = eloginParam.getSmsCode();
+
 		Map<String, String> map = new HashMap<>();
-		if (StringUtils.isBlank(app)) {
-			throw new IllegalArgumentException("Cannot create JWT Token without app");
-
+		if (StringUtils.isBlank(app) && StringUtils.isBlank(ieme) && StringUtils.isBlank(userName)
+				&& StringUtils.isBlank(type)) {
+			return Result.buildFail(SysStatus.ERROR_PARAM.getStatus(), SysStatus.ERROR_PARAM.getMsg());
 		}
 
-		if (StringUtils.isBlank(userName)) {
-			throw new IllegalArgumentException("Cannot create JWT Token without userName");
-
-		}
-
-		if (StringUtils.isBlank(type)) {
-			throw new IllegalArgumentException("Cannot create JWT Token without type");
-
-		}
 		// 手机号和验证码登录
 		if ("sms".equals(type)) {
 			Boolean flag = smsHelper.validateSmsCode(userName, smsCode, app);
@@ -110,25 +117,19 @@ public class ExternalUserResource {
 				throw new IllegalArgumentException("Cannot create JWT Token without password");
 			}
 
-			Boolean flag = smsHelper.validateSmsCode(userName, smsCode, app);
-			if (flag == false) {
-				Result.buildFail("9929", "短信验证码验证失败！");
-			}
-			log.info("---------flag-------" + flag);
 		}
 
 		Result result = outUserClient.validateUser(app, userName, password, type);
 		if ("0000".equals(result.getReturnCode())) {
 			String userId = result.getData().toString();
 
-			JwtToken accessToken=createAccessJwtToken(userId);
-			JwtToken refreshToken = OutRefreshToken(userId);
-			
+			JwtToken accessToken = createAccessJwtToken(userId, ieme);
+			// JwtToken refreshToken = OutRefreshToken(userId);
+
 			map.put("accessToken", accessToken.getToken());
-			map.put("refreshToken", refreshToken.getToken());
+			// map.put("refreshToken", refreshToken.getToken());
 		} else {
-			map.put("code", result.getReturnCode());
-			map.put("CodeDesc", result.getCodeDesc());
+			return Result.buildFail(result.getReturnCode(), result.getMsg());
 		}
 		return Result.buildSuccess(map);
 	}
@@ -142,13 +143,17 @@ public class ExternalUserResource {
 	 * @author wim qiuwenwu@hongte.info 
 	 * @date 2018年5月15日 下午5:01:10
 	 */
-	public AccessJwtToken createAccessJwtToken(String userId) {
+	public AccessJwtToken createAccessJwtToken(String userId, String ieme) {
 		if (StringUtils.isBlank(userId)) {
 			throw new IllegalArgumentException("Cannot create JWT Token without userId");
+		}
+		if (StringUtils.isBlank(ieme)) {
+			throw new IllegalArgumentException("Cannot create JWT Token without ieme");
 		}
 		LocalDateTime currentTime = LocalDateTime.now();
 		Claims claims = Jwts.claims().setSubject("out user jwt token");
 		claims.put("userId", userId);
+		claims.put("ieme", ieme);
 		String accessToken = Jwts.builder().setClaims(claims).setIssuer(jwtSettings.getTokenIssuer())
 				.setIssuedAt(Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant()))
 				.setExpiration(Date.from(currentTime.plusMinutes(jwtSettings.getOutUserTokenTime())
@@ -168,15 +173,22 @@ public class ExternalUserResource {
 	 * @author wim qiuwenwu@hongte.info 
 	 * @date 2018年5月15日 上午11:32:21
 	 */
-	public JwtToken OutRefreshToken(String userId) {
-		if (StringUtils.isBlank(userId)) {
-			throw new IllegalArgumentException("Cannot create refreshToken without userId");
+	@PostMapping(value = "/OutRefreshToken")
+	@ApiOperation(value = "外部用户刷新令牌")
+	public JwtToken OutRefreshToken(String clientId, String secrect) {
+		if (StringUtils.isBlank(clientId)) {
+			throw new IllegalArgumentException("Cannot create refreshToken without clientId");
+		}
+
+		if (StringUtils.isBlank(secrect)) {
+			throw new IllegalArgumentException("Cannot create refreshToken without secrect");
 		}
 
 		LocalDateTime currentTime = LocalDateTime.now();
 
 		Claims claims = Jwts.claims().setSubject("Out User refresh token");
-		claims.put("userId", userId);
+		claims.put("clientId", clientId);
+		claims.put("secrect", secrect);
 		String refreshToken = Jwts.builder().setClaims(claims).setIssuer(jwtSettings.getTokenIssuer())
 				.setId(UUID.randomUUID().toString())
 				.setIssuedAt(Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant()))
@@ -197,8 +209,7 @@ public class ExternalUserResource {
 	 * @date 2018年5月15日 下午2:47:07
 	 */
 	@ApiOperation(value = "通过refreshToken获取accesstoken")
-	@GetMapping(value = "/getAccessToken", produces = {
-			MediaType.APPLICATION_JSON_VALUE })
+	@GetMapping(value = "/getAccessToken", produces = { MediaType.APPLICATION_JSON_VALUE })
 	public @ResponseBody JwtToken refreshToken(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 		response.setCharacterEncoding("UTF-8");
@@ -227,10 +238,9 @@ public class ExternalUserResource {
 			throw new InvalidJwtToken();
 		}
 
-		return createAccessJwtToken(refreshToken.getUserId());
+		return createAccessJwtToken(refreshToken.getUserId(), refreshToken.getIeme());
 	}
 
-	
 	/**
 	 * 
 	 * @Title: validateOutUserJwt 
@@ -242,37 +252,34 @@ public class ExternalUserResource {
 	 */
 	@ApiOperation(value = "验证外部用户AccessToken")
 	@PostMapping(value = "/validateOutUserJwt")
-	public ResponseModal validateJwt(@RequestParam("tokenPayload") String tokenPayload,HttpServletResponse response){
+	public ResponseModal validateJwt(@RequestParam("tokenPayload") String tokenPayload, HttpServletResponse response) {
 		response.setCharacterEncoding("UTF-8");
-		ResponseModal rm=new ResponseModal();
+		ResponseModal rm = new ResponseModal();
 		Jws<Claims> jwsClaims;
 		String userId;
 		ValidateJwtVo vdj = new ValidateJwtVo();
-		
+
 		try {
-		RawAccessJwtToken accessToken = new RawAccessJwtToken(tokenExtractor.extract(tokenPayload));
-		
-		jwsClaims = accessToken.parseClaims(jwtSettings.getTokenSigningKey());
-		 userId = jwsClaims.getBody().get("userId").toString();
-		 vdj.setUserId(userId);
-		 rm.setSysStatus(SysStatus.SUCCESS);
-		 rm.setResult(vdj);
-		}catch(BadCredentialsException ex) {
+			RawAccessJwtToken accessToken = new RawAccessJwtToken(tokenExtractor.extract(tokenPayload));
+
+			jwsClaims = accessToken.parseClaims(jwtSettings.getTokenSigningKey());
+			userId = jwsClaims.getBody().get("userId").toString();
+			vdj.setUserId(userId);
+			rm.setSysStatus(SysStatus.SUCCESS);
+			rm.setResult(vdj);
+		} catch (BadCredentialsException ex) {
 			rm.setSysStatus(SysStatus.TOKEN_IS_VALID);
 			log.info("----token invalid----");
-		}catch (JwtExpiredTokenException expiredEx) {
+		} catch (JwtExpiredTokenException expiredEx) {
 			rm.setSysStatus(SysStatus.TOKEN_IS_EXPIRED);
 			log.info("----token expired----");
-        }catch (AuthenticationServiceException asEx) {
+		} catch (AuthenticationServiceException asEx) {
 			rm.setSysStatus(SysStatus.ERROR_PARAM);
 			log.info("----invalid token's header----");
-        }
+		}
 		return rm;
 	}
-	
-	
-	
-	
+
 	@ApiOperation(value = "测试发送短信")
 	@PostMapping("/TestSendSms")
 	public Boolean TestSendSms(@RequestParam("telephone") String telephone, @RequestParam("app") String app) {

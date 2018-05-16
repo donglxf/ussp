@@ -9,7 +9,7 @@ spring:
 uaa:
   security:
     jwt:
-      tokenExpirationTime: 29  #内部应用token失效时间    单位：分钟
+      tokenExpirationTime: 30  #内部应用token失效时间    单位：分钟
       refreshTokenExpTime: 720  #内部应用刷新token失效时间,单位：分钟  12小时
       appTokenTime: 365 #天，系统级鉴权token失效时间
       tokenIssuer: qiuwenwu@hongte.info
