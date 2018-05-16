@@ -58,16 +58,16 @@ public class SmsResouce {
 			@RequestParam("app") String app) {
 		try {
 			String result = redis.opsForValue().get(app + ":" + telephone);
-			Map<String, Object> map = JsonUtil.json2Map(result);
-			String redisCode = map.get("code").toString();
-			if(StringUtils.isEmpty(redisCode)) {
+			if(StringUtils.isBlank(result)) {
 				return Result.buildFail(SysStatus.SMS_CODE_VALID.getStatus(), SysStatus.SMS_CODE_VALID.getMsg());				
-			}else if (!code.equals(redisCode)) {
-				
-				return Result.buildFail(SysStatus.SMS_CODE_FAIL.getStatus(), SysStatus.SMS_CODE_FAIL.getMsg());
-			} else {
-				return Result.buildSuccess();
-			}
+			}else {
+				Map<String, Object> map = JsonUtil.json2Map(result);
+				String redisCode = map.get("code").toString();
+				if(redisCode.equals(code)) {
+					return Result.buildSuccess();
+				}else {
+				return Result.buildFail(SysStatus.SMS_CODE_FAIL.getStatus(), SysStatus.SMS_CODE_FAIL.getMsg());}
+			} 
 		} catch (Exception e) {
 			log.error("连接----redis异常-----：" + e);
 			return Result.buildFail();	
