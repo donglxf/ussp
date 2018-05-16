@@ -113,7 +113,7 @@ public class ExternalUserResource {
 
 			map.put("accessToken", accessToken.getToken());
 		} else {
-			return Result.buildFail(result.getReturnCode(), result.getMsg());
+			return Result.buildFail(result.getCodeDesc(), result.getMsg());
 		}
 		return Result.buildSuccess(map);
 	}
@@ -165,9 +165,9 @@ public class ExternalUserResource {
 		}
 		Map<String, String> map = new HashMap<>();
 		Result result=outUserClient.getClientInfo(app);
-		if(result.getReturnCode().equals("9996")) {
+		if("9996".equals(result.getCodeDesc())) {
 			return Result.buildFail(SysStatus.CLIENT_NOT_REGISTERED.getStatus(), SysStatus.CLIENT_NOT_REGISTERED.getMsg());
-		}else if(result.getReturnCode().equals("0000")) {
+		}else if("0000".equals(result.getReturnCode())) {
 			HtBoaOutClient htBoaOutClient=FastJsonUtil.jsonToPojo(FastJsonUtil.objectToJson(result.getData()), HtBoaOutClient.class);
 			
 			if(appId.equals(htBoaOutClient.getAppId())&&appSecret.equals(htBoaOutClient.getAppSecret())) {
