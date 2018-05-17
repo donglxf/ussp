@@ -590,7 +590,7 @@ public class HtBoaInResourceService {
 						sbf.append("'" + addHtBoaInResource.getResNameCn() + "',");
 						sbf.append("'" + addHtBoaInResource.getSequence() + "',");
 						sbf.append("'" + addHtBoaInResource.getResType() + "',");
-						sbf.append("'" + addHtBoaInResource.getResParent() + "',");
+						sbf.append((addHtBoaInResource.getResParent() == null ? null : "'" + addHtBoaInResource.getResParent() + "'") + ",");
 						sbf.append("'" + addHtBoaInResource.getRemark() + "',");
 						sbf.append("'" + addHtBoaInResource.getStatus() + "',");
 						sbf.append((addHtBoaInResource.getResIcon() == null ? null : "'" + addHtBoaInResource.getResIcon() + "'") + ",");
@@ -773,7 +773,7 @@ public class HtBoaInResourceService {
 							if (StringUtils.isEmpty(updateHtBoaInResource.getResParent())) {
 								fallBacksbfUpdate.append(";" + enter);
 							} else {
-								fallBacksbfUpdate.append( " AND RES_PARENT='" + updateHtBoaInResource.getResParent() + "';" + enter);
+								fallBacksbfUpdate.append( " AND RES_PARENT=" + (updateHtBoaInResource.getResParent() == null ? null : "'" + updateHtBoaInResource.getResParent() + "'") + ";" + enter);
 							}
 							if (isUpdate) {
 								sbf.append(sbfUpdate);
