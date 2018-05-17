@@ -1,27 +1,28 @@
-package com.ht.ussp.uc.app.domain;
+package com.ht.ussp.ouc.app.domain;
 
 import java.io.Serializable;
 import javax.persistence.*;
 import java.util.Date;
-import java.sql.Timestamp;
 
 
 /**
  * 
-* @ClassName: HtBoaOutPwdHist
-* @Description: 密码维护历史表
+* @ClassName: HtBoaOutUserApp
+* @Description: 用户系统关联表
 * @author wim qiuwenwu@hongte.info
-* @date 2018年1月5日 下午2:59:40
+* @date 2018年1月5日 下午3:01:01
  */
 @Entity
-@Table(name="HT_BOA_OUT_PWD_HIST")
-@NamedQuery(name="HtBoaOutPwdHist.findAll", query="SELECT h FROM HtBoaOutPwdHist h")
-public class HtBoaOutPwdHist implements Serializable {
+@Table(name="HT_BOA_OUT_USER_APP")
+@NamedQuery(name="HtBoaOutUserApp.findAll", query="SELECT h FROM HtBoaOutUserApp h")
+public class HtBoaOutUserApp implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@Column(name = "ID", unique = true, nullable = false)
 	private Long id;
+
+	private String app;
 
 	@Column(name="CREATE_OPERATOR")
 	private String createOperator;
@@ -40,19 +41,13 @@ public class HtBoaOutPwdHist implements Serializable {
 	@Column(name="LAST_MODIFIED_DATETIME")
 	private Date lastModifiedDatetime;
 
-	@Column(name="PASSWORD")
-	private String password;
-
-	@Column(name="PWD_CRE_TIME")
-	private Timestamp pwdCreTime;
-
 	@Column(name="UPDATE_OPERATOR")
 	private String updateOperator;
 
 	@Column(name="USER_ID")
 	private String userId;
 
-	public HtBoaOutPwdHist() {
+	public HtBoaOutUserApp() {
 	}
 
 	public Long getId() {
@@ -61,6 +56,14 @@ public class HtBoaOutPwdHist implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getApp() {
+		return this.app;
+	}
+
+	public void setApp(String app) {
+		this.app = app;
 	}
 
 	public String getCreateOperator() {
@@ -101,22 +104,6 @@ public class HtBoaOutPwdHist implements Serializable {
 
 	public void setLastModifiedDatetime(Date lastModifiedDatetime) {
 		this.lastModifiedDatetime = lastModifiedDatetime;
-	}
-
-	public String getPassword() {
-		return this.password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public Timestamp getPwdCreTime() {
-		return this.pwdCreTime;
-	}
-
-	public void setPwdCreTime(Timestamp pwdCreTime) {
-		this.pwdCreTime = pwdCreTime;
 	}
 
 	public String getUpdateOperator() {

@@ -81,6 +81,7 @@ public class OutUserResource{
 		}
 		htBoaOutUser.setDataSource(app);
 		htBoaOutUser.setCreatedDatetime(new Date());
+		htBoaOutUser.setStatus("0");
 		htBoaOutUser.setLastModifiedDatetime(new Date());
 		htBoaOutUser = htBoaOutUserService.saveUser(htBoaOutUser);
          
@@ -123,7 +124,8 @@ public class OutUserResource{
 		@ApiImplicitParam(name = "type", paramType = "query",dataType = "String", required = true, value = "登录type：sms:短信验证  email:邮箱  normal:用户名密码 ") })
 	@GetMapping(value = "/validateUser")
     public Result validateUser(@RequestParam(value = "userName")String userName,@RequestParam(value = "password")String password,@RequestParam(value = "app")String app,@RequestParam(value = "type")String type) {
-        if("normal".equals(type)) {
+       
+		if("normal".equals(type)) {
         	HtBoaOutLogin htBoaOutLogin = htBoaOutLoginService.findByLoginId(userName);
         	if(htBoaOutLogin!=null) {
         		 //验证原密码是否正确
@@ -135,19 +137,42 @@ public class OutUserResource{
         	}else {
         		return Result.buildFail("9999","找不到相关用户信息");
         	}
-		} else {
-			HtBoaOutUser htBoaOutUser = htBoaOutUserService.findByEmailOrMobile(userName, userName);
+		} else if("email".equals(type)) {
+			HtBoaOutUser htBoaOutUser = htBoaOutUserService.findByEmail(userName);
 			if (htBoaOutUser == null) {
 				return Result.buildFail("9999", "找不到相关用户信息");
 			} else {
 				HtBoaOutLogin htBoaOutLogin = htBoaOutLoginService.findByUserId(htBoaOutUser.getUserId());
 				if (htBoaOutLogin != null) {
-					// 验证原密码是否正确
-					return Result.buildSuccess(htBoaOutLogin.getUserId());
+					//验证原密码是否正确
+	                if(!EncryptUtil.matches(password,htBoaOutLogin.getPassword())){
+	                	return Result.buildFail(SysStatus.PWD_INVALID.getStatus(),"密码输入不正确");
+	                }else {
+	                	return Result.buildSuccess(htBoaOutLogin.getUserId());
+	                }
 				} else {
 					return Result.buildFail("9999", "找不到相关用户信息");
 				}
 			}
+		} else if("sms".equals(type)) {
+			HtBoaOutUser htBoaOutUser = htBoaOutUserService.findByMobile(userName);
+			if (htBoaOutUser == null) {
+				return Result.buildFail("9999", "找不到相关用户信息");
+			} else {
+				HtBoaOutLogin htBoaOutLogin = htBoaOutLoginService.findByUserId(htBoaOutUser.getUserId());
+				if (htBoaOutLogin != null) {
+					//验证原密码是否正确
+	                if(!EncryptUtil.matches(password,htBoaOutLogin.getPassword())){
+	                	return Result.buildFail(SysStatus.PWD_INVALID.getStatus(),"密码输入不正确");
+	                }else {
+	                	return Result.buildSuccess(htBoaOutLogin.getUserId());
+	                }
+				} else {
+					return Result.buildFail("9999", "找不到相关用户信息");
+				}
+			}
+		} else {
+			return Result.buildFail("9999","登录类型不存在【"+type+"】"); 
 		}
     }
 	

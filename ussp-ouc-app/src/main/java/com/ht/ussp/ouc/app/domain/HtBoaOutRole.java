@@ -1,4 +1,4 @@
-package com.ht.ussp.uc.app.domain;
+package com.ht.ussp.ouc.app.domain;
 
 import java.io.Serializable;
 import javax.persistence.*;
@@ -7,15 +7,15 @@ import java.util.Date;
 
 /**
  * 
-* @ClassName: HtBoaOutRoleRe
-* @Description: 角色资源表
+* @ClassName: HtBoaOutRole
+* @Description: 角色表
 * @author wim qiuwenwu@hongte.info
-* @date 2018年1月5日 下午3:00:31
+* @date 2018年1月5日 下午3:00:18
  */
 @Entity
-@Table(name="HT_BOA_OUT_ROLE_RES")
-@NamedQuery(name="HtBoaOutRoleRe.findAll", query="SELECT h FROM HtBoaOutRoleRe h")
-public class HtBoaOutRoleRe implements Serializable {
+@Table(name="HT_BOA_OUT_ROLE")
+@NamedQuery(name="HtBoaOutRole.findAll", query="SELECT h FROM HtBoaOutRole h")
+public class HtBoaOutRole implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -39,16 +39,22 @@ public class HtBoaOutRoleRe implements Serializable {
 	@Column(name="LAST_MODIFIED_DATETIME")
 	private Date lastModifiedDatetime;
 
-	@Column(name="RES_CODE")
-	private String resCode;
-
 	@Column(name="ROLE_CODE")
 	private String roleCode;
+
+	@Column(name="ROLE_NAME")
+	private String roleName;
+
+	@Column(name="ROLE_NAME_CN")
+	private String roleNameCn;
+
+	@Column(name="STATUS")
+	private String status;
 
 	@Column(name="UPDATE_OPERATOR")
 	private String updateOperator;
 
-	public HtBoaOutRoleRe() {
+	public HtBoaOutRole() {
 	}
 
 	public Long getId() {
@@ -99,20 +105,36 @@ public class HtBoaOutRoleRe implements Serializable {
 		this.lastModifiedDatetime = lastModifiedDatetime;
 	}
 
-	public String getResCode() {
-		return this.resCode;
-	}
-
-	public void setResCode(String resCode) {
-		this.resCode = resCode;
-	}
-
 	public String getRoleCode() {
 		return this.roleCode;
 	}
 
 	public void setRoleCode(String roleCode) {
 		this.roleCode = roleCode;
+	}
+
+	public String getRoleName() {
+		return this.roleName;
+	}
+
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
+	}
+
+	public String getRoleNameCn() {
+		return this.roleNameCn;
+	}
+
+	public void setRoleNameCn(String roleNameCn) {
+		this.roleNameCn = roleNameCn;
+	}
+
+	public String getStatus() {
+		return this.status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public String getUpdateOperator() {
