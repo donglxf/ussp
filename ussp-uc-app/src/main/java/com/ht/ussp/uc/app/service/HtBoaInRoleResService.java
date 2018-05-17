@@ -180,6 +180,7 @@ public class HtBoaInRoleResService {
 							}
 						}
 						
+						sbf.append( "DELETE FROM  HT_BOA_IN_ROLE_RES WHERE ROLE_CODE='" + addHtBoaInRoleRes.getRoleCode() + "' AND RES_CODE='" + addHtBoaInRoleRes.getResCode() + "'; -- roleName:"+roleName+ enter);
 						sbf.append( "INSERT INTO  `HT_BOA_IN_ROLE_RES` (  `RES_CODE`, `ROLE_CODE`,  `DEL_FLAG` ) VALUES (");
 						sbf.append("'" + addHtBoaInRoleRes.getResCode() + "',");
 						sbf.append("'" + addHtBoaInRoleRes.getRoleCode() + "',");

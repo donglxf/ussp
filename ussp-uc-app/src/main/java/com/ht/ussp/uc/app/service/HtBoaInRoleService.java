@@ -257,6 +257,7 @@ public class HtBoaInRoleService {
 					sbf.append("-- 添加 " + enter);
 					fallbacksbf.append("-- 回滚添加 " + enter);
 					for (HtBoaInRole addHtBoaInRole : needAdd) {
+						sbf.append( "DELETE FROM  HT_BOA_IN_ROLE WHERE ROLE_CODE='" + addHtBoaInRole.getRoleCode() + "' AND APP='" + addHtBoaInRole.getApp() + "' AND ROLE_NAME_CN='"+addHtBoaInRole.getRoleNameCn()+ "';" + enter);
 						sbf.append( "INSERT INTO  `HT_BOA_IN_ROLE` (`ROLE_CODE`, `ROLE_NAME_CN`, `STATUS`, `APP`, `DEL_FLAG` ) VALUES (");
 						sbf.append("'" + addHtBoaInRole.getRoleCode() + "',");
 						sbf.append("'" + addHtBoaInRole.getRoleNameCn() + "',");
