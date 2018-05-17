@@ -36,6 +36,9 @@ public class OutSystemFilter extends ZuulFilter {
 	@Value("${ht.outUrl.deny}")
 	private String outUrldeny;
 	
+	@Value("${ht.ignoreUrl.web}")
+	private String htIgnoreUrlWeb;
+	
 	@Autowired
 	private RoleClient roleClient;
 
@@ -65,6 +68,11 @@ public class OutSystemFilter extends ZuulFilter {
 		
 		// 鉴权app不能为空
 		if (StringUtils.isEmpty(app)) {
+			// 不鉴权的URL直接路由
+			if (isIgnoreUrl(uri, htIgnoreUrlWeb)) {
+				ctx.set("isNotOutSystem", true);
+				return null;
+			}
 			ctx.setSendZuulResponse(false);
 			try {
 				mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.APP_CANNOT_NULL.getStatus(),SysStatus.APP_CANNOT_NULL.getMsg()));
