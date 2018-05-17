@@ -586,7 +586,13 @@ public class HtBoaInResourceService {
 					sbf.append("-- 添加" + enter);
 					fallbacksbf.append("-- 回滚添加 " + enter);
 					for (HtBoaInResource addHtBoaInResource : needAdd) {
-						sbf.append( "DELETE FROM  HT_BOA_IN_RESOURCE WHERE RES_CODE='" + addHtBoaInResource.getResCode() + "' AND RES_PARENT=" + (addHtBoaInResource.getResParent() == null ? null : "'" + addHtBoaInResource.getResParent() + "'") + " AND APP='" + addHtBoaInResource.getApp() + "'" + ";" + enter);
+						if(StringUtils.isEmpty(addHtBoaInResource.getResParent())) {
+							sbf.append( "DELETE FROM  HT_BOA_IN_RESOURCE WHERE RES_CODE='" + addHtBoaInResource.getResCode() + "' AND RES_PARENT is null AND APP='" + addHtBoaInResource.getApp() + "'" + ";" + enter);
+							fallbacksbf.append( "DELETE FROM  HT_BOA_IN_RESOURCE WHERE RES_CODE='" + addHtBoaInResource.getResCode() + "' AND RES_PARENT is null AND APP='" + addHtBoaInResource.getApp() + "'" + ";" + enter);
+						}else {
+							sbf.append( "DELETE FROM  HT_BOA_IN_RESOURCE WHERE RES_CODE='" + addHtBoaInResource.getResCode() + "' AND RES_PARENT=" + (addHtBoaInResource.getResParent() == null ? null : "'" + addHtBoaInResource.getResParent() + "'") + " AND APP='" + addHtBoaInResource.getApp() + "'" + ";" + enter);
+							fallbacksbf.append( "DELETE FROM  HT_BOA_IN_RESOURCE WHERE RES_CODE='" + addHtBoaInResource.getResCode() + "' AND RES_PARENT=" + (addHtBoaInResource.getResParent() == null ? null : "'" + addHtBoaInResource.getResParent() + "'")   + " AND APP='" + addHtBoaInResource.getApp() + "'" + ";" + enter);
+						}
 						sbf.append( "INSERT INTO `HT_BOA_IN_RESOURCE` (`RES_CODE`, `RES_NAME_CN`, `SEQUENCE`, `RES_TYPE`, `RES_PARENT`, `REMARK`, `STATUS`, `RES_ICON`, `FONT_ICON`, `RES_CONTENT`, `APP`, `JPA_VERSION`, `DEL_FLAG`) VALUES (");
 						sbf.append("'" + addHtBoaInResource.getResCode() + "',");
 						sbf.append("'" + addHtBoaInResource.getResNameCn() + "',");
@@ -602,7 +608,6 @@ public class HtBoaInResourceService {
 						sbf.append("'" + addHtBoaInResource.getJpaVersion() + "',");
 						sbf.append("0");
 						sbf.append(");" + enter);
-						fallbacksbf.append( "DELETE FROM  HT_BOA_IN_RESOURCE WHERE RES_CODE='" + addHtBoaInResource.getResCode() + "' AND RES_PARENT=" + (addHtBoaInResource.getResParent() == null ? null : "'" + addHtBoaInResource.getResParent() + "'") + " AND APP='" + addHtBoaInResource.getApp() + "'" + ";" + enter);
 						isAnais = true;
 					}
 				}
