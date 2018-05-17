@@ -605,7 +605,7 @@ public class HtBoaInResourceService {
 						sbf.append((addHtBoaInResource.getFontIcon() == null ? null : "'" + addHtBoaInResource.getFontIcon() + "'") + ",");
 						sbf.append("'" + addHtBoaInResource.getResContent() + "',");
 						sbf.append((addHtBoaInResource.getApp() == null ? null : "'" + addHtBoaInResource.getApp() + "'") + "," );
-						sbf.append("'" + addHtBoaInResource.getJpaVersion() + "',");
+						sbf.append((addHtBoaInResource.getJpaVersion() == null ? '0' : "'" + addHtBoaInResource.getJpaVersion() + "'") + ",");
 						sbf.append("0");
 						sbf.append(");" + enter);
 						isAnais = true;
