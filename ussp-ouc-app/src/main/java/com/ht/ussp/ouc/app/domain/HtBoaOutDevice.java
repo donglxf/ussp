@@ -1,4 +1,4 @@
-package com.ht.ussp.uc.app.domain;
+package com.ht.ussp.ouc.app.domain;
 
 import java.io.Serializable;
 import javax.persistence.*;
@@ -7,15 +7,15 @@ import java.util.Date;
 
 /**
  * 
-* @ClassName: HtBoaOutUser
-* @Description: 用户表
+* @ClassName: HtBoaOutDevice
+* @Description: 设备表
 * @author wim qiuwenwu@hongte.info
-* @date 2018年1月5日 下午3:00:47
+* @date 2018年1月5日 下午2:59:03
  */
 @Entity
-@Table(name="HT_BOA_OUT_USER")
-@NamedQuery(name="HtBoaOutUser.findAll", query="SELECT h FROM HtBoaOutUser h")
-public class HtBoaOutUser implements Serializable {
+@Table(name="HT_BOA_OUT_DEVICE")
+@NamedQuery(name="HtBoaOutDevice.findAll", query="SELECT h FROM HtBoaOutDevice h")
+public class HtBoaOutDevice implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -32,11 +32,11 @@ public class HtBoaOutUser implements Serializable {
 	@Column(name="DEL_FLAG")
 	private int delFlag;
 
-	@Column(name="EMAIL")
-	private String email;
+	@Column(name="DEVICE_NO")
+	private String deviceNo;
 
-	@Column(name="ID_NO")
-	private String idNo;
+	@Column(name="IS_MASTER")
+	private int isMaster;
 
 	@Column(name="JPA_VERSION")
 	private int jpaVersion;
@@ -45,8 +45,8 @@ public class HtBoaOutUser implements Serializable {
 	@Column(name="LAST_MODIFIED_DATETIME")
 	private Date lastModifiedDatetime;
 
-	@Column(name="MOBILE")
-	private String mobile;
+	@Column(name="STATUS")
+	private String status;
 
 	@Column(name="UPDATE_OPERATOR")
 	private String updateOperator;
@@ -54,10 +54,7 @@ public class HtBoaOutUser implements Serializable {
 	@Column(name="USER_ID")
 	private String userId;
 
-	@Column(name="USER_NAME")
-	private String userName;
-
-	public HtBoaOutUser() {
+	public HtBoaOutDevice() {
 	}
 
 	public Long getId() {
@@ -92,20 +89,20 @@ public class HtBoaOutUser implements Serializable {
 		this.delFlag = delFlag;
 	}
 
-	public String getEmail() {
-		return this.email;
+	public String getDeviceNo() {
+		return this.deviceNo;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setDeviceNo(String deviceNo) {
+		this.deviceNo = deviceNo;
 	}
 
-	public String getIdNo() {
-		return this.idNo;
+	public int getIsMaster() {
+		return this.isMaster;
 	}
 
-	public void setIdNo(String idNo) {
-		this.idNo = idNo;
+	public void setIsMaster(int isMaster) {
+		this.isMaster = isMaster;
 	}
 
 	public int getJpaVersion() {
@@ -124,12 +121,12 @@ public class HtBoaOutUser implements Serializable {
 		this.lastModifiedDatetime = lastModifiedDatetime;
 	}
 
-	public String getMobile() {
-		return this.mobile;
+	public String getStatus() {
+		return this.status;
 	}
 
-	public void setMobile(String mobile) {
-		this.mobile = mobile;
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public String getUpdateOperator() {
@@ -146,14 +143,6 @@ public class HtBoaOutUser implements Serializable {
 
 	public void setUserId(String userId) {
 		this.userId = userId;
-	}
-
-	public String getUserName() {
-		return this.userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
 	}
 
 }

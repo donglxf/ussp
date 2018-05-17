@@ -1,4 +1,4 @@
-package com.ht.ussp.uc.app.domain;
+package com.ht.ussp.ouc.app.domain;
 
 import java.io.Serializable;
 import javax.persistence.*;

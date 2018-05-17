@@ -1,4 +1,4 @@
-package com.ht.ussp.uc.app.domain;
+package com.ht.ussp.ouc.app.domain;
 
 import java.io.Serializable;
 import javax.persistence.*;
@@ -7,21 +7,22 @@ import java.util.Date;
 
 /**
  * 
-* @ClassName: HtBoaOutUserApp
-* @Description: 用户系统关联表
+* @ClassName: HtBoaOutApp
+* @Description: 系统表
 * @author wim qiuwenwu@hongte.info
-* @date 2018年1月5日 下午3:01:01
+* @date 2018年1月5日 下午2:58:41
  */
 @Entity
-@Table(name="HT_BOA_OUT_USER_APP")
-@NamedQuery(name="HtBoaOutUserApp.findAll", query="SELECT h FROM HtBoaOutUserApp h")
-public class HtBoaOutUserApp implements Serializable {
+@Table(name="HT_BOA_OUT_APP")
+@NamedQuery(name="HtBoaOutApp.findAll", query="SELECT h FROM HtBoaOutApp h")
+public class HtBoaOutApp implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@Column(name = "ID", unique = true, nullable = false)
 	private Long id;
 
+	@Column(name="APP")
 	private String app;
 
 	@Column(name="CREATE_OPERATOR")
@@ -41,13 +42,19 @@ public class HtBoaOutUserApp implements Serializable {
 	@Column(name="LAST_MODIFIED_DATETIME")
 	private Date lastModifiedDatetime;
 
+	@Column(name="NAME")
+	private String name;
+
+	@Column(name="NAME_CN")
+	private String nameCn;
+
+	@Column(name="STATUS")
+	private String status;
+
 	@Column(name="UPDATE_OPERATOR")
 	private String updateOperator;
 
-	@Column(name="USER_ID")
-	private String userId;
-
-	public HtBoaOutUserApp() {
+	public HtBoaOutApp() {
 	}
 
 	public Long getId() {
@@ -106,20 +113,36 @@ public class HtBoaOutUserApp implements Serializable {
 		this.lastModifiedDatetime = lastModifiedDatetime;
 	}
 
+	public String getName() {
+		return this.name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getNameCn() {
+		return this.nameCn;
+	}
+
+	public void setNameCn(String nameCn) {
+		this.nameCn = nameCn;
+	}
+
+	public String getStatus() {
+		return this.status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
 	public String getUpdateOperator() {
 		return this.updateOperator;
 	}
 
 	public void setUpdateOperator(String updateOperator) {
 		this.updateOperator = updateOperator;
-	}
-
-	public String getUserId() {
-		return this.userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
 	}
 
 }

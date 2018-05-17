@@ -1,4 +1,4 @@
-package com.ht.ussp.uc.app.domain;
+package com.ht.ussp.ouc.app.domain;
 
 import java.io.Serializable;
 import javax.persistence.*;
@@ -7,15 +7,15 @@ import java.util.Date;
 
 /**
  * 
-* @ClassName: HtBoaOutLogin
-* @Description: 登录信息表
+* @ClassName: HtBoaOutUserRole
+* @Description: 用户角色关联表
 * @author wim qiuwenwu@hongte.info
-* @date 2018年1月5日 下午2:59:24
+* @date 2018年1月5日 下午3:01:16
  */
 @Entity
-@Table(name="HT_BOA_OUT_LOGIN")
-@NamedQuery(name="HtBoaOutLogin.findAll", query="SELECT h FROM HtBoaOutLogin h")
-public class HtBoaOutLogin implements Serializable {
+@Table(name="HT_BOA_OUT_USER_ROLE")
+@NamedQuery(name="HtBoaOutUserRole.findAll", query="SELECT h FROM HtBoaOutUserRole h")
+public class HtBoaOutUserRole implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -32,13 +32,6 @@ public class HtBoaOutLogin implements Serializable {
 	@Column(name="DEL_FLAG")
 	private int delFlag;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="EFFECTIVE_DATE")
-	private Date effectiveDate;
-
-	@Column(name="FAILED_COUNT")
-	private int failedCount;
-
 	@Column(name="JPA_VERSION")
 	private int jpaVersion;
 
@@ -46,18 +39,8 @@ public class HtBoaOutLogin implements Serializable {
 	@Column(name="LAST_MODIFIED_DATETIME")
 	private Date lastModifiedDatetime;
 
-	@Column(name="LOGIN_ID")
-	private String loginId;
-
-	@Column(name="PASSWORD")
-	private String password;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="PWD_EXP_DATE")
-	private Date pwdExpDate;
-	
-	@Column(name="STATUS")
-	private String status;
+	@Column(name="ROLE_CODE")
+	private String roleCode;
 
 	@Column(name="UPDATE_OPERATOR")
 	private String updateOperator;
@@ -65,7 +48,7 @@ public class HtBoaOutLogin implements Serializable {
 	@Column(name="USER_ID")
 	private String userId;
 
-	public HtBoaOutLogin() {
+	public HtBoaOutUserRole() {
 	}
 
 	public Long getId() {
@@ -100,22 +83,6 @@ public class HtBoaOutLogin implements Serializable {
 		this.delFlag = delFlag;
 	}
 
-	public Date getEffectiveDate() {
-		return this.effectiveDate;
-	}
-
-	public void setEffectiveDate(Date effectiveDate) {
-		this.effectiveDate = effectiveDate;
-	}
-
-	public int getFailedCount() {
-		return this.failedCount;
-	}
-
-	public void setFailedCount(int failedCount) {
-		this.failedCount = failedCount;
-	}
-
 	public int getJpaVersion() {
 		return this.jpaVersion;
 	}
@@ -132,36 +99,12 @@ public class HtBoaOutLogin implements Serializable {
 		this.lastModifiedDatetime = lastModifiedDatetime;
 	}
 
-	public String getLoginId() {
-		return this.loginId;
+	public String getRoleCode() {
+		return this.roleCode;
 	}
 
-	public void setLoginId(String loginId) {
-		this.loginId = loginId;
-	}
-
-	public String getPassword() {
-		return this.password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public Date getPwdExpDate() {
-		return this.pwdExpDate;
-	}
-
-	public void setPwdExpDate(Date pwdExpDate) {
-		this.pwdExpDate = pwdExpDate;
-	}
-
-	public String getStatus() {
-		return this.status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
+	public void setRoleCode(String roleCode) {
+		this.roleCode = roleCode;
 	}
 
 	public String getUpdateOperator() {
