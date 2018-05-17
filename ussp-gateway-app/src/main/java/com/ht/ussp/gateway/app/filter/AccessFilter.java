@@ -25,7 +25,7 @@ import com.netflix.zuul.context.RequestContext;
 /**
  * 
  * @ClassName: AccessFilter
- * @Description: 过滤器--鉴权
+ * @Description: 内部用户和系统级鉴权过滤器
  * @author wim qiuwenwu@hongte.info
  * @date 2018年3月12日 上午11:50:44
  */
@@ -54,7 +54,9 @@ public class AccessFilter extends ZuulFilter {
 
 	@Override
 	public boolean shouldFilter() {
-		return true;
+		RequestContext ctx = RequestContext.getCurrentContext();
+		
+		return (boolean)ctx.get("isNotOutSystem");
 	}
 
 	@Override
@@ -204,7 +206,7 @@ public class AccessFilter extends ZuulFilter {
 	 */
 	@Override
 	public int filterOrder() {
-		return 0;
+		return 1;
 	}
 
 	/**

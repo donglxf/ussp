@@ -36,6 +36,6 @@ public interface RoleClient {
 	 * @date 2018年5月15日 上午11:15:20
 	 */
 	@RequestMapping(value = "/apps/isOS")
-	public Boolean isOS(@RequestParam("isOS") String isOS);
+	public Boolean isOS(@RequestParam("app") String app);
 	
 }

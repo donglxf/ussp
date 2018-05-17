@@ -150,10 +150,16 @@ zuul:
       serviceId: bm-web-ui
 
 ht:
-  ignoreUrl: #不验证的url(可以使用通配符（*）)
+  ignoreUrl: #不验证的url(可以使用通配符（*）),内部应用
      app: /wx/*,/ht/*  #系统级验证/web/
      web: /uaa/*,/ht/nologin/*,/admin/*,/car/*,/rule/ui/*,/cams/ui/*,/cams/accountmq/*,/lawUi/*,/alms/ui/*,/alms/core/downLoadController/*,/alms/core/car/download,/activiti/service/*,/lawUi/*,/rp-ui-service/*,/rp/view/*,/alms/open/carAuction/*,/bm/ui/*,/uc/web/*,/uc/user/getUserForOther,/uc/login/changePwd  #不需要验证token
      http: /uc/auth/loadBtnAndTab,/uc/auth/loadMenu,/rule/service/check/key,/rule/service/user/getUserInfo,/lawService/index/*,/lawService/ProcessApproveStepBar/getProcessWorkLogList,/uc/user/in/selfinfo,/uc/user/in/changePwd,/uc/user/in/selfinfo/set #验证token后放行
+  outUrl: 
+     permit: /clsPermit/*
+     deny: /clsDeny/*
+     
+     
+     
   rule:
     className: com.ht.ussp.gateway.app.rule.InstanceIdAndIPAddrRule #自定义路由策略
     

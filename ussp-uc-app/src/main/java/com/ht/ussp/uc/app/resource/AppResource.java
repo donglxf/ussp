@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -283,7 +284,7 @@ public class AppResource {
 	 * @date 2018年5月15日 上午10:56:29
 	 */
 	
-	@PostMapping(value = "/isOS")
+	@GetMapping(value = "/isOS")
 	@ApiOperation(value = "判断是否为外部系统")
 	public Boolean isOS(@RequestParam("app") String app) {
 		List<HtBoaInApp> HtBoaInApp = htBoaInAppService.findByAppCode(app);
