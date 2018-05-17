@@ -37,24 +37,24 @@ public class OutUserLoginResource{
 	HtBoaOutPwdHistService htBoaOutPwdHistService;
 	
 
-	@ApiOperation(value = "忘记密码/重置密码", notes = "registType：1 手机号 2邮箱 3用户名密码")
+	@ApiOperation(value = "忘记密码/重置密码", notes = "登录type: sms:短信  email:邮箱  normal:用户名密码")
 	@PostMapping(value = "/resetPwd")
     public Result resetPwd(@RequestParam(value = "userName")String userName,@RequestParam(value = "newPassword")String newPassword,@RequestParam(value = "app")String app,@RequestParam(value = "registType")String registType) {
 		if(StringUtils.isEmpty(userName)) {
 			return Result.buildFail(); 
 		}
 		HtBoaOutLogin loginInfo = null;
-		if("1".equals(registType)) {
+		if("sms".equals(registType)) {
 			HtBoaOutUser u =htBoaOutUserService.findByMobile(userName);
 			if(u!=null) {
 				loginInfo = htBoaOutLoginService.findByUserId(u.getUserId());
 			} 
-		}else if("2".equals(registType)) {
+		}else if("email".equals(registType)) {
 			HtBoaOutUser u =htBoaOutUserService.findByEmail(userName);
 			if(u!=null) {
 				loginInfo = htBoaOutLoginService.findByUserId(u.getUserId());
 			} 
-		}else if("3".equals(registType)) {
+		}else if("normal".equals(registType)) {
 			loginInfo = htBoaOutLoginService.findByLoginId(userName);
 		}else {
 			return Result.buildFail("9999","注册类型不对【"+registType+"】"); 
