@@ -52,7 +52,12 @@ public class SynDataService {
     private HtBoaInOrgService htBoaInOrgService;
     
     public HtBoaInContrast findByUcBusinessIdAndType(String userId,String type) {
-    	return htBoaInContrastRepository.findByUcBusinessIdAndType(userId, type);
+    	List<HtBoaInContrast> listHtBoaInContrast = htBoaInContrastRepository.findByUcBusinessIdAndType(userId, type);
+    	if(listHtBoaInContrast==null) {
+    		return null;
+    	}else {
+    		return listHtBoaInContrast.get(0);
+    	}
     }
     
     public PageResult<UserContrastVo> findAllByPage(PageConf pageConf) {

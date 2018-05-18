@@ -76,7 +76,7 @@ public class AppResource {
 		pageConf.setSearch(page.getKeyWord());
 		long sl = System.currentTimeMillis(), el = 0L;
 		String msg = "成功";
-		String logHead = "角色记录查询：role/in/list param-> {}";
+		String logHead = "系统记录查询：role/in/list param-> {}";
 		String logStart = logHead + " | START:{}";
 		String logEnd = logHead + " {} | END:{}, COST:{}";
 		log.debug(logStart, "pageConf: " + pageConf, sl);
@@ -97,7 +97,7 @@ public class AppResource {
 		long sl = System.currentTimeMillis(), el = 0L;
 		ResponseModal r = null;
 		String msg = "成功";
-		String logHead = "角色记录查询：role/in/add param-> {}";
+		String logHead = "系统记录查询：role/in/add param-> {}";
 		String logStart = logHead + " | START:{}";
 		String logEnd = logHead + " {} | END:{}, COST:{}";
 		log.debug(logStart, "boaInAppInfo: " + boaInAppInfo, sl);
@@ -131,12 +131,12 @@ public class AppResource {
 	}
 
 	@SuppressWarnings({ "unused", "rawtypes" })
-	@ApiOperation(value = "对内：禁用/启用角色", notes = "禁用/启用角色")
+	@ApiOperation(value = "对内：禁用/启用系统", notes = "禁用/启用系统")
 	@RequestMapping(value = { "/stop" }, method = RequestMethod.POST)
 	public Result stop(Long id, String status, @RequestHeader("userId") String userId) {
 		long sl = System.currentTimeMillis(), el = 0L;
 		String msg = "成功";
-		String logHead = "角色记录查询：role/in/add param-> {}";
+		String logHead = "系统记录查询：role/in/add param-> {}";
 		String logStart = logHead + " | START:{}";
 		String logEnd = logHead + " {} | END:{}, COST:{}";
 		// log.debug(logStart, "boaInAppInfo: " + boaInAppInfo, sl);
@@ -161,13 +161,13 @@ public class AppResource {
 	}
 
 	@SuppressWarnings("rawtypes")
-	@ApiOperation(value = "对内：物理删除角色记录", notes = "提交角色编号，可批量删除")
-	@ApiImplicitParam(name = "codes", value = "角色编号集", required = true, dataType = "Codes")
+	@ApiOperation(value = "对内：物理删除系统记录", notes = "提交系统编号，可批量删除")
+	@ApiImplicitParam(name = "codes", value = "系统编号集", required = true, dataType = "Codes")
 	@RequestMapping(value = { "/deleteTrunc" }, method = RequestMethod.POST)
 	public Result deleteTrunc(int id) {
 		long sl = System.currentTimeMillis(), el = 0L;
 		String msg = "成功";
-		String logHead = "角色记录删除：role/in/delete param-> {}";
+		String logHead = "系统记录删除：role/in/delete param-> {}";
 		String logStart = logHead + " | START:{}";
 		String logEnd = logHead + " {} | END:{}, COST:{}";
 		log.debug(logStart, "codes: " + id, sl);
