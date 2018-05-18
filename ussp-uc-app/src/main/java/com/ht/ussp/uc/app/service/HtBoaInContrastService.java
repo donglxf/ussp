@@ -49,7 +49,12 @@ public class HtBoaInContrastService {
     }
     
     public HtBoaInContrast getHtBoaInContrastListByUcBusinessId(String ucBusinessId,String type) {
-        return htBoaInContrastRepository.findByUcBusinessIdAndType(ucBusinessId, type);
+    	List<HtBoaInContrast> listHtBoaInContrast = htBoaInContrastRepository.findByUcBusinessIdAndType(ucBusinessId, type);
+    	if(listHtBoaInContrast==null) {
+    		return null;
+    	}else {
+    		return listHtBoaInContrast.get(0);
+    	}
     }
     
     public List<HtBoaInContrast> getHtBoaInContrastListByType( String type) {

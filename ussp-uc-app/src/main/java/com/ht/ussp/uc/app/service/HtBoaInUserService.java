@@ -94,17 +94,17 @@ public class HtBoaInUserService {
         //获取用户关联的信贷信息 
         if(loginInfoVo!=null) {
         	
-        	HtBoaInContrast htBoaInContrastOrg = htBoaInContrastRepository.findByUcBusinessIdAndType(loginInfoVo.getOrgCode(),"10");
-        	if(htBoaInContrastOrg!=null) {
-        		loginInfoVo.setBmOrgCode(htBoaInContrastOrg.getBmBusinessId());
-        		loginInfoVo.setDdOrgCode(htBoaInContrastOrg.getDdBusinessId());
+        	List<HtBoaInContrast> htBoaInContrastOrgList = htBoaInContrastRepository.findByUcBusinessIdAndType(loginInfoVo.getOrgCode(),"10");
+        	if(htBoaInContrastOrgList!=null&&!htBoaInContrastOrgList.isEmpty()) {
+        		loginInfoVo.setBmOrgCode(htBoaInContrastOrgList.get(0).getBmBusinessId());
+        		loginInfoVo.setDdOrgCode(htBoaInContrastOrgList.get(0).getDdBusinessId());
         	}
-        	HtBoaInContrast htBoaInContrast = htBoaInContrastRepository.findByUcBusinessIdAndType(loginInfoVo.getUserId(),"20");
-        	if(htBoaInContrast!=null) {
-        		loginInfoVo.setBmUserId(htBoaInContrast.getBmBusinessId());
-        		loginInfoVo.setDdUserId(htBoaInContrast.getDdBusinessId());
-        		if(StringUtils.isEmpty(loginInfoVo.getBmOrgCode())&&StringUtils.isNoneEmpty(htBoaInContrast.getBmBusinessId())) {
-        			List<HtBoaInBmUser> listHtBoaInBmUser = htBoaInBmUserRepository.findByUserId(htBoaInContrast.getBmBusinessId());
+        	List<HtBoaInContrast> htBoaInContrastList = htBoaInContrastRepository.findByUcBusinessIdAndType(loginInfoVo.getUserId(),"20");
+        	if(htBoaInContrastList!=null&&!htBoaInContrastList.isEmpty()) {
+        		loginInfoVo.setBmUserId(htBoaInContrastList.get(0).getBmBusinessId());
+        		loginInfoVo.setDdUserId(htBoaInContrastList.get(0).getDdBusinessId());
+        		if(StringUtils.isEmpty(loginInfoVo.getBmOrgCode())&&StringUtils.isNoneEmpty(htBoaInContrastList.get(0).getBmBusinessId())) {
+        			List<HtBoaInBmUser> listHtBoaInBmUser = htBoaInBmUserRepository.findByUserId(htBoaInContrastList.get(0).getBmBusinessId());
     				if(listHtBoaInBmUser!=null && !listHtBoaInBmUser.isEmpty()) {
     					loginInfoVo.setBmOrgCode(listHtBoaInBmUser.get(0).getOrgCode());
     				}
@@ -400,6 +400,139 @@ public class HtBoaInUserService {
         	htBoaInContrast = htBoaInContrastRepository.save(htBoaInContrast);
         }
         return htBoaInContrast;
+    }
+    
+    public HtBoaInUser saveBmUserInfo(HtBoaInBmUser htBoaInBmUser) { 
+    	HtBoaInUser htBoaInUser = null;
+    	try {
+			if(htBoaInBmUser!=null) {
+				if(StringUtils.isNotEmpty(htBoaInBmUser.getUserId())) { //根据email mobile查看用户是否存在UC，如果存在则添加关联关系，如果不存在则添加UC用户
+					if(StringUtils.isNotEmpty(htBoaInBmUser.getEmail())) {
+						List<HtBoaInUser> listHtBoaInUsertemp = htBoaInUserRepository.findByEmail(htBoaInBmUser.getEmail());
+						if(listHtBoaInUsertemp!=null&&!listHtBoaInUsertemp.isEmpty()) {
+							HtBoaInUser htBoaInUserTemp = listHtBoaInUsertemp.get(0);
+							List<HtBoaInContrast> listHtBoaInContrast = htBoaInContrastRepository.findByBmBusinessIdAndType(htBoaInBmUser.getUserId(), "20");//bm关系是否存在，不存在则添加
+							if(listHtBoaInContrast==null||listHtBoaInContrast.isEmpty()) {
+								HtBoaInContrast htBoaInContrast = new HtBoaInContrast();
+					        	htBoaInContrast.setBmBusinessId(htBoaInBmUser.getUserId());
+					        	htBoaInContrast.setType("20");
+					        	htBoaInContrast.setContrast("信贷查询添加");
+					        	htBoaInContrast.setContrastDatetime(new Date());
+					        	htBoaInContrast.setStatus(Constants.STATUS_0);
+					        	htBoaInContrast.setUcBusinessId(htBoaInUserTemp.getUserId());
+					        	htBoaInContrast.setContrastDatetime(new Date());
+					        	htBoaInContrast = htBoaInContrastRepository.save(htBoaInContrast);
+							}else {
+								HtBoaInContrast u = listHtBoaInContrast.get(0);
+								if(u!=null) {
+									if(u.getBmBusinessId()!=null) {
+										if(!u.getBmBusinessId().equals(htBoaInBmUser.getUserId())) {
+											u.setExtendBusinessId1(htBoaInBmUser.getUserId());
+										}
+									}
+								}
+							}
+							return htBoaInUserTemp;
+						}
+					}
+					if(StringUtils.isNotEmpty(htBoaInBmUser.getMobile())) {
+						List<HtBoaInUser> listHtBoaInUsertemp = htBoaInUserRepository.findByMobile(htBoaInBmUser.getMobile());
+						if(listHtBoaInUsertemp!=null&&!listHtBoaInUsertemp.isEmpty()) {
+							HtBoaInUser htBoaInUserTemp = listHtBoaInUsertemp.get(0);
+							List<HtBoaInContrast> listHtBoaInContrast = htBoaInContrastRepository.findByBmBusinessIdAndType(htBoaInBmUser.getUserId(), "20");//bm关系是否存在，不存在则添加
+							if(listHtBoaInContrast==null||listHtBoaInContrast.isEmpty()) {
+								HtBoaInContrast htBoaInContrast = new HtBoaInContrast();
+					        	htBoaInContrast.setBmBusinessId(htBoaInBmUser.getUserId());
+					        	htBoaInContrast.setType("20");
+					        	htBoaInContrast.setContrast("信贷查询添加");
+					        	htBoaInContrast.setContrastDatetime(new Date());
+					        	htBoaInContrast.setStatus(Constants.STATUS_0);
+					        	htBoaInContrast.setUcBusinessId(htBoaInUserTemp.getUserId());
+					        	htBoaInContrast.setContrastDatetime(new Date());
+					        	htBoaInContrast = htBoaInContrastRepository.save(htBoaInContrast);
+							}else {
+								HtBoaInContrast u = listHtBoaInContrast.get(0);
+								if(u!=null) {
+									if(u.getBmBusinessId()!=null) {
+										if(!u.getBmBusinessId().equals(htBoaInBmUser.getUserId())) {
+											u.setExtendBusinessId1(htBoaInBmUser.getUserId());
+										}
+									}
+								}
+							}
+							return htBoaInUserTemp;
+						}
+					}
+					//UC不存在用户则添加
+					 if(htBoaInUser==null) {
+			    		    String userId = "";
+			    		    int isOrgUser = 1;
+							HtBoaInUser user = new HtBoaInUser();
+							user.setDataSource(Constants.USER_DATASOURCE_3);
+							user.setEmail(htBoaInBmUser.getEmail());
+							user.setIsOrgUser(1);
+							user.setJobNumber(htBoaInBmUser.getJobNumber());
+							user.setMobile(htBoaInBmUser.getMobile());
+							user.setOrgCode("D0100");
+							user.setUserName(htBoaInBmUser.getUserName());
+							user.setIdNo(htBoaInBmUser.getIdNo());
+							user.setRootOrgCode("D01");
+							user.setUserType("10");
+							user.setDelFlag(0);
+							user.setStatus(Constants.STATUS_0);
+							user.setCreatedDatetime(new Date());
+							user.setLastModifiedDatetime(new Date());
+
+			    	    	if (user.getJobNumber() != null && user.getJobNumber().contains("HX-")) {
+			    	            userId = String.format("%s%s%s%s%s", "01", 1, "1", "1", user.getJobNumber().replace("HX-", ""));
+			    	        } else {
+			    	        	isOrgUser = 0;
+			    	            userId = String.format("%s%s%s%s%s", "01", 0, "1", "1", generateNumber(5));
+			    	        }
+			    	    	//查看userId是否被占用
+			    	    	HtBoaInUser htBoaInUsers = findByUserId(userId);
+			    	    	if(htBoaInUsers!=null) {
+			    	    		userId = String.format("%s%s%s%s%s", "01", isOrgUser, "1", "1", generateNumber(6));
+			    	    	}
+			    	    	user.setUserId(userId);
+			    	    	htBoaInUser =  htBoaInUserRepository.save(user);
+			    	    	
+			    	    	HtBoaInLogin loginInfo = null;
+			    	    	if(loginInfo==null) {
+								loginInfo = new HtBoaInLogin();
+								loginInfo.setStatus(Constants.USER_STATUS_0);
+								loginInfo.setPassword(EncryptUtil.passwordEncrypt("123456"));
+								loginInfo.setFailedCount(0);
+								loginInfo.setRootOrgCode("D01");
+								loginInfo.setDelFlag(0);
+								loginInfo.setStatus(Constants.STATUS_1);
+								loginInfo.setCreatedDatetime(new Date());
+								loginInfo.setLastModifiedDatetime(new Date());
+								loginInfo.setUserId(userId);
+				    	        htBoaInLoginRepository.save(loginInfo);
+							} 
+			    	    	List<HtBoaInContrast> listHtBoaInContrast = htBoaInContrastRepository.findByUcBusinessIdAndType(htBoaInBmUser.getUserId(), "20");//bm关系是否存在，不存在则添加
+							if(listHtBoaInContrast==null||listHtBoaInContrast.isEmpty()) {
+								HtBoaInContrast htBoaInContrast = new HtBoaInContrast();
+					        	htBoaInContrast.setBmBusinessId(htBoaInBmUser.getUserId());
+					        	htBoaInContrast.setType("20");
+					        	htBoaInContrast.setContrast("信贷查询添加");
+					        	htBoaInContrast.setContrastDatetime(new Date());
+					        	htBoaInContrast.setStatus(Constants.STATUS_0);
+					        	htBoaInContrast.setUcBusinessId(htBoaInUser.getUserId());
+					        	htBoaInContrast.setContrastDatetime(new Date());
+					        	htBoaInContrast = htBoaInContrastRepository.save(htBoaInContrast);
+							}
+			    	 }
+					
+					
+					
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	return htBoaInUser;
     }
     
     private String generateNumber(int length) {

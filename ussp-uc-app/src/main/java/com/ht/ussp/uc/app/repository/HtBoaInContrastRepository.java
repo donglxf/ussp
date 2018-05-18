@@ -24,7 +24,7 @@ import com.ht.ussp.uc.app.domain.HtBoaInContrast;
  */
 public interface HtBoaInContrastRepository extends JpaRepository<HtBoaInContrast, Long> {
 
-	HtBoaInContrast findByUcBusinessIdAndType(String userId, String string);
+	List<HtBoaInContrast> findByUcBusinessIdAndType(String userId, String string);
 	
 	List<HtBoaInContrast> findByBmBusinessIdAndType(String bmBusinessId, String string);
 	

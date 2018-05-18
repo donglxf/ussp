@@ -455,6 +455,17 @@ public class UserResource{
         					loginInfoVo.setJobNumber(listHtBoaInBmUser.get(0).getJobNumber());
         					loginInfoVo.setUserName(listHtBoaInBmUser.get(0).getUserName());
         					loginInfoVo.setMobile(listHtBoaInBmUser.get(0).getMobile());
+        					
+        					try {//历史用户信息转存（方便贷后查询历史记录） 
+        						HtBoaInUser u = htBoaInUserService.saveBmUserInfo(listHtBoaInBmUser.get(0));
+        						if(u!=null) {
+        							loginInfoVo.setUserId(u.getUserId());
+        							loginInfoVo.setMobile(u.getMobile());
+        						}
+							} catch (Exception e) {
+								 e.printStackTrace();
+							}
+        					
         				}
         	    	}
         		}
@@ -614,8 +625,8 @@ public class UserResource{
     }
   
     @PostMapping(value = "/getDtoUserInfo")
-    public Result getDtoUserInfo() {
-    	LoginInfoDto l = loginUserInfoHelper.getUserInfoByUserId("", "wangkai"); 
+    public Result getDtoUserInfo(String userId,String bmuserId) {
+    	LoginInfoDto l = loginUserInfoHelper.getUserInfoByUserId(userId, bmuserId); 
     	//return Result.buildSuccess(loginUserInfoHelper.getLoginInfo());
     	return Result.buildSuccess(l);
     }
