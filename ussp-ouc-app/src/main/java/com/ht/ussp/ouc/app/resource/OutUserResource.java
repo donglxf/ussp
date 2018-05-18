@@ -42,7 +42,7 @@ public class OutUserResource{
 	@Autowired
 	HtBoaOutLoginService htBoaOutLoginService;
 
-	@ApiOperation(value = "用户注册", notes = "返回userId")
+	@ApiOperation(value = "外部用户注册", notes = "返回userId")
 	@ApiImplicitParams({ @ApiImplicitParam(name = "userName", paramType = "query",dataType = "String", required = true, value = "注册账号"),
 			@ApiImplicitParam(name = "password", paramType = "query",dataType = "String", required = true, value = "密码"),
 			@ApiImplicitParam(name = "app", paramType = "query",dataType = "String", required = true, value = "系统编码"),
@@ -176,7 +176,7 @@ public class OutUserResource{
 		}
     }
 	
-	@ApiOperation(value = "用户信息分页查询")
+	@ApiOperation(value = "外部用户信息分页查询")
 	@PostMapping(value = "/loadListByPage", produces = { "application/json" })
 	public PageResult<List<HtBoaOutUser>> loadListByPage(PageVo page) {
 		return htBoaOutUserService.getUserListPage(new PageRequest(page.getPage(), page.getLimit()), page.getQuery());

@@ -39,6 +39,10 @@ zuul:
     ussp-uc:
       path: /uc/**
       serviceId: ussp-uc-app
+    #外部用户权限管理中心
+    ussp-ouc:
+      path: /ouc/**
+      serviceId: ussp-ouc-app
     #用户账户与授权平台
     ussp-uaa:
       path: /uaa/**
