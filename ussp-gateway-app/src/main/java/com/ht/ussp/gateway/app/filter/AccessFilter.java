@@ -81,7 +81,13 @@ public class AccessFilter extends ZuulFilter {
 			try {
 				mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_NULL));
 			} catch (IOException e) {
-				e.printStackTrace();
+				Log.debug("write response result token is null:"+e.getMessage());
+			}finally {
+				try {
+					ctx.getResponse().getWriter().close();
+				} catch (IOException e) {
+					Log.debug("close io exception:"+e.getMessage());
+				}
 			}
 			return null;
 		}
@@ -98,7 +104,13 @@ public class AccessFilter extends ZuulFilter {
 						try {
 							mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.APP_CANNOT_NULL));
 						} catch (IOException e) {
-							e.printStackTrace();
+							Log.debug("write response result app cannot null:"+e.getMessage());
+						}finally {
+							try {
+								ctx.getResponse().getWriter().close();
+							} catch (IOException e) {
+								Log.debug("close io exception:"+e.getMessage());
+							}
 						}
 						return null;
 					}
@@ -112,7 +124,13 @@ public class AccessFilter extends ZuulFilter {
 						try {
 							mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_VALID));
 						} catch (IOException e) {
-							e.printStackTrace();
+							Log.debug("write response result token is valid:"+e.getMessage());
+						}finally {
+							try {
+								ctx.getResponse().getWriter().close();
+							} catch (IOException e) {
+								Log.debug("close io exception:"+e.getMessage());
+							}
 						}
 						return null;
 					} else if ("9921".equals(rm.getStatus_code())) {
@@ -120,7 +138,13 @@ public class AccessFilter extends ZuulFilter {
 						try {
 							mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_EXPIRED));
 						} catch (IOException e) {
-							e.printStackTrace();
+							Log.debug("write response result token is expired:"+e.getMessage());
+						}finally {
+							try {
+								ctx.getResponse().getWriter().close();
+							} catch (IOException e) {
+								Log.debug("close io exception:"+e.getMessage());
+							}
 						}
 						return null;
 					}
@@ -146,7 +170,13 @@ public class AccessFilter extends ZuulFilter {
 				try {
 					mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_VALID));
 				} catch (IOException e) {
-					e.printStackTrace();
+					Log.debug("write response result token is valid:"+e.getMessage());
+				}finally {
+					try {
+						ctx.getResponse().getWriter().close();
+					} catch (IOException e) {
+						Log.debug("close io exception:"+e.getMessage());
+					}
 				}
 				return null;
 			} else if ("9921".equals(rm.getResult_msg())) {
@@ -154,7 +184,13 @@ public class AccessFilter extends ZuulFilter {
 				try {
 					mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_EXPIRED));
 				} catch (IOException e) {
-					e.printStackTrace();
+					Log.debug("write response result token is expired:"+e.getMessage());
+				}finally {
+					try {
+						ctx.getResponse().getWriter().close();
+					} catch (IOException e) {
+						Log.debug("close io exception:"+e.getMessage());
+					}
 				}
 				return null;
 			}
@@ -163,7 +199,13 @@ public class AccessFilter extends ZuulFilter {
 			try {
 				mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.FAIL));
 			} catch (IOException e) {
-				e.printStackTrace();
+				Log.debug("write response result fail:"+e.getMessage());
+			}finally {
+				try {
+					ctx.getResponse().getWriter().close();
+				} catch (IOException e) {
+					Log.debug("close io exception:"+e.getMessage());
+				}
 			}
 		}
 		ctx.getResponse().setHeader("Content-type", "application/json;charset=UTF-8");
@@ -181,7 +223,13 @@ public class AccessFilter extends ZuulFilter {
 			try {
 				mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.HAS_NO_ACCESS));
 			} catch (IOException e) {
-				e.printStackTrace();
+				Log.debug("write response result has no access:"+e.getMessage());
+			}finally {
+				try {
+					ctx.getResponse().getWriter().close();
+				} catch (IOException e) {
+					Log.debug("close io exception:"+e.getMessage());
+				}
 			}
 			return null;
 		}
