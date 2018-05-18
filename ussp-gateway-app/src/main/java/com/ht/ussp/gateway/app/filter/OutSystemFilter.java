@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.netflix.zuul.filters.ZuulProperties;
 
-import com.esotericsoftware.minlog.Log;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.core.Result;
@@ -21,6 +20,8 @@ import com.ht.ussp.util.PatternUtil;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 
+import lombok.extern.log4j.Log4j2;
+
 /**
  * 
  * @ClassName: OutSystemFilter
@@ -28,6 +29,7 @@ import com.netflix.zuul.context.RequestContext;
  * @author wim qiuwenwu@hongte.info
  * @date 2018年5月17日 下午2:15:57
  */
+@Log4j2
 public class OutSystemFilter extends ZuulFilter {
 
 	@Value("${ht.outUrl.permit}")
@@ -77,12 +79,12 @@ public class OutSystemFilter extends ZuulFilter {
 			try {
 				mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.APP_CANNOT_NULL.getStatus(),SysStatus.APP_CANNOT_NULL.getMsg()));
 			} catch (IOException e) {
-				Log.debug("write response result app cannot null:"+e.getMessage());
+				log.debug("write response result app cannot null:"+e.getMessage());
 			}finally {
 				try {
 					ctx.getResponse().getWriter().close();
 				} catch (IOException e) {
-					Log.debug("close io exception:"+e.getMessage());
+					log.debug("close io exception:"+e.getMessage());
 				}
 			}
 			return null;
@@ -106,12 +108,12 @@ public class OutSystemFilter extends ZuulFilter {
 					try {
 						mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.TOKEN_AND_IEME_NOT_NULL.getStatus(),SysStatus.TOKEN_AND_IEME_NOT_NULL.getMsg()));
 					} catch (Exception e) {
-						Log.debug("write response result token and ieme not null:"+e.getMessage());
+						log.debug("write response result token and ieme not null:"+e.getMessage());
 					}finally {
 						try {
 							ctx.getResponse().getWriter().close();
 						} catch (IOException e) {
-							Log.debug("close io exception:"+e.getMessage());
+							log.debug("close io exception:"+e.getMessage());
 						}
 					}
 					return null;
@@ -130,12 +132,12 @@ public class OutSystemFilter extends ZuulFilter {
 						try {
 							mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.ORIGIN_VALID.getStatus(),SysStatus.ORIGIN_VALID.getMsg()));
 						} catch (Exception e) {
-							Log.debug("write response result origin valid:"+e.getMessage());
+							log.debug("write response result origin valid:"+e.getMessage());
 						}finally {
 							try {
 								ctx.getResponse().getWriter().close();
 							} catch (IOException e) {
-								Log.debug("close io exception:"+e.getMessage());
+								log.debug("close io exception:"+e.getMessage());
 							}
 						}
 						return null;
@@ -148,19 +150,19 @@ public class OutSystemFilter extends ZuulFilter {
 					try {
 						mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.TOKEN_IS_VALID.getStatus(),SysStatus.TOKEN_IS_VALID.getMsg()));
 					} catch (Exception e) {
-						Log.debug("write response result token is valid:"+e.getMessage());
+						log.debug("write response result token is valid:"+e.getMessage());
 					} 
 					return null;
 				}else if ("9921".equals(result.getCodeDesc())) {
 					try {
 						mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.TOKEN_IS_EXPIRED.getStatus(),SysStatus.TOKEN_IS_EXPIRED.getMsg()));
 					} catch (Exception e) {
-						Log.debug("write response result token is expired:"+e.getMessage());
+						log.debug("write response result token is expired:"+e.getMessage());
 					}finally {
 						try {
 							ctx.getResponse().getWriter().close();
 						} catch (IOException e) {
-							Log.debug("close io exception:"+e.getMessage());
+							log.debug("close io exception:"+e.getMessage());
 						}
 					} 
 					return null;

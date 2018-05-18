@@ -1,6 +1,5 @@
 package com.ht.ussp.uaa.app.resource;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -8,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,10 +21,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.ussp.bean.EloginParam;
 import com.ht.ussp.bean.SmsHelper;
 import com.ht.ussp.client.dto.MsgReqDtoIn;
@@ -43,9 +39,7 @@ import com.ht.ussp.uaa.app.jwt.RawAccessJwtToken;
 import com.ht.ussp.uaa.app.jwt.RefreshToken;
 import com.ht.ussp.uaa.app.jwt.TokenExtractor;
 import com.ht.ussp.uaa.app.jwt.TokenVerifier;
-import com.ht.ussp.uaa.app.model.ResponseModal;
 import com.ht.ussp.uaa.app.vo.HtBoaOutClient;
-import com.ht.ussp.uaa.app.vo.ValidateJwtVo;
 import com.ht.ussp.util.FastJsonUtil;
 
 import io.jsonwebtoken.Claims;
@@ -75,9 +69,6 @@ public class ExternalUserResource {
 
 	@Autowired
 	private TokenVerifier tokenVerifier;
-
-	@Autowired
-	private ObjectMapper mapper;
 
 	/**
 	 * 

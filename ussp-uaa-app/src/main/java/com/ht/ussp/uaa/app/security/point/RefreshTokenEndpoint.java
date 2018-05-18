@@ -62,7 +62,7 @@ public class RefreshTokenEndpoint {
 	@RequestMapping(value = "/auth/token", method = RequestMethod.GET, produces = {
 			MediaType.APPLICATION_JSON_VALUE })
 	public @ResponseBody JwtToken refreshToken(HttpServletRequest request, HttpServletResponse response)
-			throws IOException, ServletException {
+			throws ServletException {
 		response.setCharacterEncoding("UTF-8");
 		RefreshToken refreshToken = null;
 		try {
@@ -73,13 +73,43 @@ public class RefreshTokenEndpoint {
 			refreshToken = RefreshToken.create(rawToken, jwtSettings.getTokenSigningKey())
 					.orElseThrow(() -> new InvalidJwtToken());
 		} catch (BadCredentialsException ex) {
-			mapper.writeValue(response.getWriter(), new ResponseModal(SysStatus.TOKEN_IS_VALID));
+			try {
+				mapper.writeValue(response.getWriter(), new ResponseModal(SysStatus.TOKEN_IS_VALID));
+			} catch (IOException e) {
+				log.debug("write response result TOKEN_IS_VALID:"+e.getMessage());
+			}finally {
+				try {
+					response.getWriter().close();
+				} catch (IOException e) {
+					log.debug("close io exception:"+e.getMessage());
+				}
+			}
 			return null;
 		} catch (JwtExpiredTokenException expiredEx) {
-			mapper.writeValue(response.getWriter(), new ResponseModal(SysStatus.TOKEN_IS_EXPIRED));
+			try {
+				mapper.writeValue(response.getWriter(), new ResponseModal(SysStatus.TOKEN_IS_EXPIRED));
+			} catch (IOException e) {
+				log.debug("write response result TOKEN_IS_EXPIRED:"+e.getMessage());
+			}finally {
+				try {
+					response.getWriter().close();
+				} catch (IOException e) {
+					log.debug("close io exception:"+e.getMessage());
+				}
+			}
 			return null;
 		}catch(AuthenticationServiceException ex) {
-        	mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.HEADER_CANNOT_NULL));
+        	try {
+				mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.HEADER_CANNOT_NULL));
+			} catch (IOException e) {
+				log.debug("write response result HEADER_CANNOT_NULL:"+e.getMessage());
+			}finally {
+				try {
+					response.getWriter().close();
+				} catch (IOException e) {
+					log.debug("close io exception:"+e.getMessage());
+				}
+			}
         	return null;
         }
 		

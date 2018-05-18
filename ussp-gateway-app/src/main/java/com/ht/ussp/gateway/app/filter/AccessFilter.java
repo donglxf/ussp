@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.netflix.zuul.filters.ZuulProperties;
 
-import com.esotericsoftware.minlog.Log;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.gateway.app.feignClients.RoleClient;
@@ -22,6 +21,8 @@ import com.ht.ussp.util.PatternUtil;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 
+import lombok.extern.log4j.Log4j2;
+
 /**
  * 
  * @ClassName: AccessFilter
@@ -29,6 +30,7 @@ import com.netflix.zuul.context.RequestContext;
  * @author wim qiuwenwu@hongte.info
  * @date 2018年3月12日 上午11:50:44
  */
+@Log4j2
 public class AccessFilter extends ZuulFilter {
 
 	@Value("${ht.ignoreUrl.app}")
@@ -70,7 +72,7 @@ public class AccessFilter extends ZuulFilter {
 		String tokenPayload = request.getHeader("Authorization");
 		String app = request.getHeader("app");
 		String validateUrl = getUrl(uri);
-		Log.info("----------validateUrl------------"+validateUrl);
+		log.info("----------validateUrl------------"+validateUrl);
 		// 不鉴权的URL直接路由
 		if (isIgnoreUrl(uri, htIgnoreUrlWeb)) {
 			return null;
@@ -81,12 +83,12 @@ public class AccessFilter extends ZuulFilter {
 			try {
 				mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_NULL));
 			} catch (IOException e) {
-				Log.debug("write response result token is null:"+e.getMessage());
+				log.debug("write response result token is null:"+e.getMessage());
 			}finally {
 				try {
 					ctx.getResponse().getWriter().close();
 				} catch (IOException e) {
-					Log.debug("close io exception:"+e.getMessage());
+					log.debug("close io exception:"+e.getMessage());
 				}
 			}
 			return null;
@@ -97,26 +99,26 @@ public class AccessFilter extends ZuulFilter {
 			String[] htIgnoreAppUrls = htIgnoreApp.split(",");
 			for (String htIgnoreAppUrl : htIgnoreAppUrls) {
 				if (PatternUtil.compile(htIgnoreAppUrl).match(uri)) {
-					Log.info("----------validate SYSTEM LEVEL JWT START------------");
+					log.info("----------validate SYSTEM LEVEL JWT START------------");
 					//app不能为空
 					if (StringUtils.isEmpty(app)) {
 						ctx.setSendZuulResponse(false);
 						try {
 							mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.APP_CANNOT_NULL));
 						} catch (IOException e) {
-							Log.debug("write response result app cannot null:"+e.getMessage());
+							log.debug("write response result app cannot null:"+e.getMessage());
 						}finally {
 							try {
 								ctx.getResponse().getWriter().close();
 							} catch (IOException e) {
-								Log.debug("close io exception:"+e.getMessage());
+								log.debug("close io exception:"+e.getMessage());
 							}
 						}
 						return null;
 					}
 					ResponseModal rm = UaaClient.validateAppJwt(tokenPayload,app);
 					if ("0000".equals(rm.getStatus_code())) {
-						Log.info("----------validate SYSTEM LEVEL JWT SUCCESSFUL------------");
+						log.info("----------validate SYSTEM LEVEL JWT SUCCESSFUL------------");
 							ctx.setSendZuulResponse(true);
 							return null;
 					} else if ("9922".equals(rm.getStatus_code())) {
@@ -124,12 +126,12 @@ public class AccessFilter extends ZuulFilter {
 						try {
 							mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_VALID));
 						} catch (IOException e) {
-							Log.debug("write response result token is valid:"+e.getMessage());
+							log.debug("write response result token is valid:"+e.getMessage());
 						}finally {
 							try {
 								ctx.getResponse().getWriter().close();
 							} catch (IOException e) {
-								Log.debug("close io exception:"+e.getMessage());
+								log.debug("close io exception:"+e.getMessage());
 							}
 						}
 						return null;
@@ -138,12 +140,12 @@ public class AccessFilter extends ZuulFilter {
 						try {
 							mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_EXPIRED));
 						} catch (IOException e) {
-							Log.debug("write response result token is expired:"+e.getMessage());
+							log.debug("write response result token is expired:"+e.getMessage());
 						}finally {
 							try {
 								ctx.getResponse().getWriter().close();
 							} catch (IOException e) {
-								Log.debug("close io exception:"+e.getMessage());
+								log.debug("close io exception:"+e.getMessage());
 							}
 						}
 						return null;
@@ -156,7 +158,7 @@ public class AccessFilter extends ZuulFilter {
 		}
 		// 如果请求的URL与htIgnoreApp不匹配，验证内部系统JWT
 		try {
-			Log.info("----------validate JWT START------------"+tokenPayload);
+			log.info("----------validate JWT START------------"+tokenPayload);
 			ResponseModal rm = UaaClient.validateJwt(tokenPayload);
 			if ("0000".equals(rm.getStatus_code())) {
 				String str = FastJsonUtil.objectToJson(rm.getResult());
@@ -164,18 +166,18 @@ public class AccessFilter extends ZuulFilter {
 				userId = vdt.getUserId();
 				ctx.addZuulRequestHeader("userId", userId);
 				ctx.addZuulRequestHeader("orgCode", vdt.getOrgCode());
-				Log.info("----------validate JWT SUCCESSFUL------------");
+				log.info("----------validate JWT SUCCESSFUL------------");
 			} else if ("9922".equals(rm.getStatus_code())||"9997".equals(rm.getStatus_code())) {
 				ctx.setSendZuulResponse(false);
 				try {
 					mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_VALID));
 				} catch (IOException e) {
-					Log.debug("write response result token is valid:"+e.getMessage());
+					log.debug("write response result token is valid:"+e.getMessage());
 				}finally {
 					try {
 						ctx.getResponse().getWriter().close();
 					} catch (IOException e) {
-						Log.debug("close io exception:"+e.getMessage());
+						log.debug("close io exception:"+e.getMessage());
 					}
 				}
 				return null;
@@ -184,12 +186,12 @@ public class AccessFilter extends ZuulFilter {
 				try {
 					mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_EXPIRED));
 				} catch (IOException e) {
-					Log.debug("write response result token is expired:"+e.getMessage());
+					log.debug("write response result token is expired:"+e.getMessage());
 				}finally {
 					try {
 						ctx.getResponse().getWriter().close();
 					} catch (IOException e) {
-						Log.debug("close io exception:"+e.getMessage());
+						log.debug("close io exception:"+e.getMessage());
 					}
 				}
 				return null;
@@ -199,12 +201,12 @@ public class AccessFilter extends ZuulFilter {
 			try {
 				mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.FAIL));
 			} catch (IOException e) {
-				Log.debug("write response result fail:"+e.getMessage());
+				log.debug("write response result fail:"+e.getMessage());
 			}finally {
 				try {
 					ctx.getResponse().getWriter().close();
 				} catch (IOException e) {
-					Log.debug("close io exception:"+e.getMessage());
+					log.debug("close io exception:"+e.getMessage());
 				}
 			}
 		}
@@ -215,7 +217,7 @@ public class AccessFilter extends ZuulFilter {
 		if (isIgnoreUrl(uri, htIgnoreUrlHttp)) {
 			return null;
 		}
-		Log.info("----------validate api start------------");
+		log.info("----------validate api start------------");
 		// 验证api权限
 		String api_key = String.format("%s:%s:%s", userId, app, "api");
 		if (StringUtils.isEmpty(userId) || StringUtils.isEmpty(app) || !roleClient.isHasAuth(api_key, validateUrl)) {
@@ -223,17 +225,17 @@ public class AccessFilter extends ZuulFilter {
 			try {
 				mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.HAS_NO_ACCESS));
 			} catch (IOException e) {
-				Log.debug("write response result has no access:"+e.getMessage());
+				log.debug("write response result has no access:"+e.getMessage());
 			}finally {
 				try {
 					ctx.getResponse().getWriter().close();
 				} catch (IOException e) {
-					Log.debug("close io exception:"+e.getMessage());
+					log.debug("close io exception:"+e.getMessage());
 				}
 			}
 			return null;
 		}
-		Log.info("----------validate api END------------");
+		log.info("----------validate api END------------");
 		return null;
 	}
 
