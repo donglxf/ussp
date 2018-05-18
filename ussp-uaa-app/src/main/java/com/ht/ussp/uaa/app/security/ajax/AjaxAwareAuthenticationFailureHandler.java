@@ -20,6 +20,8 @@ import com.ht.ussp.uaa.app.exception.AuthMethodNotSupportedException;
 import com.ht.ussp.uaa.app.exception.JwtExpiredTokenException;
 import com.ht.ussp.uaa.app.model.ResponseModal;
 
+import lombok.extern.log4j.Log4j2;
+
 /**
  * 
 * @ClassName: AjaxAwareAuthenticationFailureHandler
@@ -28,6 +30,7 @@ import com.ht.ussp.uaa.app.model.ResponseModal;
 * @date 2018年1月6日 上午11:47:17
  */
 @Component
+@Log4j2
 public class AjaxAwareAuthenticationFailureHandler implements AuthenticationFailureHandler {
     private final ObjectMapper mapper;
     
@@ -38,7 +41,7 @@ public class AjaxAwareAuthenticationFailureHandler implements AuthenticationFail
     
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
-			AuthenticationException e) throws IOException, ServletException {
+			AuthenticationException e) throws ServletException {
 		response.setCharacterEncoding("UTF-8");
 		response.setStatus(HttpStatus.UNAUTHORIZED.value());
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -47,31 +50,151 @@ public class AjaxAwareAuthenticationFailureHandler implements AuthenticationFail
 			String es= e.getMessage();
 			if(e!=null) {
 				if(SysStatus.INVALID_USER.getStatus().equals(es)) {
-					mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.INVALID_USER));
+					try {
+						mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.INVALID_USER));
+					} catch (IOException e1) {
+						log.debug("write response result INVALID_USER:"+e.getMessage());
+					}finally {
+						try {
+							response.getWriter().close();
+						} catch (IOException e1) {
+							log.debug("close io exception:"+e.getMessage());
+						}
+					}
 				}else if(SysStatus.METHOD_NOT_SUPPORTED.getStatus().equals(es)) {
-					mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.METHOD_NOT_SUPPORTED));
+					try {
+						mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.METHOD_NOT_SUPPORTED));
+					} catch (IOException e1) {
+						log.debug("write response result METHOD_NOT_SUPPORTED:"+e.getMessage());
+					}finally {
+						try {
+							response.getWriter().close();
+						} catch (IOException e1) {
+							log.debug("close io exception:"+e.getMessage());
+						}
+					}
 				}else if(SysStatus.USER_NOT_FOUND.getStatus().equals(es)) {
-					mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.USER_NOT_FOUND));
+					try {
+						mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.USER_NOT_FOUND));
+					} catch (IOException e1) {
+						log.debug("write response result USER_NOT_FOUND:"+e.getMessage());
+					}finally {
+						try {
+							response.getWriter().close();
+						} catch (IOException e1) {
+							log.debug("close io exception:"+e.getMessage());
+						}
+					}
 				}else if(SysStatus.USER_HAS_DELETED.getStatus().equals(es)) {
-					mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.USER_HAS_DELETED));
+					try {
+						mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.USER_HAS_DELETED));
+					} catch (IOException e1) {
+						log.debug("write response result USER_HAS_DELETED:"+e.getMessage());
+					}finally {
+						try {
+							response.getWriter().close();
+						} catch (IOException e1) {
+							log.debug("close io exception:"+e.getMessage());
+						}
+					}
 				}else if(SysStatus.USER_NOT_RELATE_APP.getStatus().equals(es)) {
-					mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.USER_NOT_RELATE_APP));
+					try {
+						mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.USER_NOT_RELATE_APP));
+					} catch (IOException e1) {
+						log.debug("write response result USER_NOT_RELATE_APP:"+e.getMessage());
+					}finally {
+						try {
+							response.getWriter().close();
+						} catch (IOException e1) {
+							log.debug("close io exception:"+e.getMessage());
+						}
+					}
 				}else if(SysStatus.USER_NOT_MATCH_APP.getStatus().equals(es)) {
-					mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.USER_NOT_MATCH_APP));
+					try {
+						mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.USER_NOT_MATCH_APP));
+					} catch (IOException e1) {
+						log.debug("write response result USER_NOT_MATCH_APP:"+e.getMessage());
+					}finally {
+						try {
+							response.getWriter().close();
+						} catch (IOException e1) {
+							log.debug("close io exception:"+e.getMessage());
+						}
+					}
 				}else if(SysStatus.NO_ROLE.getStatus().equals(es)) {
-					mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.NO_ROLE));
+					try {
+						mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.NO_ROLE));
+					} catch (IOException e1) {
+						log.debug("write response result NO_ROLE:"+e.getMessage());
+					}finally {
+						try {
+							response.getWriter().close();
+						} catch (IOException e1) {
+							log.debug("close io exception:"+e.getMessage());
+						}
+					}
 				}else if(SysStatus.METHOD_NOT_SUPPORTED.getStatus().equals(es)) {
-					mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.METHOD_NOT_SUPPORTED));
+					try {
+						mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.METHOD_NOT_SUPPORTED));
+					} catch (IOException e1) {
+						log.debug("write response result METHOD_NOT_SUPPORTED:"+e.getMessage());
+					}finally {
+						try {
+							response.getWriter().close();
+						} catch (IOException e1) {
+							log.debug("close io exception:"+e.getMessage());
+						}
+					}
 				}else {
-					mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.INVALID_USER));
+					try {
+						mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.INVALID_USER));
+					} catch (IOException e1) {
+						log.debug("write response result INVALID_USER:"+e.getMessage());
+					}finally {
+						try {
+							response.getWriter().close();
+						} catch (IOException e1) {
+							log.debug("close io exception:"+e.getMessage());
+						}
+					}
 				}
 			}
 		} else
 			if (e instanceof JwtExpiredTokenException) {
-				mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.TOKEN_IS_EXPIRED));
+				try {
+					mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.TOKEN_IS_EXPIRED));
+				} catch (IOException e1) {
+					log.debug("write response result TOKEN_IS_EXPIRED:"+e.getMessage());
+				}finally {
+					try {
+						response.getWriter().close();
+					} catch (IOException e1) {
+						log.debug("close io exception:"+e.getMessage());
+					}
+				}
 		} else if (e instanceof AuthMethodNotSupportedException) {
-			mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.METHOD_NOT_SUPPORTED));
+			try {
+				mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.METHOD_NOT_SUPPORTED));
+			} catch (IOException e1) {
+				log.debug("write response result METHOD_NOT_SUPPORTED:"+e.getMessage());
+			}finally {
+				try {
+					response.getWriter().close();
+				} catch (IOException e1) {
+					log.debug("close io exception:"+e.getMessage());
+				}
+			}
 		}
-		mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.AUTH_FAILED));
+		try {
+			mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.AUTH_FAILED));
+		} catch (IOException e1) {
+			log.debug("write response result AUTH_FAILED:"+e.getMessage());
+		}finally {
+			try {
+				response.getWriter().close();
+			} catch (IOException e1) {
+				log.debug("close io exception:"+e.getMessage());
+			}
+		}
 	}
 }

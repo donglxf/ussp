@@ -26,6 +26,8 @@ import com.ht.ussp.uaa.app.model.ResponseModal;
 import com.ht.ussp.uaa.app.vo.UserVo;
 import com.ht.ussp.util.FastJsonUtil;
 
+import lombok.extern.log4j.Log4j2;
+
 /**
  * 
  * @ClassName: AjaxAwareAuthenticationSuccessHandler
@@ -33,6 +35,7 @@ import com.ht.ussp.util.FastJsonUtil;
  * @author wim qiuwenwu@hongte.info
  * @date 2018年1月6日 上午11:47:40
  */
+@Log4j2
 @Component
 public class AjaxAwareAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 	private final ObjectMapper mapper;
@@ -49,7 +52,7 @@ public class AjaxAwareAuthenticationSuccessHandler implements AuthenticationSucc
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-			Authentication authentication) throws IOException, ServletException {
+			Authentication authentication) throws ServletException {
 		Map<String, Object> map = new HashMap<String, Object>();
 		Map<String, String> tokenMap = new HashMap<String, String>();
 		map=FastJsonUtil.objectToPojo(authentication.getPrincipal(),HashMap.class);
@@ -70,7 +73,17 @@ public class AjaxAwareAuthenticationSuccessHandler implements AuthenticationSucc
 		
 		response.setStatus(HttpStatus.OK.value());
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-		mapper.writeValue(response.getWriter(), tokenMap);
+		try {
+			mapper.writeValue(response.getWriter(), tokenMap);
+		} catch (IOException e) {
+			log.debug("write response result tokenMap:"+e.getMessage());
+		}finally {
+			try {
+				response.getWriter().close();
+			} catch (IOException e) {
+				log.debug("close io exception:"+e.getMessage());
+			}
+		}
 
 		clearAuthenticationAttributes(request);
 	}
