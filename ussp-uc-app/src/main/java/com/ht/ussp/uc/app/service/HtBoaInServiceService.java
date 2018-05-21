@@ -1,5 +1,6 @@
 package com.ht.ussp.uc.app.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,8 @@ import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInService;
 import com.ht.ussp.uc.app.repository.HtBoaInServiceRepository;
+import com.ht.ussp.uc.app.vo.AppAndResourceVo;
+import com.ht.ussp.uc.app.vo.AppAndServiceVo;
 
 @Service
 public class HtBoaInServiceService {
@@ -82,5 +85,15 @@ public class HtBoaInServiceService {
 		return result;
 	}
 
+	public List<AppAndServiceVo> loadAppAndServiceVoList() {
+		 List<Object[]> list = htBoaInServiceRepository.queryAppAndServiceTree();
+	        List<AppAndServiceVo> aaaList = new ArrayList<>();
+	        AppAndServiceVo aaa;
+	        for (Object[] objects : list) {
+	            aaa = new AppAndServiceVo(objects[0], objects[1], objects[2], objects[3], objects[4]);
+	            aaaList.add(aaa);
+	        }
+	        return aaaList;
+	}
 
 }

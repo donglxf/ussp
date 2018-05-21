@@ -27,8 +27,9 @@ public class HtBoaInServiceApi implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(name = "call_service_code")
-	private String callServcieCode;
+	//授权编码
+	@Column(name = "auth_service_code")
+	private String authServiceCode;
 	
 	@Column(name = "api_content")
 	private String apiContent;

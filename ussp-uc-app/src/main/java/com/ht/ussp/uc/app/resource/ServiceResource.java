@@ -1,12 +1,13 @@
 package com.ht.ussp.uc.app.resource;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,8 +19,10 @@ import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInService;
+import com.ht.ussp.uc.app.domain.HtBoaInServiceCall;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
+import com.ht.ussp.uc.app.service.HtBoaInServiceCallService;
 import com.ht.ussp.uc.app.service.HtBoaInServiceService;
 import com.ht.ussp.uc.app.service.HtBoaInUserAppService;
 import com.ht.ussp.uc.app.vo.PageVo;
@@ -37,6 +40,9 @@ public class ServiceResource {
     
     @Autowired
     private HtBoaInUserAppService htBoaInUserAppService;
+    
+    @Autowired
+    private HtBoaInServiceCallService htBoaInServiceCallService;
 
     
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -50,7 +56,7 @@ public class ServiceResource {
     	pageConf.setSearch(page.getKeyWord());
         long sl = System.currentTimeMillis(), el = 0L;
         String msg = "成功";
-        String logHead = "微服务记录查询：role/in/list param-> {}";
+        String logHead = "微服务记录查询：minservice/list param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.debug(logStart, "pageConf: " + pageConf, sl);
@@ -69,7 +75,7 @@ public class ServiceResource {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
         String msg = "成功";
-        String logHead = "微服务记录查询：role/in/add param-> {}";
+        String logHead = "微服务记录查询：minservice/add param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.debug(logStart, "htBoaInService: " + htBoaInService, sl);
@@ -83,7 +89,7 @@ public class ServiceResource {
         u.setApp(htBoaInService.getApp());
         u.setMainService(htBoaInService.getMainService());
         u.setMainServiceName(htBoaInService.getMainServiceName());
-        u.setServcieCode(UUID.randomUUID().toString().replace("-", ""));
+        u.setServiceCode(UUID.randomUUID().toString().replace("-", ""));
         u.setStatus("0");
     	u.setCreatedDatetime(new Date());
     	u.setUpdateDatetime(new Date());
@@ -106,7 +112,7 @@ public class ServiceResource {
     public Result stop( Long id, String status,@RequestHeader("userId") String userId) {
         long sl = System.currentTimeMillis(), el = 0L;
         String msg = "成功";
-        String logHead = "微服务记录查询：role/in/add param-> {}";
+        String logHead = "禁用/启用微服务：minservice/stop param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
         //log.debug(logStart, "HtBoaInService: " + HtBoaInService, sl);
@@ -125,6 +131,20 @@ public class ServiceResource {
         u = htBoaInServiceService.add(u);
         el = System.currentTimeMillis();
         log.debug(logEnd, "HtBoaInService: " + u, msg, el, el - sl);
+        if(!StringUtils.isEmpty(u.getServiceCode())) {
+        	List<HtBoaInServiceCall> listHtBoaInServiceCall = htBoaInServiceCallService.findByMainServiceCode(u.getServiceCode());
+        	if(listHtBoaInServiceCall!=null) {
+        		for(HtBoaInServiceCall htBoaInServiceCall : listHtBoaInServiceCall) {
+        			if("0".equals(u.getStatus())) { //将启用所有正常的被调用权限
+        				htBoaInServiceCall.setStatus("1");
+        	         }else {//将所有正常的被调用权限
+        	        	htBoaInServiceCall.setStatus("2");
+        	         }
+        		}
+        		htBoaInServiceCallService.addList(listHtBoaInServiceCall);
+        	}
+        }
         return Result.buildSuccess();
     }
+    
 }

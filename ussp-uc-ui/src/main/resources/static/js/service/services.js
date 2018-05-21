@@ -185,7 +185,7 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth'  ], functio
         var data = obj.data;
         if (obj.event === 'stopOrStart') {
         	if(data.status==0){//启用状态，是否需要禁用
-        		layer.confirm('是否禁用微服务？', function (index) {
+        		layer.confirm('禁用微服务将暂停所有调用权限，确认是否禁用微服务？', function (index) {
                   	 $.post(statusServiceUrl+"?id=" + data.id+"&status=1", null, function (result) {
                            if (result["returnCode"] == "0000") {
                                refreshServieDataTable();
@@ -197,7 +197,7 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth'  ], functio
                        });
                   });
         	}else{
-        		layer.confirm('是否启用微服务？', function (index) {
+        		layer.confirm('启用微服务将恢复为调用指定api，确认是否启用微服务？', function (index) {
                   	 $.post(statusServiceUrl+"?id=" + data.id+"&status=0", null, function (result) {
                            if (result["returnCode"] == "0000") {
                                refreshServieDataTable();
@@ -210,7 +210,7 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth'  ], functio
                   });
         	}
         } else if (obj.event === 'del') {
-       	 layer.confirm('是否确认删除微服务？', function (index) {
+       	 layer.confirm('禁用微服务将暂停所有调用权限，是否确认删除微服务？', function (index) {
          	 $.post(delRoleUrl+"?id=" + data.id, null, function (result) {
                   if (result["returnCode"] == "0000") {
                 	  obj.del();
@@ -232,7 +232,7 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth'  ], functio
                  content: $("#services_modify_services_data_div").html(),
                  btn: ['保存', '取消'],
                  yes: function (index, layero) {
-                     var $submitBtn = $("button[lay-filter=filter_modify_services_form]", layero);
+                     var $submitBtn = $("button[lay-filter=filter_modify_services_data_form]", layero);
                      if ($submitBtn) {
                          $submitBtn.click();
                      } else {

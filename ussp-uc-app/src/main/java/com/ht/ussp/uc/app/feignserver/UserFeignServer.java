@@ -87,7 +87,7 @@ public class UserFeignServer{
         	if(StringUtils.isEmpty(bmUserVo.getMobile())) {
         		return Result.buildFail("9999", "手机号不能为空");
         	}
-        	HtBoaInContrast htBoaInContrast = htBoaInUserService.saveBmUserInfo(bmUserVo, null, null, null, null);
+        	HtBoaInContrast htBoaInContrast = htBoaInUserService.saveBmUserInfoByBmToken(bmUserVo);
 			if (htBoaInContrast!=null) {
 				ResponseModal result = uaaClient.createUCToken(htBoaInContrast.getUcBusinessId(), htBoaInContrast.getBmBusinessId(), 29, 25);
 				return Result.buildSuccess(result);

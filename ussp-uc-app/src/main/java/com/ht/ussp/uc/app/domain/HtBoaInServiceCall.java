@@ -27,15 +27,17 @@ public class HtBoaInServiceCall implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(name = "call_servcie_code")
-	private String callServcieCode;
+	//授权编码
+	@Column(name = "auth_service_code")
+	private String authServiceCode;
 	
 	@Column(name = "main_service_code")
 	private String mainServiceCode;
 	
-	@Column(name = "call_servcie")
-	private String callServcie;
+	@Column(name = "call_service")
+	private String callService;
 	
+	//状态（0开启所有api  1开启指定api   2停止授权所有api）
 	@Column(name = "status")
 	private String status;
 

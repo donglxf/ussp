@@ -27,8 +27,8 @@ public class HtBoaInService implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(name = "servcie_code")
-	private String servcieCode;
+	@Column(name = "service_code")
+	private String serviceCode;
 	
 	@Column(name = "main_service")
 	private String mainService;
@@ -39,7 +39,7 @@ public class HtBoaInService implements Serializable {
 	@Column(name = "app")
 	private String app;
 	
-	//状态（0正常  1禁用  2删除）
+	//状态（0正常  1禁用，也将禁用所有调用的权限  2删除）
 	@Column(name = "status")
 	private String status;
 

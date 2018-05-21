@@ -55,6 +55,10 @@ public class HtBoaInBmUserService {
         return htBoaInBmUserRepository.findByStatus(status);
     }
     
+    public HtBoaInBmUser saveHtBoaInBmUser(HtBoaInBmUser u) {
+        return htBoaInBmUserRepository.save(u);
+    }
+    
     
     public PageResult<HtBoaInBmUser> findAllByPage(PageConf pageConf) {
     	PageResult result = new PageResult();

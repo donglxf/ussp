@@ -1,9 +1,9 @@
-<div class="layui-fluid" lay-filter="serviceauth_auth">
+<div class="layui-fluid"  lay-filter="servcieauth_auth">
     <div class="tree col-xs-3" style="">
         <div>
             <div class="tree_search">
-                <div class="input-group input-group-sm" id="resource_tree">
-                    <input type="text" id="user_search_tree_org" class="form-control" placeholder="请输入资源名称"/>
+                <div class="input-group input-group-sm" id="servcieauth_btn_tree">
+                    <input type="text" id="servcieauth_search_tree_org" maxlength="60" class="form-control" placeholder="请输入机构名"/>
                     <div data-type="expandAll" class="input-group-addon btn" title="展开所有">
                         <i class="fa fa-plus-square"></i>
                     </div>
@@ -15,695 +15,66 @@
                     </div>
                 </div>
             </div>
-            <div id="resource_app_auth_ztree_left" class="ztree"></div>
+            <div id="servcieauth_org_ztree_left" class="ztree"></div>
         </div>
     </div>
-    <div class="col-xs-9" id="resource_content">
-        <div class="layui-tab view_tab" lay-filter="resource_top_tab">
-            <ul class="layui-tab-title">
-                <li class="layui-this" lay-id="resMenuType">菜单</li>
-                <li lay-id="resModuleType">模块</li>
-                <li lay-id="resCustomType">自定义权限</li>
-            </ul>
-            <div class="layui-tab-content">
-                <div class="layui-tab-item layui-show">
-                    <div class="row-lg">
-                        <div class="row-lg">
-                            <div class="toolbarBtn btn-group">
-                                <button class="layui-btn layui-btn-sm" title="新增菜单" data-type="add" data-res-type="menu">
-                                    新增菜单
-                                </button>
-                <button class="layui-btn layui-btn-sm" title="下载导入模板" id="down" style="display: none" onclick="location.href='/template/资源列表导入模板.xlsx'" ht-auth="down"   >下载导入模板</button>
-				<button class="layui-btn layui-btn-sm" title="导入" id="importResourceExcel" style="display: none" data-type="importResourceExcel"  ht-auth="import"    >导入</button>
-				<button class="layui-btn layui-btn-sm" title="导出系统资源" id="exportAppResource"   data-type="exportAppResource" >导出升级资源</button>
-				<button class="layui-btn layui-btn-sm" title="导入分析" id="importAppResourceJson"   data-type="importAppResourceJson" >导入升级资源分析</button>
-                           <input type="hidden" id="checkResApp">
-                            </div>
-                            <div class="pull-right col-xs-4">
-                                <div class="input-group input-group-sm row">
-                                    <input type="text" class="form-control" id="resource_menu_search_keyword"
-                                           placeholder="请输入菜单编号/菜单名称/菜单链接"/>
-                                    <div class="input-group-btn">
-                                        <button type="button" class="layui-btn layui-btn-sm" data-type="search"
-                                                data-res-type="menu">
-                                            <i class="fa fa-search"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row-lg">
-                            <table id="resource_menu_datatable" lay-filter="resource_menu_datatable"
-                                   class="disableCheckAll">
-                            </table>
-                        </div>
-                    </div>
-                    <div class="row-lg">
-                        <div class="layui-tab layui-tab-brief" lay-filter="resource_bottom_tab">
-                            <ul class="layui-tab-title">
-                                <li class="layui-this" lay-id="resBtnType">按钮权限</li>
-                                <li lay-id="resTabType">TAB权限</li>
-                                <li lay-id="resApiType">API权限</li>
-                            </ul>
-                            <div class="layui-tab-content">
-                                <div class="layui-tab-item layui-show">
-                                    <div class="col-xs-6" style="padding: 0;">
-                                        <div class="row-lg">
-                                            <div class="toolbarBtn btn-group">
-                                                <button class="layui-btn layui-btn-sm" title="新增" data-type="add"
-                                                        data-res-type="btn">
-                                                    新增按钮
-                                                </button>
-                                            </div>
-                                            <div class="pull-right col-xs-4">
-                                                <div class="input-group input-group-sm row">
-                                                    <input type="text" class="form-control"
-                                                           id="resource_btn_search_keyword"
-                                                           placeholder="请输入按钮编号/按钮名称"/>
-                                                    <div class="input-group-btn">
-                                                        <button type="button" class="layui-btn layui-btn-sm"
-                                                                data-type="search" data-res-type="btn">
-                                                            <i class="fa fa-search"></i>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row-lg">
-                                            <table id="resource_btn_datatable" lay-filter="resource_btn_datatable"
-                                                   class="disableCheckAll">
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-6" style="padding: 0 0 0 15px;">
-                                        <div class="row-lg">
-                                            <div class="toolbarBtn btn-group">
-                                                <button class="layui-btn layui-btn-sm" title="新增" data-type="add"
-                                                        data-res-type="api" data-relevance-type="btn">
-                                                    新增API
-                                                </button>
-                                                <button class="layui-btn layui-btn-sm" title="关联API资源"
-                                                        data-type="relevance" data-relevance-type="btn">
-                                                    关联API
-                                                </button>
-                                            </div>
-                                            <div class="pull-right col-xs-4">
-                                                <div class="input-group input-group-sm row">
-                                                    <input type="text" class="form-control"
-                                                           id="resource_btn_api_search_keyword"
-                                                           placeholder="请输入API编号/API名称"/>
-                                                    <div class="input-group-btn">
-                                                        <button type="button" class="layui-btn layui-btn-sm"
-                                                                data-type="search" data-res-type="api" data-relevance-type="btn">
-                                                            <i class="fa fa-search"></i>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row-lg">
-                                            <table id="resource_btn_api_datatable"
-                                                   lay-filter="resource_btn_api_datatable">
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="layui-tab-item">
-                                    <div class="row-lg">
-                                        <div class="toolbarBtn btn-group">
-                                            <button class="layui-btn layui-btn-sm" title="新增" data-type="add"
-                                                    data-res-type="tab">
-                                                新增TAB
-                                            </button>
-                                        </div>
-                                        <div class="pull-right col-xs-4">
-                                            <div class="input-group input-group-sm row">
-                                                <input type="text" class="form-control"
-                                                       id="resource_tab_search_keyword"
-                                                       placeholder="请输入TAB编号/TAB名称"/>
-                                                <div class="input-group-btn">
-                                                    <button type="button" class="layui-btn layui-btn-sm"
-                                                            data-type="search" data-res-type="tab">
-                                                        <i class="fa fa-search"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row-lg">
-                                        <table id="resource_tab_datatable" lay-filter="resource_tab_datatable">
-                                        </table>
-                                    </div>
-                                </div>
-                                <div class="layui-tab-item">
-                                    <div class="row-lg">
-                                        <div class="toolbarBtn btn-group">
-                                            <button class="layui-btn layui-btn-sm" title="新增" data-type="add"
-                                                    data-res-type="api">
-                                                新增API
-                                            </button>
-                                            <button class="layui-btn layui-btn-sm" title="关联API资源"
-                                                    data-type="relevance" data-relevance-type="menu">
-                                                关联API资源
-                                            </button>
-                                        </div>
-                                        <div class="pull-right col-xs-4">
-                                            <div class="input-group input-group-sm row">
-                                                <input type="text" class="form-control"
-                                                       id="resource_api_search_keyword"
-                                                       placeholder="请输入API编号/API名称"/>
-                                                <div class="input-group-btn">
-                                                    <button type="button" class="layui-btn layui-btn-sm"
-                                                            data-type="search" data-res-type="api">
-                                                        <i class="fa fa-search"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row-lg">
-                                        <table id="resource_api_datatable" lay-filter="resource_api_datatable">
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="layui-tab-item">
-                    <div class="row-lg">
-                        <div class="toolbarBtn btn-group">
-                            <button class="layui-btn layui-btn-sm" title="新增模块" data-type="add" data-res-type="module">
-                                新增模块
-                            </button>
-                        </div>
-                        <div class="pull-right col-xs-4">
-                            <div class="input-group input-group-sm row">
-                                <input type="text" class="form-control"
-                                       id="resource_module_search_keyword"
-                                       placeholder="请输入模块编号/模块名称"/>
-                                <div class="input-group-btn">
-                                    <button type="button" class="layui-btn layui-btn-sm"
-                                            data-type="search" data-res-type="module">
-                                        <i class="fa fa-search"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row-lg">
-                        <table id="resource_module_datatable" lay-filter="resource_module_datatable">
-                        </table>
-                    </div>
-                </div>
-                <div class="layui-tab-item">
-                    <div class="row-lg">
-                        <div class="toolbarBtn btn-group">
-                            <button class="layui-btn layui-btn-sm" title="新增自定义权限" data-type="add" data-res-type="custom">
-                                新增自定义权限
-                            </button>
-                        </div>
-                        <div class="pull-right col-xs-4">
-                            <div class="input-group input-group-sm row">
-                                <input type="text" class="form-control"
-                                       id="resource_custom_search_keyword"
-                                       placeholder="请输入自定义权限编号/权限名称"/>
-                                <div class="input-group-btn">
-                                    <button type="button" class="layui-btn layui-btn-sm"
-                                            data-type="search" data-res-type="custom">
-                                        <i class="fa fa-search"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row-lg">
-                        <table id="resource_custom_datatable" lay-filter="resource_custom_datatable">
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <script type="text/html" id="resource_table_btn">
-            <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
-            <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-            {{#  if(d.status === '0'){ }}
-            <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="disable">禁用</a>
-            {{#  } else if(d.status === '1') { }}
-            <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="enable">启用</a>
-            {{#  } else { }}
-            {{#  } }}
-        </script>
-        <script type="text/html" id="resource_menu_table_btn">
-            <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
-            <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-            {{#  if(d.status === '0'){ }}
-            <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="hide">隐藏</a>
-            <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="disable">禁用</a>
-            {{#  } else if(d.status === '1') { }}
-            <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="enable">启用</a>
-            {{#  } else if(d.status === '2') { }}
-            <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="show">显示</a>
-            {{#  } else { }}
-            {{#  } }}
-        </script>
-        <script type="text/html" id="resource_table_status_laytpl">
-            {{#  if(d.status === '0'){ }}
-            正常
-            {{#  } else if(d.status === '1') { }}
-            禁用
-            {{#  } else if(d.status === '2') { }}
-            隐藏
-            {{#  } else { }}
-            {{ d.status }}
-            {{#  } }}
-        </script>
-    </div>
-    <!--新增菜单表单-->
-    <div id="resource_menu_add_data_div" class="hide">
-        <form method="post" class="layui-form" lay-filter="resource_menu_add_data_form">
-            <div class="layui-form-item">
-                <label class="layui-form-label">菜单编号<b>*</b></label>
-                <div class="layui-input-block">
-                    <input type="text" name="resCode" lay-verify="required" autocomplete="off" lay-verType="tips"
-                           class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">菜单名称<b>*</b></label>
-                <div class="layui-input-block">
-                    <input type="text" name="resNameCn" lay-verify="required" autocomplete="off" lay-verType="tips"
-                           class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">菜单类型<b>*</b></label>
-                <div class="layui-input-block">
-				    <input type="radio" name="resType" value="group" title="菜单组" lay-filter="resource_add_restype"/>
-				    <input type="radio" name="resType" value="view" title="菜单" lay-filter="resource_add_restype"/>
-                </div>
-            </div>
-            <div class="layui-form-item" id="divrescontent">
-                <label class="layui-form-label">菜单链接 </label>
-                <div class="layui-input-block">
-                    <input type="text" name="resContent" autocomplete="off" class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">菜单图标</label>
-                <div class="layui-input-block">
-                    <input type="tel" name="fontIcon" autocomplete="off" class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">菜单顺序<b>*</b></label>
-                <div class="layui-input-block">
-                    <input type="text" name="sequence" lay-verify="required|number" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">父菜单编号</label>
-                <div class="layui-input-block">
-                    <input type="text" name="resParent" id="resParent" readonly class="layui-input layui-input-sm">  
-                     <!-- <select name="resParent" id="resParentGroup" class="layui-input layui-input-sm" lay-filter="resource_select_menu_group" >  </select> -->
-                </div>
-            </div>
-            <div class="hide">
-            <!-- <select id="resParentGroupNameCn" class="hide" >  </select> -->
-            <select id="resParentGroup" class="hide" >  </select>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">父菜单名称</label>
-                <div class="layui-input-block">
-                    <!-- <input type="text" name="resParentName" readonly class="layui-input layui-input-sm"> -->
-                    <select name="resParentName" id="resParentGroupNameCn" class="layui-input layui-input-sm" lay-filter="resource_select_menu_group" >  </select>
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">所属系统</label>
-                <div class="layui-input-block">
-                    <input type="text" name="appName" readonly class="layui-input layui-input-sm">
-                    <input type="hidden" name="app">
-                </div>
-            </div>
-            <button class="layui-btn hide" lay-submit="" lay-filter="resource_menu_add_data_form"></button>
-        </form>
-    </div>
-    <!--新增按钮表单-->
-    <div id="resource_btn_add_data_div" class="hide">
-        <form method="post" class="layui-form" lay-filter="resource_btn_add_data_form">
-            <div class="layui-form-item">
-                <label class="layui-form-label">按钮编号<b>*</b></label>
-                <div class="layui-input-block">
-                    <input type="text" name="resCode" lay-verify="required" autocomplete="off" lay-verType="tips"
-                           class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">按钮权限标识<b>*</b></label>
-                <div class="layui-input-block">
-                    <input type="text" name="resContent" lay-verify="required" autocomplete="off" lay-verType="tips"
-                           class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">按钮名称<b>*</b></label>
-                <div class="layui-input-block">
-                    <input type="text" name="resNameCn" lay-verify="required" autocomplete="off" lay-verType="tips"
-                           class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <!--<div class="layui-form-item">-->
-            <!--<label class="layui-form-label">按钮图标</label>-->
-            <!--<div class="layui-input-block">-->
-            <!--<input type="tel" name="fontIcon" autocomplete="off" class="layui-input layui-input-sm">-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--<div class="layui-form-item">-->
-            <!--<label class="layui-form-label">按钮顺序<b>*</b></label>-->
-            <!--<div class="layui-input-block">-->
-            <!--<input type="text" name="sequence" lay-verify="required|number" autocomplete="off"-->
-            <!--lay-verType="tips" class="layui-input layui-input-sm">-->
-            <!--</div>-->
-            <!--</div>-->
-            <div class="layui-form-item">
-                <label class="layui-form-label">所属菜单编号</label>
-                <div class="layui-input-block">
-                    <input type="text" name="resParent" readonly class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">所属菜单名称</label>
-                <div class="layui-input-block">
-                    <input type="text" name="resParentName" readonly class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">所属系统</label>
-                <div class="layui-input-block">
-                    <input type="text" name="appName" readonly class="layui-input layui-input-sm">
-                    <input type="hidden" name="app">
-                </div>
-            </div>
-            <button class="layui-btn hide" lay-submit="" lay-filter="resource_btn_add_data_form"></button>
-        </form>
-    </div>
-    <!--新增TAB表单-->
-    <div id="resource_tab_add_data_div" class="hide">
-        <form method="post" class="layui-form" lay-filter="resource_tab_add_data_form">
-            <div class="layui-form-item">
-                <label class="layui-form-label">TAB编号<b>*</b></label>
-                <div class="layui-input-block">
-                    <input type="text" name="resCode" lay-verify="required" autocomplete="off" lay-verType="tips"
-                           class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">TAB名称<b>*</b></label>
-                <div class="layui-input-block">
-                    <input type="text" name="resNameCn" lay-verify="required" autocomplete="off" lay-verType="tips"
-                           class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">TAB链接</label>
-                <div class="layui-input-block">
-                    <input type="tel" name="resContent" autocomplete="off" class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <!--<div class="layui-form-item">-->
-            <!--<label class="layui-form-label">TAB顺序<b>*</b></label>-->
-            <!--<div class="layui-input-block">-->
-            <!--<input type="text" name="sequence" lay-verify="required|number" autocomplete="off"-->
-            <!--lay-verType="tips" class="layui-input layui-input-sm">-->
-            <!--</div>-->
-            <!--</div>-->
-            <div class="layui-form-item">
-                <label class="layui-form-label">所属菜单编号</label>
-                <div class="layui-input-block">
-                    <input type="text" name="resParent" readonly class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">所属菜单名称</label>
-                <div class="layui-input-block">
-                    <input type="text" name="resParentName" readonly class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">所属系统</label>
-                <div class="layui-input-block">
-                    <input type="text" name="appName" readonly class="layui-input layui-input-sm">
-                    <input type="hidden" name="app">
-                </div>
-            </div>
-            <button class="layui-btn hide" lay-submit="" lay-filter="resource_tab_add_data_form"></button>
-        </form>
-    </div>
-    <!--新增API表单-->
-    <div id="resource_api_add_data_div" class="hide">
-        <form method="post" class="layui-form" lay-filter="resource_api_add_data_form">
-            <div class="layui-form-item">
-                <label class="layui-form-label">API编号<b>*</b></label>
-                <div class="layui-input-block">
-                    <input type="text" name="resCode" lay-verify="required" autocomplete="off" lay-verType="tips"
-                           class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">API名称<b>*</b></label>
-                <div class="layui-input-block">
-                    <input type="text" name="resNameCn" lay-verify="required" autocomplete="off" lay-verType="tips"
-                           class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">API链接<b>*</b></label>
-                <div class="layui-input-block">
-                    <input type="tel" name="resContent" lay-verify="required" autocomplete="off" lay-verType="tips"
-                           class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">API方法名<b>*</b></label>
-                <div class="layui-input-block">
-                    <input type="text" name="remark" lay-verify="required" autocomplete="off" lay-verType="tips"
-                           class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">父资源编号</label>
-                <div class="layui-input-block">
-                    <input type="text" name="resParent" readonly class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">父资源名称</label>
-                <div class="layui-input-block">
-                    <input type="text" name="resParentName" readonly class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">所属系统</label>
-                <div class="layui-input-block">
-                    <input type="text" name="appName" readonly class="layui-input layui-input-sm">
-                    <input type="hidden" name="app">
-                </div>
-            </div>
-            <button class="layui-btn hide" lay-submit="" lay-filter="resource_api_add_data_form"></button>
-        </form>
-    </div>
-    <!--新增模块表单-->
-    <div id="resource_module_add_data_div" class="hide">
-        <form method="post" class="layui-form" lay-filter="resource_module_add_data_form">
-            <div class="layui-form-item">
-                <label class="layui-form-label">模块编号<b>*</b></label>
-                <div class="layui-input-block">
-                    <input type="text" name="resCode" lay-verify="required" autocomplete="off" lay-verType="tips"
-                           class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">模块名称<b>*</b></label>
-                <div class="layui-input-block">
-                    <input type="text" name="resNameCn" lay-verify="required" autocomplete="off" lay-verType="tips"
-                           class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">模块链接</label>
-                <div class="layui-input-block">
-                    <input type="tel" name="resContent" autocomplete="off" class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">菜单图标</label>
-                <div class="layui-input-block">
-                    <input type="tel" name="fontIcon" autocomplete="off" class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">模块顺序<b>*</b></label>
-                <div class="layui-input-block">
-                    <input type="text" name="sequence" lay-verify="required|number" autocomplete="off"
-                           lay-verType="tips"
-                           class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">所属模块编号</label>
-                <div class="layui-input-block">
-                    <input type="text" name="resParent" readonly class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">所属模块名称</label>
-                <div class="layui-input-block">
-                    <input type="text" name="resParentName" readonly class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">所属系统</label>
-                <div class="layui-input-block">
-                    <input type="text" name="appName" readonly class="layui-input layui-input-sm">
-                    <input type="hidden" name="app">
-                </div>
-            </div>
-            <button class="layui-btn hide" lay-submit="" lay-filter="resource_module_add_data_form"></button>
-        </form>
-    </div>
-    <!--新增自定义权限表单-->
-    <div id="resource_custom_add_data_div" class="hide">
-        <form method="post" class="layui-form" lay-filter="resource_custom_add_data_form">
-            <div class="layui-form-item">
-                <label class="layui-form-label">自定义权限编号<b>*</b></label>
-                <div class="layui-input-block">
-                    <input type="text" name="resCode" lay-verify="required" autocomplete="off" lay-verType="tips"
-                           class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">自定义权限名称<b>*</b></label>
-                <div class="layui-input-block">
-                    <input type="text" name="resNameCn" lay-verify="required" autocomplete="off" lay-verType="tips"
-                           class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">权限备注</label>
-                <div class="layui-input-block">
-                    <input type="tel" name="remark" autocomplete="off" class="layui-input layui-input-sm">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">所属系统</label>
-                <div class="layui-input-block">
-                    <input type="text" name="appName" readonly class="layui-input layui-input-sm">
-                    <input type="hidden" name="app">
-                </div>
-            </div>
-            <button class="layui-btn hide" lay-submit="" lay-filter="resource_custom_add_data_form"></button>
-        </form>
-    </div>
-
-    <div id="resource_api_data_div" class="hide">
-        <div class="row-lg" style="height:35px;">
-            <div class="btn-group layui-form">
-                <div class="layui-form-item">
-                    <div class="layui-inline">
-                        <label class="layui-form-label" style="width: 80px;">父资源编号</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="menuCode" readonly class="layui-input layui-input-sm"
-                                   style="background: lightgray">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label" style="width: 80px;">父资源名称</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="menuName" readonly class="layui-input layui-input-sm"
-                                   style="background: lightgray">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="pull-right col-xs-4">
-                <div class="input-group input-group-sm row">
-                    <input type="text" class="form-control"
-                           id="resource_api_dialog_search_keyword"
-                           placeholder="请输入API编号/API名称/API方法名"/>
+    <div class="col-xs-9">
+        <div class="row row-lg" id="servcieauth_service_table_tools">
+            <div class="toolbarBtn btn-group">
+					<button class="layui-btn layui-btn-sm" title="授权微服务" data-type="add"  >授权微服务</button>
+			</div>
+            <div class="pull-right col-xs-4 row">
+                <div class="input-group input-group-sm">
+                    <input type="text" class="form-control" maxlength="60" id="servcieauth_service_search_keyword"  placeholder="请输入微服务名称"/>
                     <div class="input-group-btn">
-                        <button type="button" class="layui-btn layui-btn-sm" id="resource_dalog_api_search"
-                                data-type="search">
+                        <button type="button" class="layui-btn layui-btn-sm" data-type="search">
                             <i class="fa fa-search"></i>
                         </button>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row-lg">
-            <table id="resource_api_dalog_datatable" lay-filter="resource_api_dalog_datatable">
-            </table>
+        <div class="row row-lg">
+            <table id="servcieauth_service_datatable" lay-filter="filter_servcieauth_service_datatable"> </table>
         </div>
-    </div>
-    <!-- 导入数据分析  -->
-     <div id="import_resource_json_data_div" class="hide">
-	     <div class="layui-form"  >
-	        <div class="layui-form-item">
-	            <label class="layui-form-label">数据来源<b>*</b></label>
-	            <div class="layui-input-block">
-	                <textarea placeholder="请输入分析数据源"   id="txtJsonDataSource"  style="height: 280px;" class="layui-textarea"></textarea>
-	            </div>
-	        </div>
-	        <div class="layui-form-item">
-	            <div class="layui-fluid" style="width: 100px">
-	                <button class="layui-btn pull-center" id="analysis_res_data" style="width:100px;" >分析</button>
-	            </div>
-	            
-	        </div>
-	    </div>
-		<div class="row-lg">
-			<form method="post" class="layui-form" lay-filter="changePwd_filter_modify_form">
-			   <input type="hidden" id="analysitResultCode" />
-				<div class="layui-form-item">
-					<label class="layui-form-label">生成脚本</label>
-					<div class="layui-input-block">
-						<textarea  readonly id="txtAnalysitResult"  style="height: 280px;"  class="layui-textarea"></textarea>
+		<div class="row row-lg">
+				<div class="layui-field-box">
+					<div class="row row-lg" id="servcieauth_api_table_tools">
+					    <div class="toolbarBtn btn-group"  >
+                             <button class="layui-btn layui-btn-sm" title="授权api" data-type="loadRoleList"  > 授权api </button>
+                        </div>
+						<div class="pull-right col-xs-4 row">
+							<div class="input-group input-group-sm">
+								<input type="text" class="form-control" maxlength="60" id="servcieauth_api_search_keyword" placeholder="请输入微服务API" />
+								<div class="input-group-btn">
+									<button type="button" class="layui-btn layui-btn-sm" data-type="searchservcieauth"> <i class="fa fa-search"></i> </button>
+								</div>
+							</div>
+						</div>
 					</div>
-				</div>
-				<div class="layui-form-item">
-					<label class="layui-form-label">回滚脚本</label>
-					<div class="layui-input-block">
-					    <textarea  readonly id="txtAnalysitResultBack"  style="height: 280px;"  class="layui-textarea"></textarea>
+					<div class="row row-lg">
+					    <table id="servcieauth_api_datatable" lay-filter="filter_servcieauth_api_datatable"> </table>
 					</div>
+					  <script type="text/html" id="servcieauth_statusTpl">
+                      {{#  if(d.status == '0'){ }}
+                                                                    启用
+                      {{#  } else { }}
+                                                                   禁用
+                      {{#  } }}
+					</script>
+					<!-- {{#  if(d.delFlag == '0'){ }}
+                           <a class="layui-btn layui-btn-xs" lay-event="startOrStop">禁用</a>
+                      {{#  } else { }}
+                           <a class="layui-btn layui-btn-xs" lay-event="startOrStop">启用</a>
+                      {{#  } }} -->
+					<script type="text/html" id="servcieauth_role_datatable_bar">
+                        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                   </script>
+                   <script type="text/html" id="createTimeTpl">
+                       {{new Date( d.createdDatetime ).Format('yyyy-MM-dd HH:mm:ss')}} 
+	               </script>
 				</div>
-			</form>
 		</div>
 	</div>
-	<!-- 导入数据分析  -->
-     <div id="import_resource_choice_item_div" class="hide">
-	     <div class="layui-form"  >
-	        <div class="layui-form-item">
-	            <label class="layui-form-label">升级资源:</label>
-	            <div class="layui-input-block">
-	                <input type="checkbox" name="ck_resource" value="resource" title="资源" />
-	                <input type="checkbox" name="ck_role" value="role" title="角色" />
-	                <input type="checkbox" name="ck_role_resource" value="role_resource" title="角色资源" />
-	            </div>
-	        </div>
-	    </div>
-	</div>
-    <script type="text/html" id="resource_menu_font_icon_laytpl">
-        <i class="fa {{d.fontIcon}}" aria-hidden="true"></i>
-    </script>
-    <script type="text/html" id="resource_menu_restype_laytpl">
-       {{#  if(d.resType == 'view'){ }}
-            菜单
-            {{#  } else if(d.resType == 'group') { }}
-            菜单组
-            {{#  } }}
-    </script>
-    
-    <script src="/js/service/serviceauth.js?v=1.2"></script>
+    <script src="/js/service/serviceauth.js"></script>
 </div>

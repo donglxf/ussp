@@ -1,17 +1,20 @@
 package com.ht.ussp.uc.app.resource;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInBmOrg;
@@ -30,6 +33,8 @@ import com.ht.ussp.uc.app.service.SynDataService;
 import com.ht.ussp.uc.app.vo.BmUserVo;
 import com.ht.ussp.uc.app.vo.PageVo;
 import com.ht.ussp.uc.app.vo.UserContrastVo;
+import com.ht.ussp.uc.app.vo.UserMessageVo;
+import com.ht.ussp.util.EncryptUtil;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
@@ -259,4 +264,18 @@ public class SynDataResource {
     	return Result.buildSuccess();
     }
 
+    @ApiOperation(value = "添加信贷用户信息")
+    @PostMapping(value = "/addBmUserInfo")
+    public Result addBmUserInfo(@RequestBody HtBoaInBmUser htBoaInBmUser, @RequestHeader("userId") String loginUserId) {
+        if (htBoaInBmUser != null) {
+        	if(StringUtils.isNotEmpty(htBoaInBmUser.getUserId())) {
+        		List<HtBoaInBmUser> listHtBoaInBmUser  = htBoaInBmUserService.getHtBoaInBmUserByUserId(htBoaInBmUser.getUserId());
+        		if(listHtBoaInBmUser!=null && !listHtBoaInBmUser.isEmpty()) {
+        			htBoaInBmUser = listHtBoaInBmUser.get(0);
+        		}
+            	return Result.buildSuccess(htBoaInBmUserService.saveHtBoaInBmUser(htBoaInBmUser));
+        	}
+        }
+        return Result.buildFail();
+    }
 }
