@@ -39,6 +39,7 @@ import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.service.HtBoaInAppService;
 import com.ht.ussp.uc.app.vo.PageVo;
 import com.ht.ussp.util.LogicUtil;
+import com.taobao.api.internal.util.StringUtils;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -288,11 +289,12 @@ public class AppResource {
 	@ApiOperation(value = "判断是否为外部系统")
 	public Boolean isOS(@RequestParam("app") String app) {
 		List<HtBoaInApp> HtBoaInApp = htBoaInAppService.findByAppCode(app);
-		if (HtBoaInApp.size() > 1) {
-			log.info("系统编码不唯一");
-			return false;
-		}
- 		if (LogicUtil.isNotNullAndEmpty(HtBoaInApp) && HtBoaInApp.get(0).getIsOS() == 0) {
+		
+ 		if (LogicUtil.isNotNullAndEmpty(HtBoaInApp) &&HtBoaInApp.get(0).getIsOS() == 0) {
+ 			if (HtBoaInApp.size() > 1) {
+ 				log.info("系统编码不唯一");
+ 				return false;
+ 			}
 			return true;
 
 		} else {
