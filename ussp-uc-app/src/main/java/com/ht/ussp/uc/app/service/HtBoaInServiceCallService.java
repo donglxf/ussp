@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.criteria.Predicate;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -14,9 +12,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.druid.util.StringUtils;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInServiceCall;
@@ -34,6 +32,15 @@ public class HtBoaInServiceCallService {
         return this.htBoaInServiceCallRepository.getOne(id);
     }
 
+    public HtBoaInServiceCall findByMainServiceCodeAndCallService(String mainServiceCode,String callServiceCode) {
+    	List<HtBoaInServiceCall>  listHtBoaInServiceCall = this.htBoaInServiceCallRepository.findByMainServiceCodeAndCallServiceCode(mainServiceCode,callServiceCode);
+    	if(listHtBoaInServiceCall!=null&&!listHtBoaInServiceCall.isEmpty()) {
+    		return listHtBoaInServiceCall.get(0);
+    	}else {
+    		return null;
+    	}
+    }
+    
     public List<HtBoaInServiceCall> findAll(HtBoaInServiceCall u) {
         ExampleMatcher matcher = ExampleMatcher.matching();
         Example<HtBoaInServiceCall> ex = Example.of(u, matcher);
@@ -56,36 +63,7 @@ public class HtBoaInServiceCallService {
         this.htBoaInServiceCallRepository.delete(id);
     }
 
-	public PageResult<List<HtBoaInServiceCall>> findAllByPage(PageRequest pageRequest, Map<String, String> query) {
-		PageResult result = new PageResult();
-		Page<HtBoaInServiceCall> pageData = null;
-		if(query!=null) {
-			Specification<HtBoaInServiceCall> specification = (root, query1, cb) -> {
-				Predicate p1 = cb.like(root.get("mainServiceCode").as(String.class), "%" + query.get("serviceCode") + "%");
-				Predicate p2 = cb.like(root.get("callService").as(String.class), "%" + query.get("serviceCode") + "%");
-				Predicate p3 = cb.equal(root.get("app").as(String.class), query.get("app"));
-				query1.where(cb.and(cb.or(p1, p2), p3));
-				return query1.getRestriction();
-			};
-			  pageData = htBoaInServiceCallRepository.findAll(specification, pageRequest);
-		}else {
-			Specification<HtBoaInServiceCall> specification = (root, query1, cb) -> {
-				Predicate p1 = cb.like(root.get("mainServiceCode").as(String.class), "%%");
-				Predicate p2 = cb.like(root.get("callService").as(String.class), "%%");
-				query1.where(cb.or(p1, p2));
-				return query1.getRestriction();
-			};
-			  pageData = htBoaInServiceCallRepository.findAll(specification, pageRequest);
-		}
-		
-		if (pageData != null) {
-			result.count(pageData.getTotalElements()).data(pageData.getContent());
-		}
-		result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
-		return result;
-	}
-	
-	public PageResult findAllByPage2(PageConf pageConf, Map<String, String> query) {
+	public PageResult findAllByPage(PageConf pageConf, Map<String, String> query) {
 		PageResult result = new PageResult();
 		Sort sort = null;
 		Pageable pageable = null;
@@ -96,17 +74,24 @@ public class HtBoaInServiceCallService {
 			}
 			sort = new Sort(orders);
 		}
-		if (null != pageConf.getPage() && null != pageConf.getSize())
+		if (null != pageConf.getPage() && null != pageConf.getSize()) {
 			pageable = new PageRequest(pageConf.getPage(), pageConf.getSize(), sort);
-
-		String search = pageConf.getSearch();
+		}
+		String serviceCode = "";
+		String keyword = "";
+		if(query!=null) {
+			serviceCode = query.get("serviceCode");
+			keyword = query.get("keyWord");
+		}
+		if(StringUtils.isEmpty(keyword)) {
+			keyword = "%%";
+		}else {
+			keyword = "%"+keyword+"%";
+		}
+		
 		Page<BoaInServiceInfo> pageData = null;
-		if (null == search || 0 == search.trim().length())
-			search = "%%";
-		else
-			search = "%" + search + "%";
 		if (null != pageable) {
-			pageData = this.htBoaInServiceCallRepository.listBoaInServiceInfoByPageWeb(pageable, search);
+			pageData = this.htBoaInServiceCallRepository.listBoaInServiceInfoByPageWeb(pageable, serviceCode,keyword);
 		}
 		if (pageData != null) {
 			result.count(pageData.getTotalElements()).data(pageData.getContent());

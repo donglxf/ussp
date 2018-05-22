@@ -22,15 +22,15 @@ import lombok.NoArgsConstructor;
 public class AppAndServiceVo {
     
 	private String serviceCode;
-    private String mainServiceName;
-    private String mainService;
+    private String applicationServiceName;
+    private String applicationService;
     private String parentCode;
     private String app;
     
-	public AppAndServiceVo(Object serviceCode, Object mainServiceName, Object mainService, Object parentApp, Object app) {
+	public AppAndServiceVo(Object serviceCode, Object applicationServiceName, Object applicationService, Object parentApp, Object app) {
 		this.serviceCode = serviceCode == null ? null : serviceCode.toString();
-		this.mainServiceName = mainServiceName == null ? null : mainServiceName.toString();
-		this.mainService = mainService == null ? null : mainService.toString();
+		this.applicationServiceName = applicationServiceName == null ? null : applicationServiceName.toString();
+		this.applicationService = applicationService == null ? null : applicationService.toString();
 		this.parentCode = parentApp == null ? null : parentApp.toString();
 		this.app = app == null ? null : app.toString();
 	}

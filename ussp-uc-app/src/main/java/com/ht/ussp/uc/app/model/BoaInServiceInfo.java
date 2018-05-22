@@ -17,11 +17,14 @@ public class BoaInServiceInfo {
 	@ApiModelProperty(value = "id", dataType = "long")
 	long id;
 
-	@ApiModelProperty(value = "主微服务", dataType = "string")
-	String mainServiceCode;
+	@ApiModelProperty(value = "微服务code", dataType = "string")
+	String serviceCode;
+	
+	@ApiModelProperty(value = "微服务", dataType = "string")
+	String applicationService;
 
-	@ApiModelProperty(value = "主微服务名称", dataType = "string")
-	String mainServiceName;
+	@ApiModelProperty(value = "微服务名称", dataType = "string")
+	String applicationServiceName;
 
 	@ApiModelProperty(value = "所属系统", dataType = "string")
 	String app;
@@ -46,7 +49,16 @@ public class BoaInServiceInfo {
 	String authServiceCode;
 
 	@ApiModelProperty(value = "可调用的微服务code", dataType = "string")
-	String callService;
+	String callServiceCode;
+	
+	@ApiModelProperty(value = "可调用的微服务微服务", dataType = "string")
+	String callApplicationService;
+
+	@ApiModelProperty(value = "可调用的微服务名称", dataType = "string")
+	String callApplicationServiceName;
+	
+	@ApiModelProperty(value = "可调用的微服务所属系统", dataType = "string")
+	String callApp;
 
 	@ApiModelProperty(value = "可调用的微服务api", dataType = "string")
 	String apiContent;
@@ -55,10 +67,11 @@ public class BoaInServiceInfo {
 	String apiDesc;
 
 	// 微服务授权信息
-	public BoaInServiceInfo(long id,   String app, String mainServiceCode, String mainServiceName, String authServiceCode,String callService,
-			 String status, String createOperator, Date createdDatetime, String updateOperator, Date updateDatetime) {
+	public BoaInServiceInfo(long id, String app, String serviceCode, String applicationService, String applicationServiceName, String authServiceCode,String callServiceCode,String callApplicationService,String callApplicationServiceName,
+			 String status, String createOperator, Date createdDatetime, String updateOperator, Date updateDatetime,String callApp) {
 		this.id = id;
-		this.mainServiceName = mainServiceName;
+		this.serviceCode = serviceCode;
+		this.applicationService = applicationService;
 		this.app = app;
 		this.status = status;
 		this.createOperator = createOperator;
@@ -66,15 +79,19 @@ public class BoaInServiceInfo {
 		this.updateOperator = updateOperator;
 		this.updateDatetime = updateDatetime;
 		this.authServiceCode = authServiceCode;
-		this.callService = callService;
-		this.mainServiceCode = mainServiceCode;
+		this.callServiceCode = callServiceCode;
+		this.applicationServiceName = applicationServiceName;
+		this.callApplicationService = callApplicationService;
+		this.callApplicationServiceName = callApplicationServiceName;
+		this.callApp = callApp;
 	}
 
 	// 微服务API授权信息
-	public BoaInServiceInfo(long id,  String app, String mainServiceCode, String mainServiceName, String authServiceCode,String callService,  
+	public BoaInServiceInfo(long id,  String app, String serviceCode, String applicationService, String applicationServiceName, String authServiceCode,String callService, String callApplicationService,String callApplicationServiceName, 
 			String status, String createOperator, Date createdDatetime, String updateOperator, Date updateDatetime,  String apiContent, String apiDesc) {
 		this.id = id;
-		this.mainServiceName = mainServiceName;
+		this.serviceCode = serviceCode;
+		this.applicationService = applicationService;
 		this.app = app;
 		this.status = status;
 		this.createOperator = createOperator;
@@ -82,9 +99,11 @@ public class BoaInServiceInfo {
 		this.updateOperator = updateOperator;
 		this.updateDatetime = updateDatetime;
 		this.authServiceCode = authServiceCode;
-		this.mainServiceCode = mainServiceCode;
+		this.applicationServiceName = applicationServiceName;
 		this.apiContent = apiContent;
 		this.apiDesc = apiDesc;
+		this.callApplicationService = callApplicationService;
+		this.callApplicationServiceName = callApplicationServiceName;
 	}
 	
 }

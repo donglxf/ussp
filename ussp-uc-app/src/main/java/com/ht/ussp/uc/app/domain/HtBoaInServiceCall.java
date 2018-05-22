@@ -34,8 +34,8 @@ public class HtBoaInServiceCall implements Serializable {
 	@Column(name = "main_service_code")
 	private String mainServiceCode;
 	
-	@Column(name = "call_service")
-	private String callService;
+	@Column(name = "call_service_code")
+	private String callServiceCode;
 	
 	//状态（0开启所有api  1开启指定api   2停止授权所有api）
 	@Column(name = "status")

@@ -12,7 +12,7 @@ public interface HtBoaInServiceRepository  extends JpaSpecificationExecutor<HtBo
 
 	 @Query(value = "SELECT * FROM ( " +
 	            "SELECT " +
-	            "service_code,main_service_name,main_service, app parentapp,app " +
+	            "service_code,application_service_name,application_service, app parentapp,app " +
 	            "FROM ht_boa_in_service " +
 	            "WHERE STATUS='0' " +
 	            "UNION ALL " +
@@ -21,7 +21,7 @@ public interface HtBoaInServiceRepository  extends JpaSpecificationExecutor<HtBo
 	            "FROM HT_BOA_IN_APP " +
 	            "WHERE STATUS='0' " +
 	            "AND DEL_FLAG='0' " +
-	            ") A ORDER BY main_service_name ", nativeQuery = true)
+	            ") A ORDER BY application_service_name ", nativeQuery = true)
 	List<Object[]> queryAppAndServiceTree();
 
 	

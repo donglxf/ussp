@@ -120,6 +120,7 @@ public class AppResource {
 			u = htBoaInAppService.update(u);
 		} else {
 			u.setCreatedDatetime(new Date());
+			u.setIsOS(boaInAppInfo.getIsOS());
 			u.setStatus("0");
 			u.setCreateOperator(userId);
 			u = htBoaInAppService.add(u);
@@ -127,7 +128,6 @@ public class AppResource {
 		el = System.currentTimeMillis();
 		log.debug(logEnd, "boaInAppInfo: " + boaInAppInfo, msg, el, el - sl);
 		return Result.buildSuccess();
-		// return new ResponseModal(200, msg, u);
 	}
 
 	@SuppressWarnings({ "unused", "rawtypes" })

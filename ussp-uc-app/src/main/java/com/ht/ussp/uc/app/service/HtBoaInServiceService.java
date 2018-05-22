@@ -51,31 +51,39 @@ public class HtBoaInServiceService {
     }
 
  
-	public PageResult<List<HtBoaInService>> getUserListByPage(PageRequest pageRequest, Map<String, String> query,String keyWord) {
+	public PageResult<List<HtBoaInService>> getUserListByPage(PageRequest pageRequest, Map<String, String> query) {
 		PageResult result = new PageResult();
 		Page<HtBoaInService> pageData = null;
 ////      Join<HtBoaInUser, HtBoaInLogin> join = root.join("htBoaInLogin", JoinType.LEFT);
 ////      Predicate p5 = cb.equal(join.get("userId").as(String.class), root.get("userId").as(String.class));
 //      //把Predicate应用到CriteriaQuery中去,因为还可以给CriteriaQuery添加其他的功能，比如排序、分组啥的
 //      query1.where(cb.and(cb.or(p1, p2, p3), p4));
-		  
 		if(query!=null) {
-			Specification<HtBoaInService> specification = (root, query1, cb) -> {
-				Predicate p1 = cb.like(root.get("mainServiceName").as(String.class), "%" + keyWord + "%");
-				Predicate p2 = cb.like(root.get("mainService").as(String.class), "%" + keyWord + "%");
-				Predicate p3 = cb.equal(root.get("app").as(String.class), query.get("app"));
-				query1.where(cb.and(cb.or(p1, p2), p3));
-				return query1.getRestriction();
-			};
+			String keyWord=query.get("keyWord")==null?"":query.get("keyWord");
+			String app=query.get("app");
+			Specification<HtBoaInService> specification = null;
+			if(StringUtils.isEmpty(app)) {
+				specification = (root, query1, cb) -> {
+					Predicate p1 = cb.like(root.get("applicationServiceName").as(String.class), "%" + keyWord + "%");
+					Predicate p2 = cb.like(root.get("applicationService").as(String.class), "%" + keyWord + "%");
+					Predicate p3 = cb.like(root.get("app").as(String.class), "%" + keyWord + "%");
+					query1.where(cb.or(p1, p2,p3));
+					//query1.orderBy(cb.desc(root.get("app").as(String.class)));
+					return query1.getRestriction();
+				};
+			}else {
+				specification = (root, query1, cb) -> {
+					Predicate p1 = cb.like(root.get("applicationServiceName").as(String.class), "%" + keyWord + "%");
+					Predicate p2 = cb.like(root.get("applicationService").as(String.class), "%" + keyWord + "%");
+					Predicate p3 = cb.equal(root.get("app").as(String.class), query.get("app"));
+					query1.where(cb.and(cb.or(p1, p2), p3));
+					//query1.orderBy(cb.desc(root.get("app").as(String.class)));
+					return query1.getRestriction();
+				};
+			}
 			  pageData = htBoaInServiceRepository.findAll(specification, pageRequest);
 		}else {
-			Specification<HtBoaInService> specification = (root, query1, cb) -> {
-				Predicate p1 = cb.like(root.get("mainServiceName").as(String.class), "%" + keyWord + "%");
-				Predicate p2 = cb.like(root.get("mainService").as(String.class), "%" + keyWord + "%");
-				query1.where(cb.or(p1, p2));
-				return query1.getRestriction();
-			};
-			  pageData = htBoaInServiceRepository.findAll(specification, pageRequest);
+			  pageData = htBoaInServiceRepository.findAll(pageRequest);
 		}
 		
 		if (pageData != null) {

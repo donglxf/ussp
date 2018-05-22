@@ -21,7 +21,7 @@
     <div class="col-xs-9">
         <div class="row row-lg" id="servcieauth_service_table_tools">
             <div class="toolbarBtn btn-group">
-					<button class="layui-btn layui-btn-sm" title="授权微服务" data-type="add"  >授权微服务</button>
+					<button class="layui-btn layui-btn-sm" title="授权微服务" data-type="addService"  >授权微服务</button>
 			</div>
             <div class="pull-right col-xs-4 row">
                 <div class="input-group input-group-sm">
@@ -41,7 +41,7 @@
 				<div class="layui-field-box">
 					<div class="row row-lg" id="servcieauth_api_table_tools">
 					    <div class="toolbarBtn btn-group"  >
-                             <button class="layui-btn layui-btn-sm" title="授权api" data-type="loadRoleList"  > 授权api </button>
+                             <button class="layui-btn layui-btn-sm" title="授权api" data-type="addServiceApi"  > 授权api </button>
                         </div>
 						<div class="pull-right col-xs-4 row">
 							<div class="input-group input-group-sm">
@@ -55,20 +55,45 @@
 					<div class="row row-lg">
 					    <table id="servcieauth_api_datatable" lay-filter="filter_servcieauth_api_datatable"> </table>
 					</div>
-					  <script type="text/html" id="servcieauth_statusTpl">
+					  <script type="text/html" id="servcieauth_service_statusTpl">
                       {{#  if(d.status == '0'){ }}
-                                                                    启用
+                                                                    开放所有api
+                      {{#  } else if(d.status == '1'){ }}
+                                                                      开放指定api
                       {{#  } else { }}
-                                                                   禁用
+                                                                    停止授权
                       {{#  } }}
+
 					</script>
-					<!-- {{#  if(d.delFlag == '0'){ }}
-                           <a class="layui-btn layui-btn-xs" lay-event="startOrStop">禁用</a>
+					<script type="text/html" id="servcieauth_api_statusTpl">
+                      {{#  if(d.status == '0'){ }}
+                                                                    正常
+                      {{#  } else if(d.status == '1') { }}
+                                                                   禁用
+                      {{#  } else{  }}
+                                                                      删除
+                      {{#  }   }}
+					</script>
+					<script type="text/html" id="servcieauth_service_datatable_bar">
+					  {{#  if(d.status == '0'){ }}
+                       <a class="layui-btn  layui-btn-xs" lay-event="startServiceApi">启用指定API</a>
+                       <a class="layui-btn  layui-btn-xs" lay-event="stopService">禁用</a>
+                      {{#  } else if(d.status == '1'){ }}
+                        <a class="layui-btn  layui-btn-xs" lay-event="startService">启用</a>
+                        <a class="layui-btn  layui-btn-xs" lay-event="stopService">禁用</a>
                       {{#  } else { }}
-                           <a class="layui-btn layui-btn-xs" lay-event="startOrStop">启用</a>
-                      {{#  } }} -->
-					<script type="text/html" id="servcieauth_role_datatable_bar">
-                        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                         <a class="layui-btn  layui-btn-xs" lay-event="startService">启用</a>
+                         <a class="layui-btn  layui-btn-xs" lay-event="startServiceApi">启用指定API</a>
+                      {{#  } }}
+                       
+                   </script>
+                   <script type="text/html" id="servcieauth_api_datatable_bar">
+                     {{#  if(d.status == '0'){ }}
+                       <a class="layui-btn  layui-btn-xs" lay-event="stopServiceApi">禁用</a>
+                      {{#  } else if(d.status == '1') { }}
+                       <a class="layui-btn  layui-btn-xs" lay-event="startServiceApi">启用</a>
+                      {{#  } }}
+                        <a class="layui-btn  layui-btn-xs" lay-event="delServiceApi">删除</a>
                    </script>
                    <script type="text/html" id="createTimeTpl">
                        {{new Date( d.createdDatetime ).Format('yyyy-MM-dd HH:mm:ss')}} 
@@ -76,5 +101,65 @@
 				</div>
 		</div>
 	</div>
+	<!-- 授权微服务 -->
+	 <div id="serviceauth_service_data_div" class="hide">
+        <div class="row-lg" style="height:35px;">
+            <div class="btn-group layui-form">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label" style="width: 80px;">微服务</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="applicationService" readonly class="layui-input layui-input-sm"  style="background: lightgray">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label" style="width: 80px;">微服务名称</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="applicationServiceName" readonly class="layui-input layui-input-sm" style="background: lightgray">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pull-right col-xs-4">
+                <div class="input-group input-group-sm row">
+                    <input type="text" class="form-control" id="serviceauth_service_dialog_search_keyword" placeholder="请输入系统编号/微服务名称"/>
+                    <div class="input-group-btn">
+                        <button type="button" class="layui-btn layui-btn-sm"  id="searchMainService">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row-lg">
+            <table id="serviceauth_service_dalog_datatable" lay-filter="serviceauth_service_dalog_datatable">
+            </table>
+        </div>
+    </div>
+    <!--新增指定API-->
+    <div id="serviceauth_api_add_data_div" class="hide">
+        <form method="post" class="layui-form" style="margin-top: 20px" lay-filter="filter_add_serviceauth_api_form">
+            <div class="layui-form-item" >
+                <label class="layui-form-label">api接口<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="apiContent" lay-verify="required" maxlength="60" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">描述<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="apiDesc" lay-verify="required" maxlength="60" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">所属微服务<b>*</b></label>
+				<div class="layui-input-block">
+					<input type="text"  id="callApplicationService" readonly autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="authServiceCode" id="authServiceCode" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+				</div>
+			</div>
+			<button class="layui-btn hide" lay-submit="" lay-filter="filter_add_serviceauth_api_form"></button>
+        </form>
+    </div>
     <script src="/js/service/serviceauth.js"></script>
 </div>

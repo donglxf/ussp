@@ -30,11 +30,11 @@ public class HtBoaInService implements Serializable {
 	@Column(name = "service_code")
 	private String serviceCode;
 	
-	@Column(name = "main_service")
-	private String mainService;
+	@Column(name = "application_service")
+	private String applicationService;
 	
-	@Column(name = "main_service_name")
-	private String mainServiceName;
+	@Column(name = "application_service_name")
+	private String applicationServiceName;
 	
 	@Column(name = "app")
 	private String app;

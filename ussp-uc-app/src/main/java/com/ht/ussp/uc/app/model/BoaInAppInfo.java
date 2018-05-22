@@ -47,11 +47,13 @@ public class BoaInAppInfo {
     @ApiModelProperty(value = "是否管理员", dataType = "string")
     private String controller;
 
+    @ApiModelProperty(value = "系统类别", dataType = "string")//0外部系统 1内部系统
+    private Integer isOS;
     
     public BoaInAppInfo(String app, String name, String nameCn,
             String status, String createOperator,
             Date createdDatetime, String updateOperator,
-            Date lastModifiedDatetime,int delFlag,Long id) {
+            Date lastModifiedDatetime,Integer delFlag,Long id,Integer isOS) {
         this.app = app;
         this.name = name;
         this.nameCn = nameCn;
@@ -62,6 +64,7 @@ public class BoaInAppInfo {
         this.lastModifiedDatetime = lastModifiedDatetime;
         this.delFlag = delFlag;
         this.id = id;
+        this.isOS = isOS;
     }
     
     public BoaInAppInfo(String app, String name, String nameCn,

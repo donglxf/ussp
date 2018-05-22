@@ -1,5 +1,6 @@
 package com.ht.ussp.uc.app.resource;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -9,6 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -60,7 +64,7 @@ public class ServiceResource {
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.debug(logStart, "pageConf: " + pageConf, sl);
-        result =  htBoaInServiceService.getUserListByPage(new PageRequest(page.getPage(), page.getLimit()),page.getQuery(),page.getKeyWord());
+        result =  htBoaInServiceService.getUserListByPage(new PageRequest(page.getPage(), page.getLimit(),new Sort(new Order("app"))),page.getQuery());
         el = System.currentTimeMillis();
         log.debug(logEnd, "pageConf: " + result, msg, el, el - sl);
         result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
@@ -87,8 +91,8 @@ public class ServiceResource {
     		u = new HtBoaInService();
     	}
         u.setApp(htBoaInService.getApp());
-        u.setMainService(htBoaInService.getMainService());
-        u.setMainServiceName(htBoaInService.getMainServiceName());
+        u.setApplicationService(htBoaInService.getApplicationService());
+        u.setApplicationServiceName(htBoaInService.getApplicationServiceName());
         u.setServiceCode(UUID.randomUUID().toString().replace("-", ""));
         u.setStatus("0");
     	u.setCreatedDatetime(new Date());

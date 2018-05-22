@@ -73,7 +73,7 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth'  ], functio
         },
         search: function () {
             //执行重载
-        	refreshServieDataTable($("#role_search_keyword").val());
+        	refreshServieDataTable($("#services_search_keyword").val());
         },
         
     };
@@ -95,8 +95,8 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth'  ], functio
                     curr: 1 //重新从第 1 页开始
                 }
                 , where: {
-                    keyWord: keyword,
                     query: {
+                    	keyWord: keyword,
                     	app: selectNodes[0]["app"]
                     }
                 }
@@ -108,7 +108,9 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth'  ], functio
                     curr: 1 //重新从第 1 页开始
                 }
                 , where: {
-                    keyWord: keyword,
+                	query: {
+                    	keyWord: keyword,
+                    }
                 }
             });
         }
@@ -171,8 +173,8 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth'  ], functio
         , cols: [[
             {type: 'numbers'}
 //            , {field: 'servcieCode',   title: '编号'}
-            , {field: 'mainService',   title: '微服务'}
-            , {field: 'mainServiceName',   title: '微服务名称'}
+            , {field: 'applicationService',   title: '微服务'}
+            , {field: 'applicationServiceName',   title: '微服务名称'}
             , {field: 'app',    title: '所属系统'}
             , {field: 'status',  templet: '#statusTpl', title: '状态'}
             , {field: 'createOperator',   title: '创建人'}

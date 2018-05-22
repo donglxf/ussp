@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.ReturnCodeEnum;
-import com.ht.ussp.uc.app.domain.HtBoaInService;
 import com.ht.ussp.uc.app.domain.HtBoaInServiceApi;
 import com.ht.ussp.uc.app.repository.HtBoaInServiceApiRepository;
 
@@ -47,26 +46,20 @@ public class HtBoaInServiceApiService {
         this.htBoaInServiceApiRepository.delete(id);
     }
 
-	public PageResult findAllByPage(PageRequest pageRequest, Map<String, String> query, String keyWord) {
+	public PageResult findAllByPage(PageRequest pageRequest, Map<String, String> query) {
 		PageResult result = new PageResult();
 		Page<HtBoaInServiceApi> pageData = null;
 		if(query!=null) {
+			String keyWord = query.get("keyWord")==null?"":query.get("keyWord");
 			Specification<HtBoaInServiceApi> specification = (root, query1, cb) -> {
 				Predicate p1 = cb.like(root.get("apiContent").as(String.class), "%" + keyWord + "%");
-				Predicate p2 = cb.like(root.get("apiContent").as(String.class), "%" + keyWord + "%");
-				Predicate p3 = cb.equal(root.get("apiDesc").as(String.class), query.get("app"));
-				query1.where(cb.and(cb.or(p1, p2), p3));
+				Predicate p2 = cb.equal(root.get("authServiceCode").as(String.class), query.get("authServiceCode"));
+				query1.where(cb.and(p1, p2));
 				return query1.getRestriction();
 			};
-			  pageData = htBoaInServiceApiRepository.findAll(specification, pageRequest);
+			pageData = htBoaInServiceApiRepository.findAll(specification, pageRequest);
 		}else {
-			Specification<HtBoaInServiceApi> specification = (root, query1, cb) -> {
-				Predicate p1 = cb.like(root.get("apiContent").as(String.class), "%" + keyWord + "%");
-				Predicate p2 = cb.like(root.get("apiDesc").as(String.class), "%" + keyWord + "%");
-				query1.where(cb.or(p1, p2));
-				return query1.getRestriction();
-			};
-			  pageData = htBoaInServiceApiRepository.findAll(specification, pageRequest);
+			 // pageData = htBoaInServiceApiRepository.findAll(pageRequest);
 		}
 		
 		if (pageData != null) {

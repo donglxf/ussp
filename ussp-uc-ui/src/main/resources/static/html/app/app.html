@@ -57,6 +57,13 @@
                     <input type="text" name="nameCn" lay-verify="required" maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
             </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">系统类别<b>*</b></label>
+                <div class="layui-input-block">
+                   <input type="radio" name="isOS" value="1" title="内部系统" checked>
+				    <input type="radio" name="isOS" value="0" title="外部系统" >
+                </div>
+            </div>
             <button class="layui-btn hide" lay-submit="" lay-filter="filter_add_app_form"></button>
         </form>
     </div>
@@ -102,6 +109,13 @@
                       启用
       {{#  } else { }}
                      禁用
+      {{#  } }}
+	</script>
+	<script type="text/html" id="isOSTpl">
+      {{#  if(d.isOS == '1'){ }}
+                    内部系统
+      {{#  } else { }}
+                   外部系统
       {{#  } }}
 	</script>
 	<script type="text/html" id="createTimeTpl">
