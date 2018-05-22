@@ -290,17 +290,20 @@ public class AppResource {
 	public Boolean isOS(@RequestParam("app") String app) {
 		List<HtBoaInApp> HtBoaInApp = htBoaInAppService.findByAppCode(app);
 		
- 		if (LogicUtil.isNotNullAndEmpty(HtBoaInApp) &&HtBoaInApp.get(0).getIsOS() == 0) {
- 			if (HtBoaInApp.size() > 1) {
+		if(LogicUtil.isNullOrEmpty(HtBoaInApp)) {
+			return false;
+		}else if(HtBoaInApp.size() > 1){
  				log.info("系统编码不唯一");
  				return false;
- 			}
+			
+		}else if(HtBoaInApp.get(0).getIsOS() == null){
+			return false;
+		}else if(HtBoaInApp.get(0).getIsOS()==0){
 			return true;
-
-		} else {
+		}else {
 			return false;
 		}
-
+		
 	}
 
 }
