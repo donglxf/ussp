@@ -21,11 +21,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.druid.util.StringUtils;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
+import com.ht.ussp.uc.app.domain.HtBoaInResource;
 import com.ht.ussp.uc.app.domain.HtBoaInService;
 import com.ht.ussp.uc.app.domain.HtBoaInServiceApi;
 import com.ht.ussp.uc.app.domain.HtBoaInServiceCall;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
+import com.ht.ussp.uc.app.service.HtBoaInResourceService;
 import com.ht.ussp.uc.app.service.HtBoaInServiceApiService;
 import com.ht.ussp.uc.app.service.HtBoaInServiceCallService;
 import com.ht.ussp.uc.app.service.HtBoaInServiceService;
@@ -45,12 +47,13 @@ public class ServiceAuthResource {
 
     @Autowired
     private HtBoaInServiceService htBoaInServiceService;
-    
     @Autowired
     private HtBoaInServiceCallService htBoaInServiceCallService;
-    
     @Autowired
     private HtBoaInServiceApiService htBoaInServiceApiService;
+    @Autowired
+    private HtBoaInResourceService htBoaInResourceService;
+    
     
 	@ApiOperation(value = "获取微服务结构树")
     @PostMapping("/app/getAppServiceTree")
@@ -296,4 +299,20 @@ public class ServiceAuthResource {
 		return Result.buildFail();
     }
 	
+	@SuppressWarnings({   "rawtypes" })
+	@ApiOperation(value = "获取系统api", notes = "获取系统api")
+    @PostMapping("/getAppApi")
+    public Result getAppApi(String serviceCode) {
+		HtBoaInService htBoaInService = null;
+		List<HtBoaInResource> listAppApi = null;
+		List<HtBoaInService> htBoaInServiceList =htBoaInServiceService.findByServiceCode(serviceCode);
+		if(htBoaInServiceList!=null&&!htBoaInServiceList.isEmpty()) {
+			htBoaInService = htBoaInServiceList.get(0);
+		}
+		if(htBoaInService!=null) {
+			listAppApi = htBoaInResourceService.findByAppAndResType(htBoaInService.getApp(), "api");
+		}
+		
+        return Result.buildSuccess(listAppApi);
+    }
 }

@@ -22,7 +22,6 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                          return false;
                 	 }
                  }
-                 console.log(nodes);
                 layer.close(addDialog);
                 addDialog =  layer.open({
                     type: 1,
@@ -97,6 +96,78 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
             	//执行重载
             	refreshServiceApiTable($("#servcieauth_api_search_keyword").val());
             },
+            chooiceAddServiceApi: function () { //弹出用户新增弹出框
+            	console.log(11);
+           	 var nodes = serviceAuthAppTree.getSelectedNodes();
+	           	if(authServiceCode==""){
+	        		layer.msg("请先选择已授权的微服务！");
+	        		return;
+	        	}
+               layer.close(addDialog);
+               addDialog =  layer.open({
+                   type: 1,
+                   area: ['1200px', '645px'],
+                   shadeClose: true,
+                   title: "选择授权微服务",
+                   content: $("#serviceauth_service_api_data_div").html(),
+                   btn: ['确认', '取消'],
+                   yes: function (index, layero) {
+                       var serviceCheckStatus = table.checkStatus('serviceauth_service_api_dalog_datatable');
+                       $.ajax({
+                           type: "POST",
+                           url: addCalledServiceBatchUrl,
+                           data: JSON.stringify({
+                           	mainServiceCode: nodes[0]["serviceCode"],
+                           	serviceList: serviceCheckStatus.data
+                           }), 
+                           contentType: "application/json; charset=utf-8",
+                           success: function (result) {
+                               layer.close(index);
+                               if (result["returnCode"] == '0000') {
+                               	refreshServiceServiceTable();
+                                   layer.alert("授权微服务成功");
+                               }
+                           },
+                           error: function (result) {
+                               layer.msg("关联API发生异常，请联系管理员。");
+                               console.error(result);
+                           }
+                       })
+                   },
+                   btn2: function () {
+                       layer.closeAll('tips');
+                   },
+                   success: function (layero, index) {
+                       $("input[name=applicationService]", layero).val(nodes[0]["applicationService"]);
+                       $("input[name=applicationServiceName]", layero).val(nodes[0]["applicationServiceName"]);
+                       table.render({
+                           id: 'serviceauth_service_api_dalog_datatable'
+                           , elem: $('#serviceauth_service_api_dalog_datatable', layero)
+                           , url: config.basePath + 'resource/api/page/load'
+                           , page: true
+                           , height: "471"
+                           , cols: [[
+                               {type: 'numbers'}
+                               , {type: 'checkbox'}
+                               , {field: 'resContent', width: 300, title: 'API'}
+                               , {field: 'resNameCn', width: 200, title: 'API名称'}
+                               , {field: 'remark', title: '方法名'}
+                           ]]
+                       });
+                       var $keywordInputApi = $("#serviceauth_service_api_dialog_search_keyword", layero);
+                       $('#searchMainServiceApi', layero).on('click', function () {
+                           var keyWord = $keywordInputApi.val();
+                           refreshServiceApiAuthDalogTable($keywordInputApi.val());
+                       });
+                       $keywordInputApi.keydown(function (e) {
+                           if (e.keyCode == 13) {
+                               var keyWord = $keywordInputApi.val();
+                               refreshServiceApiAuthDalogTable($keywordInputApi.val());
+                           }
+                       });
+                   }
+               });
+           },
             addServiceApi:function(){
             	if(authServiceCode==""){
             		layer.msg("请先选择已授权的微服务！");
@@ -225,7 +296,24 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
   	   });
     };
     
-   
+    var refreshServiceApiAuthDalogTable = function (keyword) {
+        if (!keyword) {
+            keyword = null;
+        }
+        table.reload('serviceauth_service_api_dalog_datatable', {
+  		  height: 'full-600',
+  	        page: {
+  	            curr: 1 //重新从第 1 页开始
+  	        }
+  	        , where: {
+  	        	query: {
+            		  keyWord: keyword,
+                 }
+  	        }
+  	   });
+    };
+    
+    
     //渲染组织机构树
     serviceAuthAppTree = $.fn.zTree.init($('#servcieauth_org_ztree_left'), { 
         view: {

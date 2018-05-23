@@ -107,4 +107,8 @@ public class HtBoaInServiceService {
 	        return aaaList;
 	}
 
+	public List<HtBoaInService> findByServiceCode(String serviceCode) {
+		return htBoaInServiceRepository.findByServiceCode(serviceCode);
+	}
+
 }

@@ -41,7 +41,8 @@
 				<div class="layui-field-box">
 					<div class="row row-lg" id="servcieauth_api_table_tools">
 					    <div class="toolbarBtn btn-group"  >
-                             <button class="layui-btn layui-btn-sm" title="添加允许被调用的接口" data-type="addServiceApi"  > 授权api </button>
+					         <button class="layui-btn layui-btn-sm" title="授权api"  data-type="chooiceAddServiceApi" > 选择授权api </button>
+                             <button class="layui-btn layui-btn-sm" title="添加允许被调用的接口" data-type="addServiceApi"  >添加授权api</button>
                         </div>
 						<div class="pull-right col-xs-4 row">
 							<div class="input-group input-group-sm">
@@ -160,6 +161,41 @@
 			</div>
 			<button class="layui-btn hide" lay-submit="" lay-filter="filter_add_serviceauth_api_form"></button>
         </form>
+    </div>
+    <!-- 授权微服务API -->
+	 <div id="serviceauth_service_api_data_div" class="hide">
+        <div class="row-lg" style="height:35px;">
+            <div class="btn-group layui-form">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label" style="width: 80px;">主微服务</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="applicationService" readonly class="layui-input layui-input-sm"  style="background: lightgray">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label" style="width: 80px;">主微服务名称</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="applicationServiceName" readonly class="layui-input layui-input-sm" style="background: lightgray">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pull-right col-xs-4">
+                <div class="input-group input-group-sm row">
+                    <input type="text" class="form-control" id="serviceauth_service_api_dialog_search_keyword" placeholder="请输入api"/>
+                    <div class="input-group-btn">
+                        <button type="button" class="layui-btn layui-btn-sm"  id="searchMainServiceApi">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row-lg">
+            <table id="serviceauth_service_api_dalog_datatable" lay-filter="serviceauth_service_api_dalog_datatable">
+            </table>
+        </div>
     </div>
     <script src="/js/service/serviceauth.js"></script>
 </div>

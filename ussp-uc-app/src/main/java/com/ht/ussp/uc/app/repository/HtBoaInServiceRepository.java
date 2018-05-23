@@ -26,5 +26,7 @@ public interface HtBoaInServiceRepository  extends JpaSpecificationExecutor<HtBo
 
 	List<HtBoaInService> findByApplicationServiceAndAppAndStatus(String applicationService, String app, String status);
 
+	List<HtBoaInService> findByServiceCode(String serviceCode);
+
 	
 }
