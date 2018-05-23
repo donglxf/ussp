@@ -33,6 +33,7 @@ import com.ht.ussp.uc.app.service.HtBoaInServiceCallService;
 import com.ht.ussp.uc.app.service.HtBoaInServiceService;
 import com.ht.ussp.uc.app.vo.AppAndServiceVo;
 import com.ht.ussp.uc.app.vo.PageVo;
+import com.ht.ussp.uc.app.vo.ResourcePageVo;
 import com.ht.ussp.uc.app.vo.ServiceAuthServiceVo;
 
 import io.swagger.annotations.ApiImplicitParam;
@@ -220,6 +221,50 @@ public class ServiceAuthResource {
 		return Result.buildSuccess(htBoaInServiceApi);
 	}
 	
+	@SuppressWarnings({ "unused", "rawtypes" })
+	@ApiOperation(value = "批量新增授权微服务接口")
+	@PostMapping("/addCalledServiceApiBatch")
+	public Result addCalledServiceApiBatch(@RequestBody ServiceAuthServiceVo serviceAuthServiceVo, @RequestHeader("userId") String userId) {
+		long sl = System.currentTimeMillis(), el = 0L;
+		ResponseModal r = null;
+		String msg = "成功";
+		String logHead = "批量新增授权微服务接口 ：addCalledServiceApiBatch param-> {}";
+		String logStart = logHead + " | START:{}";
+		String logEnd = logHead + " {} | END:{}, COST:{}";
+		log.debug(logStart, "addCalledServiceApiBatch: " + serviceAuthServiceVo, sl);
+		List<HtBoaInServiceApi> listHtBoaInServiceApi = new ArrayList<HtBoaInServiceApi>();
+		if(serviceAuthServiceVo!=null) {
+			if(!StringUtils.isEmpty(serviceAuthServiceVo.getAuthServiceCode()) && serviceAuthServiceVo.getRecourceApiList()!=null && !serviceAuthServiceVo.getRecourceApiList().isEmpty()) {
+				for(HtBoaInResource htBoaInResource : serviceAuthServiceVo.getRecourceApiList()) {
+					HtBoaInServiceApi u = null;
+					List<HtBoaInServiceApi> listu = htBoaInServiceApiService.findByAuthServiceCodeAndApiContent(serviceAuthServiceVo.getAuthServiceCode(),htBoaInResource.getResContent());
+					if(listu!=null&&!listu.isEmpty()) {
+						u = listu.get(0);
+					}
+					if (u == null) {
+						 u = new HtBoaInServiceApi();
+							u.setAuthServiceCode(serviceAuthServiceVo.getAuthServiceCode());
+							u.setApiContent(htBoaInResource.getResContent());
+							u.setApiDesc(htBoaInResource.getResNameCn());
+							u.setStatus("0");
+							u.setJapVersion("0");
+							u.setCreatedDatetime(new Date());
+							u.setUpdateDatetime(new Date());
+							u.setUpdateOperator(userId);
+							u.setCreateOperator(userId);
+							listHtBoaInServiceApi.add(u);
+					}
+				}
+			}
+		}
+		if(listHtBoaInServiceApi!=null&&!listHtBoaInServiceApi.isEmpty()) {
+			listHtBoaInServiceApi = htBoaInServiceApiService.addList(listHtBoaInServiceApi);
+		}
+		el = System.currentTimeMillis();
+		log.debug(logEnd, "addCalledServiceApiBatch : " + listHtBoaInServiceApi, msg, el, el - sl);
+		return Result.buildSuccess(listHtBoaInServiceApi);
+	}
+	
 	@SuppressWarnings({   "rawtypes" })
 	@ApiOperation(value = "禁用/启用微服务API", notes = "禁用/启用微服务  0:正常 1：")
     @PostMapping("/stopServiceApi")
@@ -302,17 +347,21 @@ public class ServiceAuthResource {
 	@SuppressWarnings({   "rawtypes" })
 	@ApiOperation(value = "获取系统api", notes = "获取系统api")
     @PostMapping("/getAppApi")
-    public Result getAppApi(String serviceCode) {
+    public PageResult getAppApi(ResourcePageVo resourcePageVo,String serviceCode) {
+		PageResult result = new PageResult(); 
 		HtBoaInService htBoaInService = null;
-		List<HtBoaInResource> listAppApi = null;
 		List<HtBoaInService> htBoaInServiceList =htBoaInServiceService.findByServiceCode(serviceCode);
 		if(htBoaInServiceList!=null&&!htBoaInServiceList.isEmpty()) {
 			htBoaInService = htBoaInServiceList.get(0);
 		}
 		if(htBoaInService!=null) {
-			listAppApi = htBoaInResourceService.findByAppAndResType(htBoaInService.getApp(), "api");
+			resourcePageVo.setApp(htBoaInService.getApp());
+			if(resourcePageVo.getQuery()!=null) {
+				resourcePageVo.setKeyWord(resourcePageVo.getQuery().get("keyWord"));
+			}
+			result = htBoaInResourceService.loadApiByPage(resourcePageVo);
 		}
-		
-        return Result.buildSuccess(listAppApi);
+		return result;
     }
+	
 }

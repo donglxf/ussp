@@ -77,7 +77,7 @@ public class SynDataResource {
 	 * 矫正历史错误数据
 	 * @return
 	 */
-	@ApiOperation("02-矫正历史错误数据")
+	@ApiOperation("矫正历史错误数据")
 	@RequestMapping(value = {"/dealErrorData" }, method = RequestMethod.POST)
 	public Result dealErrorData() { 
         return dingDingService.dealErrorData();

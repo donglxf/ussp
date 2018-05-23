@@ -12,5 +12,7 @@ public interface HtBoaInServiceApiRepository  extends JpaSpecificationExecutor<H
 	List<HtBoaInServiceApi> findByAuthServiceCodeAndApiContentAndStatus(String authServiceCode, String mainApi,
 			String status);
 
+	List<HtBoaInServiceApi> findByAuthServiceCodeAndApiContent(String authServiceCode, String apiContent);
+
 
 }

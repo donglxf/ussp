@@ -39,7 +39,6 @@ import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.service.HtBoaInAppService;
 import com.ht.ussp.uc.app.vo.PageVo;
 import com.ht.ussp.util.LogicUtil;
-import com.taobao.api.internal.util.StringUtils;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;

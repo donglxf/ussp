@@ -37,6 +37,10 @@ public class HtBoaInServiceApiService {
     public HtBoaInServiceApi add(HtBoaInServiceApi u) {
         return this.htBoaInServiceApiRepository.saveAndFlush(u);
     }
+    
+    public List<HtBoaInServiceApi> addList(List<HtBoaInServiceApi> listHtBoaInServiceApi) {
+        return this.htBoaInServiceApiRepository.save(listHtBoaInServiceApi);
+    }
 
     public HtBoaInServiceApi update(HtBoaInServiceApi u) {
         return this.htBoaInServiceApiRepository.save(u);
@@ -71,6 +75,10 @@ public class HtBoaInServiceApiService {
 
 	public List<HtBoaInServiceApi> getApiByAuthServiceCodeAndApiContentAndStatus(String authServiceCode, String mainApi, String status) {
 		return htBoaInServiceApiRepository.findByAuthServiceCodeAndApiContentAndStatus(authServiceCode,mainApi,status);
+	}
+
+	public List<HtBoaInServiceApi> findByAuthServiceCodeAndApiContent(String authServiceCode, String apiContent) {
+		return htBoaInServiceApiRepository.findByAuthServiceCodeAndApiContent(authServiceCode, apiContent);
 	}
  
 

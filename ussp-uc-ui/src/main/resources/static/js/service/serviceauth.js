@@ -44,6 +44,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                                 layer.close(index);
                                 if (result["returnCode"] == '0000') {
                                 	refreshServiceServiceTable();
+                                	refreshServiceApiTable();
                                     layer.alert("授权微服务成功");
                                 }
                             },
@@ -97,7 +98,6 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
             	refreshServiceApiTable($("#servcieauth_api_search_keyword").val());
             },
             chooiceAddServiceApi: function () { //弹出用户新增弹出框
-            	console.log(11);
            	 var nodes = serviceAuthAppTree.getSelectedNodes();
 	           	if(authServiceCode==""){
 	        		layer.msg("请先选择已授权的微服务！");
@@ -108,24 +108,26 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                    type: 1,
                    area: ['1200px', '645px'],
                    shadeClose: true,
-                   title: "选择授权微服务",
+                   title: "选择授权api",
                    content: $("#serviceauth_service_api_data_div").html(),
                    btn: ['确认', '取消'],
                    yes: function (index, layero) {
-                       var serviceCheckStatus = table.checkStatus('serviceauth_service_api_dalog_datatable');
+                       var serviceApiCheckStatus = table.checkStatus('serviceauth_service_api_dalog_datatable');
+                       console.log(serviceApiCheckStatus);
                        $.ajax({
                            type: "POST",
-                           url: addCalledServiceBatchUrl,
+                           url: addCalledServiceApiBatchUrl,
                            data: JSON.stringify({
-                           	mainServiceCode: nodes[0]["serviceCode"],
-                           	serviceList: serviceCheckStatus.data
+                        	 authServiceCode: authServiceCode,
+                        	 recourceApiList: serviceApiCheckStatus.data
                            }), 
                            contentType: "application/json; charset=utf-8",
                            success: function (result) {
                                layer.close(index);
                                if (result["returnCode"] == '0000') {
                                	refreshServiceServiceTable();
-                                   layer.alert("授权微服务成功");
+                               	refreshServiceApiTable();
+                                layer.alert("授权微服务成功");
                                }
                            },
                            error: function (result) {
@@ -143,8 +145,11 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
                        table.render({
                            id: 'serviceauth_service_api_dalog_datatable'
                            , elem: $('#serviceauth_service_api_dalog_datatable', layero)
-                           , url: config.basePath + 'resource/api/page/load'
+                           , url: getAppApiUrl+"?serviceCode="+nodes[0]["serviceCode"]
                            , page: true
+                           , where: {
+                               resType: "api"
+                           }
                            , height: "471"
                            , cols: [[
                                {type: 'numbers'}
@@ -240,8 +245,11 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
     var changeServiceSatusUrl=config.basePath + 'authservice/stop'; //0开启所有 1开启指定api 2禁用
     var appListByPageUrl=config.basePath +"authservice/app/getAppServiceTree"; //系统列表
     var addServiceAPIUrl=config.basePath + 'authservice/addServiceAPI'; //指定微服务api
+    var addCalledServiceApiBatchUrl=config.basePath + 'authservice/addCalledServiceApiBatch'; //添加微服务间的授权管理
     var stopServiceApiUrl=config.basePath + 'authservice/stopServiceApi'; //指定微服务api
     var delServiceApiUrl=config.basePath + 'authservice/delServiceApi'; //指定微服务api
+    
+    var getAppApiUrl=config.basePath + 'authservice/getAppApi'; //获取系统的api
     
     var refreshServiceServiceTable = function (keyword) {
         if (!keyword) {
@@ -301,13 +309,13 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
             keyword = null;
         }
         table.reload('serviceauth_service_api_dalog_datatable', {
-  		  height: 'full-600',
   	        page: {
   	            curr: 1 //重新从第 1 页开始
   	        }
   	        , where: {
   	        	query: {
             		  keyWord: keyword,
+            		  resType: "api"
                  }
   	        }
   	   });
@@ -346,6 +354,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
         }
         , callback: {
         	onClick: function (event, treeId, treeNode, clickFlag) {
+        		authServiceCode = "";
         		refreshServiceServiceTable();
             },
             onAsyncSuccess: function (event, treeId, treeNode, msgString) {
@@ -398,8 +407,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth'], function () {
             //, {field: 'authServiceCode', width: 120, title: '授权code'}
             , {field: 'apiContent',   title: '微服务接口'}
             , {field: 'apiDesc',   title: '接口描述'}
-            , {field: 'app', width: 200, title: '所属微服务'}
-            , {field: 'app', width: 200, title: '所属系统'}
+            , {field: 'app', width: 200, title: '授权微服务'}
             , {field: 'status', width: 100,templet: '#servcieauth_api_statusTpl' ,title: '状态'}
             , {field: 'createOperator', width: 100, title: '创建人'}
             , {field: 'createdDatetime', width: 200, title: '创建时间',templet: '#createTimeTpl'}
