@@ -68,6 +68,10 @@ public class HtBoaInServiceApiService {
 		result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
 		return result;
 	}
+
+	public List<HtBoaInServiceApi> getApiByAuthServiceCodeAndApiContentAndStatus(String authServiceCode, String mainApi, String status) {
+		return htBoaInServiceApiRepository.findByAuthServiceCodeAndApiContentAndStatus(authServiceCode,mainApi,status);
+	}
  
 
 

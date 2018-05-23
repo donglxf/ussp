@@ -19,7 +19,6 @@ import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInService;
 import com.ht.ussp.uc.app.repository.HtBoaInServiceRepository;
-import com.ht.ussp.uc.app.vo.AppAndResourceVo;
 import com.ht.ussp.uc.app.vo.AppAndServiceVo;
 
 @Service
@@ -30,6 +29,10 @@ public class HtBoaInServiceService {
 	
     public HtBoaInService findById(Long id) {
         return this.htBoaInServiceRepository.getOne(id);
+    }
+    
+    public List<HtBoaInService> findByApplicationServiceAndAppAndStatus(String applicationService,String app,String status) {
+        return this.htBoaInServiceRepository.findByApplicationServiceAndAppAndStatus(applicationService,app,status);
     }
 
     public List<HtBoaInService> findAll(HtBoaInService u) {
@@ -51,7 +54,7 @@ public class HtBoaInServiceService {
     }
 
  
-	public PageResult<List<HtBoaInService>> getUserListByPage(PageRequest pageRequest, Map<String, String> query) {
+	public PageResult<List<HtBoaInService>> getServiceListByPage(PageRequest pageRequest, Map<String, String> query) {
 		PageResult result = new PageResult();
 		Page<HtBoaInService> pageData = null;
 ////      Join<HtBoaInUser, HtBoaInLogin> join = root.join("htBoaInLogin", JoinType.LEFT);

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.druid.util.StringUtils;
@@ -32,6 +33,8 @@ import com.ht.ussp.uc.app.vo.AppAndServiceVo;
 import com.ht.ussp.uc.app.vo.PageVo;
 import com.ht.ussp.uc.app.vo.ServiceAuthServiceVo;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
@@ -168,10 +171,10 @@ public class ServiceAuthResource {
 	
 	///api
 	
+	@SuppressWarnings("rawtypes")
 	@ApiOperation(value = "获取对应已授权的微服务API")
     @PostMapping("/listServiceAPI")
     public PageResult  listServiceAPI(PageVo page) {
-		PageResult result = new PageResult();
     	PageConf pageConf = new PageConf();
     	pageConf.setPage(page.getPage());
     	pageConf.setSize(page.getLimit());
@@ -250,4 +253,47 @@ public class ServiceAuthResource {
         htBoaInServiceApiService.delete(u.getId());
         return Result.buildSuccess();
     }
+
+	@SuppressWarnings({   "rawtypes" })
+	@ApiOperation(value = "验证微服务调用权限", notes = "验证微服务调用权限:返回true可以调用  返回false不允许调用")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "mainApp", paramType = "query",dataType = "String", required = true, value = "被调用的系统"),
+		@ApiImplicitParam(name = "mainService", paramType = "query",dataType = "String", required = true, value = "被调用的微服务"),
+		@ApiImplicitParam(name = "mainApi", paramType = "query",dataType = "String", required = true, value = "被调用的微服务接口"),
+		@ApiImplicitParam(name = "calledApp", paramType = "query",dataType = "String", required = true, value = "发起调用的系统"),
+		@ApiImplicitParam(name = "calledService", paramType = "query",dataType = "String", required = true, value = "发起调用的微服务") })
+    @PostMapping("/validateServiceAuth")
+    public Result validateServiceAuth(@RequestParam(value = "mainApp")String mainApp,@RequestParam(value = "mainService")String mainService,@RequestParam(value = "mainApi")String mainApi,@RequestParam(value = "calledApp")String calledApp,@RequestParam(value = "calledService")String  calledService ) {
+		HtBoaInService mainHtBoaInService = null;
+		HtBoaInService calledHtBoaInService = null;
+		HtBoaInServiceCall htBoaInServiceCall =null;
+		//1.验证发起调用的微服务是否有权限调用主微服务
+		List<HtBoaInService> mianHtBoaInServiceList = htBoaInServiceService.findByApplicationServiceAndAppAndStatus(mainService,mainApp,"0");
+		List<HtBoaInService> calledHtBoaInServiceList = htBoaInServiceService.findByApplicationServiceAndAppAndStatus(calledService,calledApp,"0");
+		if(mianHtBoaInServiceList==null||calledHtBoaInServiceList==null||mianHtBoaInServiceList.isEmpty()||calledHtBoaInServiceList.isEmpty()) {
+			return Result.buildSuccess(false);
+		}
+		mainHtBoaInService = mianHtBoaInServiceList.get(0);
+		calledHtBoaInService = calledHtBoaInServiceList.get(0);
+		if(mainHtBoaInService!=null&&calledHtBoaInService!=null) {
+			htBoaInServiceCall = htBoaInServiceCallService.findByMainServiceCodeAndCallService(mainHtBoaInService.getServiceCode(), calledHtBoaInService.getServiceCode());
+		}
+		if(htBoaInServiceCall==null) {
+			return Result.buildSuccess(false);
+		}
+		//2.验证是全部api权限 还是指定api权限 状态（0开启所有api  1开启指定api   2停止授权所有api）
+		if("0".equals(htBoaInServiceCall.getStatus())) {
+			return Result.buildSuccess(true);
+		}else if("2".equals(htBoaInServiceCall.getStatus())) {
+			return Result.buildSuccess(false);
+		}else if("1".equals(htBoaInServiceCall.getStatus())) {
+			List<HtBoaInServiceApi> listHtBoaInServiceApi = htBoaInServiceApiService.getApiByAuthServiceCodeAndApiContentAndStatus(htBoaInServiceCall.getAuthServiceCode(),mainApi,"0");
+			if(listHtBoaInServiceApi==null||listHtBoaInServiceApi.isEmpty()) {
+				return Result.buildSuccess(false);
+			}else {
+				return Result.buildSuccess(true);
+			}
+		}
+		return Result.buildFail();
+    }
+	
 }

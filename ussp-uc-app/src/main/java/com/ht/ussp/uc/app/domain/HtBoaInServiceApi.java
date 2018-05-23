@@ -17,7 +17,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "ht_boa_in_service_api")
+@Table(name = "HT_BOA_IN_SERVICE_API")
 @NamedQuery(name = "HtBoaInServiceApi.findAll", query = "SELECT h FROM HtBoaInServiceApi h")
 public class HtBoaInServiceApi implements Serializable {
 	private static final long serialVersionUID = 1L;

@@ -1,6 +1,5 @@
 package com.ht.ussp.uc.app.resource;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -11,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,7 +50,7 @@ public class ServiceResource {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @ApiOperation(value = "微服务列表查询", notes = "列出所有微服务记录列表信息")
     @PostMapping("/getServiceListByPage")
-    public PageResult<HtBoaInService> list(PageVo page) {
+    public PageResult<HtBoaInService> getServiceListByPage(PageVo page) {
     	PageResult result = new PageResult();
     	PageConf pageConf = new PageConf();
     	pageConf.setPage(page.getPage());
@@ -64,7 +62,7 @@ public class ServiceResource {
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.debug(logStart, "pageConf: " + pageConf, sl);
-        result =  htBoaInServiceService.getUserListByPage(new PageRequest(page.getPage(), page.getLimit(),new Sort(new Order("app"))),page.getQuery());
+        result =  htBoaInServiceService.getServiceListByPage(new PageRequest(page.getPage(), page.getLimit(),new Sort(new Order("app"))),page.getQuery());
         el = System.currentTimeMillis();
         log.debug(logEnd, "pageConf: " + result, msg, el, el - sl);
         result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());

@@ -24,5 +24,7 @@ public interface HtBoaInServiceRepository  extends JpaSpecificationExecutor<HtBo
 	            ") A ORDER BY application_service_name ", nativeQuery = true)
 	List<Object[]> queryAppAndServiceTree();
 
+	List<HtBoaInService> findByApplicationServiceAndAppAndStatus(String applicationService, String app, String status);
+
 	
 }
