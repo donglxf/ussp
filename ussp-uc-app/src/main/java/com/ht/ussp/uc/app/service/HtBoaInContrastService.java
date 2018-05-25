@@ -49,8 +49,8 @@ public class HtBoaInContrastService {
     }
     
     public HtBoaInContrast getHtBoaInContrastListByUcBusinessId(String ucBusinessId,String type) {
-        List<HtBoaInContrast> listHtBoaInContrast = htBoaInContrastRepository.findByUcBusinessIdAndType(ucBusinessId, type);
-    	if(listHtBoaInContrast==null) {
+    	List<HtBoaInContrast> listHtBoaInContrast = htBoaInContrastRepository.findByUcBusinessIdAndType(ucBusinessId, type);
+    	if(listHtBoaInContrast==null||listHtBoaInContrast.isEmpty()) {
     		return null;
     	}else {
     		return listHtBoaInContrast.get(0);

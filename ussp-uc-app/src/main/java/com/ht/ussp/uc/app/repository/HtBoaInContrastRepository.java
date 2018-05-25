@@ -33,3 +33,4 @@ public interface HtBoaInContrastRepository extends JpaRepository<HtBoaInContrast
 	List<HtBoaInContrast> findByDdBusinessIdAndType(String ddBusinessId, String type);
     
 }
+ 

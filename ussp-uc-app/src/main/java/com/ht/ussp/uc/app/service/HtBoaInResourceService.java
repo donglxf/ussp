@@ -596,19 +596,18 @@ public class HtBoaInResourceService {
 						sbf.append( "INSERT INTO `HT_BOA_IN_RESOURCE` (`RES_CODE`, `RES_NAME_CN`, `SEQUENCE`, `RES_TYPE`, `RES_PARENT`, `REMARK`, `STATUS`, `RES_ICON`, `FONT_ICON`, `RES_CONTENT`, `APP`, `JPA_VERSION`, `DEL_FLAG`) VALUES (");
 						sbf.append("'" + addHtBoaInResource.getResCode() + "',");
 						sbf.append("'" + addHtBoaInResource.getResNameCn() + "',");
-						sbf.append("'" + addHtBoaInResource.getSequence() + "',");
+						sbf.append((addHtBoaInResource.getSequence() == null ? null : "'" + addHtBoaInResource.getSequence() + "'") + ",");
 						sbf.append("'" + addHtBoaInResource.getResType() + "',");
 						sbf.append((addHtBoaInResource.getResParent() == null ? null : "'" + addHtBoaInResource.getResParent() + "'") + ",");
 						sbf.append("'" + addHtBoaInResource.getRemark() + "',");
-						sbf.append("'" + addHtBoaInResource.getStatus() + "',");
+						sbf.append((addHtBoaInResource.getStatus() == null ? '0' : "'" + addHtBoaInResource.getStatus() + "'") + ",");
 						sbf.append((addHtBoaInResource.getResIcon() == null ? null : "'" + addHtBoaInResource.getResIcon() + "'") + ",");
 						sbf.append((addHtBoaInResource.getFontIcon() == null ? null : "'" + addHtBoaInResource.getFontIcon() + "'") + ",");
 						sbf.append("'" + addHtBoaInResource.getResContent() + "',");
-						sbf.append("'" + addHtBoaInResource.getApp() + "',");
-						sbf.append((addHtBoaInResource.getJpaVersion() == null ? null : "'" + addHtBoaInResource.getJpaVersion() + "'") + ",");
-						sbf.append("'" + addHtBoaInResource.getDelFlag() + "'");
+						sbf.append((addHtBoaInResource.getApp() == null ? null : "'" + addHtBoaInResource.getApp() + "'") + "," );
+						sbf.append((addHtBoaInResource.getJpaVersion() == null ? '0' : "'" + addHtBoaInResource.getJpaVersion() + "'") + ",");
+						sbf.append("0");
 						sbf.append(");" + enter);
-						
 						isAnais = true;
 					}
 				}
@@ -756,15 +755,15 @@ public class HtBoaInResourceService {
 							}
 							if (StringUtils.isEmpty(updateHtBoaInResource.getDelFlag())) {
 								if (!StringUtils.isEmpty(sourceHtBoaInResource.getDelFlag())) {
-									sbfUpdate.append(" DEL_FLAG=" + sourceHtBoaInResource.getDelFlag() + ",");
-									fallBacksbfUpdate.append(" DEL_FLAG=" + updateHtBoaInResource.getDelFlag() + ",");
+									sbfUpdate.append(" DEL_FLAG=" + sourceHtBoaInResource.getDelFlag()+ ",");
+									fallBacksbfUpdate.append(" DEL_FLAG=" + updateHtBoaInResource.getDelFlag()+ ",");
 									isUpdate = true;
 								}
 							} else {
 								if (!(updateHtBoaInResource.getDelFlag()) .equals((sourceHtBoaInResource.getDelFlag()))) {
 									if (!StringUtils.isEmpty(sourceHtBoaInResource.getDelFlag())) {
-										sbfUpdate.append(" DEL_FLAG=" + sourceHtBoaInResource.getDelFlag() + ",");
-										fallBacksbfUpdate.append(" DEL_FLAG=" + updateHtBoaInResource.getDelFlag() + ",");
+										sbfUpdate.append(" DEL_FLAG=" + sourceHtBoaInResource.getDelFlag()+ ",");
+										fallBacksbfUpdate.append(" DEL_FLAG=" + updateHtBoaInResource.getDelFlag()+ ",");
 										isUpdate = true;
 									}
 								}
@@ -781,7 +780,7 @@ public class HtBoaInResourceService {
 							if (StringUtils.isEmpty(updateHtBoaInResource.getResParent())) {
 								fallBacksbfUpdate.append(";" + enter);
 							} else {
-								fallBacksbfUpdate.append( " AND RES_PARENT='" + updateHtBoaInResource.getResParent() + "';" + enter);
+								fallBacksbfUpdate.append( " AND RES_PARENT=" + (updateHtBoaInResource.getResParent() == null ? null : "'" + updateHtBoaInResource.getResParent() + "'") + ";" + enter);
 							}
 							if (isUpdate) {
 								sbf.append(sbfUpdate);
@@ -809,7 +808,7 @@ public class HtBoaInResourceService {
 						sbf.append("'" + addHtBoaInResource.getResContent() + "',");
 						sbf.append("'" + addHtBoaInResource.getApp() + "',");
 						sbf.append("'" + addHtBoaInResource.getJpaVersion() + "',");
-						sbf.append("'" + addHtBoaInResource.getDelFlag() + "'");
+						sbf.append("0");
 						sbf.append(");" + enter);
 						fallbacksbf.append( "DELETE FROM  HT_BOA_IN_RESOURCE WHERE RES_CODE='" + addHtBoaInResource.getResCode() + "' AND RES_PARENT='" + addHtBoaInResource.getResParent() + "'" + " AND APP='" + addHtBoaInResource.getApp() + "'" + ";" + enter);
 						isAnais = true;

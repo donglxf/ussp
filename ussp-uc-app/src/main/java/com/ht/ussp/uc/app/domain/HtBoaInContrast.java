@@ -43,7 +43,7 @@ public class HtBoaInContrast implements Serializable {
     @Column(name = "dd_business_id")
     private String ddBusinessId;
 
-    @Column(name = "extend_business_id_1")
+    @Column(name = "extend_business_id_1") //关联多个信贷的账号
     private String extendBusinessId1;
 
     @Column(name = "extend_business_id_2")
