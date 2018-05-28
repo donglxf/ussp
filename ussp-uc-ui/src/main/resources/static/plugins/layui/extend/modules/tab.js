@@ -139,6 +139,7 @@ layui.define(['jquery', 'element', 'nprogress', 'utils'], function (exports) {
                                 case renderType.page:
                                     var loadIndex = that.load();
                                     var url = that._title.children('li[lay-id=' + layId + ']').data('url');
+                                    that.closeLoad(loadIndex);
                                     that._content.children('div[lay-item-id=' + layId + ']')
                                         .html(that.getBodyContent(url + '?v=' + new Date().getTime(), function () {
                                             that.closeLoad(loadIndex);
