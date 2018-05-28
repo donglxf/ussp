@@ -77,7 +77,7 @@ public class OutSystemFilter extends ZuulFilter {
 			}
 			ctx.setSendZuulResponse(false);
 			try {
-				mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.APP_CANNOT_NULL.getStatus(),SysStatus.APP_CANNOT_NULL.getMsg()));
+				mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.APP_CANNOT_NULL));
 			} catch (IOException e) {
 				log.debug("write response result app cannot null:"+e.getMessage());
 			}finally {
@@ -106,7 +106,7 @@ public class OutSystemFilter extends ZuulFilter {
 				if (StringUtils.isEmpty(tokenPayload)&&StringUtils.isEmpty(ieme)) {
 					ctx.setSendZuulResponse(false);
 					try {
-						mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.TOKEN_AND_IEME_NOT_NULL.getStatus(),SysStatus.TOKEN_AND_IEME_NOT_NULL.getMsg()));
+						mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.TOKEN_AND_IEME_NOT_NULL));
 					} catch (Exception e) {
 						log.debug("write response result token and ieme not null:"+e.getMessage());
 					}finally {
@@ -130,7 +130,7 @@ public class OutSystemFilter extends ZuulFilter {
 					if(!iemeTemp.equals(ieme)) {
 						ctx.setSendZuulResponse(false);
 						try {
-							mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.ORIGIN_VALID.getStatus(),SysStatus.ORIGIN_VALID.getMsg()));
+							mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.ORIGIN_VALID));
 						} catch (Exception e) {
 							log.debug("write response result origin valid:"+e.getMessage());
 						}finally {
@@ -148,14 +148,14 @@ public class OutSystemFilter extends ZuulFilter {
 						return null;
 				} else if ("9922".equals(result.getCodeDesc())) {
 					try {
-						mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.TOKEN_IS_VALID.getStatus(),SysStatus.TOKEN_IS_VALID.getMsg()));
+						mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.TOKEN_IS_VALID));
 					} catch (Exception e) {
 						log.debug("write response result token is valid:"+e.getMessage());
 					} 
 					return null;
 				}else if ("9921".equals(result.getCodeDesc())) {
 					try {
-						mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.TOKEN_IS_EXPIRED.getStatus(),SysStatus.TOKEN_IS_EXPIRED.getMsg()));
+						mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.TOKEN_IS_EXPIRED));
 					} catch (Exception e) {
 						log.debug("write response result token is expired:"+e.getMessage());
 					}finally {
