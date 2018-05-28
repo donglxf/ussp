@@ -3,7 +3,6 @@
         <div class="layui-tab view_tab" lay-filter="syndata_top_tab">
             <ul class="layui-tab-title">
                 <li class="layui-this">用户</li>
-                <li>机构</li>
             </ul>
             <div class="layui-tab-content">
                 <div class="layui-tab-item layui-show">
@@ -11,7 +10,6 @@
                         <div class="row row-lg">
                         <div class="toolbarBtn btn-group">
                             <button class="layui-btn layui-btn-sm" title="获取钉钉用户数据" data-type="syndatadd" ht-auth="syndatadd"  > 获取钉钉用户数据 </button>
-                            <button class="layui-btn layui-btn-sm " title="获取信贷用户数据" data-type="reset" ht-auth="syndatadd" > 获取信贷用户数据  </button>
                         </div>
                         
                             <div class="pull-right col-xs-4">
@@ -37,6 +35,9 @@
                     </div>
                   <div class="row-lg">
                                <div class="row row-lg">
+                               <div class="toolbarBtn btn-group">
+		                            <button class="layui-btn layui-btn-sm" title="添加信贷用户" data-type="addBMUserInof"  ht-auth="addBmUserInfo"  > 添加信贷用户 </button>
+		                        </div>
                                    <div class="pull-right col-xs-4">
                                        <div class="input-group input-group-sm row">
                                            <input type="search" class="form-control" id="syndata_bm_user_search_keyword" placeholder="请输入信贷用户名/手机号" />
@@ -67,5 +68,47 @@
             </div>
         </div>
     </div>
+    <!--新增信贷用户-->
+		<div id="user_bm_info_add_data_div" class="hide">
+			<form method="post" class="layui-form" lay-filter="filter_add_bmUserInfo_data_form">
+				<div class="layui-form-item">
+					<label class="layui-form-label">用户id<b>*</b></label>
+					<div class="layui-input-block">
+						<input type="text" name="userId" lay-verify="required" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">用户姓名<b>*</b></label>
+					<div class="layui-input-block">
+						<input type="text" name="userName" lay-verify="required" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">手机号<b>*</b></label>
+					<div class="layui-input-block">
+						<input type="tel" name="mobile" lay-verify="required|phone" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">邮箱<b>*</b></label>
+					<div class="layui-input-block">
+						<input type="text" name="email" lay-verify="email" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">所属分公司</label>
+					<div class="layui-input-block">
+						 <input type="text" name="parentDept" lay-verify="required" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">所属机构<b>*</b></label>
+					<div class="layui-input-block">
+					    <input type="text" name="orgCode" lay-verify="required" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+					</div>
+				</div>
+				<button class="layui-btn hide" lay-submit="" lay-filter="filter_add_bmUserInfo_data_form"></button>
+			</form>
+		</div>
     <script src="/js/syndata/syndata.js"></script>
 </div>
