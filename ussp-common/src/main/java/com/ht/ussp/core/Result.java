@@ -6,9 +6,11 @@
  */
 package com.ht.ussp.core;
 
-import lombok.Data;
-
 import java.io.Serializable;
+
+import com.ht.ussp.common.SysStatus;
+
+import lombok.Data;
 
 /**
  * Rest接口请求结果对象<br>
@@ -80,6 +82,38 @@ public class Result<T> implements Serializable {
         result.returnCode(ReturnCodeEnum.FAIL.getReturnCode()).codeDesc(ReturnCodeEnum.FAIL.getCodeDesc());
         result.codeDesc(codeDesc);
         result.msg(msg);
+        return result;
+    }
+    
+    /**
+     * 
+     * @Title: buildFailConvert 
+     * @Description: 返回码使用returnCode 
+     * @return Result<T>
+     * @throws
+     * @author wim qiuwenwu@hongte.info 
+     * @date 2018年5月28日 下午4:37:11
+     */
+    public static <T> Result<T> buildFailConvert(String returnCode,String codeDesc){
+        Result<T> result= new Result<T>();
+        result.setReturnCode(returnCode);
+        result.setCodeDesc(codeDesc);
+        return result;
+    }
+    
+    /**
+     * 
+     * @Title: buildFail 
+     * @Description: 直接使用SysStatus枚举类 
+     * @return Result<T>
+     * @throws
+     * @author wim qiuwenwu@hongte.info 
+     * @date 2018年5月28日 下午4:36:43
+     */
+    public static <T> Result<T> buildFail(SysStatus sysStatus){
+        Result<T> result= new Result<T>();
+        result.setReturnCode(sysStatus.getStatus());
+        result.setCodeDesc(sysStatus.getMsg());
         return result;
     }
 

@@ -29,7 +29,6 @@ import com.ht.ussp.client.dto.MsgReqDtoIn;
 import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uaa.app.config.JwtSettings;
-import com.ht.ussp.uaa.app.config.WebSecurityConfig;
 import com.ht.ussp.uaa.app.exception.InvalidJwtToken;
 import com.ht.ussp.uaa.app.exception.JwtExpiredTokenException;
 import com.ht.ussp.uaa.app.feignClient.OutUserClient;
@@ -92,7 +91,7 @@ public class ExternalUserResource {
 		Map<String, String> map = new HashMap<>();
 		if (StringUtils.isBlank(app)|| StringUtils.isBlank(ieme) || StringUtils.isBlank(userName)
 				||StringUtils.isBlank(type)||StringUtils.isBlank(password)) {
-			return Result.buildFail(SysStatus.ERROR_PARAM.getStatus(), SysStatus.ERROR_PARAM.getMsg());
+			return Result.buildFail(SysStatus.ERROR_PARAM);
 		}
 
 
@@ -104,7 +103,7 @@ public class ExternalUserResource {
 
 			map.put("accessToken", accessToken.getToken());
 		} else {
-			return Result.buildFail(result.getCodeDesc(), result.getMsg());
+			return Result.buildFailConvert(result.getCodeDesc(), result.getMsg());
 		}
 		return Result.buildSuccess(map);
 	}
@@ -152,12 +151,12 @@ public class ExternalUserResource {
 	@ApiOperation(value = "获取外部用户刷新令牌")
 	public Result OutRefreshToken(String app,String appId, String appSecret) {
 		if (StringUtils.isBlank(app)||StringUtils.isBlank(appId)||StringUtils.isBlank(appSecret)) {
-			return Result.buildFail(SysStatus.ERROR_PARAM.getStatus(), SysStatus.ERROR_PARAM.getMsg());
+			return Result.buildFail(SysStatus.ERROR_PARAM);
 		}
 		Map<String, String> map = new HashMap<>();
 		Result result=outUserClient.getClientInfo(app);
 		if("9996".equals(result.getCodeDesc())) {
-			return Result.buildFail(SysStatus.CLIENT_NOT_REGISTERED.getStatus(), SysStatus.CLIENT_NOT_REGISTERED.getMsg());
+			return Result.buildFail(SysStatus.CLIENT_NOT_REGISTERED);
 		}else if("0000".equals(result.getReturnCode())) {
 			HtBoaOutClient htBoaOutClient=FastJsonUtil.jsonToPojo(FastJsonUtil.objectToJson(result.getData()), HtBoaOutClient.class);
 			
@@ -179,7 +178,7 @@ public class ExternalUserResource {
 				
 			}else {
 				
-				return Result.buildFail(SysStatus.CLIENT_IS_VALID.getStatus(), SysStatus.CLIENT_IS_VALID.getMsg());
+				return Result.buildFail(SysStatus.CLIENT_IS_VALID);
 			}
 			
 		}
@@ -211,12 +210,12 @@ public class ExternalUserResource {
 		 token = RefreshToken.create(rawToken, jwtSettings.getTokenSigningKey())
 				.orElseThrow(() -> new InvalidJwtToken());
 		}catch(BadCredentialsException ex) {
-			return Result.buildFail(SysStatus.TOKEN_IS_VALID.getStatus(), SysStatus.TOKEN_IS_VALID.getMsg());
+			return Result.buildFail(SysStatus.TOKEN_IS_VALID);
 		}catch (JwtExpiredTokenException expiredEx) {
-			return Result.buildFail(SysStatus.TOKEN_IS_EXPIRED.getStatus(), SysStatus.TOKEN_IS_EXPIRED.getMsg());
+			return Result.buildFail(SysStatus.TOKEN_IS_EXPIRED);
 			
 		}catch(AuthenticationServiceException ex) {
-			return Result.buildFail(SysStatus.ERROR_PARAM.getStatus(), SysStatus.ERROR_PARAM.getMsg());
+			return Result.buildFail(SysStatus.ERROR_PARAM);
 		}
 		
 		String jti = token.getJti();
@@ -254,11 +253,11 @@ public class ExternalUserResource {
 			map.put("userId", userId);
 			map.put("ieme", ieme);
 		} catch (BadCredentialsException ex) {
-			return Result.buildFail(SysStatus.TOKEN_IS_VALID.getStatus(), SysStatus.TOKEN_IS_VALID.getMsg());
+			return Result.buildFail(SysStatus.TOKEN_IS_VALID);
 		} catch (JwtExpiredTokenException expiredEx) {
-			return Result.buildFail(SysStatus.TOKEN_IS_EXPIRED.getStatus(), SysStatus.TOKEN_IS_EXPIRED.getMsg());
+			return Result.buildFail(SysStatus.TOKEN_IS_EXPIRED);
 		} catch (AuthenticationServiceException asEx) {
-			return Result.buildFail(SysStatus.ERROR_PARAM.getStatus(), SysStatus.ERROR_PARAM.getMsg());
+			return Result.buildFail(SysStatus.ERROR_PARAM);
 		}
 		return Result.buildSuccess(map);
 	}
