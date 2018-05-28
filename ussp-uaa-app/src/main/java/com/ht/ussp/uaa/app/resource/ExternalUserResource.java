@@ -203,10 +203,10 @@ public class ExternalUserResource {
 		RefreshToken token=null;
 		Map<String, String> map = new HashMap<>();
 		try {
-		String tokenPayload = tokenExtractor
-				.extract(request.getHeader(WebSecurityConfig.AUTHENTICATION_HEADER_NAME));
+//		String tokenPayload = tokenExtractor
+//				.extract(request.getHeader(WebSecurityConfig.AUTHENTICATION_HEADER_NAME));
 
-		RawAccessJwtToken rawToken = new RawAccessJwtToken(tokenPayload);
+		RawAccessJwtToken rawToken = new RawAccessJwtToken(refreshToken);
 
 		 token = RefreshToken.create(rawToken, jwtSettings.getTokenSigningKey())
 				.orElseThrow(() -> new InvalidJwtToken());
