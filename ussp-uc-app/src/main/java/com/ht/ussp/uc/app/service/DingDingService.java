@@ -4,11 +4,14 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import javax.persistence.criteria.Predicate;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -16,14 +19,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ht.ussp.common.Constants;
+import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
+import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.DdDept;
 import com.ht.ussp.uc.app.domain.DdDeptOperator;
 import com.ht.ussp.uc.app.domain.DdUser;
@@ -97,9 +105,6 @@ public class DingDingService {
 	@Autowired
 	private HtBoaInPositionUserRepository htBoaInPositionUserRepository;
 	
-	
-	
-
 	/**
 	 * 钉钉与生产数据对照
 	 */
@@ -197,45 +202,6 @@ public class DingDingService {
 			e.printStackTrace();
 			return Result.buildFail("9999",e.getMessage());
 		}
-	}
-	
-	
-	@SuppressWarnings("rawtypes")
-	public Result dealErrorData() { 
-		List<HtBoaInUser> htBoaInUserList= htBoaInUserService.findAll();//所有UC用户
-		List<DdUser> listDdUser = getDDUserList(); //获取钉钉所有用户数据
-		List<HtBoaInContrast> listHtBoaInContrastUser = htBoaInContrastService.getHtBoaInContrastListByType("20");//获取UC已存在数据
-		List<HtBoaInContrast> updateList = new ArrayList<HtBoaInContrast>();
-    	
-		for (DdUser ddUser : listDdUser) {
-			if (StringUtils.isNotEmpty(ddUser.getMobile())) {
-				Optional<HtBoaInUser> htBoaInUserOptional  = htBoaInUserList.stream().filter(ucUser -> ddUser.getMobile().equals(ucUser.getMobile())).findFirst();
-				if (htBoaInUserOptional != null && htBoaInUserOptional.isPresent()) {
-					HtBoaInUser htBoaInUser = htBoaInUserOptional.get();
-					if(htBoaInUser==null) {
-						continue;
-					}else {
-						Optional<HtBoaInContrast> htBoaInContrastOptional = listHtBoaInContrastUser.stream().filter(ucUser ->htBoaInUser.getUserId().equals(ucUser.getUcBusinessId())).findFirst();
-	       				if(htBoaInContrastOptional!=null &&htBoaInContrastOptional.isPresent()) {
-	       					try {
-	       						HtBoaInContrast htBoaInContrast = htBoaInContrastOptional.get(); 
-	       						htBoaInContrast.setDdBusinessId(ddUser.getUserId());
-	       						updateList.add(htBoaInContrast);
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-	       					
-	       				}
-					}
-
-				}
-			}
-		}
-		if(updateList!=null && !updateList.isEmpty()) {
-			htBoaInContrastService.add(updateList);
-		}
-		log.debug("矫正历史错误数据完成！");
-        return Result.buildSuccess();
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -599,8 +565,24 @@ public class DingDingService {
 				}
 				String parentOrgCode="";//所属中心
 				if(StringUtils.isNotEmpty(ddUser.getDeptId())) {
-					HtBoaInContrast htBoaInContrastOrg = htBoaInContrastListORG.stream().filter(org -> ddUser.getDeptId().equals(org.getDdBusinessId())).findFirst().get();
-					HtBoaInOrg o = htBoaInOrgList.stream().filter(org -> org.getOrgCode().equals(htBoaInContrastOrg.getUcBusinessId())).findFirst().get();
+					HtBoaInContrast htBoaInContrastOrg = null;
+					Optional<HtBoaInContrast> optionalHtBoaInContrast = htBoaInContrastListORG.stream().filter(org -> ddUser.getDeptId().equals(org.getDdBusinessId())).findFirst();
+					if(optionalHtBoaInContrast!=null && optionalHtBoaInContrast.isPresent()) { 
+						htBoaInContrastOrg = optionalHtBoaInContrast.get();
+					}
+					if(htBoaInContrastOrg==null) {
+						continue;
+					}
+					
+					HtBoaInOrg o = null;
+					HtBoaInContrast htBoaInContrastOrgTemp = htBoaInContrastOrg;
+					Optional<HtBoaInOrg> optionalHtBoaInOrg = htBoaInOrgList.stream().filter(org -> org.getOrgCode().equals(htBoaInContrastOrgTemp.getUcBusinessId())).findFirst();
+					if(optionalHtBoaInOrg!=null && optionalHtBoaInOrg.isPresent()) {
+						o = optionalHtBoaInOrg.get();
+					}
+					if(o==null) {
+						continue;
+					}
 					if(StringUtils.isNotEmpty(o.getOrgCode())) {
 						sbf.append("P");
 						if(o.getOrgCode().length()>5) {//获取中心机构编码
@@ -681,7 +663,6 @@ public class DingDingService {
         	       	 }
             		 if(htBoaInUser==null) {
                			 if(StringUtils.isNotEmpty(ddAddUser.getJobNumber())) {
-               				//htBoaInUser = htBoaInUserList.stream().filter(ucUser ->ddAddUser.getEmail().equals(ucUser.getEmail())).findFirst().get();  //htBoaInUserService.findByEmail(ddAddUser.getEmail());
                				Optional<HtBoaInUser> htBoaInUserOptional = htBoaInUserList.stream().filter(ucUser ->ddAddUser.getJobNumber().equals(ucUser.getJobNumber())).findFirst();
                				if(htBoaInUserOptional!=null &&htBoaInUserOptional.isPresent()) {
                						htBoaInUser = htBoaInUserOptional.get(); 
@@ -690,7 +671,6 @@ public class DingDingService {
         	       	 }
         	       	 if(htBoaInUser==null) {
         	       		 if(StringUtils.isNotEmpty(ddAddUser.getMobile())) {
-        	       			//htBoaInUser = htBoaInUserList.stream().filter(ucUser ->ddAddUser.getMobile().equals(ucUser.getMobile())).findFirst().get();  
         	       			Optional<HtBoaInUser> htBoaInUserOptional = htBoaInUserList.stream().filter(ucUser ->ddAddUser.getMobile().equals(ucUser.getMobile())).findFirst();
         	       			if(htBoaInUserOptional!=null &&htBoaInUserOptional.isPresent()) {
                						htBoaInUser = htBoaInUserOptional.get(); 
@@ -706,10 +686,21 @@ public class DingDingService {
             				htBoaInUser.setMobile(ddAddUser.getMobile());
             			}
             			if(StringUtils.isNotEmpty(ddAddUser.getDeptId())) {
-            				HtBoaInContrast htBoaInContrastOrg = htBoaInContrastListORG.stream().filter(org -> ddAddUser.getDeptId().equals(org.getDdBusinessId())).findFirst().get();
-            				HtBoaInOrg o = htBoaInOrgList.stream().filter(org -> org.getOrgCode().equals(htBoaInContrastOrg.getUcBusinessId())).findFirst().get();
-            				if(StringUtils.isNotEmpty(o.getOrgCode())) {
-            					htBoaInUser.setOrgCode(o.getOrgCode());
+            				HtBoaInContrast htBoaInContrastOrg = null;
+            				Optional<HtBoaInContrast> htBoaInContrastOptional = htBoaInContrastListORG.stream().filter(org -> ddAddUser.getDeptId().equals(org.getDdBusinessId())).findFirst();
+            				if(htBoaInContrastOptional!=null&&htBoaInContrastOptional.isPresent()) {
+            					htBoaInContrastOrg = htBoaInContrastOptional.get();
+            				}
+            				HtBoaInOrg o = null;
+            				HtBoaInContrast htBoaInContrastOrgTmep = htBoaInContrastOrg;
+            				Optional<HtBoaInOrg> htBoaInOrgOptional = htBoaInOrgList.stream().filter(org -> org.getOrgCode().equals(htBoaInContrastOrgTmep.getUcBusinessId())).findFirst();
+            				if(htBoaInOrgOptional!=null&&htBoaInOrgOptional.isPresent()) {
+            					o = htBoaInOrgOptional.get();
+            				}
+            				if(o!=null) {
+            					if(StringUtils.isNotEmpty(o.getOrgCode())) {
+                					htBoaInUser.setOrgCode(o.getOrgCode());
+                				}
             				}
             			}
             			if(StringUtils.isNotEmpty(ddAddUser.getUserName())) {
@@ -743,8 +734,25 @@ public class DingDingService {
         	       		mobileList.add(ddAddUser.getMobile());
         	       	 }
         	       	HtBoaInUser u = new HtBoaInUser();
-            		HtBoaInContrast htBoaInContrastOrg = htBoaInContrastListORG.stream().filter(org -> org.getDdBusinessId().equals(ddAddUser.getDeptId())).findFirst().get();
-            		HtBoaInOrg o = htBoaInOrgList.stream().filter(org -> org.getOrgCode().equals(htBoaInContrastOrg.getUcBusinessId())).findFirst().get();
+            		HtBoaInContrast htBoaInContrastOrg = null;
+            		Optional<HtBoaInContrast> optionalContrastOrg =	htBoaInContrastListORG.stream().filter(org -> org.getDdBusinessId().equals(ddAddUser.getDeptId())).findFirst();
+            		if(optionalContrastOrg!=null&&optionalContrastOrg.isPresent()) {
+            			htBoaInContrastOrg = optionalContrastOrg.get();
+        			}
+            		HtBoaInContrast htBoaInContrastOrgTemp=htBoaInContrastOrg;
+            		HtBoaInOrg o = null;
+            		if(htBoaInContrastOrg!=null) {
+            			Optional<HtBoaInOrg> optionalHtBoaInOrg = htBoaInOrgList.stream().filter(org -> org.getOrgCode().equals(htBoaInContrastOrgTemp.getUcBusinessId())).findFirst();
+            			if(optionalHtBoaInOrg!=null&&optionalHtBoaInOrg.isPresent()) {
+            				o = optionalHtBoaInOrg.get();
+            			}
+    				}
+            		if(o==null) {
+            			o = new HtBoaInOrg();
+            			o.setRootOrgCode("D01");
+            			o.setOrgCode("D0100");
+            			o.setOrgPath("");
+            		}
             		int isOrgUser = ddAddUser.getJobNumber()==null?0:1;
                     String userId = generatorUserId(userIdList,o.getRootOrgCode(),  isOrgUser,2, ddAddUser.getJobNumber());
                     u.setUserId(userId);
@@ -809,7 +817,6 @@ public class DingDingService {
         	ddUserOperator.setOperatorType(2);
         	List<DdUserOperator> delUserList =  getDdUserOperator(ddUserOperator);
         	for (DdUserOperator dddelUser : delUserList) {
-        		//HtBoaInContrast htBoaInContrastUser = htBoaInContrastListUser.stream().filter(user -> user.getUcBusinessId().equals(dddelUser.getUserId())).findFirst().get();
         		HtBoaInUser u = null;//htBoaInUserService.findByUserId(dddelUser.getUserId());
     			Optional<HtBoaInUser> htBoaInUserOptional = htBoaInUserList.stream().filter(ucUser -> ucUser.getUserId().equals(dddelUser.getUserId())).findFirst();
     			if (htBoaInUserOptional != null && htBoaInUserOptional.isPresent()) {
@@ -830,10 +837,17 @@ public class DingDingService {
         	for (DdUserOperator ddUpdateUser : updateUserList) {
         		HtBoaInUser u = null; 
         		try {
-        			HtBoaInContrast htBoaInContrastUser = htBoaInContrastListUser.stream().filter(user -> ddUpdateUser.getUserId().equals(user.getDdBusinessId())).findFirst().get();
-        			Optional<HtBoaInUser> htBoaInUserOptional = htBoaInUserList.stream().filter(ucUser ->ucUser.getUserId().equals(htBoaInContrastUser.getUcBusinessId())).findFirst();
-        			if (htBoaInUserOptional != null && htBoaInUserOptional.isPresent()) {
-        				u = htBoaInUserOptional.get();
+        			HtBoaInContrast htBoaInContrastUser = null;
+        			Optional<HtBoaInContrast> htBoaInContrastUserOptional = htBoaInContrastListUser.stream().filter(user -> ddUpdateUser.getUserId().equals(user.getDdBusinessId())).findFirst();
+        			if (htBoaInContrastUserOptional != null && htBoaInContrastUserOptional.isPresent()) {
+        				htBoaInContrastUser = htBoaInContrastUserOptional.get();
+        			}
+        			HtBoaInContrast htBoaInContrastUserTemp = htBoaInContrastUser;
+        			if(htBoaInContrastUserTemp!=null) {
+        				Optional<HtBoaInUser> htBoaInUserOptional = htBoaInUserList.stream().filter(ucUser ->ucUser.getUserId().equals(htBoaInContrastUserTemp.getUcBusinessId())).findFirst();
+            			if (htBoaInUserOptional != null && htBoaInUserOptional.isPresent()) {
+            				u = htBoaInUserOptional.get();
+            			}
         			}
     			} catch (Exception e) {
     				e.printStackTrace();
@@ -848,10 +862,23 @@ public class DingDingService {
         				u.setMobile(ddUpdateUser.getMobile());
         			}
         			if(StringUtils.isNotEmpty(ddUpdateUser.getDeptId())) {
-        				HtBoaInContrast htBoaInContrastOrg = htBoaInContrastListORG.stream().filter(org -> org.getDdBusinessId().equals(ddUpdateUser.getDeptId())).findFirst().get();
-        				HtBoaInOrg o = htBoaInOrgList.stream().filter(org -> org.getOrgCode().equals(htBoaInContrastOrg.getUcBusinessId())).findFirst().get();
-        				if(StringUtils.isNotEmpty(o.getOrgCode())) {
-        					u.setOrgCode(o.getOrgCode());
+        				HtBoaInContrast htBoaInContrastOrg = null;
+        				Optional<HtBoaInContrast> htBoaInContrastOrgOptional = htBoaInContrastListORG.stream().filter(org -> org.getDdBusinessId().equals(ddUpdateUser.getDeptId())).findFirst();
+        				if(htBoaInContrastOrgOptional!=null&&htBoaInContrastOrgOptional.isPresent()) {
+        					htBoaInContrastOrg = htBoaInContrastOrgOptional.get();
+        				}
+        				HtBoaInContrast htBoaInContrastOrgTemp = htBoaInContrastOrg;
+        				if(htBoaInContrastOrgTemp!=null) {
+        					HtBoaInOrg o = null;
+        					Optional<HtBoaInOrg> htBoaInOrgOptional = htBoaInOrgList.stream().filter(org -> org.getOrgCode().equals(htBoaInContrastOrgTemp.getUcBusinessId())).findFirst();
+            				if(htBoaInOrgOptional!=null&&htBoaInOrgOptional.isPresent()) {
+            					o = htBoaInOrgOptional.get();
+            				}
+            				if(o!=null) {
+            					if(StringUtils.isNotEmpty(o.getOrgCode())) {
+                					u.setOrgCode(o.getOrgCode());
+                				}
+            				}
         				}
         			}
         			if(StringUtils.isNotEmpty(ddUpdateUser.getUserName())) {
@@ -1167,4 +1194,298 @@ public class DingDingService {
 			e.printStackTrace();
 		}
 	}
+ 
+    //optype=1syntype=1keyword=34
+    public PageResult<List<DdUserOperator>> loadSynUserListByPage(PageRequest pageRequest, Map<String, String> query) {
+    	PageResult result = new PageResult();
+    	Page<DdUserOperator> pageData = null;
+		if(query!=null) {
+			String keyWord = query.get("keyWord")==null?"":query.get("keyWord");
+			String optype = "";
+			String syntype = "";
+			String kewords = "";
+			boolean isBoolean = false;//是否是表达式查询，false不是 true是
+			if(keyWord.contains("optype=")) {
+				try {
+					optype = keyWord.substring(keyWord.indexOf("optype=")+"optype=".length(),keyWord.indexOf("optype=")+"optype=".length()+1);
+					isBoolean = true;
+				} catch (Exception e) {
+					optype = null;
+				}
+			}
+			if(keyWord.contains("syntype=")) {
+				try {
+					syntype = keyWord.substring(keyWord.indexOf("syntype=")+"syntype=".length(),keyWord.indexOf("syntype=")+"syntype=".length()+1);
+					isBoolean = true;
+				} catch (Exception e) {
+					syntype = null;
+				}
+			}
+			if(keyWord.contains("keyWord=")) {
+				try {
+					kewords = keyWord.substring(keyWord.indexOf("keyWord=")+"keyWord=".length(),keyWord.length());
+					isBoolean = true;
+				} catch (Exception e) {
+
+				}
+			}
+			boolean isBooleans = isBoolean;//是否是表达式查询，false不是 true是
+			String operatorType = optype;
+			String synFlag = syntype;
+			String keword = kewords;
+			Specification<DdUserOperator> specification =null;
+			if(isBooleans) {
+				if(!StringUtils.isEmpty(operatorType)) {
+					specification = (root, query1, cb) -> {
+						Predicate p1 = cb.like(root.get("userName").as(String.class), "%" + keword + "%");
+						Predicate p2 = cb.like(root.get("email").as(String.class), "%" + keword + "%");
+						Predicate p3 = cb.like(root.get("mobile").as(String.class), "%" + keword + "%");
+						Predicate p4 = cb.like(root.get("userId").as(String.class), "%" + keword + "%");
+						Predicate p5 = cb.equal(root.get("operatorType").as(Integer.class), operatorType );
+						query1.where(cb.and(cb.or(p1, p2, p3, p4),p5));
+						return query1.getRestriction();
+					 };
+				}
+				if(!StringUtils.isEmpty(synFlag)) {
+					specification = (root, query1, cb) -> {
+						Predicate p1 = cb.like(root.get("userName").as(String.class), "%" + keword + "%");
+						Predicate p2 = cb.like(root.get("email").as(String.class), "%" + keword + "%");
+						Predicate p3 = cb.like(root.get("mobile").as(String.class), "%" + keword + "%");
+						Predicate p4 = cb.like(root.get("userId").as(String.class), "%" + keword + "%");
+						Predicate p6 = cb.equal(root.get("synFlag").as(String.class), synFlag );
+						query1.where(cb.and(cb.or(p1, p2, p3, p4),p6));
+						return query1.getRestriction();
+					 };
+				}
+				if(!StringUtils.isEmpty(operatorType)&&!StringUtils.isEmpty(synFlag)) {
+					specification = (root, query1, cb) -> {
+						Predicate p1 = cb.like(root.get("userName").as(String.class), "%" + keword + "%");
+						Predicate p2 = cb.like(root.get("email").as(String.class), "%" + keword + "%");
+						Predicate p3 = cb.like(root.get("mobile").as(String.class), "%" + keword + "%");
+						Predicate p4 = cb.like(root.get("userId").as(String.class), "%" + keword + "%");
+						Predicate p5 = cb.equal(root.get("operatorType").as(Integer.class),  operatorType );
+						Predicate p6 = cb.equal(root.get("synFlag").as(String.class), synFlag );
+						query1.where(cb.and(cb.or(p1, p2, p3, p4),p5,p6));
+						return query1.getRestriction();
+					 };
+				}
+			}else {
+				  specification = (root, query1, cb) -> {
+					Predicate p1 = cb.like(root.get("userName").as(String.class), "%" + keyWord + "%");
+					Predicate p2 = cb.like(root.get("email").as(String.class), "%" + keyWord + "%");
+					Predicate p3 = cb.like(root.get("mobile").as(String.class), "%" + keyWord + "%");
+					Predicate p4 = cb.like(root.get("userId").as(String.class), "%" + keyWord + "%");
+					query1.where(cb.or(p1, p2, p3,p4));
+					return query1.getRestriction();
+				 };
+			}
+			 pageData = ddUserOperatorRepository.findAll(specification, pageRequest);
+		}else {
+			 pageData = ddUserOperatorRepository.findAll(pageRequest);
+		}
+		
+		if (pageData != null) {
+			result.count(pageData.getTotalElements()).data(pageData.getContent());
+		}
+		result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
+		return result;
+	}
+    
+    public Result synUserDataToUc(long id) {
+    	DdUserOperator ddUserOperator =ddUserOperatorRepository.findOne(id);
+    	if(ddUserOperator!=null) {
+    		HtBoaInUser htBoaInUsers = null;
+    		//查看是否已经存在用户信息（电话号码 邮箱）
+	    	if(StringUtils.isNotEmpty(ddUserOperator.getMobile())) {
+	    		htBoaInUsers = htBoaInUserService.findByMobile(ddUserOperator.getMobile());
+	    	}
+	    	if(htBoaInUsers==null) {
+	    		if(StringUtils.isNotEmpty(ddUserOperator.getEmail())) {
+	    			htBoaInUsers = htBoaInUserService.findByEmail(ddUserOperator.getEmail());
+		    	}
+	    	}
+	    	if(htBoaInUsers==null) {
+	    		Integer isOrgUser = ddUserOperator.getJobNumber()==null?0:1;
+				HtBoaInUser user = new HtBoaInUser();
+				user.setDataSource(Constants.USER_DATASOURCE_2);
+				user.setEmail(StringUtils.isEmpty(ddUserOperator.getEmail())?null:ddUserOperator.getEmail());
+				user.setIsOrgUser(isOrgUser);
+				user.setJobNumber(StringUtils.isEmpty(ddUserOperator.getJobNumber())?null:ddUserOperator.getJobNumber());
+				user.setMobile(StringUtils.isEmpty(ddUserOperator.getMobile())?null:ddUserOperator.getMobile());
+				//查找对应的机构
+				List<HtBoaInContrast> htBoaInContrastORGList = htBoaInContrastService.getHtBoaInContrastListByDdBusinessId(ddUserOperator.getDeptId(), "10");
+				HtBoaInContrast htBoaInContrastOrg = null;
+				if(htBoaInContrastORGList!=null && !htBoaInContrastORGList.isEmpty()) {
+					htBoaInContrastOrg = htBoaInContrastORGList.get(0);
+				}
+				if(htBoaInContrastOrg==null) {
+					user.setOrgCode("D0100");
+				}else {
+					user.setOrgCode(htBoaInContrastOrg.getUcBusinessId());
+				}
+				user.setUserName(ddUserOperator.getUserName());
+				user.setIdNo(StringUtils.isEmpty(ddUserOperator.getIdNo())?null:ddUserOperator.getIdNo());
+				user.setRootOrgCode("D01");
+				user.setUserType("10");
+				user.setDelFlag(0);
+				user.setStatus(Constants.STATUS_0);
+				user.setCreatedDatetime(new Date());
+				user.setLastModifiedDatetime(new Date());
+
+				String userId = "";
+		    	if (user.getJobNumber() != null && user.getJobNumber().contains("HX-")) {
+		            userId = String.format("%s%s%s%s%s", "01", 1, "1", "1", user.getJobNumber().replace("HX-", ""));
+		        } else {
+		        	isOrgUser = 0;
+		            userId = String.format("%s%s%s%s%s", "01", 0, "1", "1", generateNumber(5));
+		        }
+		    	//查看userId是否被占用
+		    	htBoaInUsers = htBoaInUserService.findByUserId(userId);
+		    	if(htBoaInUsers!=null) {
+		    		userId = String.format("%s%s%s%s%s", "01", isOrgUser, "1", "1", generateNumber(6));
+		    	}
+		    	user.setUserId(userId);
+		    	htBoaInUsers =  htBoaInUserService.add(user);
+	    	}
+	    	
+	    	if(htBoaInUsers!=null) {
+	    		HtBoaInLogin loginInfo = htBoaInLoginService.findByUserId(htBoaInUsers.getUserId());
+		    	if(loginInfo==null) {
+					loginInfo = new HtBoaInLogin();
+					loginInfo.setStatus(Constants.USER_STATUS_0);
+					loginInfo.setPassword(EncryptUtil.passwordEncrypt("123456"));
+					loginInfo.setFailedCount(0);
+					loginInfo.setRootOrgCode(htBoaInUsers.getOrgCode());
+					loginInfo.setDelFlag(0);
+					loginInfo.setStatus(Constants.STATUS_0);
+					loginInfo.setCreatedDatetime(new Date());
+					loginInfo.setLastModifiedDatetime(new Date());
+					loginInfo.setUserId(htBoaInUsers.getUserId());
+					htBoaInLoginService.add(loginInfo);
+				} 
+	            //添加用户与钉钉的关联
+	            HtBoaInContrast htBoaInContrast = htBoaInContrastService.getHtBoaInContrastListByUcBusinessId(htBoaInUsers.getUserId(), "20");
+	            if(htBoaInContrast==null) {
+	            	htBoaInContrast = new HtBoaInContrast();
+	            }
+	            htBoaInContrast.setType("20");
+	            htBoaInContrast.setUcBusinessId(htBoaInUsers.getUserId());
+	            htBoaInContrast.setDdBusinessId(ddUserOperator.getUserId());
+	            htBoaInContrast.setContrast("自动对照");
+	            htBoaInContrast.setContrastDatetime(new Date());
+	            htBoaInContrastService.add(htBoaInContrast);
+	            
+	            ddUserOperator.setSynFlag("1");
+	            ddUserOperatorRepository.save(ddUserOperator);
+	    	}
+    	}
+		return Result.buildSuccess();
+	}
+    
+    public PageResult<List<DdDeptOperator>> loadSynDeptListByPage(PageRequest pageRequest, Map<String, String> query) {
+    	PageResult result = new PageResult();
+		String keyWord = "";
+		Specification<DdDeptOperator> specification = (root, query1, cb) -> {
+			Predicate p1 = cb.like(root.get("parentId").as(String.class), "%" + keyWord + "%");
+			Predicate p2 = cb.like(root.get("deptName").as(String.class), "%" + keyWord + "%");
+			query1.where(cb.or(p1, p2));
+			return query1.getRestriction();
+		};
+		Page<DdDeptOperator> pageData = ddDeptOperatorRepository.findAll(specification, pageRequest);
+		if (pageData != null) {
+			result.count(pageData.getTotalElements()).data(pageData.getContent());
+		}
+		result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
+		return result;
+	}
+
+ 
+	public Result synDeptDataToUc( long id) {
+    	DdDeptOperator ddDeptOperator =ddDeptOperatorRepository.findOne(id);
+    	if(ddDeptOperator!=null) {
+    		List<HtBoaInContrast>  htBoaInContrastOrgList = htBoaInContrastService.getHtBoaInContrastListByDdBusinessId(ddDeptOperator.getDeptId(), "10");
+    		HtBoaInContrast htBoaInContrastorg = null;
+    		if(htBoaInContrastOrgList!=null&&!htBoaInContrastOrgList.isEmpty()) {
+    			htBoaInContrastorg = htBoaInContrastOrgList.get(0);
+    		}
+    		if(htBoaInContrastorg ==null) {
+    			//获取orgCode 1.找到上级的UC机构，获取到maxCode
+    			List<HtBoaInContrast> listContrastParent = htBoaInContrastService.getHtBoaInContrastListByDdBusinessId(ddDeptOperator.getParentId(), "10");
+    			HtBoaInOrg parentOrg = null;
+    			String newOrgCode ="";
+    			if(listContrastParent!=null&&!listContrastParent.isEmpty()) {
+    				 List<HtBoaInOrg> parentOrgList = htBoaInOrgService.findByOrgCode(listContrastParent.get(0).getUcBusinessId());
+    				 if(parentOrgList!=null&&!parentOrgList.isEmpty()) {
+    					 parentOrg = parentOrgList.get(0);
+    				 }
+
+    				 if(parentOrg==null){
+    					 parentOrg = new HtBoaInOrg();
+    				 }
+    				  String maxOrgCode = htBoaInOrgService.getMaxOrgCode(listContrastParent.get(0).getUcBusinessId());
+			          if (StringUtils.isNotEmpty(maxOrgCode)) {
+			                try { 
+			                	BigDecimal indexs = new BigDecimal(maxOrgCode.replace("D0", "").replaceAll("[^0-9]", ""));
+			                    newOrgCode = "D0"+(indexs.add(new BigDecimal("1")) );
+			                } catch (Exception e) {
+			                	e.printStackTrace();
+			                }
+			           }else {
+			        	   newOrgCode = parentOrg.getOrgCode()+"01";
+			           }
+    			}else {
+    				if("58800327".equals(ddDeptOperator.getDeptId())) {
+    					parentOrg = new HtBoaInOrg();
+    					newOrgCode = "D01";
+    				} 
+    			}
+    			HtBoaInOrg newOrg = null;
+				List<HtBoaInOrg> listHtBoaInOrg = htBoaInOrgService.findByOrgCode(newOrgCode);
+				if(listHtBoaInOrg!=null&&!listHtBoaInOrg.isEmpty()) {
+					newOrg = listHtBoaInOrg.get(0);
+				}else {
+					newOrg = new HtBoaInOrg();
+				}
+				newOrg.setOrgCode(newOrgCode);
+				newOrg.setParentOrgCode(parentOrg.getOrgCode());
+				if("D01".equals(parentOrg.getOrgCode())) {
+					newOrg.setOrgType("20");//中心
+				}
+		        newOrg.setRootOrgCode("D01");
+                newOrg.setOrgPath(parentOrg.getOrgPath()+"/"+newOrgCode);
+                newOrg.setOrgNameCn(ddDeptOperator.getDeptName());
+                newOrg.setDataSource(Constants.USER_DATASOURCE_2);
+                newOrg.setSequence(0);
+                if(newOrgCode.length()>2&&!"D01".equals(newOrgCode)) {
+                	newOrg.setSequence(Integer.parseInt(newOrgCode.substring(newOrgCode.length()-2, newOrgCode.length())));
+                }
+                newOrg.setRemark(ddDeptOperator.getDeptId());//把钉钉组织机构id存入该字段
+                htBoaInOrgService.add(newOrg);
+                
+                //添加机构与钉钉的关联
+                HtBoaInContrast htBoaInContrast = htBoaInContrastService.getHtBoaInContrastListByUcBusinessId(newOrgCode, "10");
+                if(htBoaInContrast==null) {
+                	htBoaInContrast = new HtBoaInContrast();
+                	htBoaInContrast.setType("10");
+                    htBoaInContrast.setUcBusinessId(newOrgCode);
+                    htBoaInContrast.setDdBusinessId(ddDeptOperator.getDeptId());
+                    htBoaInContrast.setContrast("自动对照");
+                    htBoaInContrast.setContrastDatetime(new Date());
+                }else {
+                	htBoaInContrast.setUcBusinessId(newOrgCode);
+                    htBoaInContrast.setDdBusinessId(ddDeptOperator.getDeptId());
+                    htBoaInContrast.setContrastDatetime(new Date());
+                }
+                
+                htBoaInContrastService.add(htBoaInContrast);
+                //更新同步完成标记
+                ddDeptOperator.setSynFlag("1");
+                ddDeptOperatorRepository.save(ddDeptOperator);
+    		}
+    		
+    	}
+		return Result.buildSuccess();
+	}
+
+	
 }

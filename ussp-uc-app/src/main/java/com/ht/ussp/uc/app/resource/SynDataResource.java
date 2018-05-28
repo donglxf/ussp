@@ -1,12 +1,17 @@
 package com.ht.ussp.uc.app.resource;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
+import com.ht.ussp.uc.app.domain.DdDeptOperator;
+import com.ht.ussp.uc.app.domain.DdUserOperator;
 import com.ht.ussp.uc.app.domain.HtBoaInBmOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInBmUser;
 import com.ht.ussp.uc.app.domain.HtBoaInContrast;
@@ -69,20 +76,11 @@ public class SynDataResource {
     }
     
 	/**
-	 * 矫正历史错误数据
-	 * @return
-	 */
-	@ApiOperation("02-矫正历史错误数据")
-	@RequestMapping(value = {"/dealErrorData" }, method = RequestMethod.POST)
-	public Result dealErrorData() { 
-        return dingDingService.dealErrorData();
-	}
-	
-	/**
 	 * 数据整理
 	 * @return
 	 */
-	@ApiOperation("03-钉钉数据整理（机构，用户）")
+	@SuppressWarnings("rawtypes")
+	@ApiOperation("02-钉钉数据整理（机构，用户）")
 	@RequestMapping(value = {"/dealData" }, method = RequestMethod.POST)
 	public Result dealData() {
         return dingDingService.dealData();
@@ -94,7 +92,7 @@ public class SynDataResource {
      * @return
      */
     @SuppressWarnings({ "rawtypes" })
-    @ApiOperation("04-将钉钉机构转换为UC基础数据")
+    @ApiOperation("03-将钉钉机构转换为UC基础数据")
 	@RequestMapping(value = {"/convertOrg" }, method = RequestMethod.POST)
     public Result convertOrg() {
         return dingDingService.convertOrg();
@@ -106,7 +104,7 @@ public class SynDataResource {
      * @return
      */
     @SuppressWarnings({ "rawtypes" })
-    @ApiOperation("04-01 将钉钉岗位转换为UC基础数据")
+    @ApiOperation("04-将钉钉岗位转换为UC基础数据")
 	@RequestMapping(value = {"/convertPosition" }, method = RequestMethod.POST)
     public Result convertPosition() {
         return dingDingService.convertPosition();
@@ -136,7 +134,8 @@ public class SynDataResource {
     	return dingDingService.convertUserPosition();
     }
     
-	@ApiOperation("07-信贷用户转换为UC用户")
+	@SuppressWarnings("rawtypes")
+	@ApiOperation("信贷用户转换为UC用户")
 	@RequestMapping(value = {"/convertBmUser" }, method = RequestMethod.POST)
 	public Result convertBmUser() { 
 		//1.获取所有信贷用户  2.通过手机号,email验证关联 信贷用户与UC用户  4.如果信贷用户在UC不存在，则在UC创建一个,挂靠到未知机构
@@ -166,12 +165,11 @@ public class SynDataResource {
      * @return
      */
     @SuppressWarnings({ "rawtypes"})
-    @ApiOperation("08-岗位角色关联转换")
+    @ApiOperation("岗位角色关联转换")
     @RequestMapping(value = {"/converPositionRole" }, method = RequestMethod.POST)
     public Result  converPositionRole() { 
     	return dingDingService.converPositionRole();
     }
-    
     
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	@ApiOperation(value = "获取关联的用户信息，信贷用户信息")
@@ -259,4 +257,55 @@ public class SynDataResource {
     	return Result.buildSuccess();
     }
 
+    @SuppressWarnings({ "rawtypes"  })
+    @ApiOperation(value = "添加信贷用信息")
+    @PostMapping(value = "/addBmUserUserInfo")
+    public Result addBmUserUserInfo(@RequestBody HtBoaInBmUser htBoaInBmUser, @RequestHeader("userId") String loginUserId) {
+    	HtBoaInBmUser u =null;
+    	List<HtBoaInBmUser> listHtBoaInBmUser=null;
+    	if(StringUtils.isNotEmpty(htBoaInBmUser.getUserId())) {
+    		listHtBoaInBmUser = htBoaInBmUserService.getHtBoaInBmUserByUserId(htBoaInBmUser.getUserId());
+    		if(listHtBoaInBmUser!=null&&!listHtBoaInBmUser.isEmpty()) {
+    			u = listHtBoaInBmUser.get(0);
+    		}
+    	}
+    	if(u==null) {
+    		htBoaInBmUser.setDelFlag(0);
+    		htBoaInBmUser.setCreatedDatetime(new Date());
+    		htBoaInBmUser.setLastModifiedDatetime(new Date());
+    		htBoaInBmUser.setStatus("0");
+    		u = htBoaInBmUserService.save(htBoaInBmUser);
+    	}
+    	return Result.buildSuccess(u);
+    }
+    
+    @ApiOperation(value = "钉钉用户同步操作列表信息")
+	@PostMapping(value = "/loadSynUserListByPage", produces = { "application/json" })
+	public PageResult<List<DdUserOperator>> loadSynUserListByPage(PageVo page) {
+    	List<Sort.Order> orders = new ArrayList<Sort.Order>();
+		orders.add(new Order("operatorType"));
+		return dingDingService.loadSynUserListByPage(new PageRequest(page.getPage(), page.getLimit(),new Sort(orders)), page.getQuery());
+	}
+    
+    @ApiOperation(value = "单个同步用户到UC")
+   	@PostMapping(value = "/synUserDataToUc", produces = { "application/json" })
+   	public Result synUserDataToUc(long id) {
+   		return dingDingService.synUserDataToUc(id);
+   	}
+    
+    
+    @ApiOperation(value = "钉钉机构同步操作列表信息")
+	@PostMapping(value = "/loadSynDeptListByPage", produces = { "application/json" })
+	public PageResult<List<DdDeptOperator>> loadSynDeptListByPage(PageVo page) {
+    	List<Sort.Order> orders = new ArrayList<Sort.Order>();
+    	orders.add(new Order("operatorType"));
+    	orders.add(new Order("level"));
+		return dingDingService.loadSynDeptListByPage(new PageRequest(page.getPage(), page.getLimit(),new Sort(orders)), page.getQuery());
+	}
+    
+    @ApiOperation(value = "单个同步机构到UC")
+   	@PostMapping(value = "/synDeptDataToUc", produces = { "application/json" })
+   	public Result synDeptDataToUc(long id) {
+   		return dingDingService.synDeptDataToUc(id);
+   	}
 }

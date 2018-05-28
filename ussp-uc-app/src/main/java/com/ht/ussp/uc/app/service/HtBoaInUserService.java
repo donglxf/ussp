@@ -308,11 +308,11 @@ public class HtBoaInUserService {
 				user.setDataSource(Constants.USER_DATASOURCE_3);
 				user.setEmail(bmuservo.getEmail());
 				user.setIsOrgUser(1);
-				user.setJobNumber(bmuservo.getJobNumber());
-				user.setMobile(bmuservo.getMobile());
+				user.setJobNumber(StringUtils.isEmpty(bmuservo.getJobNumber())?null:bmuservo.getJobNumber());
+				user.setMobile(StringUtils.isEmpty(bmuservo.getMobile())?null:bmuservo.getMobile()  );
 				user.setOrgCode(bmuservo.getOrgCode());
 				user.setUserName(bmuservo.getUserName());
-				user.setIdNo(bmuservo.getIdNo());
+				user.setIdNo(StringUtils.isEmpty(bmuservo.getIdNo())?null:bmuservo.getIdNo()   );
 				user.setRootOrgCode("D01");
 				user.setUserType("10");
 				user.setDelFlag(0);

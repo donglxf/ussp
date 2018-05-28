@@ -113,4 +113,8 @@ public class HtBoaInBmUserService {
     public List<HtBoaInBmUser> getHtBoaInBmUserByUserId(String userId) {
         return htBoaInBmUserRepository.findByUserId(userId);
     }
+
+	public HtBoaInBmUser save(HtBoaInBmUser u) {
+		return htBoaInBmUserRepository.save(u);
+	}
 }

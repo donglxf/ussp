@@ -1,0 +1,51 @@
+<div class="layui-fluid" lay-filter="dduser_auth">
+	<div class="layui-form-item"  style="padding-left: 15px;padding-right: 15px;">
+		<div class="row row-lg" id="dduser_table_tools">
+			<div class="toolbarBtn btn-group">
+				<button class="layui-btn layui-btn-sm" title="新增" data-type="add" ht-auth="add">新增</button>
+				<button class="layui-btn layui-btn-sm" title="导出" data-type="exportdduser" ht-auth="export">导出</button>
+				<button class="layui-btn layui-btn-sm" title="下载导入模板" onclick="location.href='/template/系统导入模板.xlsx'"  ht-auth="dwon">下载导入模板</button>
+				<button class="layui-btn layui-btn-sm" title="导入" id="importdduser" data-type="importdduser" ht-auth="import">导入</button>
+			</div>
+			<div class="pull-right col-xs-4 row">
+                <div class="input-group input-group-sm">
+                   <input type="text" class="form-control input-sm" maxlength="60" id="dduser_search_keyword" placeholder="请输入系统编号/系统名称" />
+                    <div class="input-group-btn">
+                        <button type="button" class="layui-btn layui-btn-sm" data-type="search">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+		</div>
+		<div class="row row-lg">
+			<table id="dduser_datatable" lay-filter="filter_dduser_datatable"> </table>
+			<script type="text/html" id="dduser_datatable_bar">
+       {{#  if(d.synFlag == '0'){ }}
+             <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="syndduser"  >同步</a>
+      {{#  }   }}
+            </script>
+		</div>
+	</div>
+    <script src="/js/syndata/syndduser.js"></script>
+    <script type="text/html" id="statusTpl">
+      {{#  if(d.synFlag == '0'){ }}
+                    未同步  
+      {{#  } else { }}
+                     同步
+      {{#  } }}
+	</script>
+	<script type="text/html" id="operatorTpl">
+      {{#  if(d.operatorType == '1'){ }}
+                     添加
+      {{#  } else if(d.operatorType == '2'){ }}
+                      删除
+      {{#  } else if(d.operatorType == '3'){ }}
+                      更新
+      {{#  } }}
+	</script>
+	
+	<script type="text/html" id="createTimeTpl">
+ {{new Date( d.createdDatetime ).Format('yyyy-MM-dd HH:mm:ss')}} 
+</script>
+</div>

@@ -1,10 +1,12 @@
 layui.use(['form', 'laytpl', 'table', 'ht_config', 'ht_auth' ], function () {
     var $ = layui.jquery
         , laytpl = layui.laytpl
+        ,form = layui.form
         , table = layui.table
         , config = layui.ht_config
         , ht_auth = layui.ht_auth
         , selectTab = 0
+        ,addDialog
         , selectBmUserData
         , active = {
     		syndatadd: function () {
@@ -18,6 +20,51 @@ layui.use(['form', 'laytpl', 'table', 'ht_config', 'ht_auth' ], function () {
 	        searchBM: function () {
 	        	renderSynDataTable("user_bm",$("#syndata_bm_user_search_keyword").val());
 	        },
+	        addBMUserInof: function () { 
+	        	 //弹出用户新增弹出框
+	            layer.close(addDialog);
+	            addDialog = layer.open({
+	                type: 1,
+	                area: ['400px', '400px'],
+	                shadeClose: true,
+	                title: "新增用户",
+	                content: $("#user_bm_info_add_data_div").html(),
+	                btn: ['保存', '取消'],
+	                yes: function (index, layero) {
+	                    var $submitBtn = $("button[lay-filter=filter_add_bmUserInfo_data_form]", layero);
+	                    if ($submitBtn) {
+	                        $submitBtn.click();
+	                    } else {
+	                        throw new Error("没有找到submit按钮。");
+	                    }
+	                },
+	                btn2: function () {
+	                    layer.closeAll('tips');
+	                },
+	                success: function (layero, index) {
+	                    //填充选中的组织机构
+	                    form.on('submit(filter_add_bmUserInfo_data_form)', function (data) {
+	                        $.ajax({
+	                            type: "POST",
+	                            url: addBmUserUserInfoUrl,
+	                            data: JSON.stringify(data.field),
+	                            contentType: "application/json; charset=utf-8",
+	                            success: function (result) {
+	                                layer.close(index);
+	                                if (result["returnCode"] == '0000') {
+	                                    layer.alert("信贷用户新增成功。");
+	                                }
+	                            },
+	                            error: function (result) {
+	                                layer.msg("用户新增发生异常，请联系管理员。");
+	                                console.error(result);
+	                            }
+	                        });
+	                        return false;
+	                    });
+	                }
+	            })
+	        },
 	        
     }; 
 
@@ -26,6 +73,7 @@ layui.use(['form', 'laytpl', 'table', 'ht_config', 'ht_auth' ], function () {
     var queryBmUserUrl = config.basePath +"syndata/queryBmUser"; //导入
     var removeBmUserUrl = config.basePath +"syndata/removeBmUser"; //解除关联
     var addBmUserUrl = config.basePath +"syndata/addBmUser"; //添加关联
+    var addBmUserUserInfoUrl = config.basePath +"syndata/addBmUserUserInfo"; //添加关联
     
      /**
       * 
