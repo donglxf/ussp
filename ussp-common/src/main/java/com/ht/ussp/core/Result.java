@@ -113,7 +113,7 @@ public class Result<T> implements Serializable {
     public static <T> Result<T> buildFail(SysStatus sysStatus){
         Result<T> result= new Result<T>();
         result.setReturnCode(sysStatus.getStatus());
-        result.setCodeDesc(sysStatus.getMsg());
+        result.setMsg(sysStatus.getMsg());
         return result;
     }
 

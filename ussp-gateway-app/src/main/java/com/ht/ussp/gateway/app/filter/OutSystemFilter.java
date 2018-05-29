@@ -146,14 +146,14 @@ public class OutSystemFilter extends ZuulFilter {
 					ctx.addZuulRequestHeader("ieme", iemeTemp);
 					ctx.setSendZuulResponse(true);
 						return null;
-				} else if ("9922".equals(result.getCodeDesc())) {
+				} else if ("9922".equals(result.getReturnCode())) {
 					try {
 						mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.TOKEN_IS_VALID));
 					} catch (Exception e) {
 						log.debug("write response result token is valid:"+e.getMessage());
 					} 
 					return null;
-				}else if ("9921".equals(result.getCodeDesc())) {
+				}else if ("9921".equals(result.getReturnCode())) {
 					try {
 						mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.TOKEN_IS_EXPIRED));
 					} catch (Exception e) {
