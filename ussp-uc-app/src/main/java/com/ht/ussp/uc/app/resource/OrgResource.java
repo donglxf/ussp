@@ -269,15 +269,7 @@ public class OrgResource {
     public HtBoaInOrg getOrgInfoByOrgType(@RequestParam("orgCode")String orgCode,@RequestParam("orgType") String orgType) {
         return htBoaInOrgService.getOrgInfoByOrgType(orgCode,orgType);
     }
-    
-
-    @PostMapping(value = "/testGetOrgInfoByOrgType")
-    public Result testGetOrgInfoByOrgType() {
-    	loginUserInfoHelper.getUserListByTime("2018-03-08 16:10:10", "2018-04-08 16:10:10");
-    	orgInfoHelper.getOrgListByTime("2018-03-08 16:10:10", "2018-04-08 16:10:10");
-    	return Result.buildSuccess(orgInfoHelper.getOrgInfoByOrgType("D01100501","20"));
-    }  
-    
+ 
     @ApiOperation(value = "产生新的orgcode")
     @GetMapping(value = "/getNewOrgCode")
     public String getNewOrgCode(String parentOrgCode) {

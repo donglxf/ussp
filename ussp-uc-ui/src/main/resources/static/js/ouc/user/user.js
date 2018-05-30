@@ -22,7 +22,7 @@ layui.use([ 'form',   'table', 'ht_config', 'ht_auth'], function () {
   //自定义验证规则
     var refreshOutUserTable = function (keyword) {
     	table.reload('out_user_datatable', {
-            height: 'full-673',
+            height: 'full-200',
             page: {
                 curr: 1 //重新从第 1 页开始
             }
@@ -36,18 +36,16 @@ layui.use([ 'form',   'table', 'ht_config', 'ht_auth'], function () {
         id: 'out_user_datatable'
         , elem: '#out_user_datatable'
         , url: loadListUserByPage
-        , limit : 5
-        , limits :[5, 10, 20, 30, 40, 50]
         , page: true
-        , height: 'full-673'
+        , height: 'full-200'
         , cols: [[
             {type: 'numbers',event: 'rowClick'}
-            , {field: 'userName',   title: '用户姓名',event: 'rowClick'}
-            , {field: 'mobile', width: 120, title: '手机',event: 'rowClick'}
-            , {field: 'email',   title: '邮箱'}
-            , {field: 'dataSource',   title: '注册系统'}
-            , {field: 'status', width: 60, title: '状态', templet: "#user_status_laytpl",event: 'rowClick'}
-            , {fixed: 'right', width: 230, title: '操作', align: 'center', toolbar: '#out_user_datatable_bar'}
+            , {field: 'userName', width: 300,   title: '用户姓名',event: 'rowClick'}
+            , {field: 'mobile', width: 200,   title: '手机',event: 'rowClick'}
+            , {field: 'email', width: 300,   title: '邮箱'}
+            , {field: 'dataSource', width: 200,  title: '注册系统'}
+            , {field: 'status', width: 150, title: '状态', templet: "#user_status_laytpl",event: 'rowClick'}
+            , {fixed: 'right', width: 250, title: '操作', align: 'center', toolbar: '#out_user_datatable_bar'}
         ]]
     });
     //监听操作栏

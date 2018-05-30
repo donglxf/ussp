@@ -769,6 +769,10 @@ public class HtBoaInUserService {
 	public void add(List<HtBoaInUser> newUserList) {
 		this.htBoaInUserRepository.save(newUserList);
 	}
+	
+	public void delete(HtBoaInUser u) {
+		this.htBoaInUserRepository.delete(u);
+	}
 
 	public HtBoaInUser findByJobNumber(String jobnum) {
 		 HtBoaInUser htBoaInUser = null;

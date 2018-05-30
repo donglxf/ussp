@@ -189,4 +189,25 @@ public class HtBoaInOrgService {
 	public String getMaxOrgCode(String parentOrgCode) {
 		return  this.htBoaInOrgRepository.getMaxOrgCode(parentOrgCode);
 	}
+
+	/**
+	 * 获取所有下级机构
+	 * @param orgCode
+	 * @return
+	 */
+	public List<HtBoaInOrg> getAllSubOrgInfo(String orgCode) {
+		List<HtBoaInOrg> listHtBoaInOrg = new ArrayList<HtBoaInOrg>();
+		getAllSubOrg(listHtBoaInOrg,orgCode);
+		return listHtBoaInOrg;
+	}
+	private List<HtBoaInOrg> getAllSubOrg(List<HtBoaInOrg> listHtBoaInOrg,String orgCode) {
+		List<HtBoaInOrg> listSubHtBoaInOrg = htBoaInOrgRepository.findByParentOrgCode(orgCode);//获取下级机构
+		if(listSubHtBoaInOrg!=null&&!listSubHtBoaInOrg.isEmpty()) {
+			listHtBoaInOrg.addAll(listSubHtBoaInOrg);
+			for(HtBoaInOrg o :listSubHtBoaInOrg) {
+				return getAllSubOrg(listHtBoaInOrg, o.getOrgCode());
+			}
+		} 
+		return listHtBoaInOrg;
+	}
 }

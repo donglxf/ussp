@@ -125,6 +125,7 @@ layui.use(['form',   'table', 'ht_config','ht_auth','upload' ], function () {
             keyword = null;
         }
         table.reload('app_datatable', {
+        	height: 'full-200',
             page: {
                 curr: 1 //重新从第 1 页开始
             }

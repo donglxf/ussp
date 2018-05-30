@@ -32,15 +32,12 @@ import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.domain.HtBoaInUserRole;
-import com.ht.ussp.uc.app.feignclients.EipClient;
-import com.ht.ussp.uc.app.feignclients.UaaClient;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
 import com.ht.ussp.uc.app.service.HtBoaInBmUserService;
 import com.ht.ussp.uc.app.service.HtBoaInContrastService;
 import com.ht.ussp.uc.app.service.HtBoaInLoginService;
-import com.ht.ussp.uc.app.service.HtBoaInOrgService;
 import com.ht.ussp.uc.app.service.HtBoaInPwdHistService;
 import com.ht.ussp.uc.app.service.HtBoaInUserAppService;
 import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
@@ -82,15 +79,9 @@ public class UserResource{
     @Autowired
     private HtBoaInPwdHistService htBoaInPwdHistService;
     @Autowired
-	private EipClient eipClient;
-    @Autowired
-    private UaaClient uaaClient;
-    @Autowired
    	private LoginUserInfoHelper loginUserInfoHelper;
     @Autowired
    	private HtBoaInContrastService htBoaInContrastService;
-    @Autowired
-    private HtBoaInOrgService htBoaInOrgService;
     @Autowired
     private HtBoaInBmUserService htBoaInBmUserService;
     
@@ -368,6 +359,19 @@ public class UserResource{
         return Result.buildFail();
     }
 
+    @PostMapping("/deleteTrunc")
+    public Result delTrunc(String userId) {
+        if (userId != null && !"".equals(userId.trim())) {
+        	HtBoaInLogin u = htBoaInLoginService.findByUserId(userId);
+        	htBoaInLoginService.delete(u);
+        	HtBoaInUser user = htBoaInUserService.findByUserId(userId);
+        	htBoaInUserService.delete(user);
+        	HtBoaInContrast c = htBoaInContrastService.getHtBoaInContrastListByUcBusinessId(userId, "20");
+        	htBoaInContrastService.delete(c);
+        }
+        return Result.buildFail();
+    }
+    
     @PostMapping("/view")
     public Result viewAsync(String userId) {
         if (userId != null && !"".equals(userId.trim())) {
