@@ -52,7 +52,11 @@ public class UcDataResource {
 	@ApiOperation(value = "获取指定用户所属机构信息",notes="通过userid,email,mobile,jobnumber查询")
 	@PostMapping(value = { "/user/getUserOrg" })
 	public Result getUserOrg(@RequestParam("keyword") String keyword) {
-		HtBoaInUser htBoaInUser = htBoaInUserService.findByUserIdOrEmailOrMobileOrJobNumber(keyword,keyword,keyword,keyword);
+		HtBoaInUser htBoaInUser = null;
+		List<HtBoaInUser> htBoaInUserList = htBoaInUserService.findByUserIdOrEmailOrMobileOrJobNumber(keyword,keyword,keyword,keyword);
+		if(htBoaInUserList!=null&&!htBoaInUserList.isEmpty()) {
+			htBoaInUser = htBoaInUserList.get(0);
+		}
 		if(htBoaInUser!=null) {
 			DataUserOrgVo dataUserOrgVo = new DataUserOrgVo();
 			dataUserOrgVo.setEmail(htBoaInUser.getEmail());
@@ -77,7 +81,7 @@ public class UcDataResource {
 			dataUserOrgVo.setSubHtBoaInOrgList(listSubHtBoaInOrg);
 			return Result.buildSuccess(dataUserOrgVo);
 		}else {
-			return Result.buildFail();
+			return Result.buildSuccess(null);
 		}
 	}
 	
@@ -102,7 +106,11 @@ public class UcDataResource {
 		pageConf.setPage(0);
 		pageConf.setSize(500);
 		Map<String, String> query = new HashMap<>();
-		HtBoaInUser htBoaInUser = htBoaInUserService.findByUserIdOrEmailOrMobileOrJobNumber(keyword,keyword,keyword,keyword);
+		HtBoaInUser htBoaInUser = null;
+		List<HtBoaInUser> htBoaInUserList = htBoaInUserService.findByUserIdOrEmailOrMobileOrJobNumber(keyword,keyword,keyword,keyword);
+		if(htBoaInUserList!=null&&!htBoaInUserList.isEmpty()) {
+			htBoaInUser = htBoaInUserList.get(0);
+		}
 		if(htBoaInUser!=null) {
 			query.put("userId", htBoaInUser.getUserId());
 			result = htBoaInPositionUserService.listPositionUserByPage(pageConf, query);
@@ -124,7 +132,11 @@ public class UcDataResource {
 		pageConf.setPage(0);
 		pageConf.setSize(500);
 		Map<String, String> query = new HashMap<>();
-		HtBoaInUser htBoaInUser = htBoaInUserService.findByUserIdOrEmailOrMobileOrJobNumber(keyword,keyword,keyword,keyword);
+		HtBoaInUser htBoaInUser = null;
+		List<HtBoaInUser> htBoaInUserList = htBoaInUserService.findByUserIdOrEmailOrMobileOrJobNumber(keyword,keyword,keyword,keyword);
+		if(htBoaInUserList!=null&&!htBoaInUserList.isEmpty()) {
+			htBoaInUser = htBoaInUserList.get(0);
+		}
 		if(htBoaInUser!=null) {
 			query.put("userId", htBoaInUser.getUserId());
 			result = htBoaInUserRoleService.listUserRoleByPage(pageConf, query);

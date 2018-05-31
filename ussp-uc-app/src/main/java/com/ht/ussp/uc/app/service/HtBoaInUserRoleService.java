@@ -158,4 +158,13 @@ public class HtBoaInUserRoleService {
 	public void deleteByRoleCode(String roleCode) {
 		this.htBoaInUserRoleRepository.deleteByRoleCode(roleCode);
 	}
+	public List<HtBoaInUserRole> findByRoleCode(String roleCode) {
+		return this.htBoaInUserRoleRepository.findByRoleCode(roleCode);
+	}
+	public void deleteByUserId(String userId) {
+		this.htBoaInUserRoleRepository.deleteByUserId(userId);
+	}
+	public void deleteByUserIdAndRoleCode(String userId, String roleCode) {
+		this.htBoaInUserRoleRepository.deleteByUserIdAndRoleCode(userId,roleCode);
+	}
 }

@@ -31,17 +31,6 @@
                     </div>
                 </div>
             </div>
-		
-			<!-- <div class="layui-inline">
-				<div class="input-group input-group-sm">
-					<input type="text" class="form-control input-sm" maxlength="60" id="role_search_keyword" placeholder="请输入角色编号/角色名称" />
-				</div>
-			</div>
-			<div class="toolbarBtn btn-group">
-				<button class="layui-btn layui-btn-sm" title="新增" data-type="add"> 新增</button>
-				<button type="button" class="layui-btn layui-btn-sm" data-type="search">查询</button>
-				<button type="button" class="layui-btn layui-btn-sm" onclick="document.getElementById('role_search_keyword').value=''">重置</button>
-			</div> -->
 		</div>
 		<div class="row row-lg">
 			<table id="role_datatable" lay-filter="filter_role_datatable"> </table>
@@ -54,6 +43,26 @@
                 <a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>
                 <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
             </script>
+		</div>
+		<div class="row row-lg">
+				<div class="layui-field-box">
+					<div class="row row-lg" id="role_roleusers_table_tools">
+						<div class="pull-right col-xs-4 row">
+							<div class="input-group input-group-sm">
+								<input type="text" class="form-control" maxlength="60" id="role_roleUsers_search_keyword" placeholder="请输入用户名/手机号/邮箱/工号" />
+								<div class="input-group-btn">
+									<button type="button" class="layui-btn layui-btn-sm" data-type="searchRoleUsers"> <i class="fa fa-search"></i> </button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row row-lg">
+					    <table id="role_roleusers_datatable" lay-filter="filter_role_roleusers_datatable"> </table>
+					    <script type="text/html" id="role_roleuser_datatable_bar">
+                            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delRoleUser">删除</a>
+                         </script>
+					</div>
+				</div>
 		</div>
 	</div>
 	<!--新增表单-->

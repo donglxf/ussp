@@ -90,7 +90,7 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth'  ], functio
         var selectNodes = appTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
         	table.reload('services_datatable', {
-            	height: 'full-200'
+            	height: 'full-230'
                 , page: {
                     curr: 1 //重新从第 1 页开始
                 }
@@ -103,7 +103,7 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth'  ], functio
             });
         }else{
         	table.reload('services_datatable', {
-            	height: 'full-200'
+            	height: 'full-230'
                 , page: {
                     curr: 1 //重新从第 1 页开始
                 }
@@ -169,7 +169,7 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth'  ], functio
         , url: serviceListByPageUrl
         , method: 'post' //如果无需自定义HTTP类型，可不加该参数
         , page: true
-        , height: 'full-200'
+        , height: 'full-230'
         , cols: [[
             {type: 'numbers'}
 //            , {field: 'servcieCode',   title: '编号'}

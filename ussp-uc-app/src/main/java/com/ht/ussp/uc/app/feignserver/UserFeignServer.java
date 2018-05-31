@@ -1,9 +1,11 @@
 package com.ht.ussp.uc.app.feignserver;
 
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,12 +14,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.druid.util.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.ht.ussp.core.Result;
+import com.ht.ussp.uc.app.domain.HtBoaInBmUser;
 import com.ht.ussp.uc.app.domain.HtBoaInContrast;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
+import com.ht.ussp.uc.app.domain.HtBoaInUserRole;
 import com.ht.ussp.uc.app.feignclients.UaaClient;
 import com.ht.ussp.uc.app.model.ResponseModal;
+import com.ht.ussp.uc.app.service.HtBoaInBmUserService;
 import com.ht.ussp.uc.app.service.HtBoaInContrastService;
 import com.ht.ussp.uc.app.service.HtBoaInLoginService;
+import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.vo.BmUserVo;
 import com.ht.ussp.uc.app.vo.LoginInfoVo;
@@ -41,6 +47,10 @@ public class UserFeignServer{
    	private HtBoaInContrastService htBoaInContrastService;
     @Autowired
     private UaaClient uaaClient;
+    @Autowired
+    private HtBoaInBmUserService htBoaInBmUserService;
+    @Autowired
+    private HtBoaInUserRoleService htBoaInUserRoleService;
     
     /**
      * 保存信贷用户信息<br>
@@ -126,18 +136,88 @@ public class UserFeignServer{
     	return Result.buildSuccess();
     }
     
-    @ApiOperation(value = "获取指定userId用户信息,userId为空并且bmUserId不为空，则根据信贷userId查询UC用户信息（userId：Uc用户id,bmUserId:信贷用户id,app:系统编码）")
-    @PostMapping(value = "/getUserInfoByUserId")
-    public LoginInfoVo getUserInfoByUserId(@RequestParam("userId")String userId, @RequestParam("bmUserId")String bmUserId, @RequestParam("app") String app) {
-    	if(StringUtils.isEmpty(userId)) {
+    @ApiOperation(value = "获取指定userId用户信息",notes="userId为空并且bmUserId不为空，则根据信贷userId查询UC用户信息（userId：Uc用户id,bmUserId:信贷用户id,app:系统编码）")
+    @GetMapping(value = "/getUserInfoByUserId")
+    public Result getUserInfoByUserId(@RequestParam("userId")String userId, @RequestParam("bmUserId")String bmUserId, @RequestParam("app") String app) {
+    	LoginInfoVo loginInfoVo = null;
+    	if(StringUtils.isEmpty(userId)||userId.length()==0||"null".equals(userId)) {
     		List<HtBoaInContrast> listHtBoaInContrast= htBoaInContrastService.getHtBoaInContrastListByBmUserId(bmUserId,"20");
     		if(listHtBoaInContrast==null||listHtBoaInContrast.isEmpty()) {
-    			return null;
+    			if(!StringUtils.isEmpty(bmUserId)) {
+        			if(loginInfoVo==null) {
+        				List<HtBoaInBmUser> listHtBoaInBmUser = htBoaInBmUserService.getHtBoaInBmUserByUserId(bmUserId);
+        				if(listHtBoaInBmUser!=null && !listHtBoaInBmUser.isEmpty()) {
+        					loginInfoVo = new LoginInfoVo();
+        					loginInfoVo.setBmOrgCode(listHtBoaInBmUser.get(0).getOrgCode());
+        					loginInfoVo.setBmUserId(bmUserId);
+        					loginInfoVo.setEmail(listHtBoaInBmUser.get(0).getEmail());
+        					loginInfoVo.setJobNumber(listHtBoaInBmUser.get(0).getJobNumber());
+        					loginInfoVo.setUserName(listHtBoaInBmUser.get(0).getUserName());
+        					loginInfoVo.setMobile(listHtBoaInBmUser.get(0).getMobile());
+        					try {//历史用户信息转存（方便贷后查询历史记录） 
+        						HtBoaInUser u = htBoaInUserService.saveBmUserInfo(listHtBoaInBmUser.get(0));
+        						if(u!=null) {
+        							loginInfoVo.setUserId(u.getUserId());
+        							loginInfoVo.setMobile(u.getMobile());
+        						}
+							} catch (Exception e) {
+								 e.printStackTrace();
+							}
+        				}
+        	    	}
+        		}
     		}else {
     			userId=listHtBoaInContrast.get(0).getUcBusinessId();
+    			loginInfoVo = htBoaInUserService.queryUserInfo(userId,app);
     		}
+    	}else {
+    		loginInfoVo = htBoaInUserService.queryUserInfo(userId,app);
     	}
-        return htBoaInUserService.queryUserInfo(userId,app);
+        return Result.buildSuccess(loginInfoVo);
     }
+    
+    @ApiOperation(value = "查询角色下所有用户", notes = "查询角色下所有用户")
+	@PostMapping(value = "/getUserInfoForRole")
+	public Result getUserInfoForRole(String roleCode,String keyword) {
+		List<HtBoaInUser> listHtBoaInUser = new ArrayList<HtBoaInUser>();
+		List<HtBoaInUserRole> listHtBoaInUserRole =  htBoaInUserRoleService.findByRoleCode(roleCode);
+		for(HtBoaInUserRole u : listHtBoaInUserRole) {
+			HtBoaInUser user = htBoaInUserService.findByUserId(u.getUserId());
+			if(user!=null) {
+				if(StringUtils.isEmpty(keyword)) {
+					listHtBoaInUser.add(user);
+				}else {
+					boolean isAdd = false;
+					if(!StringUtils.isEmpty(user.getUserName())) {
+						if(user.getUserName().contains(keyword)) {
+							isAdd = true;
+						}
+					}
+					if(!StringUtils.isEmpty(user.getEmail())) {
+						if(user.getEmail().contains(keyword)) {
+							isAdd = true;
+						}
+					}
+					if(!StringUtils.isEmpty(user.getJobNumber())) {
+						if(user.getJobNumber().contains(keyword)) {
+							isAdd = true;
+						}
+					}
+					if(!StringUtils.isEmpty(user.getMobile())) {
+						if(user.getMobile().contains(keyword)) {
+							isAdd = true;
+						}
+					}
+					if(isAdd){
+						listHtBoaInUser.add(user);
+					}
+				}
+			}else {
+				htBoaInUserRoleService.delete(u);
+			}
+			
+		}
+		return Result.buildSuccess(listHtBoaInUser);
+	}
     
 }

@@ -22,7 +22,7 @@ layui.use([ 'form',   'table', 'ht_config', 'ht_auth'], function () {
   //自定义验证规则
     var refreshOutUserTable = function (keyword) {
     	table.reload('out_user_datatable', {
-            height: 'full-200',
+            height: 'full-230',
             page: {
                 curr: 1 //重新从第 1 页开始
             }
@@ -37,7 +37,7 @@ layui.use([ 'form',   'table', 'ht_config', 'ht_auth'], function () {
         , elem: '#out_user_datatable'
         , url: loadListUserByPage
         , page: true
-        , height: 'full-200'
+        , height: 'full-230'
         , cols: [[
             {type: 'numbers',event: 'rowClick'}
             , {field: 'userName', width: 300,   title: '用户姓名',event: 'rowClick'}

@@ -76,10 +76,10 @@ public class HtBoaInUserService {
      * @param userId
      * @return
      */
-    public HtBoaInUser findByUserIdOrEmailOrMobileOrJobNumber(String userId,String email,String mobile,String jboNumber){
+    public List<HtBoaInUser> findByUserIdOrEmailOrMobileOrJobNumber(String userId,String email,String mobile,String jboNumber){
         return htBoaInUserRepository.findByUserIdOrEmailOrMobileOrJobNumber(userId, email, mobile, jboNumber);
     }
-
+    
     public LoginInfoVo queryUserInfo(String userId,String app) {
         LoginInfoVo loginInfoVo = new LoginInfoVo();
         UserMessageVo userMessageVo = htBoaInUserRepository.queryUserByUserId(userId);

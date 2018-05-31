@@ -31,8 +31,6 @@ import com.ht.ussp.uc.app.domain.HtBoaInContrast;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
-import com.ht.ussp.uc.app.domain.HtBoaInUserRole;
-import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
 import com.ht.ussp.uc.app.service.HtBoaInBmUserService;
@@ -40,7 +38,6 @@ import com.ht.ussp.uc.app.service.HtBoaInContrastService;
 import com.ht.ussp.uc.app.service.HtBoaInLoginService;
 import com.ht.ussp.uc.app.service.HtBoaInPwdHistService;
 import com.ht.ussp.uc.app.service.HtBoaInUserAppService;
-import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.vo.EmailVo;
 import com.ht.ussp.uc.app.vo.LoginInfoVo;
@@ -74,8 +71,6 @@ public class UserResource{
     private HtBoaInUserAppService htBoaInUserAppService;
     @Autowired
     private HtBoaInLoginService htBoaInLoginService;
-    @Autowired
-    private HtBoaInUserRoleService htBoaInUserRoleService;
     @Autowired
     private HtBoaInPwdHistService htBoaInPwdHistService;
     @Autowired
@@ -141,29 +136,6 @@ public class UserResource{
         return new ResponseModal("200", msg, u1 );
     }
 
-
-    @ApiOperation(value = "对内：根据UserId查询用户角色", notes = "根据UserId查询用户角色")
-    @RequestMapping(value = {"/listUserRoleByPage"}, method = RequestMethod.GET)
-    public PageResult<HtBoaInUserRole> listUserRoleByPage(PageVo page) {
-        PageResult result = new PageResult();
-        PageConf pageConf = new PageConf();
-        pageConf.setPage(page.getPage());
-        pageConf.setSize(page.getLimit());
-        pageConf.setSearch(page.getKeyWord());
-        long sl = System.currentTimeMillis(), el = 0L;
-        ResponseModal r = null;
-        String msg = "成功";
-        String logHead = "根据UserId查询用户角色：user/listUserRoleByPage param-> {}";
-        String logStart = logHead + " | START:{}";
-        String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.debug(logStart, "page: " + page, sl);
-        result = htBoaInUserRoleService.listUserRoleByPage(pageConf, page.getQuery());
-        el = System.currentTimeMillis();
-        log.debug(logEnd, "page: " + page, msg, el, el - sl);
-        return result;
-    }
-
-
     protected ResponseModal exceptionReturn(String logEnd, String param, List<?> list, long sl, String exInfo, int row) {
         if (null == exInfo)
             exInfo = "";
@@ -202,7 +174,11 @@ public class UserResource{
         // HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(userName);
         
         //修改登录账号为userId mobile email 工号
-        HtBoaInUser htBoaInUser = htBoaInUserService.findByUserIdOrEmailOrMobileOrJobNumber(userName,userName,userName,userName);
+        HtBoaInUser htBoaInUser = null;
+		List<HtBoaInUser> htBoaInUserList = htBoaInUserService.findByUserIdOrEmailOrMobileOrJobNumber(userName,userName,userName,userName);
+		if(htBoaInUserList!=null&&!htBoaInUserList.isEmpty()) {
+			htBoaInUser = htBoaInUserList.get(0);
+		}
         
         if(htBoaInUser==null) {
         	HtBoaInLogin htBoaInLogin = htBoaInLoginService.findByLoginId(userName);

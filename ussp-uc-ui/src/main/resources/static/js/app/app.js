@@ -125,7 +125,7 @@ layui.use(['form',   'table', 'ht_config','ht_auth','upload' ], function () {
             keyword = null;
         }
         table.reload('app_datatable', {
-        	height: 'full-200',
+        	height: 'full-180',
             page: {
                 curr: 1 //重新从第 1 页开始
             }
@@ -140,15 +140,8 @@ layui.use(['form',   'table', 'ht_config','ht_auth','upload' ], function () {
         , elem: '#app_datatable'
         , url: appListByPageUrl
         , method: 'post' //如果无需自定义HTTP类型，可不加该参数
-        , response: {
-            statusName: 'returnCode' //数据状态的字段名称，默认：code
-            , statusCode: "0000" //成功的状态码，默认：0
-            , msgName: 'msg' //状态信息的字段名称，默认：msg
-            , countName: 'count' //数据总数的字段名称，默认：count
-            , dataName: 'data' //数据列表的字段名称，默认：data
-        } //如果无需自定义数据响应名称，可不加该参数
         , page: true
-        , height: 'full-200'
+        , height: 'full-400'
         , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
         , cols: [[
             {type: 'numbers'}
