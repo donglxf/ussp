@@ -29,9 +29,9 @@ public class DealDDDataTimerJobHandler02 extends IJobHandler {
 	
     @Override
     public ReturnT<String> execute(String param) throws Exception {
-    	XxlJobLogger.log("---------------------定时任务开始--------------------->");
+    	XxlJobLogger.log("---------------------定时任务开始(整理钉钉数据)--------------------->");
     	dingDingService.dealData();
-    	XxlJobLogger.log("---------------------定时任务结束--------------------->");
+    	XxlJobLogger.log("---------------------定时任务结束(整理钉钉数据)--------------------->");
         return SUCCESS;
     }
 }

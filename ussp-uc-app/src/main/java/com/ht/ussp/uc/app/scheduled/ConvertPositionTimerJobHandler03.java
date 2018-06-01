@@ -21,17 +21,17 @@ import com.xxl.job.core.log.XxlJobLogger;
  *
  * @author xuxueli 2015-12-19 19:43:36
  */
-@JobHandler(value = "ConvertUserTimerJobHandler04")
+@JobHandler(value = "ConvertPositionTimerJobHandler03")
 @Component
-public class ConvertUserTimerJobHandler04 extends IJobHandler {
+public class ConvertPositionTimerJobHandler03 extends IJobHandler {
 	@Autowired
 	private DingDingService dingDingService;
 	
     @Override
     public ReturnT<String> execute(String param) throws Exception {
-    	XxlJobLogger.log("---------------------定时任务开始(转换用户)--------------------->");
-    	dingDingService.convertUser();
-    	XxlJobLogger.log("---------------------定时任务结束(转换用户)--------------------->");
+    	XxlJobLogger.log("---------------------定时任务开始(岗位)--------------------->");
+    	dingDingService.convertPosition();
+    	XxlJobLogger.log("---------------------定时任务结束(岗位)--------------------->");
         return SUCCESS;
     }
 }

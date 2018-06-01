@@ -14,12 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.druid.util.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.ht.ussp.core.Result;
+import com.ht.ussp.uc.app.domain.DdUser;
 import com.ht.ussp.uc.app.domain.HtBoaInBmUser;
 import com.ht.ussp.uc.app.domain.HtBoaInContrast;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.domain.HtBoaInUserRole;
 import com.ht.ussp.uc.app.feignclients.UaaClient;
 import com.ht.ussp.uc.app.model.ResponseModal;
+import com.ht.ussp.uc.app.service.DingDingService;
 import com.ht.ussp.uc.app.service.HtBoaInBmUserService;
 import com.ht.ussp.uc.app.service.HtBoaInContrastService;
 import com.ht.ussp.uc.app.service.HtBoaInLoginService;
@@ -51,6 +53,10 @@ public class UserFeignServer{
     private HtBoaInBmUserService htBoaInBmUserService;
     @Autowired
     private HtBoaInUserRoleService htBoaInUserRoleService;
+    @Autowired
+    private DingDingService dingDingService;
+    
+    
     
     /**
      * 保存信贷用户信息<br>
@@ -219,5 +225,13 @@ public class UserFeignServer{
 		}
 		return Result.buildSuccess(listHtBoaInUser);
 	}
+    
+    
+    @ApiOperation(value = "查询角色下所有用户", notes = "查询角色下所有用户")
+	@PostMapping(value = "/getAllDDUser")
+	public Result getAllDDUser() { 
+    	List<DdUser> listDDUser = dingDingService.getDDUserList();
+    	return Result.buildSuccess(listDDUser);
+    }
     
 }
