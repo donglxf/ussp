@@ -289,7 +289,7 @@ public class SystemLevelResource {
 	 */
 	@PostMapping(value = "/createSalaryToken")
 	@ApiOperation(value = "创建SalaryToken")
-	public ResponseModal createSalaryToken(String jobNumber, String batchNumber, Integer sendType, Integer tokenTime) {
+	public ResponseModal createSalaryToken(String jobNumber, String batchNumber, Integer sendType,Integer type, Integer tokenTime) {
 		ResponseModal rm = new ResponseModal();
 		if (StringUtils.isBlank(jobNumber)) {
 			throw new IllegalArgumentException("Cannot create JWT Token without jobNumber");
@@ -311,6 +311,7 @@ public class SystemLevelResource {
 		claims.put("jobNumber", jobNumber);
 		claims.put("batchNumber", batchNumber);
 		claims.put("sendType", sendType);
+		claims.put("type", type);
 		String token = Jwts.builder().setClaims(claims).setIssuer(jwtSettings.getTokenIssuer())
 				.setIssuedAt(Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant()))
 				.setExpiration(Date.from(currentTime.plusMinutes(tokenTime).atZone(ZoneId.systemDefault()).toInstant()))
@@ -339,6 +340,7 @@ public class SystemLevelResource {
 		String jobNumber;
 		String batchNumber;
 		Integer sendType;
+		Integer type;
 		ValidateSalaryJwtVo vdj = new ValidateSalaryJwtVo();
 
 		try {
@@ -348,9 +350,11 @@ public class SystemLevelResource {
 			jobNumber = jwsClaims.getBody().get("jobNumber").toString();
 			batchNumber = jwsClaims.getBody().get("batchNumber").toString();
 			sendType = Integer.parseInt(jwsClaims.getBody().get("sendType").toString());
+			type = Integer.parseInt(jwsClaims.getBody().get("type").toString());
 			vdj.setJobNumber(jobNumber);
 			vdj.setBatchNumber(batchNumber);
 			vdj.setSendType(sendType);
+			vdj.setSendType(type);
 			rm.setSysStatus(SysStatus.SUCCESS);
 			rm.setResult(vdj);
 		} catch (BadCredentialsException ex) {
