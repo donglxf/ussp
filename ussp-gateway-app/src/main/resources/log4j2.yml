@@ -22,10 +22,8 @@ Configuration:
       target: SYSTEM_OUT
       PatternLayout:
         pattern: ${CONAOLE_LOG_PATTERN}
-    RollingFile: # 输出到文件，超过30MB分割
+    RollingFile: # 输出到文件，超过128MB归档
       name: ROLLING_FILE
-      MaxFileSize: 30720KB
-      MaxBackupIndex: 10
       fileName: ${LOG_HOME}/${PROJECT_NAME}.log
       filePattern: ${LOG_HOME}/${PROJECT_NAME}_%d{yyyy-MM-dd}.log
       PatternLayout:
