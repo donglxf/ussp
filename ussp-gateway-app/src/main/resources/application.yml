@@ -23,10 +23,11 @@ hystrix:
 ribbon:  
   ReadTimeout: 10000  
   ConnectTimeout: 10000
-  MaxAutoRetries: 0
-  MaxAutoRetriesNextServer: 1
+  MaxAutoRetries: 2
+  MaxAutoRetriesNextServer: 0
   ServerListRefreshInterval: 1000
 zuul:
+  retryable: true
   host:
     maxTotalConnections: 2000
     maxPerRouteConnections: 800
