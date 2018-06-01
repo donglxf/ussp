@@ -355,7 +355,7 @@ public class SystemLevelResource {
 			vdj.setJobNumber(jobNumber);
 			vdj.setBatchNumber(batchNumber);
 			vdj.setSendType(sendType);
-			vdj.setSendType(type);
+			vdj.setType(type);
 			rm.setSysStatus(SysStatus.SUCCESS);
 			rm.setResult(vdj);
 		} catch (BadCredentialsException ex) {
