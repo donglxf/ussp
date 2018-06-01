@@ -333,6 +333,7 @@ public class SystemLevelResource {
 	 * @date 2018年4月26日 上午11:49:38
 	 */
 	@PostMapping(value = "/validateSalaryJwt")
+	@ApiOperation(value = "验证薪资系统token")
 	public ResponseModal validateJwt(@RequestParam("tokenPayload") String tokenPayload, HttpServletResponse response) {
 		response.setCharacterEncoding("UTF-8");
 		ResponseModal rm = new ResponseModal();
