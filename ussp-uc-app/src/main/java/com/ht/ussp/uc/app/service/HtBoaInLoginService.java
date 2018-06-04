@@ -53,4 +53,9 @@ public class HtBoaInLoginService {
 	public List<HtBoaInLogin> findAll() {
 		return this.htBoaInLoginRepository.findAll();
 	}
+
+	public List<HtBoaInLogin> findByLoginIdIsNull() {
+		return this.htBoaInLoginRepository.findByLoginIdIsNull();
+		
+	}
 }

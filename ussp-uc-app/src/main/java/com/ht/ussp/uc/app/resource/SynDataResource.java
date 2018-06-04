@@ -308,4 +308,10 @@ public class SynDataResource {
    	public Result synDeptDataToUc(long id) {
    		return dingDingService.synDeptDataToUc(id);
    	}
+    
+    @ApiOperation(value = "处理错误数据")
+   	@PostMapping(value = "/dealLoginIdNull", produces = { "application/json" })
+   	public Result dealLoginIdNull() {
+   		return dingDingService.dealLoginIdNull();
+   	}
 }
