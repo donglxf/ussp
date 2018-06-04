@@ -12,4 +12,6 @@ public class ValidateSalaryJwtVo {
 	private String batchNumber;
 	
 	private Integer sendType;
+	
+	private Integer type;
 }

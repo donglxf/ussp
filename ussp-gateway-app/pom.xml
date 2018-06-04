@@ -21,14 +21,14 @@
 		<start-class>com.ht.ussp.gateway.app.GatewayApplication</start-class>
 		<maven.deploy.skip>true</maven.deploy.skip>
 		<docker.image.prefix>ussp</docker.image.prefix>
-
+		
 		<docker-maven-plugin.version>1.0.0</docker-maven-plugin.version>
-		<docker.java.base.image>frolvlad/alpine-oraclejdk8:slim</docker.java.base.image>
-		<docker.repostory>172.16.200.101</docker.repostory>
-		<docker.registry.name>ht</docker.registry.name>
-		<docker.maintainer>xiayutai@hongte.info</docker.maintainer>
-
-		<git-commit-id-plugin.version>2.2.4</git-commit-id-plugin.version>
+        <docker.java.base.image>frolvlad/alpine-oraclejdk8:slim</docker.java.base.image>
+        <docker.repostory>172.16.200.101</docker.repostory>
+        <docker.registry.name>ht</docker.registry.name>
+        <docker.maintainer>xiayutai@hongte.info</docker.maintainer>
+        
+        <git-commit-id-plugin.version>2.2.4</git-commit-id-plugin.version>
 	</properties>
 
 	<dependencies>
@@ -40,7 +40,6 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-zuul</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.retry</groupId>
 			<artifactId>spring-retry</artifactId>
@@ -137,7 +136,7 @@
 		<dependency>
 			<groupId>com.ht.ussp</groupId>
 			<artifactId>ussp-common</artifactId>
-			<version>2018060110</version>
+			<version>2018052901</version>
 		</dependency>
 	</dependencies>
 
@@ -161,81 +160,78 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-
+			
 			<plugin>
-				<groupId>pl.project13.maven</groupId>
-				<artifactId>git-commit-id-plugin</artifactId>
-			</plugin>
+                    <groupId>pl.project13.maven</groupId>
+                    <artifactId>git-commit-id-plugin</artifactId>
+                </plugin>
 
 			<!-- Docker maven plugin -->
 			<plugin>
-				<groupId>com.spotify</groupId>
-				<artifactId>docker-maven-plugin</artifactId>
-				<version>${docker-maven-plugin.version}</version>
-				<executions>
-					<execution>
-						<phase>deploy</phase>
-						<goals>
-							<goal>build</goal>
-						</goals>
-						<configuration>
-							<imageName>${docker.repostory}/${docker.registry.name}/${project.artifactId}:${git.branch}</imageName>
-						</configuration>
-					</execution>
-					<execution>
-						<id>push-image</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>push</goal>
-						</goals>
-						<configuration>
-							<imageName>${docker.repostory}/${docker.registry.name}/${project.artifactId}:${git.branch}</imageName>
-						</configuration>
-					</execution>
-					<execution>
-						<id>push-latest-image</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>push</goal>
-						</goals>
-						<configuration>
-							<imageName>${docker.repostory}/${docker.registry.name}/${project.artifactId}:latest</imageName>
-						</configuration>
-					</execution>
-				</executions>
-				<configuration>
-					<serverId>docker-ht</serverId>
-					<registryUrl>http://${docker.repostory}</registryUrl>
-					<!--如果<pushImage>false</pushImage>则install阶段将不提交Docker镜像，只有maven的deploy阶段才提交。 -->
-					<pushImage>false</pushImage>
-					<image>${docker.registry.name}/${project.artifactId}:${git.branch}</image>
-					<newName>${docker.repostory}/${docker.registry.name}/${project.artifactId}:${git.branch}</newName>
-					<imageTags>
-						<!--可以指定多个标签 -->
-						<imageTag>latest</imageTag>
-					</imageTags>
-					<!--覆盖已存在的标签 镜像 -->
-					<latestforceTags>true</latestforceTags>
-					<baseImage>${docker.java.base.image}</baseImage>
-					<maintainer>${docker.maintainer}</maintainer>
-					<cmd></cmd>
-					<env>
-						<TZ>Asia/Shanghai</TZ>
-						<JAVA_OPTS>-Xms1g -Xmx1g -Xss256K -XX:+UseG1GC
-							-XX:MaxGCPauseMillis=200 -XX:InitiatingHeapOccupancyPercent=45</JAVA_OPTS>
-					</env>
-					<!--<entryPoint>["java","-jar","/${project.build.finalName}.jar"]</entryPoint> -->
-					<entryPoint>[ "sh", "-c", "java $JAVA_OPTS
-						-Djava.security.egd=file:/dev/./urandom -Dfile.encoding=UTF-8
-						-Duser.timeZone=GMT+08 -jar ${project.build.finalName}.jar" ]</entryPoint>
-					<resources>
-						<resource>
-							<directory>${project.build.directory}</directory>
-							<include>${project.build.finalName}.jar</include>
-						</resource>
-					</resources>
-				</configuration>
-			</plugin>
+                    <groupId>com.spotify</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <version>${docker-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <phase>deploy</phase>
+                            <goals>
+                                <goal>build</goal>
+                            </goals>
+                            <configuration>
+                                <imageName>${docker.repostory}/${docker.registry.name}/${project.artifactId}:${git.branch}</imageName>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>push-image</id>
+                            <phase>deploy</phase>
+                            <goals>
+                                <goal>push</goal>
+                            </goals>
+                            <configuration>
+                                <imageName>${docker.repostory}/${docker.registry.name}/${project.artifactId}:${git.branch}</imageName>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>push-latest-image</id>
+                            <phase>deploy</phase>
+                            <goals>
+                                <goal>push</goal>
+                            </goals>
+                            <configuration>
+                                <imageName>${docker.repostory}/${docker.registry.name}/${project.artifactId}:latest</imageName>
+                            </configuration>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <serverId>docker-ht</serverId>
+                        <registryUrl>http://${docker.repostory}</registryUrl>
+                        <!--如果<pushImage>false</pushImage>则install阶段将不提交Docker镜像，只有maven的deploy阶段才提交。-->
+                        <pushImage>false</pushImage>
+                        <image>${docker.registry.name}/${project.artifactId}:${git.branch}</image>
+                        <newName>${docker.repostory}/${docker.registry.name}/${project.artifactId}:${git.branch}</newName>
+                        <imageTags>
+                            <!--可以指定多个标签-->
+                            <imageTag>latest</imageTag>
+                        </imageTags>
+                        <!--覆盖已存在的标签 镜像-->
+                        <latestforceTags>true</latestforceTags>
+                        <baseImage>${docker.java.base.image}</baseImage>
+                        <maintainer>${docker.maintainer}</maintainer>
+                        <cmd></cmd>
+                        <env>
+                            <TZ>Asia/Shanghai</TZ>
+                            <JAVA_OPTS>-Xms1g -Xmx1g -Xss256K  -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:InitiatingHeapOccupancyPercent=45</JAVA_OPTS>
+                        </env>
+                        <!--<entryPoint>["java","-jar","/${project.build.finalName}.jar"]</entryPoint>-->
+                        <entryPoint>[ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -Dfile.encoding=UTF-8 -Duser.timeZone=GMT+08 -jar ${project.build.finalName}.jar" ]</entryPoint>
+                        <resources>
+                            <resource>
+                                <directory>${project.build.directory}</directory>
+                                <include>${project.build.finalName}.jar</include>
+                            </resource>
+                        </resources>
+                    </configuration>
+                </plugin>
 
 		</plugins>
 	</build>
