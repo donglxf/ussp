@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.ht.ussp.uc.app.vo.ResVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,7 +17,9 @@ import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
 import com.ht.ussp.uc.app.model.BoaInAppInfo;
 import com.ht.ussp.uc.app.model.PageConf;
+import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
 import com.ht.ussp.uc.app.repository.HtBoaInUserAppRepository;
+import com.ht.ussp.uc.app.vo.ResVo;
 
 /**
  * @author wim qiuwenwu@hongte.info
@@ -109,6 +110,46 @@ public class HtBoaInUserAppService {
         result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
         return result;
     }
+    
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public PageResult getUserInfoForAppByPage(PageConf pageConf, Map<String, String> query) {
+        PageResult result = new PageResult();
+        Sort sort = null;
+        Pageable pageable = null;
+        List<Order> orders = new ArrayList<Order>();
+        if (null != pageConf.getSortNames()) {
+            for (int i = 0; i < pageConf.getSortNames().size(); i++) {
+                orders.add(new Order(pageConf.getSortOrders().get(i), pageConf.getSortNames().get(i)));
+            }
+            sort = new Sort(orders);
+        }
+
+        if (null != pageConf.getPage() && null != pageConf.getSize())
+            pageable = new PageRequest(pageConf.getPage(), pageConf.getSize(), sort);
+
+        String search = "";
+        String appCode = "";
+        if (query != null && query.size() > 0 && query.get("appCode") != null) {
+        	appCode = query.get("appCode");
+        }
+
+        if (query != null && query.size() > 0 && query.get("keyWord") != null) {
+            search = query.get("keyWord");
+        }
+
+        if (null == search || 0 == search.trim().length())
+            search = "%%";
+        else
+            search = "%" + search + "%";
+
+        Page<SelfBoaInUserInfo> pageData = this.htBoaInUserAppRepository.getUserInfoForAppByPage(pageable, search, appCode);
+
+        if (pageData != null) {
+            result.count(pageData.getTotalElements()).data(pageData.getContent());
+        }
+        result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
+        return result;
+    }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     public PageResult listAllUserAppByPage(PageConf pageConf, Map<String, String> query) {
@@ -173,5 +214,9 @@ public class HtBoaInUserAppService {
 
 	public List<HtBoaInUserApp> getUserAppListByUserId(String userId) {
 		return htBoaInUserAppRepository.findByUserIdAndDelFlag(userId,0);
+	}
+	
+	public List<HtBoaInUserApp> findByUserIdAndApp(String userId,String app) {
+		return htBoaInUserAppRepository.findByUserIdAndApp(userId, app);
 	}
 }

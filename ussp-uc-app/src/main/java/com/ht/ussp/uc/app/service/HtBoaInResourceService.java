@@ -189,7 +189,11 @@ public class HtBoaInResourceService {
 	 */
 	public List<ResVo> loadByUserIdAndApp(String userId, String app, String[] resTypes) {
 		List<ResVo> resVoList;
-		HtBoaInUserApp userApp = htBoaInUserAppRepository.findByUserIdAndApp(userId, app);
+		HtBoaInUserApp userApp = null;
+		List<HtBoaInUserApp> userAppList = htBoaInUserAppRepository.findByUserIdAndApp(userId, app);
+		if(userAppList!=null&&!userAppList.isEmpty()) {
+			userApp = userAppList.get(0);
+		}
 		// 判断是否有系统访问权限
 		if (userApp == null) {
 			return null;

@@ -121,7 +121,11 @@ public class HtBoaInUserService {
         	
         	//获取用户是否是系统管理员
         	if(StringUtils.isNotEmpty(app)) {
-        		HtBoaInUserApp htBoaInUserApp = htBoaInUserAppRepository.findByUserIdAndApp(userId, app);
+        		HtBoaInUserApp htBoaInUserApp = null;
+        		List<HtBoaInUserApp> userAppList = htBoaInUserAppRepository.findByUserIdAndApp(userId, app);
+        		if(userAppList!=null&&!userAppList.isEmpty()) {
+        			htBoaInUserApp = userAppList.get(0);
+        		}
         		if(htBoaInUserApp!=null) {
         			loginInfoVo.setController(htBoaInUserApp.getController());
         		}else {
