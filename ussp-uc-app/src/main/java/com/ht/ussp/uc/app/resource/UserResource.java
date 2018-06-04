@@ -183,15 +183,11 @@ public class UserResource{
         if(htBoaInUser==null) {
         	HtBoaInLogin htBoaInLogin = htBoaInLoginService.findByLoginId(userName);
         	if(htBoaInLogin!=null) {
-        		    if (Constants.USER_STATUS_1.equals(htBoaInLogin.getStatus())) {
+        		    if (Constants.USER_STATUS_4.equals(htBoaInLogin.getStatus())) {
         	            log.debug("该用户已被禁用！");
         	            rm.setSysStatus(SysStatus.USER_NOT_FOUND);
         	            return rm;
-        	        }else if(Constants.USER_STATUS_4.equals(htBoaInLogin.getStatus())) {
-        	        	log.debug("该用户已被冻结！");
-         	            rm.setSysStatus(SysStatus.USER_NOT_FOUND);
-         	            return rm;
-        	        }else if(Constants.USER_STATUS_5.equals(htBoaInLogin.getStatus())) {
+        	        } else if(Constants.USER_STATUS_5.equals(htBoaInLogin.getStatus())) {
         	        	log.debug("该用户已被锁定！");
          	            rm.setSysStatus(SysStatus.USER_HAS_LOCKED);
          	            return rm;
