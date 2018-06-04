@@ -14,7 +14,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name="HT_BOA_OUT_ROLE_RES")
-@NamedQuery(name="HtBoaOutRoleRe.findAll", query="SELECT h FROM HtBoaOutRoleRe h")
+@NamedQuery(name="HtBoaOutRoleRes.findAll", query="SELECT h FROM HtBoaOutRoleRes h")
 public class HtBoaOutRoleRes implements Serializable {
 	private static final long serialVersionUID = 1L;
 

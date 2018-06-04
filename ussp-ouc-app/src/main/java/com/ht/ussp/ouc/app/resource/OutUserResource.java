@@ -163,7 +163,7 @@ public class OutUserResource{
 	}
 	
 	@ApiOperation(value = "获取当前登录用户信息", notes = "通过网关访问，获取头部userId")
-	@GetMapping(value = "/validateUser")
+	@GetMapping(value = "/getCurUserInfo")
     public Result getCurUserInfo(@RequestHeader(value="userId") String userId) {
 		HtBoaOutUser user = htBoaOutUserService.findByUserId(userId);
 		return Result.buildSuccess(user);
