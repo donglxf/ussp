@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -124,55 +125,34 @@ public class OutUserResource{
 		@ApiImplicitParam(name = "type", paramType = "query",dataType = "String", required = true, value = "登录type：sms:短信验证  email:邮箱  normal:用户名密码 ") })
 	@GetMapping(value = "/validateUser")
     public Result validateUser(@RequestParam(value = "userName")String userName,@RequestParam(value = "password")String password,@RequestParam(value = "app")String app,@RequestParam(value = "type")String type) {
-       
-		if("normal".equals(type)) {
-        	HtBoaOutLogin htBoaOutLogin = htBoaOutLoginService.findByLoginId(userName);
-        	if(htBoaOutLogin!=null) {
-        		 //验证原密码是否正确
-                if(!EncryptUtil.matches(password,htBoaOutLogin.getPassword())){
-                	return Result.buildFail(SysStatus.PWD_INVALID.getStatus(),"密码输入不正确");
-                }else {
-                	return Result.buildSuccess(htBoaOutLogin.getUserId());
-                }
-        	}else {
-        		return Result.buildFail("9999","找不到相关用户信息");
-        	}
-		} else if("email".equals(type)) {
-			HtBoaOutUser htBoaOutUser = htBoaOutUserService.findByEmail(userName);
+		HtBoaOutUser htBoaOutUser =null;
+		HtBoaOutLogin htBoaOutLogin = null;
+		if("email".equals(type)) {
+			htBoaOutUser = htBoaOutUserService.findByEmail(userName);
 			if (htBoaOutUser == null) {
 				return Result.buildFail("9999", "找不到相关用户信息");
-			} else {
-				HtBoaOutLogin htBoaOutLogin = htBoaOutLoginService.findByUserId(htBoaOutUser.getUserId());
-				if (htBoaOutLogin != null) {
-					//验证原密码是否正确
-	                if(!EncryptUtil.matches(password,htBoaOutLogin.getPassword())){
-	                	return Result.buildFail(SysStatus.PWD_INVALID.getStatus(),"密码输入不正确");
-	                }else {
-	                	return Result.buildSuccess(htBoaOutLogin.getUserId());
-	                }
-				} else {
-					return Result.buildFail("9999", "找不到相关用户信息");
-				}
 			}
-		} else if("sms".equals(type)) {
-			HtBoaOutUser htBoaOutUser = htBoaOutUserService.findByMobile(userName);
+			htBoaOutLogin = htBoaOutLoginService.findByUserId(htBoaOutUser.getUserId());
+		}else if("sms".equals(type)) {
+			htBoaOutUser = htBoaOutUserService.findByMobile(userName);
 			if (htBoaOutUser == null) {
 				return Result.buildFail("9999", "找不到相关用户信息");
-			} else {
-				HtBoaOutLogin htBoaOutLogin = htBoaOutLoginService.findByUserId(htBoaOutUser.getUserId());
-				if (htBoaOutLogin != null) {
-					//验证原密码是否正确
-	                if(!EncryptUtil.matches(password,htBoaOutLogin.getPassword())){
-	                	return Result.buildFail(SysStatus.PWD_INVALID.getStatus(),"密码输入不正确");
-	                }else {
-	                	return Result.buildSuccess(htBoaOutLogin.getUserId());
-	                }
-				} else {
-					return Result.buildFail("9999", "找不到相关用户信息");
-				}
 			}
-		} else {
+			htBoaOutLogin = htBoaOutLoginService.findByUserId(htBoaOutUser.getUserId());
+		}else if("normal".equals(type)) { 
+			htBoaOutLogin = htBoaOutLoginService.findByLoginId(userName);
+		}else {
 			return Result.buildFail("9999","登录类型不存在【"+type+"】"); 
+      	}
+		if (htBoaOutLogin != null) {
+			//验证原密码是否正确
+            if(!EncryptUtil.matches(password,htBoaOutLogin.getPassword())){
+            	return Result.buildFail(SysStatus.PWD_INVALID.getStatus(),"密码输入不正确");
+            }else {
+            	return Result.buildSuccess(htBoaOutLogin.getUserId());
+            }
+		} else {
+			return Result.buildFail("9999", "找不到相关用户信息");
 		}
     }
 	
@@ -180,5 +160,12 @@ public class OutUserResource{
 	@PostMapping(value = "/loadListByPage", produces = { "application/json" })
 	public PageResult<List<HtBoaOutUser>> loadListByPage(PageVo page) {
 		return htBoaOutUserService.getUserListPage(new PageRequest(page.getPage(), page.getLimit()), page.getQuery());
+	}
+	
+	@ApiOperation(value = "获取当前登录用户信息", notes = "通过网关访问，获取头部userId")
+	@GetMapping(value = "/validateUser")
+    public Result getCurUserInfo(@RequestHeader(value="userId") String userId) {
+		HtBoaOutUser user = htBoaOutUserService.findByUserId(userId);
+		return Result.buildSuccess(user);
 	}
 }

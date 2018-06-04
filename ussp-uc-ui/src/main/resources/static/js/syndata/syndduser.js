@@ -51,7 +51,7 @@ layui.use(['form',   'table', 'ht_config','ht_auth' ], function () {
             , {field: 'deptId',    title: '所属机构'}
             , {field: 'position',  title: '岗位'}
             , {field: 'operatorType', templet: '#operatorTpl',   title: '操作'}
-            , {field: 'status',  templet: '#statusTpl', title: '状态'}
+            , {field: 'status',  templet: '#synStatusTpl', title: '状态'}
             , {fixed: 'right',   title: '操作',   toolbar: '#dduser_datatable_bar'}
         ]]
     });

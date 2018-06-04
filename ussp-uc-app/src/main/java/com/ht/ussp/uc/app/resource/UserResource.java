@@ -183,20 +183,19 @@ public class UserResource{
         if(htBoaInUser==null) {
         	HtBoaInLogin htBoaInLogin = htBoaInLoginService.findByLoginId(userName);
         	if(htBoaInLogin!=null) {
-        		    if (htBoaInLogin.getStatus() == Constants.USER_STATUS_1) {
+        		    if (Constants.USER_STATUS_1.equals(htBoaInLogin.getStatus())) {
         	            log.debug("该用户已被禁用！");
         	            rm.setSysStatus(SysStatus.USER_NOT_FOUND);
         	            return rm;
-        	        }else if(htBoaInLogin.getStatus() == Constants.USER_STATUS_4) {
-        	        	 log.debug("该用户已被冻结！");
+        	        }else if(Constants.USER_STATUS_4.equals(htBoaInLogin.getStatus())) {
+        	        	log.debug("该用户已被冻结！");
          	            rm.setSysStatus(SysStatus.USER_NOT_FOUND);
          	            return rm;
-        	        }else if(htBoaInLogin.getStatus() == Constants.USER_STATUS_5) {
-        	        	 log.debug("该用户已被锁定！");
+        	        }else if(Constants.USER_STATUS_5.equals(htBoaInLogin.getStatus())) {
+        	        	log.debug("该用户已被锁定！");
          	            rm.setSysStatus(SysStatus.USER_HAS_LOCKED);
          	            return rm;
         	        }
-        			
         		htBoaInUser = htBoaInUserService.findByUserId(htBoaInLogin.getUserId());
         	}
         }
@@ -204,7 +203,7 @@ public class UserResource{
             rm.setSysStatus(SysStatus.NO_RESULT);
             return rm;
 		}
-       if(htBoaInUser.getStatus() == Constants.USER_STATUS_2) {
+       if(Constants.USER_STATUS_2.equals(htBoaInUser.getStatus())  ) {
        	    log.debug("该用户已离职！");
             rm.setSysStatus(SysStatus.USER_NOT_FOUND);
             return rm;

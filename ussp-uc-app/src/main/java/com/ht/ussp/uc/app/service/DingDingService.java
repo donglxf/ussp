@@ -855,6 +855,9 @@ public class DingDingService {
     			}
         		//HtBoaInUser u = htBoaInUserService.findByUserId(htBoaInContrastUser.getUcBusinessId());
         		if(u!=null) {
+        			if("hulan@hongte.info".equals(ddUpdateUser.getEmail())) {
+        				System.out.println("");
+        			}
         			if(StringUtils.isNotEmpty(ddUpdateUser.getEmail())) {
         				u.setEmail(ddUpdateUser.getEmail());
         			}
