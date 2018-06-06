@@ -47,6 +47,21 @@
 					    <script type="text/html" id="app_appuser_datatable_bar">
                             <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delAppUser">删除</a>
                          </script>
+                         <script type="text/html" id="user_status_laytpl">
+                {{#  if(d.status == '0'){ }}
+                正常
+                {{#  } else if(d.status == '1') { }}
+                禁用
+                {{#  } else if(d.status == '2') { }}
+               离职
+                {{#  } else if(d.status == '4') { }}
+                冻结
+                {{#  } else if(d.status == '5') { }}
+                锁定
+                {{#  } else { }}
+                {{ d.status }}
+                {{#  } }}
+            </script>
 					</div>
 				</div>
 		</div>

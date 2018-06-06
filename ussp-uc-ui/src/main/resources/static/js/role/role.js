@@ -268,7 +268,7 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth' ,'upload'],
             , {field: 'mobile',  title: '手机'}
             , {field: 'email',   title: '邮箱'}
             , {field: 'jobNumber', width: 100, title: '工号' }
-            , {field: 'createdDatetime',  templet: '#createTimeTpl', title: '创建时间'}
+            , {field: 'status', width: '8%', title: '状态', templet: "#user_status_laytpl"}
             , {fixed: 'right',   title: '操作',   toolbar: '#role_roleuser_datatable_bar'}
         ]]
     });

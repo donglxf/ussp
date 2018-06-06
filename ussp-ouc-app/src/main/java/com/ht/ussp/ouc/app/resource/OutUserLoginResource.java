@@ -19,6 +19,7 @@ import com.ht.ussp.ouc.app.service.HtBoaOutLoginService;
 import com.ht.ussp.ouc.app.service.HtBoaOutPwdHistService;
 import com.ht.ussp.ouc.app.service.HtBoaOutUserService;
 import com.ht.ussp.util.EncryptUtil;
+import com.ht.ussp.util.md5.Cryptography;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
@@ -44,13 +45,14 @@ public class OutUserLoginResource{
 			return Result.buildFail(); 
 		}
 		HtBoaOutLogin loginInfo = null;
+		HtBoaOutUser u = null;
 		if("sms".equals(registType)) {
-			HtBoaOutUser u =htBoaOutUserService.findByMobile(userName);
+			 u =htBoaOutUserService.findByMobile(userName);
 			if(u!=null) {
 				loginInfo = htBoaOutLoginService.findByUserId(u.getUserId());
 			} 
 		}else if("email".equals(registType)) {
-			HtBoaOutUser u =htBoaOutUserService.findByEmail(userName);
+			 u =htBoaOutUserService.findByEmail(userName);
 			if(u!=null) {
 				loginInfo = htBoaOutLoginService.findByUserId(u.getUserId());
 			} 
@@ -65,6 +67,12 @@ public class OutUserLoginResource{
 	        loginInfo.setDelFlag(0);
 	        loginInfo.setLastModifiedDatetime(new Date());
 	        loginInfo = htBoaOutLoginService.saveUserLogin(loginInfo);
+	        if(u!=null) {
+	        	if("10".equals(u.getUserType())) {
+	        		u.setUserType("1");
+	        		htBoaOutUserService.saveUser(u);
+	        	}
+	        }
 	        return Result.buildSuccess(loginInfo);
 		}else {
 			return Result.buildFail("9999","找不到相关用户信息");
@@ -76,6 +84,30 @@ public class OutUserLoginResource{
 	public Result changePwd(@RequestParam(value = "userId")String userId,@RequestParam(value = "oldPassword")String oldPassword, @RequestParam(value = "newPassword")String newPassword) {
 		long sl = System.currentTimeMillis(), el = 0L;
 		HtBoaOutLogin u = htBoaOutLoginService.findByUserId(userId);
+		HtBoaOutUser htBoaOutUser = htBoaOutUserService.findByUserId(userId);
+		if(u==null || htBoaOutUser==null) {
+			return Result.buildFail("9999","找不到相关用户信息");
+		}
+		if(htBoaOutUser!=null) {
+			if("10".equals(htBoaOutUser.getUserType())) { //存量用户先验证原密码是否正确，然后转换为新的密码
+				try {
+					String oldPwd = Cryptography.tripleDESEncrypt(oldPassword, "~#^&tuandai*%#housebaby#111!"); //微信加密key
+					if(StringUtils.isNotEmpty(oldPwd)) {
+						if(oldPwd.equals(u.getOldPassword())) {
+							u.setPassword(EncryptUtil.passwordEncrypt(newPassword));
+							u = htBoaOutLoginService.saveUserLogin(u);
+							htBoaOutUser.setUserType("1");
+							htBoaOutUserService.saveUser(htBoaOutUser);
+						}else {
+							return Result.buildFail(SysStatus.PWD_INVALID.getStatus(),"密码输入不正确");
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
 		// 验证原密码是否正确
 		if (!EncryptUtil.matches(oldPassword, u.getPassword())) {
 			return Result.buildFail(SysStatus.PWD_INVALID.getStatus(), "原密码输入不正确");
@@ -93,6 +125,7 @@ public class OutUserLoginResource{
 		if ("1".equals(u.getStatus())) {
 			u.setStatus("0");
 		}
+		
 		htBoaOutLoginService.saveUserLogin(u);
 		htBoaOutPwdHistService.save(htBoaOutPwdHist);
 		el = System.currentTimeMillis();

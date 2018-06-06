@@ -84,6 +84,7 @@ public class OutUserResource{
 		htBoaOutUser.setDataSource(app);
 		htBoaOutUser.setCreatedDatetime(new Date());
 		htBoaOutUser.setStatus("0");
+		htBoaOutUser.setUserType("0");
 		htBoaOutUser.setLastModifiedDatetime(new Date());
 		htBoaOutUser = htBoaOutUserService.saveUser(htBoaOutUser);
          
