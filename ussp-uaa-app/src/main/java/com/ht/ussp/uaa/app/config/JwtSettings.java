@@ -38,7 +38,38 @@ public class JwtSettings {
 	private Integer refreshTokenExpTime;
 	
 	
+	/**
+	 * 外部用户刷新令牌时间
+	 */
+	private Integer outRefreshTokenExpTime;
+	
+	/**
+	 * 外部用户token时间
+	 */
 	private Integer outUserTokenTime;
+	
+	/**
+	 * 外部用户签名KEY
+	 */
+	private String outTokenSigningKey;
+	
+	
+
+	public String getOutTokenSigningKey() {
+		return outTokenSigningKey;
+	}
+
+	public void setOutTokenSigningKey(String outTokenSigningKey) {
+		this.outTokenSigningKey = outTokenSigningKey;
+	}
+
+	public Integer getOutRefreshTokenExpTime() {
+		return outRefreshTokenExpTime;
+	}
+
+	public void setOutRefreshTokenExpTime(Integer outRefreshTokenExpTime) {
+		this.outRefreshTokenExpTime = outRefreshTokenExpTime;
+	}
 
 	public Integer getRefreshTokenExpTime() {
 		return refreshTokenExpTime;

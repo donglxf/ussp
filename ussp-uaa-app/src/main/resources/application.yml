@@ -9,12 +9,15 @@ spring:
 uaa:
   security:
     jwt:
-      tokenExpirationTime: 29  #内部应用token失效时间    单位：分钟
-      refreshTokenExpTime: 720  #内部应
+      tokenExpirationTime: 30  #内部应用token失效时间    单位：分钟
+      refreshTokenExpTime: 720  #内部应用刷新token失效时间,单位：分钟  12小时
       appTokenTime: 365 #天，系统级鉴权token失效时间
       tokenIssuer: qiuwenwu@hongte.info
       tokenSigningKey: xm8EV6Hy5RMFK4EEACIDAwQus
-      OutUserTokenTime: 30  #外部用户token失效时间
+      outUserTokenTime: 120  #外部用户token失效时间  单位：分钟
+      outRefreshTokenExpTime: 129600  #90天，可保存到外部系统的数据库
+      outTokenSigningKey: V6bEDZuckEx5DdCEFuyBO8oGHvIKSh
+      
       
       
 feign:

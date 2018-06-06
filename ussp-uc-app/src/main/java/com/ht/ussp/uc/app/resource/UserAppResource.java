@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
+import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.service.HtBoaInUserAppService;
 import com.ht.ussp.uc.app.vo.PageVo;
 
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 
@@ -172,7 +172,6 @@ public class UserAppResource {
 	}
     
     @ApiOperation(value = "对内：删除用户系统记录", notes = "提交角色编号，可批量删除")
-    @ApiImplicitParam(name = "codes", value = "角色编号集", required = true, dataType = "Codes")
     @RequestMapping(value = {"/delete" }, method = RequestMethod.POST)
     public Result delete( int id) {
         long sl = System.currentTimeMillis(), el = 0L;
@@ -188,4 +187,38 @@ public class UserAppResource {
         log.debug(logEnd, "codes: " + id, msg, el, el - sl);
         return Result.buildSuccess();
     }
+    
+    
+	@SuppressWarnings("rawtypes")
+	@ApiOperation(value = "删除用户系统记录", notes = "根据用户id,系统code删除")
+	@PostMapping(value = { "/deleteByUserIdAndAppCode" }, produces = { "application/json" })
+	public Result deleteByUserIdAndAppCode(String userId, String appCode) {
+		List<HtBoaInUserApp> userAppList = htBoaInUserAppService.findByUserIdAndApp(userId, appCode);
+		if(userAppList!=null) {
+			for(HtBoaInUserApp u : userAppList) {
+				htBoaInUserAppService.delete(u);
+			}
+		}
+		return Result.buildSuccess();
+	}
+	
+	@ApiOperation(value = "查询系统下所有用户", notes = "查询系统下所有用户")
+	@PostMapping(value = "/getUserInfoForApp")
+	public PageResult<HtBoaInUser> getUserInfoForApp(PageVo page) {
+		PageResult result = new PageResult();
+		PageConf pageConf = new PageConf();
+		pageConf.setPage(page.getPage());
+		pageConf.setSize(page.getLimit());
+		pageConf.setSearch(page.getKeyWord());
+		long sl = System.currentTimeMillis(), el = 0L;
+		String msg = "成功";
+		String logHead = "查询系统下所有用户：getUserInfoForApp param-> {}";
+		String logStart = logHead + " | START:{}";
+		String logEnd = logHead + " {} | END:{}, COST:{}";
+		log.debug(logStart, "page: " + page, sl);
+		result = htBoaInUserAppService.getUserInfoForAppByPage(pageConf, page.getQuery());
+		el = System.currentTimeMillis();
+		log.debug(logEnd, "page: " + page, msg, el, el - sl);
+		return result;
+	}
 }

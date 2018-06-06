@@ -1,0 +1,127 @@
+<div class="layui-fluid" lay-filter="services_auth">
+    <div class="tree col-xs-3" style="">
+        <div>
+            <div class="tree_search">
+                <div class="input-group input-group-sm">
+                    <input type="text" id="services_app_search_tree" maxlength="60" class="form-control" placeholder="请输入系统名称"/>
+                    <div id="services_app_btn_refresh_tree" class="input-group-addon btn" title="刷新">
+                        <i class="fa fa-refresh"></i>
+                    </div>
+                </div>
+            </div>
+            <div id="services_app_ztree_left" class="ztree"></div>
+        </div>
+    </div>
+    <div class="col-xs-9">
+	<div class="layui-form-item" style="padding-left: 15px;padding-right: 15px;">
+		<div class="row row-lg" id="services_table_tools">
+				<div class="toolbarBtn btn-group">
+					<button class="layui-btn layui-btn-sm" title="新增" data-type="add" >新增</button>
+				</div>
+				<div class="pull-right col-xs-4 row">
+                <div class="input-group input-group-sm">
+                    <input type="text" class="form-control input-sm" maxlength="60" id="services_search_keyword" placeholder="请输入服务名称" />
+                    <div class="input-group-btn">
+                        <button type="button" class="layui-btn layui-btn-sm" data-type="search">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+		</div>
+		<div class="row row-lg">
+			<table id="services_datatable" lay-filter="filter_services_datatable"> </table>
+			<script type="text/html" id="services_datatable_bar">
+ {{#  if(d.status == '0'){ }}
+                <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="stopOrStart">禁用</a>
+{{#  } else { }}
+ <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="stopOrStart">启用</a>
+{{#  } }}
+                <a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>
+            </script>
+		</div>
+	</div>
+	<!--新增表单-->
+    <div id="services_add_services_div" class="hide">
+        <form method="post" class="layui-form" style="margin-top: 20px" lay-filter="filter_add_services_form">
+            <div class="layui-form-item" >
+                <label class="layui-form-label">微服务<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="applicationService" lay-verify="required" maxlength="20" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">微服务名称<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="applicationServiceName" lay-verify="required" maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">所属系统<b>*</b></label>
+				<div class="layui-input-block">
+					<!-- <select name="app" id="app"     lay-verify="required" > 
+					</select> -->
+					<input type="text"  id="appNameCn" readonly autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="app" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+				</div>
+			</div>
+			<button class="layui-btn hide" lay-submit="" lay-filter="filter_add_services_form"></button>
+        </form>
+    </div>
+    <!--修改表单-->
+    <div id="services_modify_services_data_div"  class="hide">
+        <form method="post" class="layui-form" lay-filter="filter_modify_services_data_form">
+           <div class="layui-form-item" >
+                <label class="layui-form-label">微服务<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="applicationService" lay-verify="required" readonly maxlength="20" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm layui-bg-gray">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">微服务名称<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="applicationServiceName" lay-verify="required" maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+				<label class="layui-form-label">所属系统<b>*</b></label>
+				<div class="layui-input-block">
+				    <input type="text" name="app" lay-verify="required" readonly maxlength="20" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm layui-bg-gray">
+					<!-- <select name="app" id="app" disabled     lay-verify="required" > 
+					</select> -->
+				</div>
+			</div>
+            <input type="hidden" name="id"   readonly  >
+            <button class="layui-btn hide" lay-submit="" lay-filter="filter_modify_services_data_form"></button>
+        </form>
+    </div>
+    <!--查看表单-->
+    <div id="view_services_div" class="ibox-content hide" class="hide">
+        <form id="view_data_form" class="form-horizontal" method="post"  >
+			<div class="layui-form-item" >
+                <label class="layui-form-label">微服务<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="applicationService" lay-verify="required" readonly maxlength="20" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">微服务名称<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="applicationServiceName" lay-verify="required" readonly maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+        </form>
+    </div>
+    <script src="/js/service/services.js"></script>
+    <script type="text/html" id="statusTpl">
+      {{#  if(d.status == '0'){ }}
+                      启用
+      {{#  } else { }}
+                     禁用
+      {{#  } }}
+	</script>
+	<script type="text/html" id="createTimeTpl">
+ {{new Date( d.createdDatetime ).Format('yyyy-MM-dd HH:mm:ss')}} 
+</script>
+</div>
+</div>

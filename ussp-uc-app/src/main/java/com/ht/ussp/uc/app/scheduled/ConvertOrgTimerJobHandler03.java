@@ -29,9 +29,9 @@ public class ConvertOrgTimerJobHandler03 extends IJobHandler {
 	
     @Override
     public ReturnT<String> execute(String param) throws Exception {
-    	XxlJobLogger.log("---------------------定时任务开始--------------------->");
+    	XxlJobLogger.log("---------------------定时任务开始(转换机构)--------------------->");
     	dingDingService.convertOrg();
-    	XxlJobLogger.log("---------------------定时任务结束--------------------->");
+    	XxlJobLogger.log("---------------------定时任务结束(转换机构)--------------------->");
         return SUCCESS;
     }
 }

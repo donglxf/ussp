@@ -68,6 +68,9 @@ public final class RefreshToken implements JwtToken {
     	return claims.getBody().get("bmUserId").toString();
     }
     
+    public String getIeme() {
+    	return claims.getBody().get("ieme").toString();
+    }
     public Integer getTokenTime() {
     	return Integer.valueOf(claims.getBody().get("tokenTime").toString());
     }

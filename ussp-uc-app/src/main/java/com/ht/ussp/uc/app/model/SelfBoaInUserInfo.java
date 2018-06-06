@@ -74,6 +74,15 @@ public class SelfBoaInUserInfo {
     @ApiModelProperty(value = "工号", dataType = "string")
     String jobNumber;
     
+    @ApiModelProperty(value = "系统编码", dataType = "string")
+    String appCode;
+    
+    @ApiModelProperty(value = "系统名称", dataType = "string")
+    String appName;
+    
+  //状态: 0 正常  2离职
+    @ApiModelProperty(value = "用户状态", dataType = "string")
+    String status;
     public SelfBoaInUserInfo(String userId, String userName, String email,
             String idNo, String mobile, String orgCode, String orgName, String orgNameCh,
             String rootOrgCode, String rootOrgName, String rootOrgNameCh, String orgPath,
@@ -92,7 +101,19 @@ public class SelfBoaInUserInfo {
         this.orgPath = orgPath;
         this.orgType = orgType;
         this.jobNumber = jobNumber;
-        
+    }
+    
+    public SelfBoaInUserInfo(String userId, String userName, String email,
+            String idNo, String mobile, String orgCode, String jobNumber,String appCode,String status ) {
+        this.userId = userId;
+        this.userName = userName;
+        this.email = email;
+        this.idNo = idNo;
+        this.mobile = mobile;
+        this.orgCode = orgCode;
+        this.jobNumber = jobNumber;
+        this.appCode = appCode;
+        this.status = status;
     }
 
 }

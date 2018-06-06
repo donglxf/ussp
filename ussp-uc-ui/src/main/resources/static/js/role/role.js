@@ -13,6 +13,7 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth' ,'upload'],
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
         , appTree //组织机构树控件
+        ,roleCode
         , active = {
         add: function () { //弹出用户新增弹出框
         	 var nodes = appTree.getSelectedNodes();
@@ -79,27 +80,27 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth' ,'upload'],
                console.log(result);
             });
          },
-        search: function () {
-            //执行重载
-        	refreshTable($("#role_search_keyword").val());
-        },
-        getDDRole:function(){
-     	   $.post(getDDUrl, null, function (result) {
-            console.log(result);
-         });
-      },
+         search: function () {
+             //执行重载
+         	refreshRoleTable($("#role_search_keyword").val());
+         },
+         searchRoleUsers: function () {
+             //执行重载
+         	refreshRoleUsersTable($("#role_roleUsers_search_keyword").val());
+         },
         
     };
     
     var roleListByPageUrl=config.basePath +"role/in/list"; //列出所有角色记录列表信息  
+    var getUserInfoForRoleUrl=config.basePath +"userrole/getUserInfoForRole"; //列出所有角色记录列表信息  
     var addRoleUrl=config.basePath +"role/in/add"; //添加角色信息
     var delRoleUrl=config.basePath +"role/in/delete"; //删除角色信息
+    var delRoleUserUrl=config.basePath +"userrole/deleteByUserIdAndRoleCode"; //删除角色用户关系信息
     var statusRoleUrl=config.basePath +"role/in/stop"; //禁用
     var checkRoleCodeExist = config.basePath +"role/isExistRoleCode"; //校验角色编码是否已经存在
     var appListByPageUrl=config.basePath +"userapp/listAppByPage"; //列出所有角色记录列表信息
     var exportRoleExcelUrl = config.basePath +"role/exportRoleExcel"; //导出
     var importRoleExcelUrl = config.basePath +"role/importRoleExcel"; //导入
-    var getDDUrl = config.basePath +"role/getDDRole"; //导入
     upload.render({
 		elem: '#importRole'
 		,url:importRoleExcelUrl
@@ -108,7 +109,7 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth' ,'upload'],
 		,done: function(res){
 			if (res.returnCode == '0000') {
              	layer.msg("角色导入成功");
-             	refreshTable();
+             	refreshRoleTable();
             }
            
 		}
@@ -138,7 +139,7 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth' ,'upload'],
 		  },
 		  
 	});
-    var refreshTable = function (keyword) {
+    var refreshRoleTable = function (keyword) {
         if (!keyword) {
             keyword = null;
         }
@@ -146,7 +147,7 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth' ,'upload'],
         var selectNodes = appTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
         	table.reload('role_datatable', {
-            	height: 'full-200'
+        		height: 'full-635'
                 , page: {
                     curr: 1 //重新从第 1 页开始
                 }
@@ -159,7 +160,7 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth' ,'upload'],
             });
         }else{
         	table.reload('role_datatable', {
-            	height: 'full-200'
+        		height: 'full-635'
                 , page: {
                     curr: 1 //重新从第 1 页开始
                 }
@@ -169,6 +170,22 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth' ,'upload'],
             });
         }
     };
+    var refreshRoleUsersTable = function (keyword) {
+    	 if (!keyword) {
+             keyword = null;
+         }
+    	if(roleCode){
+    		table.reload('role_roleusers_datatable', {
+            	height: 'full-600'
+                , where: {
+                    roleCode:roleCode,
+                    keyword:keyword
+                }
+            });
+    	}
+    };
+    
+    
     
   //渲染组织机构树
     appTree = $.fn.zTree.init($('#role_app_ztree_left'), {
@@ -200,7 +217,7 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth' ,'upload'],
             }
             , callback: {
             	onClick: function (event, treeId, treeNode, clickFlag) {
-            		refreshTable();
+            		refreshRoleTable();
                 },
                 onAsyncSuccess: function (event, treeId, treeNode, msgString) {
                     var node = appTree.getNodeByParam("level ", "0");
@@ -223,28 +240,67 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth' ,'upload'],
         , url: roleListByPageUrl
         , method: 'post' //如果无需自定义HTTP类型，可不加该参数
         , page: true
-        , height: 'full-200'
+        , height: 'full-635'
         , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
         , cols: [[
             {type: 'numbers'}
-            , {field: 'roleCode',   title: '角色编号'}
-            , {field: 'roleNameCn',   title: '角色名称'}
-            , {field: 'app',    title: '所属系统'}
-            , {field: 'status',  templet: '#statusTpl', title: '状态'}
-            , {field: 'createOperator',   title: '创建人'}
-            , {field: 'createdDatetime',  templet: '#createTimeTpl', title: '创建时间'}
+            , {field: 'roleCode',   title: '角色编号', event:'getRoleUsers'}
+            , {field: 'roleNameCn',   title: '角色名称', event:'getRoleUsers'}
+            , {field: 'app',    title: '所属系统', event:'getRoleUsers'}
+            , {field: 'status',  templet: '#statusTpl', title: '状态', event:'getRoleUsers'}
+            , {field: 'createOperator',   title: '创建人', event:'getRoleUsers'}
+            , {field: 'createdDatetime',  templet: '#createTimeTpl', title: '创建时间', event:'getRoleUsers'}
             , {fixed: 'right',   title: '操作',   toolbar: '#role_datatable_bar'}
         ]]
+    });
+    table.render({
+        id: 'role_roleusers_datatable'
+        , elem: '#role_roleusers_datatable'
+        , url: getUserInfoForRoleUrl
+        , method: 'post' //如果无需自定义HTTP类型，可不加该参数
+        , height: 'full-600'
+        , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+        , cols: [[
+            {type: 'numbers'}
+            , {field: 'userId',   title: '用户编号'}
+            , {field: 'userName',   title: '用户名'}
+            , {field: 'orgCode', width: 100, title: '所属机构'}
+            , {field: 'mobile',  title: '手机'}
+            , {field: 'email',   title: '邮箱'}
+            , {field: 'jobNumber', width: 100, title: '工号' }
+            , {field: 'status', width: '8%', title: '状态', templet: "#user_status_laytpl"}
+            , {fixed: 'right',   title: '操作',   toolbar: '#role_roleuser_datatable_bar'}
+        ]]
+    });
+    table.on('tool(filter_role_roleusers_datatable)', function (obj) {
+    	var data = obj.data;
+    	if (obj.event === 'delRoleUser') {
+       	 layer.confirm('是否确认删除角色用户？', function (index) {
+            	 $.post(delRoleUserUrl+"?userId=" + data.userId+"&roleCode="+roleCode, null, function (result) {
+                     if (result["returnCode"] == "0000") {
+                   	    obj.del();
+                   	    refreshRoleUsersTable();
+                         layer.close(index);
+                         layer.msg("删除角色用户成功");
+                     } else {
+                         layer.msg(result.codeDesc);
+                     }
+                 });
+            });
+       } 
     });
     //监听操作栏
     table.on('tool(filter_role_datatable)', function (obj) {
         var data = obj.data;
-        if (obj.event === 'stopOrStart') {
+        if (obj.event === 'getRoleUsers') {
+        	roleCode= data.roleCode;
+        	refreshRoleUsersTable();
+        } else if (obj.event === 'stopOrStart') {
         	if(data.status==0){//启用状态，是否需要禁用
         		layer.confirm('是否禁用角色？', function (index) {
                   	 $.post(statusRoleUrl+"?id=" + data.id+"&status=1", null, function (result) {
                            if (result["returnCode"] == "0000") {
-                               refreshTable();
+                               refreshRoleTable();
                                layer.close(index);
                                layer.msg("禁用角色成功");
                            } else {
@@ -256,7 +312,7 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth' ,'upload'],
         		layer.confirm('是否启用角色？', function (index) {
                   	 $.post(statusRoleUrl+"?id=" + data.id+"&status=0", null, function (result) {
                            if (result["returnCode"] == "0000") {
-                               refreshTable();
+                               refreshRoleTable();
                                layer.close(index);
                                layer.msg("启用角色成功");
                            } else {
@@ -270,7 +326,7 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth' ,'upload'],
              	 $.post(delRoleUrl+"?id=" + data.id, null, function (result) {
                       if (result["returnCode"] == "0000") {
                     	  obj.del();
-                          refreshTable();
+                          refreshRoleTable();
                           layer.close(index);
                           layer.msg("删除角色成功");
                       } else {
@@ -331,7 +387,7 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth' ,'upload'],
                             success: function (result2) {
                                 layer.close(editDialog);
                                 if (result2["returnCode"] == '0000') {
-                                    refreshTable();
+                                    refreshRoleTable();
                                     layer.alert("角色修改成功");
                                 }
                             },
@@ -350,16 +406,31 @@ layui.use(['form', 'laytpl' , 'ztree','table','ht_config', 'ht_auth' ,'upload'],
     table.on('renderComplete(filter_role_datatable)', function (obj) {
         ht_auth.render("role_auth");
     });
+    
+    table.on('renderComplete(filter_role_roleusers_datatable)', function (obj) {
+        ht_auth.render("role_auth");
+    });
     //监听工具栏
     $('#role_table_tools .layui-btn').on('click', function () {
         var type = $(this).data('type');
         active[type] ? active[type].call(this) : '';
     });
-    var $keywordInput = $("#role_search_keyword");
-    $keywordInput.keydown(function (e) {
+    $('#role_roleusers_table_tools .layui-btn').on('click', function () {
+        var type = $(this).data('type');
+        active[type] ? active[type].call(this) : '';
+    });
+    var $keywordInputRole = $("#role_search_keyword");
+    $keywordInputRole.keydown(function (e) {
         if (e.keyCode == 13) {
-            var keyWord = $keywordInput.val();
-            refreshTable(keyWord);
+            var keyWord = $keywordInputRole.val();
+            refreshRoleTable(keyWord);
+        }
+    });
+    var $keywordInputRoleUser = $("#role_roleUsers_search_keyword");
+    $keywordInputRoleUser.keydown(function (e) {
+        if (e.keyCode == 13) {
+            var keyWord = $keywordInputRoleUser.val();
+            refreshRoleUsersTable(keyWord);
         }
     });
     //刷新树的数据

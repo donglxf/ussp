@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -855,6 +856,9 @@ public class DingDingService {
     			}
         		//HtBoaInUser u = htBoaInUserService.findByUserId(htBoaInContrastUser.getUcBusinessId());
         		if(u!=null) {
+        			if("hulan@hongte.info".equals(ddUpdateUser.getEmail())) {
+        				System.out.println("");
+        			}
         			if(StringUtils.isNotEmpty(ddUpdateUser.getEmail())) {
         				u.setEmail(ddUpdateUser.getEmail());
         			}
@@ -1351,6 +1355,7 @@ public class DingDingService {
 	    	if(htBoaInUsers!=null) {
 	    		HtBoaInLogin loginInfo = htBoaInLoginService.findByUserId(htBoaInUsers.getUserId());
 		    	if(loginInfo==null) {
+		    		String loginId=UUID.randomUUID().toString().replace("-", "");
 					loginInfo = new HtBoaInLogin();
 					loginInfo.setStatus(Constants.USER_STATUS_0);
 					loginInfo.setPassword(EncryptUtil.passwordEncrypt("123456"));
@@ -1361,6 +1366,7 @@ public class DingDingService {
 					loginInfo.setCreatedDatetime(new Date());
 					loginInfo.setLastModifiedDatetime(new Date());
 					loginInfo.setUserId(htBoaInUsers.getUserId());
+					loginInfo.setLoginId(StringUtils.isEmpty(ddUserOperator.getUserId())?loginId:ddUserOperator.getUserId());
 					htBoaInLoginService.add(loginInfo);
 				} 
 	            //添加用户与钉钉的关联
@@ -1484,6 +1490,35 @@ public class DingDingService {
     		}
     		
     	}
+		return Result.buildSuccess();
+	}
+
+	public Result dealLoginIdNull() {
+		List<HtBoaInLogin> listHtBoaInLogin = htBoaInLoginService.findByLoginIdIsNull();
+		for(HtBoaInLogin htBoaInLogin : listHtBoaInLogin) {
+			String loginId=UUID.randomUUID().toString().replace("-", "");
+			String loginIdTmp="";
+			HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(htBoaInLogin.getUserId());
+			if(htBoaInUser!=null) {
+				try {
+					if(StringUtils.isNotEmpty(htBoaInUser.getEmail())) {
+						if(htBoaInUser.getEmail().indexOf("@")>0) {
+							loginIdTmp =  htBoaInUser.getEmail().substring(0, htBoaInUser.getEmail().indexOf("@"));
+						}
+					}
+					if(StringUtils.isNotEmpty(loginIdTmp)) {
+						HtBoaInLogin l = htBoaInLoginService.findByLoginId(loginIdTmp);
+						if(l==null) {
+							loginId = loginIdTmp;
+						}
+					}
+					htBoaInLogin.setLoginId(loginId);
+					htBoaInLoginService.add(htBoaInLogin);
+				} catch (Exception e) {
+					continue;
+				}
+			}
+		}
 		return Result.buildSuccess();
 	}
 

@@ -49,6 +49,10 @@ public class HtBoaOutUser implements Serializable {
     @Column(name = "REGIST_TYPE")
     private String registType;
     
+    //0:普通注册用户 1:存量用户转成了普通用户 10:微信系统存量用户
+    @Column(name = "USER_TYPE")
+    private String userType;
+    
     @Column(name = "DATA_SOURCE")
     private String dataSource;
 

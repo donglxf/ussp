@@ -5,7 +5,6 @@ import javax.persistence.*;
 
 import java.util.Date;
 
-
 /**
  * 
 * @ClassName: HtBoaInApp
@@ -14,47 +13,51 @@ import java.util.Date;
 * @date 2018年1月5日 下午2:46:22
  */
 @Entity
-@Table(name="HT_BOA_IN_APP")
-@NamedQuery(name="HtBoaInApp.findAll", query="SELECT h FROM HtBoaInApp h")
+@Table(name = "HT_BOA_IN_APP")
+@NamedQuery(name = "HtBoaInApp.findAll", query = "SELECT h FROM HtBoaInApp h")
 public class HtBoaInApp implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@Column(name = "ID", unique = true, nullable = false)
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name="APP")
+	@Column(name = "APP")
 	private String app;
 
-	@Column(name="CREATE_OPERATOR")
+	@Column(name = "CREATE_OPERATOR")
 	private String createOperator;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="CREATED_DATETIME")
+	@Column(name = "CREATED_DATETIME")
 	private Date createdDatetime;
 
-	@Column(name="DEL_FLAG")
+	@Column(name = "DEL_FLAG")
 	private int delFlag;
 
-	@Column(name="JPA_VERSION")
+	@Column(name = "JPA_VERSION")
 	private int jpaVersion;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="LAST_MODIFIED_DATETIME")
+	@Column(name = "LAST_MODIFIED_DATETIME")
 	private Date lastModifiedDatetime;
 
-	@Column(name="NAME")
+	@Column(name = "NAME")
 	private String name;
 
-	@Column(name="NAME_CN")
+	@Column(name = "NAME_CN")
 	private String nameCn;
 
-	@Column(name="STATUS")
+	@Column(name = "STATUS")
 	private String status;
 
-	@Column(name="UPDATE_OPERATOR")
+	@Column(name = "UPDATE_OPERATOR")
 	private String updateOperator;
+
+	// 是否外部系统 0：是 1：否
+	@Column(name = "isOS")
+	private Integer isOS;
 
 	public HtBoaInApp() {
 	}
@@ -145,6 +148,14 @@ public class HtBoaInApp implements Serializable {
 
 	public void setUpdateOperator(String updateOperator) {
 		this.updateOperator = updateOperator;
+	}
+
+	public Integer getIsOS() {
+		return isOS;
+	}
+
+	public void setIsOS(Integer isOS) {
+		this.isOS = isOS;
 	}
 
 }

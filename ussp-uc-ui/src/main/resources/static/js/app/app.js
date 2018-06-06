@@ -8,6 +8,7 @@ layui.use(['form',   'table', 'ht_config','ht_auth','upload' ], function () {
         , addDialog = 0 //新增弹出框的ID
         , viewDialog = 0 //查询弹出框的ID
         , editDialog = 0 //修改弹出框的ID
+        , appCode=""
         , active = {
         add: function () { //弹出用户新增弹出框
             layer.close(addDialog);
@@ -42,12 +43,7 @@ layui.use(['form',   'table', 'ht_config','ht_auth','upload' ], function () {
                             success: function (message) {
                                 layer.close(addDialog);
                                 if (message.returnCode == '0000') {
-                                   /* table.reload('app_datatable', {
-                                        page: {
-                                            curr: 1 //重新从第 1 页开始
-                                        }
-                                    });*/
-                                	refreshTable();
+                                	refreshAppsTable();
                                     layer.alert("系统新增成功");
                                 }
                             },
@@ -68,17 +64,24 @@ layui.use(['form',   'table', 'ht_config','ht_auth','upload' ], function () {
          },
         search: function () {
             //执行重载
-        	refreshTable($("#app_search_keyword").val());
+        	refreshAppsTable($("#app_search_keyword").val());
+        },
+        searchAppUsers: function () {
+            //执行重载
+        	refreshAppUsersTable($("#app_appUsers_search_keyword").val());
         }
     };
     
-    var appListByPageUrl=config.basePath +"system/list"; //列出所有系统记录列表信息  
-    var addappUrl=config.basePath +"system/add"; //添加系统信息
-    var delappUrl=config.basePath +"system/delete"; //删除系统信息
-    var statusappUrl=config.basePath +"system/stop"; //禁用
-    var checkAppCodeExistUrl = config.basePath +"system/isExistAppCode"; //校验岗位编码是否已经存在
-    var exportAppExcelUrl = config.basePath +"system/exportAppExcel"; //导出
-    var importAppExcelUrl = config.basePath +"system/importAppExcel"; //导入
+    var appListByPageUrl=config.basePath +"apps/list"; //列出所有系统记录列表信息  
+    var addappUrl=config.basePath +"apps/add"; //添加系统信息
+    var delappUrl=config.basePath +"apps/delete"; //删除系统信息
+    var statusappUrl=config.basePath +"apps/stop"; //禁用
+    var checkAppCodeExistUrl = config.basePath +"apps/isExistAppCode"; //校验岗位编码是否已经存在
+    var exportAppExcelUrl = config.basePath +"apps/exportAppExcel"; //导出
+    var importAppExcelUrl = config.basePath +"apps/importAppExcel"; //导入
+    
+    var getUserInfoForAppUrl=config.basePath +"userapp/getUserInfoForApp"; //列出所有角色记录列表信息  
+    var delAppUserUrl=config.basePath +"userapp/deleteByUserIdAndAppCode"; //删除角色用户关系信息
     
     upload.render({
 		elem: '#importApp'
@@ -88,7 +91,7 @@ layui.use(['form',   'table', 'ht_config','ht_auth','upload' ], function () {
 		,done: function(res){
 			if (res.returnCode == '0000') {
             	layer.msg("系统导入成功");
-            	refreshTable();
+            	refreshAppsTable();
             }
            
 		}
@@ -120,11 +123,12 @@ layui.use(['form',   'table', 'ht_config','ht_auth','upload' ], function () {
 		  
 	});
 	
-    var refreshTable = function (keyword) {
+	var refreshAppsTable = function (keyword) {
         if (!keyword) {
             keyword = null;
         }
         table.reload('app_datatable', {
+        	height: 'full-635',
             page: {
                 curr: 1 //重新从第 1 页开始
             }
@@ -133,41 +137,93 @@ layui.use(['form',   'table', 'ht_config','ht_auth','upload' ], function () {
             }
         });
     };
+    
+    var refreshAppUsersTable = function (keyword) {
+   	 if (!keyword) {
+            keyword = null;
+        }
+   	if(appCode){
+   		table.reload('app_appusers_datatable', {
+           	height: 'full-605'
+               , where: {
+            	   query:{
+            		   appCode:appCode,
+            		   keyWord:keyword
+            	   }
+               }
+           });
+   	}
+   };
     //渲染用户数据表格
     table.render({
         id: 'app_datatable'
         , elem: '#app_datatable'
         , url: appListByPageUrl
         , method: 'post' //如果无需自定义HTTP类型，可不加该参数
-        , response: {
-            statusName: 'returnCode' //数据状态的字段名称，默认：code
-            , statusCode: "0000" //成功的状态码，默认：0
-            , msgName: 'msg' //状态信息的字段名称，默认：msg
-            , countName: 'count' //数据总数的字段名称，默认：count
-            , dataName: 'data' //数据列表的字段名称，默认：data
-        } //如果无需自定义数据响应名称，可不加该参数
         , page: true
-        , height: 'full-200'
-        , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+        , limit : 5
+        , limits :[5, 10, 20, 30, 40, 50]
+        , height: 'full-635'
         , cols: [[
             {type: 'numbers'}
-            , {field: 'app', width: 150, title: '系统编号'}
-            , {field: 'nameCn', width: 400,   title: '系统名称'}
-            , {field: 'status', width: 100,templet: '#statusTpl', title: '状态'}
-            , {field: 'createOperator', width: 350,   title: '创建人'}
-            , {field: 'createdDatetime', width: 300,templet: '#createTimeTpl', title: '创建时间'}
-            , {fixed: 'right', width: 330,  title: '操作',   toolbar: '#app_datatable_bar'}
+            , {field: 'app', width: '10%', title: '系统编号', event:'getAppUsers'}
+            , {field: 'nameCn',  width: '20%', title: '系统名称', event:'getAppUsers'}
+            , {field: 'isOS', width: '15%', templet: '#isOSTpl', title: '系统类型', event:'getAppUsers'}
+            , {field: 'status', width: '15%',templet: '#statusTpl', title: '状态', event:'getAppUsers'}
+            , {field: 'createOperator', width: '10%',  title: '创建人', event:'getAppUsers'}
+            , {field: 'createdDatetime', width: '10%',templet: '#createTimeTpl', title: '创建时间', event:'getAppUsers'}
+            , {fixed: 'right', width: '14%', title: '操作',   toolbar: '#app_datatable_bar'}
         ]]
+    });
+    table.render({
+        id: 'app_appusers_datatable'
+        , elem: '#app_appusers_datatable'
+        , url: getUserInfoForAppUrl
+        , page: true
+        , method: 'post'  
+        , height: 'full-600'
+        , cellMinWidth: 80  
+        , cols: [[
+            {type: 'numbers'}
+            , {field: 'userId',width: '10%',   title: '用户编号'}
+            , {field: 'userName',width: '15%',   title: '用户名'}
+            , {field: 'orgCode', width: '10%',title: '所属机构'}
+            , {field: 'mobile',width: '15%',  title: '手机'}
+            , {field: 'email',  width: '20%', title: '邮箱'}
+            , {field: 'jobNumber', width: '10%', title: '工号' }
+            , {field: 'status', width: '8%', title: '状态', templet: "#user_status_laytpl"}
+            , {fixed: 'right', width: '10%',  title: '操作',   toolbar: '#app_appuser_datatable_bar'}
+        ]]
+    });
+    table.on('tool(filter_app_appusers_datatable)', function (obj) {
+    	var data = obj.data;
+    	if (obj.event === 'delAppUser') {
+       	 layer.confirm('是否确认删除系统用户？', function (index) {
+            	 $.post(delAppUserUrl+"?userId=" + data.userId+"&appCode="+appCode, null, function (result) {
+                     if (result["returnCode"] == "0000") {
+                   	    obj.del();
+                   	    refreshAppUsersTable();
+                         layer.close(index);
+                         layer.msg("删除系统用户成功");
+                     } else {
+                         layer.msg(result.codeDesc);
+                     }
+                 });
+            });
+       } 
     });
     //监听操作栏
     table.on('tool(filter_app_datatable)', function (obj) {
         var data = obj.data;
-        if (obj.event === 'stopOrStart') {
+        if (obj.event == 'getAppUsers') {
+        	appCode= data.app;
+        	refreshAppUsersTable();
+        } else if (obj.event === 'stopOrStart') {
         	if(data.status==0){//启用状态，是否需要禁用
         		layer.confirm('是否禁用系统？', function (index) {
                   	 $.post(statusappUrl+"?id=" + data.id+"&status=1", null, function (result) {
                            if (result["returnCode"] == "0000") {
-                               refreshTable();
+                               refreshAppsTable();
                                layer.close(index);
                                layer.msg("禁用系统成功");
                            } else {
@@ -179,7 +235,7 @@ layui.use(['form',   'table', 'ht_config','ht_auth','upload' ], function () {
         		layer.confirm('是否启用系统？', function (index) {
                   	 $.post(statusappUrl+"?id=" + data.id+"&status=0", null, function (result) {
                            if (result["returnCode"] == "0000") {
-                               refreshTable();
+                               refreshAppsTable();
                                layer.close(index);
                                layer.msg("启用系统成功");
                            } else {
@@ -193,7 +249,7 @@ layui.use(['form',   'table', 'ht_config','ht_auth','upload' ], function () {
              	 $.post(delappUrl+"?id=" + data.id, null, function (result) {
                       if (result["returnCode"] == "0000") {
                     	  obj.del();
-                          refreshTable();
+                          refreshAppsTable();
                           layer.close(index);
                           layer.msg("删除系统成功");
                       } else {
@@ -240,7 +296,7 @@ layui.use(['form',   'table', 'ht_config','ht_auth','upload' ], function () {
                             success: function (result2) {
                                 layer.close(editDialog);
                                 if (result2["returnCode"] == '0000') {
-                                    refreshTable();
+                                    refreshAppsTable();
                                     layer.alert("系统修改成功");
                                 }
                             },
@@ -263,11 +319,24 @@ layui.use(['form',   'table', 'ht_config','ht_auth','upload' ], function () {
         var type = $(this).data('type');
         active[type] ? active[type].call(this) : '';
     });
-    var $keywordInput = $("#app_search_keyword");
-    $keywordInput.keydown(function (e) {
+    $('#app_appusers_table_tools .layui-btn').on('click', function () {
+        var type = $(this).data('type');
+        active[type] ? active[type].call(this) : '';
+    });
+    
+    var $keywordAppInput = $("#app_search_keyword");
+    $keywordAppInput.keydown(function (e) {
         if (e.keyCode == 13) {
-            var keyWord = $keywordInput.val();
-            refreshTable(keyWord);
+            var keyWord = $keywordAppInput.val();
+            refreshAppsTable(keyWord);
+        }
+    });
+    
+    var $keywordAppUserInput = $("#app_appUsers_search_keyword");
+    $keywordAppUserInput.keydown(function (e) {
+        if (e.keyCode == 13) {
+            var keyWord = $keywordAppUserInput.val();
+            refreshAppUsersTable(keyWord);
         }
     });
     

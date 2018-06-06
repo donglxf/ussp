@@ -41,6 +41,10 @@
 			<artifactId>spring-cloud-starter-zuul</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.retry</groupId>
+			<artifactId>spring-retry</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-eureka</artifactId>
 		</dependency>
@@ -132,7 +136,7 @@
 		<dependency>
 			<groupId>com.ht.ussp</groupId>
 			<artifactId>ussp-common</artifactId>
-			<version>0.0.16</version>
+			<version>2018052901</version>
 		</dependency>
 	</dependencies>
 
@@ -216,10 +220,10 @@
                         <cmd></cmd>
                         <env>
                             <TZ>Asia/Shanghai</TZ>
-                            <JAVA_OPTS>-Xms2g -Xmx2g -Xss256K  -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:InitiatingHeapOccupancyPercent=45</JAVA_OPTS>
+                            <JAVA_OPTS>-Xms3g -Xmx3g -Xss256K  -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:InitiatingHeapOccupancyPercent=45 -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+HeapDumpOnOutOfMemoryError  -XX:HeapDumpPath=/logs -Xloggc:/logs/ussp_gateway_gc.log</JAVA_OPTS>
                         </env>
                         <!--<entryPoint>["java","-jar","/${project.build.finalName}.jar"]</entryPoint>-->
-                        <entryPoint>[ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -Dfile.encoding=UTF-8 -Duser.timeZone=GMT+08 -jar ${project.build.finalName}.jar" ]</entryPoint>
+                        <entryPoint>[ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -Dfile.encoding=UTF-8 -Duser.timeZone=GMT+08 -Dcom.sun.management.jmxremote.port=8999 -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=172.16.200.110 -jar ${project.build.finalName}.jar" ]</entryPoint>
                         <resources>
                             <resource>
                                 <directory>${project.build.directory}</directory>

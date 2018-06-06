@@ -40,6 +40,10 @@ public class HtBoaInContrastService {
         return htBoaInContrastRepository.findAll();
     }
     
+    public void delete(HtBoaInContrast u) {
+          htBoaInContrastRepository.delete(u);
+    }
+    
     public List<HtBoaInContrast> getHtBoaInContrastListByBmUserId(String bmBusinessId,String type) {
         return htBoaInContrastRepository.findByBmBusinessIdAndType(bmBusinessId, type);
     }

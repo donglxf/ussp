@@ -29,9 +29,9 @@ public class ConvertUserTimerJobHandler04 extends IJobHandler {
 	
     @Override
     public ReturnT<String> execute(String param) throws Exception {
-    	XxlJobLogger.log("---------------------定时任务开始--------------------->");
+    	XxlJobLogger.log("---------------------定时任务开始(转换用户)--------------------->");
     	dingDingService.convertUser();
-    	XxlJobLogger.log("---------------------定时任务结束--------------------->");
+    	XxlJobLogger.log("---------------------定时任务结束(转换用户)--------------------->");
         return SUCCESS;
     }
 }

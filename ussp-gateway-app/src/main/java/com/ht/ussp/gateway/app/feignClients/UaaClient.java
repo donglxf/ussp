@@ -1,9 +1,11 @@
 package com.ht.ussp.gateway.app.feignClients;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.ht.ussp.core.Result;
 import com.ht.ussp.gateway.app.model.ResponseModal;
 
 /**
@@ -47,5 +49,17 @@ public interface UaaClient {
 	 */
 	@RequestMapping(value = "/external/validateAppJwt")
 	public ResponseModal validateAppJwt(@RequestParam("tokenPayload") String tokenPayload,@RequestParam("app") String app);
+	
+	/**
+	 * 
+	 * @Title: validateOutUserJwt 
+	 * @Description: 外部用户AccessToken验证 
+	 * @return Result
+	 * @throws
+	 * @author wim qiuwenwu@hongte.info 
+	 * @date 2018年5月17日 下午3:36:19
+	 */
+	@PostMapping(value = "/out/validateOutUserJwt")
+	public Result validateOutUserJwt(@RequestParam("tokenPayload") String tokenPayload);
 	
 }

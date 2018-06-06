@@ -15,5 +15,7 @@ public interface HtBoaOutUserRepository extends JpaSpecificationExecutor<HtBoaOu
 
 	HtBoaOutUser findByMobile(String mobile);
 
+	HtBoaOutUser findByUserId(String userId);
+
     
 }

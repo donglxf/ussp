@@ -1,27 +1,31 @@
 package com.ht.ussp.uc.app.resource;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
+import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.domain.HtBoaInUserRole;
 import com.ht.ussp.uc.app.model.BoaInRoleInfo;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
+import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.vo.PageVo;
 
 import io.swagger.annotations.ApiImplicitParam;
@@ -38,12 +42,15 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class UserRoleResource {
 
-    @Autowired
+	@Autowired
     private HtBoaInUserRoleService htBoaInUserRoleService;
+	
+	@Autowired
+    private HtBoaInUserService htBoaInUserService;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@ApiOperation(value = "对内：根据UserId查询用户角色", notes = "根据UserId查询用户角色")
-	@RequestMapping(value = { "/listUserRoleByPage" }, produces = { "application/json" })
+	@PostMapping(value = "/listUserRoleByPage")
 	public PageResult<HtBoaInUserRole> listUserRoleByPage(PageVo page) {
 		PageResult result = new PageResult();
 		PageConf pageConf = new PageConf();
@@ -63,9 +70,53 @@ public class UserRoleResource {
 		return result;
 	}
     
+	@ApiOperation(value = "查询角色下所有用户", notes = "查询角色下所有用户")
+	@PostMapping(value = "/getUserInfoForRole")
+	public Result getUserInfoForRole(String roleCode,String keyword) {
+		List<HtBoaInUser> listHtBoaInUser = new ArrayList<HtBoaInUser>();
+		List<HtBoaInUserRole> listHtBoaInUserRole =  htBoaInUserRoleService.findByRoleCode(roleCode);
+		for(HtBoaInUserRole u : listHtBoaInUserRole) {
+			HtBoaInUser user = htBoaInUserService.findByUserId(u.getUserId());
+			if(user!=null) {
+				if(StringUtils.isEmpty(keyword)) {
+					listHtBoaInUser.add(user);
+				}else {
+					boolean isAdd = false;
+					if(!StringUtils.isEmpty(user.getUserName())) {
+						if(user.getUserName().contains(keyword)) {
+							isAdd = true;
+						}
+					}
+					if(!StringUtils.isEmpty(user.getEmail())) {
+						if(user.getEmail().contains(keyword)) {
+							isAdd = true;
+						}
+					}
+					if(!StringUtils.isEmpty(user.getJobNumber())) {
+						if(user.getJobNumber().contains(keyword)) {
+							isAdd = true;
+						}
+					}
+					if(!StringUtils.isEmpty(user.getMobile())) {
+						if(user.getMobile().contains(keyword)) {
+							isAdd = true;
+						}
+					}
+					if(isAdd){
+						listHtBoaInUser.add(user);
+					}
+				}
+			}else {
+				htBoaInUserRoleService.delete(u);
+			}
+			
+		}
+		return Result.buildSuccess(listHtBoaInUser);
+	}
+	
 	@SuppressWarnings("rawtypes")
 	@ApiOperation(value = "获取用户所有角色信息")
-	@RequestMapping(value = { "/getUserRole" }, method = RequestMethod.GET)
+	@GetMapping(value = "/getUserRole")
 	public List<BoaInRoleInfo> getUserRole(@RequestParam("userId")String userId) {
     	PageResult result = new PageResult();
     	PageConf pageConf = new PageConf();
@@ -142,21 +193,37 @@ public class UserRoleResource {
     }
     
     @SuppressWarnings("rawtypes")
-	@ApiOperation(value = "对内：删除用户角色记录", notes = "提交角色编号，可批量删除")
-    @ApiImplicitParam(name = "codes", value = "角色编号集", required = true, dataType = "Codes")
+	@ApiOperation(value = "对内：删除用户角色用户记录")
     @PostMapping(value = {"/delete" }, produces = {"application/json"})
-    public Result delete(int id) {
+    public Result delete(long id) {
+        long sl = System.currentTimeMillis(), el = 0L;
+        String msg = "成功";
+        String logHead = "角色用户记录删除：role/in/delete param-> {}";
+        String logStart = logHead + " | START:{}";
+        String logEnd = logHead + " {} | END:{}, COST:{}";
+        log.debug(logStart, "codes: " + id, sl);
+        HtBoaInUserRole u = htBoaInUserRoleService.findById(id);
+        if(u!=null) {
+        	htBoaInUserRoleService.delete(u);
+        }
+        el = System.currentTimeMillis();
+        log.debug(logEnd, "codes: " + id, msg, el, el - sl);
+        return Result.buildSuccess();
+        //return new ResponseModal(200, msg);
+    }
+    
+    @SuppressWarnings("rawtypes")
+	@ApiOperation(value = "删除用户角色记录", notes = "根据用户id,角色code删除")
+    @ApiImplicitParam(name = "codes", value = "角色编号集", required = true, dataType = "Codes")
+    @PostMapping(value = {"/deleteByUserIdAndRoleCode" }, produces = {"application/json"})
+    public Result deleteByUserIdAndRoleCode(String userId,String roleCode) {
         long sl = System.currentTimeMillis(), el = 0L;
         String msg = "成功";
         String logHead = "角色记录删除：role/in/delete param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.debug(logStart, "codes: " + id, sl);
-        HtBoaInUserRole u = new HtBoaInUserRole();
-        u.setId((long) id);
-        htBoaInUserRoleService.delete(u);
+        htBoaInUserRoleService.deleteByUserIdAndRoleCode(userId,roleCode);
         el = System.currentTimeMillis();
-        log.debug(logEnd, "codes: " + id, msg, el, el - sl);
         return Result.buildSuccess();
         //return new ResponseModal(200, msg);
     }

@@ -29,9 +29,9 @@ public class GetDDTimerJobHandler01 extends IJobHandler {
 	
     @Override
     public ReturnT<String> execute(String param) throws Exception {
-    	XxlJobLogger.log("---------------------定时任务开始--------------------->");
+    	XxlJobLogger.log("---------------------定时任务开始(下载钉钉)--------------------->");
     	dingDingService.getDD();
-    	XxlJobLogger.log("---------------------定时任务结束--------------------->");
+    	XxlJobLogger.log("---------------------定时任务结束(下载钉钉)--------------------->");
         return SUCCESS;
     }
 }

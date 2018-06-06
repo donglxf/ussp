@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 
 import com.ht.ussp.gateway.app.filter.AccessFilter;
 import com.ht.ussp.gateway.app.filter.CustomCorsFilter;
+import com.ht.ussp.gateway.app.filter.OutSystemFilter;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -30,7 +31,12 @@ public class GatewayApplication {
         log.info("网关启动成功！");
 
     }
-
+    
+    @Bean
+    public OutSystemFilter outSystemFilter() {
+        return new OutSystemFilter();
+    }
+    
     @Bean
     public AccessFilter accessFilter() {
         return new AccessFilter();

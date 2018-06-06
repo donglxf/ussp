@@ -76,10 +76,10 @@ public class HtBoaInUserService {
      * @param userId
      * @return
      */
-    public HtBoaInUser findByUserIdOrEmailOrMobileOrJobNumber(String userId,String email,String mobile,String jboNumber){
+    public List<HtBoaInUser> findByUserIdOrEmailOrMobileOrJobNumber(String userId,String email,String mobile,String jboNumber){
         return htBoaInUserRepository.findByUserIdOrEmailOrMobileOrJobNumber(userId, email, mobile, jboNumber);
     }
-
+    
     public LoginInfoVo queryUserInfo(String userId,String app) {
         LoginInfoVo loginInfoVo = new LoginInfoVo();
         UserMessageVo userMessageVo = htBoaInUserRepository.queryUserByUserId(userId);
@@ -121,7 +121,11 @@ public class HtBoaInUserService {
         	
         	//获取用户是否是系统管理员
         	if(StringUtils.isNotEmpty(app)) {
-        		HtBoaInUserApp htBoaInUserApp = htBoaInUserAppRepository.findByUserIdAndApp(userId, app);
+        		HtBoaInUserApp htBoaInUserApp = null;
+        		List<HtBoaInUserApp> userAppList = htBoaInUserAppRepository.findByUserIdAndApp(userId, app);
+        		if(userAppList!=null&&!userAppList.isEmpty()) {
+        			htBoaInUserApp = userAppList.get(0);
+        		}
         		if(htBoaInUserApp!=null) {
         			loginInfoVo.setController(htBoaInUserApp.getController());
         		}else {
@@ -254,7 +258,7 @@ public class HtBoaInUserService {
     	 }
     	//查看是否存在用户，如果存在用户则不用新增用户
     	 if(listHtBoaInContrast!=null&&!listHtBoaInContrast.isEmpty()) {
-    		 Optional<HtBoaInContrast>  htBoaInContrastOptional =listHtBoaInContrast.stream().filter(contrast ->bmuservo.getBmUserId().equals(contrast.getUcBusinessId())).findFirst();
+    		 Optional<HtBoaInContrast>  htBoaInContrastOptional =listHtBoaInContrast.stream().filter(contrast ->bmuservo.getBmUserId().equals(contrast.getBmBusinessId())).findFirst();
 			 if(htBoaInContrastOptional!=null&&htBoaInContrastOptional.isPresent()) {
 				 htBoaInContrast = htBoaInContrastOptional.get();
 			 }
@@ -402,6 +406,119 @@ public class HtBoaInUserService {
         return htBoaInContrast;
     }
     
+    public HtBoaInContrast saveBmUserInfoByBmToken(BmUserVo bmuservo) {
+   	 HtBoaInUser htBoaInUser = null;
+   	 HtBoaInContrast htBoaInContrast = null;
+   	 List<HtBoaInContrast> listHtBoaInContrast = htBoaInContrastRepository.findByBmBusinessIdAndType(bmuservo.getBmUserId(), "20");
+   	 
+   	//查看是否存在用户，如果存在用户则不用新增用户
+   	 if(listHtBoaInContrast!=null&&!listHtBoaInContrast.isEmpty()) {
+   		htBoaInContrast = listHtBoaInContrast.get(0);
+   		if(htBoaInContrast!=null) {
+   			htBoaInUser = htBoaInUserRepository.findByUserId(htBoaInContrast.getUcBusinessId());
+   		}
+   	 } 
+   	 if(htBoaInUser==null) {
+	    if(StringUtils.isNotEmpty(bmuservo.getEmail())) {
+	    	List<HtBoaInUser> listEmailU= htBoaInUserRepository.findByEmail(bmuservo.getEmail());
+	    	if(listEmailU!=null&&!listEmailU.isEmpty()) {
+	    		htBoaInUser = listEmailU.get(0);
+	    	}
+   		 } 
+   	 }
+	 if (htBoaInUser == null) {
+		if (StringUtils.isNotEmpty(bmuservo.getMobile())) {
+			List<HtBoaInUser> listMobileU = htBoaInUserRepository.findByMobile(bmuservo.getMobile());
+			if (listMobileU != null && !listMobileU.isEmpty()) {
+				htBoaInUser = listMobileU.get(0);
+			}
+		}
+	 }
+   	 if(StringUtils.isEmpty(bmuservo.getOrgCode())) {
+   		 bmuservo.setOrgCode("D0100");
+   	 }
+   	 if(htBoaInUser==null) {
+   		    String userId = "";
+   		    int isOrgUser = 1;
+				HtBoaInUser user = new HtBoaInUser();
+				user.setDataSource(Constants.USER_DATASOURCE_3);
+				user.setEmail(bmuservo.getEmail());
+				user.setIsOrgUser(1);
+				user.setJobNumber(bmuservo.getJobNumber());
+				user.setMobile(bmuservo.getMobile());
+				user.setOrgCode(bmuservo.getOrgCode());
+				user.setUserName(bmuservo.getUserName());
+				user.setIdNo(bmuservo.getIdNo());
+				user.setRootOrgCode("D01");
+				user.setUserType("10");
+				user.setDelFlag(0);
+				user.setStatus(Constants.STATUS_0);
+				user.setCreatedDatetime(new Date());
+				user.setLastModifiedDatetime(new Date());
+
+   	    	if (user.getJobNumber() != null && user.getJobNumber().contains("HX-")) {
+   	            userId = String.format("%s%s%s%s%s", "01", 1, "1", "1", user.getJobNumber().replace("HX-", ""));
+   	        } else {
+   	        	isOrgUser = 0;
+   	            userId = String.format("%s%s%s%s%s", "01", 0, "1", "1", generateNumber(5));
+   	        }
+   	    	//查看userId是否被占用
+   	    	HtBoaInUser htBoaInUsers = findByUserId(userId);
+   	    	if(htBoaInUsers!=null) {
+   	    		userId = String.format("%s%s%s%s%s", "01", isOrgUser, "1", "1", generateNumber(6));
+   	    	}
+   	    	user.setUserId(userId);
+   	    	htBoaInUser =  htBoaInUserRepository.save(user);
+   	    	
+   	    	HtBoaInLogin loginInfo = htBoaInLoginRepository.findByLoginId(bmuservo.getBmUserId());
+   	    	if(loginInfo==null) {
+					loginInfo = new HtBoaInLogin();
+					loginInfo.setStatus(Constants.USER_STATUS_0);
+					loginInfo.setPassword(EncryptUtil.passwordEncrypt("123456"));
+					loginInfo.setFailedCount(0);
+					loginInfo.setRootOrgCode(bmuservo.getOrgCode());
+					loginInfo.setDelFlag(0);
+					loginInfo.setStatus(Constants.STATUS_0);
+					loginInfo.setCreatedDatetime(new Date());
+					loginInfo.setLastModifiedDatetime(new Date());
+					loginInfo.setUserId(userId);
+	    	        htBoaInLoginRepository.save(loginInfo);
+			} 
+   	 }
+   	 HtBoaInBmUser htBoaInBmUser = null;
+       //添加bmUser
+   	 List<HtBoaInBmUser> listHtBoaInBmUserTemp = htBoaInBmUserRepository.findByUserId(bmuservo.getBmUserId());
+	 if(listHtBoaInBmUserTemp!=null &&!listHtBoaInBmUserTemp.isEmpty()) {
+			 htBoaInBmUser = listHtBoaInBmUserTemp.get(0);
+	 }
+     if(htBoaInBmUser==null) { //不存在，则添加
+       	htBoaInBmUser = new HtBoaInBmUser();
+       	htBoaInBmUser.setUserId(bmuservo.getBmUserId());
+       	htBoaInBmUser.setEmail(bmuservo.getEmail());
+       	htBoaInBmUser.setJobNumber(bmuservo.getJobNumber());
+       	htBoaInBmUser.setMobile(bmuservo.getMobile());
+       	htBoaInBmUser.setOrgCode(bmuservo.getOrgCode());
+       	htBoaInBmUser.setUserName(bmuservo.getUserName());
+       	htBoaInBmUser.setIdNo(bmuservo.getIdNo());
+       	htBoaInBmUser.setDelFlag(0);
+       	htBoaInBmUser.setCreatedDatetime(new Date());
+       	htBoaInBmUser.setLastModifiedDatetime(new Date());
+       	htBoaInBmUser = htBoaInBmUserRepository.save(htBoaInBmUser);
+      }
+      //添加关系
+      if(listHtBoaInContrast==null || listHtBoaInContrast.isEmpty()) {
+       	htBoaInContrast = new HtBoaInContrast();
+       	htBoaInContrast.setBmBusinessId(bmuservo.getBmUserId());
+       	htBoaInContrast.setType("20");
+       	htBoaInContrast.setContrast("信贷添加");
+       	htBoaInContrast.setContrastDatetime(new Date());
+       	htBoaInContrast.setStatus(Constants.STATUS_0);
+       	htBoaInContrast.setUcBusinessId(htBoaInUser.getUserId());
+       	htBoaInContrast.setContrastDatetime(new Date());
+       	htBoaInContrast = htBoaInContrastRepository.save(htBoaInContrast);
+       }
+       return htBoaInContrast;
+   }
     public HtBoaInUser saveBmUserInfo(HtBoaInBmUser htBoaInBmUser) { 
     	HtBoaInUser htBoaInUser = null;
     	try {
@@ -535,6 +652,7 @@ public class HtBoaInUserService {
     	return htBoaInUser;
     }
     
+    
     private String generateNumber(int length) {
         String no = "";
         //初始化备选数组
@@ -654,6 +772,10 @@ public class HtBoaInUserService {
 
 	public void add(List<HtBoaInUser> newUserList) {
 		this.htBoaInUserRepository.save(newUserList);
+	}
+	
+	public void delete(HtBoaInUser u) {
+		this.htBoaInUserRepository.delete(u);
 	}
 
 	public HtBoaInUser findByJobNumber(String jobnum) {

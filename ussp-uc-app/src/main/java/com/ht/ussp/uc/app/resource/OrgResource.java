@@ -34,8 +34,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.ht.ussp.bean.LoginUserInfoHelper;
-import com.ht.ussp.bean.OrgInfoHelper;
 import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
@@ -74,12 +72,6 @@ public class OrgResource {
     @Autowired
     private HtBoaInPositionService htBoaInPositionService;
 
-    @Autowired
-    private OrgInfoHelper orgInfoHelper;
-    
-    @Autowired
-    private LoginUserInfoHelper loginUserInfoHelper;
-    
 
     /**
      * 根据父机构编码获取组织机构树<br>
@@ -269,15 +261,7 @@ public class OrgResource {
     public HtBoaInOrg getOrgInfoByOrgType(@RequestParam("orgCode")String orgCode,@RequestParam("orgType") String orgType) {
         return htBoaInOrgService.getOrgInfoByOrgType(orgCode,orgType);
     }
-    
-
-    @PostMapping(value = "/testGetOrgInfoByOrgType")
-    public Result testGetOrgInfoByOrgType() {
-    	loginUserInfoHelper.getUserListByTime("2018-03-08 16:10:10", "2018-04-08 16:10:10");
-    	orgInfoHelper.getOrgListByTime("2018-03-08 16:10:10", "2018-04-08 16:10:10");
-    	return Result.buildSuccess(orgInfoHelper.getOrgInfoByOrgType("D01100501","20"));
-    }  
-    
+ 
     @ApiOperation(value = "产生新的orgcode")
     @GetMapping(value = "/getNewOrgCode")
     public String getNewOrgCode(String parentOrgCode) {

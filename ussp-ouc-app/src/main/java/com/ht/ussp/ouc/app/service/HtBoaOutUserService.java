@@ -56,4 +56,8 @@ public class HtBoaOutUserService {
 		result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
 		return result;
 	}
+
+	public HtBoaOutUser findByUserId(String userId) {
+		return htBoaOutUserRepository.findByUserId(userId);
+	}
 }

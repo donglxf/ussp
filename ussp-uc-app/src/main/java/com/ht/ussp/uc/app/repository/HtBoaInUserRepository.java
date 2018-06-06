@@ -49,7 +49,7 @@ public interface HtBoaInUserRepository extends JpaSpecificationExecutor<HtBoaInU
      * @param userId
      * @return
      */
-    HtBoaInUser findByUserIdOrEmailOrMobileOrJobNumber(String userId,String email,String mobile,String jboNumber);
+    List<HtBoaInUser> findByUserIdOrEmailOrMobileOrJobNumber(String userId,String email,String mobile,String jboNumber);
 
     @Query(value = "SELECT " +
             "new com.ht.ussp.uc.app.vo.UserMessageVo(" +
@@ -191,5 +191,5 @@ public interface HtBoaInUserRepository extends JpaSpecificationExecutor<HtBoaInU
 
 	@Query(value="select * from HT_BOA_IN_USER where LAST_MODIFIED_DATETIME BETWEEN ?1 AND ?2",nativeQuery=true)
 	List<HtBoaInUser> getUserListByTime(String startTime, String endTime);
-    
+
 }

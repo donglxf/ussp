@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ht.ussp.uc.app.domain.HtBoaInUserRole;
 import com.ht.ussp.uc.app.model.BoaInRoleInfo;
@@ -41,6 +42,13 @@ public interface HtBoaInUserRoleRepository extends JpaRepository<HtBoaInUserRole
 	public List<BoaInRoleInfo> getUserRoleList(String roleCode, String userId);
 
 	public void deleteByRoleCode(String roleCode);
+
+	public List<HtBoaInUserRole> findByRoleCode(String roleCode);
+
+	public void deleteByUserId(String userId);
+
+	@Transactional
+	public void deleteByUserIdAndRoleCode(String userId, String roleCode);
 	
 	
 	/*@Query(value="select  r.id,r.role_code, r.role_Name, r.role_Name_Cn,  r.status, r.create_Operator, r.created_Datetime, r.update_Operator, r.last_Modified_Datetime,r.del_Flag"

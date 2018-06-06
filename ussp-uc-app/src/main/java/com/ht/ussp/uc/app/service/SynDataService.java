@@ -53,10 +53,10 @@ public class SynDataService {
     
     public HtBoaInContrast findByUcBusinessIdAndType(String userId,String type) {
     	List<HtBoaInContrast> listHtBoaInContrast = htBoaInContrastRepository.findByUcBusinessIdAndType(userId, type);
-    	if(listHtBoaInContrast==null) {
-    		return null;
-    	}else {
+    	if(listHtBoaInContrast!=null&&!listHtBoaInContrast.isEmpty()) {
     		return listHtBoaInContrast.get(0);
+    	}else {
+    		return null;
     	}
     }
     

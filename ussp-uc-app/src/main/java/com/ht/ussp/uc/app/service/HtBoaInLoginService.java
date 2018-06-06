@@ -24,6 +24,10 @@ public class HtBoaInLoginService {
 		return htBoaInLoginRepository.findByLoginId(loginId);
 	}
 	
+	public void delete(HtBoaInLogin u) {
+		  htBoaInLoginRepository.delete(u);
+	}
+	
 	public HtBoaInLogin findByLoginIdAndStatus(String loginId,int status) {
 		return htBoaInLoginRepository.findByLoginIdAndStatus(loginId,status);
 	}
@@ -48,5 +52,10 @@ public class HtBoaInLoginService {
 
 	public List<HtBoaInLogin> findAll() {
 		return this.htBoaInLoginRepository.findAll();
+	}
+
+	public List<HtBoaInLogin> findByLoginIdIsNull() {
+		return this.htBoaInLoginRepository.findByLoginIdIsNull();
+		
 	}
 }

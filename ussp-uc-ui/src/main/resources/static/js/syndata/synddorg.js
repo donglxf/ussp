@@ -48,7 +48,7 @@ layui.use(['form',   'table', 'ht_config','ht_auth' ], function () {
             , {field: 'level',     title: '机构层级'}
             , {field: 'parentId',    title: '所属机构'}
             , {field: 'operatorType', templet: '#operatorTpl',   title: '操作'}
-            , {field: 'status',  templet: '#statusTpl', title: '状态'}
+            , {field: 'status',  templet: '#synStatusTpl', title: '状态'}
             , {fixed: 'right',   title: '操作',   toolbar: '#ddorg_datatable_bar'}
         ]]
     });
