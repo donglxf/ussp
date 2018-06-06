@@ -67,7 +67,7 @@ public class OutSystemFilter extends ZuulFilter {
 		String app = request.getHeader("app");
 		String ieme=request.getHeader("ieme");
 		String uri = request.getRequestURI().toString();
-		
+		log.info("----------------uri:"+request.getRequestURL());
 		// 鉴权app不能为空
 		if (StringUtils.isEmpty(app)) {
 			// 不鉴权的URL直接路由
