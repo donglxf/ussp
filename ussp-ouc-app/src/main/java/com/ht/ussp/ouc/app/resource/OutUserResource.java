@@ -24,6 +24,7 @@ import com.ht.ussp.ouc.app.service.HtBoaOutLoginService;
 import com.ht.ussp.ouc.app.service.HtBoaOutUserService;
 import com.ht.ussp.ouc.app.vo.PageVo;
 import com.ht.ussp.util.EncryptUtil;
+import com.ht.ussp.util.md5.Cryptography;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -141,10 +142,33 @@ public class OutUserResource{
 			htBoaOutLogin = htBoaOutLoginService.findByUserId(htBoaOutUser.getUserId());
 		}else if("normal".equals(type)) { 
 			htBoaOutLogin = htBoaOutLoginService.findByLoginId(userName);
+			if(htBoaOutLogin!=null) {
+				htBoaOutUser = htBoaOutUserService.findByUserId(htBoaOutLogin.getUserId());
+			}
 		}else {
 			return Result.buildFail("9999","登录类型不存在【"+type+"】"); 
       	}
 		if (htBoaOutLogin != null) {
+			//存量用户处理
+    		if(htBoaOutUser!=null) {
+    			if(StringUtils.isNotEmpty(htBoaOutUser.getUserType())) {
+    				if("10".equals(htBoaOutUser.getUserType())) { //存量用户先验证原密码是否正确，然后转换为新的密码
+    					try {
+							String oldPwd = Cryptography.tripleDESEncrypt(password, "~#^&tuandai*%#housebaby#111!"); //微信加密key
+							if(StringUtils.isNotEmpty(oldPwd)) {
+								if(oldPwd.equals(htBoaOutLogin.getOldPassword())) {
+									htBoaOutLogin.setPassword(EncryptUtil.passwordEncrypt(password));
+									htBoaOutLogin = htBoaOutLoginService.saveUserLogin(htBoaOutLogin);
+								}else {
+									return Result.buildFail(SysStatus.PWD_INVALID.getStatus(),"密码输入不正确");
+								}
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+    				}
+    			}
+    		}
 			//验证原密码是否正确
             if(!EncryptUtil.matches(password,htBoaOutLogin.getPassword())){
             	return Result.buildFail(SysStatus.PWD_INVALID.getStatus(),"密码输入不正确");
