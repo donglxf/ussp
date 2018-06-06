@@ -144,7 +144,7 @@ layui.use(['form',   'table', 'ht_config','ht_auth','upload' ], function () {
         }
    	if(appCode){
    		table.reload('app_appusers_datatable', {
-           	height: 'full-600'
+           	height: 'full-605'
                , where: {
             	   query:{
             		   appCode:appCode,
@@ -164,16 +164,15 @@ layui.use(['form',   'table', 'ht_config','ht_auth','upload' ], function () {
         , limit : 5
         , limits :[5, 10, 20, 30, 40, 50]
         , height: 'full-635'
-        , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
         , cols: [[
             {type: 'numbers'}
-            , {field: 'app', width: 150, title: '系统编号', event:'getAppUsers'}
-            , {field: 'nameCn', width: 400,   title: '系统名称', event:'getAppUsers'}
-            , {field: 'isOS', width: 100, templet: '#isOSTpl', title: '系统名称', event:'getAppUsers'}
-            , {field: 'status', width: 100,templet: '#statusTpl', title: '状态', event:'getAppUsers'}
-            , {field: 'createOperator', width: 250,   title: '创建人', event:'getAppUsers'}
-            , {field: 'createdDatetime', width: 300,templet: '#createTimeTpl', title: '创建时间', event:'getAppUsers'}
-            , {fixed: 'right', width: 330,  title: '操作',   toolbar: '#app_datatable_bar'}
+            , {field: 'app', width: '10%', title: '系统编号', event:'getAppUsers'}
+            , {field: 'nameCn',  width: '20%', title: '系统名称', event:'getAppUsers'}
+            , {field: 'isOS', width: '15%', templet: '#isOSTpl', title: '系统类型', event:'getAppUsers'}
+            , {field: 'status', width: '15%',templet: '#statusTpl', title: '状态', event:'getAppUsers'}
+            , {field: 'createOperator', width: '10%',  title: '创建人', event:'getAppUsers'}
+            , {field: 'createdDatetime', width: '10%',templet: '#createTimeTpl', title: '创建时间', event:'getAppUsers'}
+            , {fixed: 'right', width: '14%', title: '操作',   toolbar: '#app_datatable_bar'}
         ]]
     });
     table.render({
@@ -186,13 +185,14 @@ layui.use(['form',   'table', 'ht_config','ht_auth','upload' ], function () {
         , cellMinWidth: 80  
         , cols: [[
             {type: 'numbers'}
-            , {field: 'userId',   title: '用户编号'}
-            , {field: 'userName',   title: '用户名'}
-            , {field: 'orgCode', width: 100, title: '所属机构'}
-            , {field: 'mobile',  title: '手机'}
-            , {field: 'email',   title: '邮箱'}
-            , {field: 'jobNumber', width: 100, title: '工号' }
-            , {fixed: 'right',   title: '操作',   toolbar: '#app_appuser_datatable_bar'}
+            , {field: 'userId',width: '10%',   title: '用户编号'}
+            , {field: 'userName',width: '15%',   title: '用户名'}
+            , {field: 'orgCode', width: '10%',title: '所属机构'}
+            , {field: 'mobile',width: '15%',  title: '手机'}
+            , {field: 'email',  width: '20%', title: '邮箱'}
+            , {field: 'jobNumber', width: '10%', title: '工号' }
+            , {field: 'status', width: '8%', title: '状态', templet: "#user_status_laytpl"}
+            , {fixed: 'right', width: '10%',  title: '操作',   toolbar: '#app_appuser_datatable_bar'}
         ]]
     });
     table.on('tool(filter_app_appusers_datatable)', function (obj) {
