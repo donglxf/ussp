@@ -120,6 +120,7 @@ public class OutSystemFilter extends ZuulFilter {
 				}
 				
 				//验证外部系统ACCESSTOKEN 
+				log.info("----------tokenPayload-------------"+tokenPayload);
 				Result result=UaaClient.validateOutUserJwt(tokenPayload);
 				if ("0000".equals(result.getReturnCode())) {
 					String str = FastJsonUtil.objectToJson(result.getData());
