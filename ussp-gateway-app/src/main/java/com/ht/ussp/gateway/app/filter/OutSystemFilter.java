@@ -103,7 +103,7 @@ public class OutSystemFilter extends ZuulFilter {
 				String tokenPayload = request.getHeader("Authorization");
 
 				// TOKEN和IEME都不能为空
-				if (StringUtils.isEmpty(tokenPayload)&&StringUtils.isEmpty(ieme)) {
+				if (StringUtils.isEmpty(tokenPayload)||StringUtils.isEmpty(ieme)) {
 					ctx.setSendZuulResponse(false);
 					try {
 						mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.TOKEN_AND_IEME_NOT_NULL));
