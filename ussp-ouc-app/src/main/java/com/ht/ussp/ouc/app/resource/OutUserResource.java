@@ -159,6 +159,8 @@ public class OutUserResource{
 								if(oldPwd.equals(htBoaOutLogin.getOldPassword())) {
 									htBoaOutLogin.setPassword(EncryptUtil.passwordEncrypt(password));
 									htBoaOutLogin = htBoaOutLoginService.saveUserLogin(htBoaOutLogin);
+									htBoaOutUser.setUserType("1");
+									htBoaOutUserService.saveUser(htBoaOutUser);
 								}else {
 									return Result.buildFail(SysStatus.PWD_INVALID.getStatus(),"密码输入不正确");
 								}
