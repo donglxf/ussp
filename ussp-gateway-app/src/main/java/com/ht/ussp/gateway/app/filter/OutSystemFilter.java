@@ -152,6 +152,12 @@ public class OutSystemFilter extends ZuulFilter {
 						mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.TOKEN_IS_VALID));
 					} catch (Exception e) {
 						log.debug("write response result token is valid:"+e.getMessage());
+					}finally {
+						try {
+							ctx.getResponse().getWriter().close();
+						} catch (IOException e) {
+							log.debug("close io exception:"+e.getMessage());
+						}
 					} 
 					return null;
 				}else if ("9921".equals(result.getReturnCode())) {
