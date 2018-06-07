@@ -89,17 +89,22 @@ public class InstanceIdAndIPAddrRule extends AbstractLoadBalancerRule {
     public Server choose(ILoadBalancer lb, Object key) {
         RequestContext ctx = RequestContext.getCurrentContext();
         HttpServletRequest request = ctx.getRequest();
-        String path = "";
+        List<Server> serverList = lb.getAllServers();
+        String path;
         if (request != null) {
             path = request.getRequestURI();
+        } else {
+            log.warn("request对象为空。");
+            log.debug(String.format("%-23s %-30s", "↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓", "↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓"));
+            log.debug(String.format("%-23s %-30s", "待匹配的服务实例名", "待匹配的服务IP地址"));
+            for (Server server : serverList) {
+                InstanceInfo instanceInfo = ((DiscoveryEnabledServer) server).getInstanceInfo();
+                log.debug(String.format("%-30s %-30s", instanceInfo.getInstanceId(), instanceInfo.getIPAddr()));
+            }
+            log.debug(String.format("%-23s %-30s", "↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑", "↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑"));
+            return null;
         }
         init();
-        List<Server> serverList = lb.getAllServers();
-        log.debug(String.format("%-23s %-30s", "待匹配的服务实例名", "待匹配的服务IP地址"));
-        for (Server server : serverList) {
-            InstanceInfo instanceInfo = ((DiscoveryEnabledServer) server).getInstanceInfo();
-            log.debug(String.format("%-30s %-30s", instanceInfo.getInstanceId(), instanceInfo.getIPAddr()));
-        }
 
         if (CollectionUtils.isEmpty(serverList)) {
             return null;
@@ -264,8 +269,6 @@ public class InstanceIdAndIPAddrRule extends AbstractLoadBalancerRule {
                     ctx.addZuulRequestHeader(IP_ADDR, ipAddr);
                 }
             }
-        }else{
-            log.warn("request对象为空。");
         }
     }
 
