@@ -29,27 +29,52 @@ import java.util.*;
 @Log4j2
 public class InstanceIdAndIPAddrRule extends AbstractLoadBalancerRule {
 
-    public final String META_DATA_KEY_WEIGHT = "weight";
+    private final String META_DATA_KEY_WEIGHT = "weight";
 
-    public final String INSTANCE_ID = "instanceId";
-    public final String DEFULT_INSTANCE_ID = "defultInstanceId";
-    public final String EXCLUDE_INSTANCE_ID = "excludeInstanceId";
-    public final String DEFULT_EXCLUDE_INSTANCE_ID = "defultExcludeInstanceId";
-    public final String IP_ADDR = "ip";
-    public final String SPLIT = ",";
+    private final String INSTANCE_ID = "instanceId";
+    private final String DEFULT_INSTANCE_ID = "defultInstanceId";
+    private final String EXCLUDE_INSTANCE_ID = "excludeInstanceId";
+    private final String DEFULT_EXCLUDE_INSTANCE_ID = "defultExcludeInstanceId";
+    private final String IP_ADDR = "ip";
+    private final String SPLIT = ",";
 
-    public final HystrixRequestVariableDefault<List<String>> instanceIds = new HystrixRequestVariableDefault<>();//指定路由的实例名
-    public final HystrixRequestVariableDefault<List<String>> defultInstanceIds = new HystrixRequestVariableDefault<>();//默认指定路由的实例名
-    public final HystrixRequestVariableDefault<List<String>> excludeInstanceIds = new HystrixRequestVariableDefault<>();//排除指定路由的实例名
-    public final HystrixRequestVariableDefault<List<String>> defultExcludeInstanceIds = new HystrixRequestVariableDefault<>();//默认排除指定路由的实例名
-    public final HystrixRequestVariableDefault<List<String>> ipAddrs = new HystrixRequestVariableDefault<>();//指定路由的ip
+    private final String UNKNOWN = "unknown";
+    private final String LOCAL_HOST_IPV4 = "127.0.0.1";
+    private final String LOCAL_HOST_IPV6 = "0:0:0:0:0:0:0:1";
+
+    /**
+     * 指定路由的实例名
+     */
+    private final HystrixRequestVariableDefault<List<String>> instanceIds = new HystrixRequestVariableDefault<>();
+    /**
+     * 默认指定路由的实例名
+     */
+    private final HystrixRequestVariableDefault<List<String>> defultInstanceIds = new HystrixRequestVariableDefault<>();
+    /**
+     * 排除指定路由的实例名
+     */
+    private final HystrixRequestVariableDefault<List<String>> excludeInstanceIds = new HystrixRequestVariableDefault<>();
+    /**
+     * 默认排除指定路由的实例名
+     */
+    private final HystrixRequestVariableDefault<List<String>> defultExcludeInstanceIds = new HystrixRequestVariableDefault<>();
+    /**
+     * 指定路由的ip
+     */
+    private final HystrixRequestVariableDefault<List<String>> ipAddrs = new HystrixRequestVariableDefault<>();
 
     private Random random = new Random();
 
+    /**
+     * 默认指定路由的实例名
+     */
     @Value("${ht.rule.defultInstanceId:}")
-    private String defultInstanceId;//默认指定路由的实例名
+    private String defultInstanceId;
+    /**
+     * 默认排除指定路由的实例名
+     */
     @Value("${ht.rule.defultExcludeInstanceId:}")
-    private String defultExcludeInstanceId;//默认排除指定路由的实例名
+    private String defultExcludeInstanceId;
 
     @Override
     public Server choose(Object key) {
@@ -68,13 +93,13 @@ public class InstanceIdAndIPAddrRule extends AbstractLoadBalancerRule {
         if (request != null) {
             path = request.getRequestURI();
         }
-        inti();
+        init();
         List<Server> serverList = lb.getAllServers();
-//        log.debug(String.format("%-23s %-30s", "待匹配的服务实例名", "待匹配的服务IP地址"));
-//        for (Server server : serverList) {
-//            InstanceInfo instanceInfo = ((DiscoveryEnabledServer) server).getInstanceInfo();
-//            log.debug(String.format("%-30s %-30s", instanceInfo.getInstanceId(), instanceInfo.getIPAddr()));
-//        }
+        log.debug(String.format("%-23s %-30s", "待匹配的服务实例名", "待匹配的服务IP地址"));
+        for (Server server : serverList) {
+            InstanceInfo instanceInfo = ((DiscoveryEnabledServer) server).getInstanceInfo();
+            log.debug(String.format("%-30s %-30s", instanceInfo.getInstanceId(), instanceInfo.getIPAddr()));
+        }
 
         if (CollectionUtils.isEmpty(serverList)) {
             return null;
@@ -86,7 +111,8 @@ public class InstanceIdAndIPAddrRule extends AbstractLoadBalancerRule {
         if (HystrixRequestContext.isCurrentThreadInitialized()) {
             for (Server server : serverList) {
                 InstanceInfo instanceInfo = ((DiscoveryEnabledServer) server).getInstanceInfo();
-                String instanceId = instanceInfo.getInstanceId();//待匹配的服务实例名
+                //待匹配的服务实例名
+                String instanceId = instanceInfo.getInstanceId();
 
                 // 优先匹配自定义服务实例名
                 if (instanceIds.get() != null && instanceIds.get().contains(instanceId)) {
@@ -97,7 +123,8 @@ public class InstanceIdAndIPAddrRule extends AbstractLoadBalancerRule {
             }
             for (Server server : serverList) {
                 InstanceInfo instanceInfo = ((DiscoveryEnabledServer) server).getInstanceInfo();
-                String instanceId = instanceInfo.getInstanceId();//待匹配的服务实例名
+                //待匹配的服务实例名
+                String instanceId = instanceInfo.getInstanceId();
 
                 // 排除的路由实例
                 if (excludeInstanceIds.get() != null && excludeInstanceIds.get().contains(instanceId)) {
@@ -115,8 +142,10 @@ public class InstanceIdAndIPAddrRule extends AbstractLoadBalancerRule {
 
             for (Server server : serverList) {
                 InstanceInfo instanceInfo = ((DiscoveryEnabledServer) server).getInstanceInfo();
-                String instanceId = instanceInfo.getInstanceId();//待匹配的服务实例名
-                String ipAddr = instanceInfo.getIPAddr();//待匹配的服务IP地址
+                //待匹配的服务实例名
+                String instanceId = instanceInfo.getInstanceId();
+                //待匹配的服务IP地址
+                String ipAddr = instanceInfo.getIPAddr();
 
                 // 排除的路由实例
                 if (excludeInstanceIds.get() != null && excludeInstanceIds.get().contains(instanceId)) {
@@ -160,7 +189,8 @@ public class InstanceIdAndIPAddrRule extends AbstractLoadBalancerRule {
         } else {
             for (Server server : serverList) {
                 InstanceInfo instanceInfo = ((DiscoveryEnabledServer) server).getInstanceInfo();
-                String instanceId = instanceInfo.getInstanceId();//待匹配的服务实例名
+                //待匹配的服务实例名
+                String instanceId = instanceInfo.getInstanceId();
                 Map<String, String> metadata = instanceInfo.getMetadata();
                 String strWeight = metadata.get(META_DATA_KEY_WEIGHT);
 
@@ -187,15 +217,16 @@ public class InstanceIdAndIPAddrRule extends AbstractLoadBalancerRule {
         for (Map.Entry<Server, Integer> entry : serverWeightMap.entrySet()) {
             current += entry.getValue();
             if (randomWight <= current) {
-                if (!StringUtils.isEmpty(path))
+                if (!StringUtils.isEmpty(path)) {
                     log.debug(String.format("【%-50s->权重随机        ：%s】", path, entry.getKey().getId()));
+                }
                 return entry.getKey();
             }
         }
         return null;
     }
 
-    public void inti() {
+    public void init() {
         RequestContext ctx = RequestContext.getCurrentContext();
         HttpServletRequest request = ctx.getRequest();
         if (request != null) {
@@ -217,16 +248,21 @@ public class InstanceIdAndIPAddrRule extends AbstractLoadBalancerRule {
             initHystrixRequestContext(aInstanceId, hInstanceId, defultInstanceId, excludeInstanceId, defultExcludeInstanceId, ipAddr);
             // 传递给后续微服务
             if (ctx != null && HystrixRequestContext.isCurrentThreadInitialized()) {
-                if (instanceIds.get() != null)
+                if (instanceIds.get() != null) {
                     ctx.addZuulRequestHeader(INSTANCE_ID, Arrays.toString(instanceIds.get().toArray()));
-                if (defultInstanceIds.get() != null)
+                }
+                if (defultInstanceIds.get() != null) {
                     ctx.addZuulRequestHeader(DEFULT_INSTANCE_ID, Arrays.toString(defultInstanceIds.get().toArray()));
-                if (excludeInstanceIds.get() != null)
+                }
+                if (excludeInstanceIds.get() != null) {
                     ctx.addZuulRequestHeader(EXCLUDE_INSTANCE_ID, Arrays.toString(excludeInstanceIds.get().toArray()));
-                if (defultExcludeInstanceIds.get() != null)
+                }
+                if (defultExcludeInstanceIds.get() != null) {
                     ctx.addZuulRequestHeader(DEFULT_EXCLUDE_INSTANCE_ID, Arrays.toString(defultExcludeInstanceIds.get().toArray()));
-                if (ipAddr != null && ipAddr.length() > 0)
-                    ctx.addZuulRequestHeader(IP_ADDR, ipAddr); // 传递给后续微服务
+                }
+                if (ipAddr != null && ipAddr.length() > 0) {
+                    ctx.addZuulRequestHeader(IP_ADDR, ipAddr);
+                }
             }
         }
     }
@@ -302,42 +338,28 @@ public class InstanceIdAndIPAddrRule extends AbstractLoadBalancerRule {
         }
     }
 
+
     public String getIpAddress(HttpServletRequest request) {
         // 获取请求主机IP地址,如果通过代理进来，则透过防火墙获取真实IP地址
 
         String ip = request.getHeader("X-Forwarded-For");
-//        if (log.isInfoEnabled()) {
-//            log.info("getIpAddress(HttpServletRequest) - X-Forwarded-For - String ip=" + ip);
-//        }
 
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
+            if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
                 ip = request.getHeader("Proxy-Client-IP");
-//                if (log.isInfoEnabled()) {
-//                    log.info("getIpAddress(HttpServletRequest) - Proxy-Client-IP - String ip=" + ip);
-//                }
             }
-            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
                 ip = request.getHeader("WL-Proxy-Client-IP");
-//                if (log.isInfoEnabled()) {
-//                    log.info("getIpAddress(HttpServletRequest) - WL-Proxy-Client-IP - String ip=" + ip);
-//                }
             }
-            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
                 ip = request.getHeader("HTTP_CLIENT_IP");
-//                if (log.isInfoEnabled()) {
-//                    log.info("getIpAddress(HttpServletRequest) - HTTP_CLIENT_IP - String ip=" + ip);
-//                }
             }
-            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
                 ip = request.getHeader("HTTP_X_FORWARDED_FOR");
-//                if (log.isInfoEnabled()) {
-//                    log.info("getIpAddress(HttpServletRequest) - HTTP_X_FORWARDED_FOR - String ip=" + ip);
-//                }
             }
-            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
                 ip = request.getRemoteAddr();
-                if (ip.equals("127.0.0.1") || ip.equals("0:0:0:0:0:0:0:1")) {
+                if (LOCAL_HOST_IPV4.equals(ip) || LOCAL_HOST_IPV6.equals(ip)) {
                     //根据网卡取本机配置的IP
                     InetAddress inet = null;
                     try {
@@ -347,22 +369,16 @@ public class InstanceIdAndIPAddrRule extends AbstractLoadBalancerRule {
                     }
                     ip = inet.getHostAddress();
                 }
-//                if (log.isInfoEnabled()) {
-//                    log.info("getIpAddress(HttpServletRequest) - getLocalHost - String ip=" + ip + " - getRemoteAddr " + request.getRemoteAddr());
-//                }
             }
         } else if (ip != null && ip.length() > 15) {
             String[] ips = ip.split(",");
             for (int index = 0; index < ips.length; index++) {
                 String strIp = ips[index];
-                if (!("unknown".equalsIgnoreCase(strIp))) {
+                if (!(UNKNOWN.equalsIgnoreCase(strIp))) {
                     ip = strIp;
                     break;
                 }
             }
-//            if (ip.indexOf(",") > 0) {
-//                ip = ip.substring(0, ip.indexOf(","));
-//            }
         }
         return ip;
     }
