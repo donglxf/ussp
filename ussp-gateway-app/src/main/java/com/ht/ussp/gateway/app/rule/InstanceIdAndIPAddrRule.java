@@ -264,6 +264,8 @@ public class InstanceIdAndIPAddrRule extends AbstractLoadBalancerRule {
                     ctx.addZuulRequestHeader(IP_ADDR, ipAddr);
                 }
             }
+        }else{
+            log.warn("request对象为空。");
         }
     }
 
