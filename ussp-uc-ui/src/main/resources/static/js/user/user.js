@@ -4,7 +4,10 @@ var userpositionUserId = "";
 var refreshUserAppTable = "";
 var refreshUserRoleTable = "";
 var refreshuserpositionTable="";
+var $1;
+var layeroEdit;
 layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
+	$1 = layui.jquery;
     var $ = layui.jquery
         , config = layui.ht_config
         , element = layui.element
@@ -476,7 +479,7 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
                         editDialog = layer.open({
                             type: 1,
                             area: ['400px', '450px'],
-                            shadeClose: true,
+                            shadeClose: false,
                             title: "修改用户",
                             content: $("#user_modify_data_div").html(),
                             btn: ['保存', '取消'],
@@ -499,6 +502,22 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
                                         $input.val(value);
                                     }
                                 });
+                                layeroEdit = layero;
+                                $('#orgNameEdit',layero).on('click', function () {
+                                	layer.open({
+                                        type: 2,
+                                        area: ['400px', '600px'],
+                                        maxmin: true,
+                                        shadeClose: true,
+                                        title: "选择机构",
+                                        content: "/html/user/orgTreeDialog.html",
+                                        success: function (layero, index) {
+                                       	 /* 渲染表单 */
+                                            form.render();
+                                        }
+                                    })
+                                });
+                                
                                 form.render(null, "user_filter_modify_data_form");
                                 form.on('submit(user_filter_modify_data_form)', function (data) {
                                     $.ajax({
