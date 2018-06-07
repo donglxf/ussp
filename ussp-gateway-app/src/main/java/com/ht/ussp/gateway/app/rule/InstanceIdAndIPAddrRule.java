@@ -90,21 +90,12 @@ public class InstanceIdAndIPAddrRule extends AbstractLoadBalancerRule {
         RequestContext ctx = RequestContext.getCurrentContext();
         HttpServletRequest request = ctx.getRequest();
         List<Server> serverList = lb.getAllServers();
-        String path;
+        String path = "";
         if (request != null) {
             path = request.getRequestURI();
-        } else {
-            log.warn("request对象为空。");
-            log.debug(String.format("%-23s %-30s", "↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓", "↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓"));
-            log.debug(String.format("%-23s %-30s", "待匹配的服务实例名", "待匹配的服务IP地址"));
-            for (Server server : serverList) {
-                InstanceInfo instanceInfo = ((DiscoveryEnabledServer) server).getInstanceInfo();
-                log.debug(String.format("%-30s %-30s", instanceInfo.getInstanceId(), instanceInfo.getIPAddr()));
-            }
-            log.debug(String.format("%-23s %-30s", "↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑", "↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑"));
-            return null;
+            init(serverList);
         }
-        init();
+
 
         if (CollectionUtils.isEmpty(serverList)) {
             return null;
@@ -231,7 +222,7 @@ public class InstanceIdAndIPAddrRule extends AbstractLoadBalancerRule {
         return null;
     }
 
-    public void init() {
+    public void init(List<Server> serverList) {
         RequestContext ctx = RequestContext.getCurrentContext();
         HttpServletRequest request = ctx.getRequest();
         if (request != null) {
