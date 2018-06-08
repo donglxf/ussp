@@ -161,7 +161,7 @@ public class AccessFilter extends ZuulFilter {
         }
         // 如果请求的URL与htIgnoreApp不匹配，验证内部系统JWT
         try {
-            log.info("----------validate JWT START------------" + tokenPayload);
+            log.info("----------validate JWT START------------");
             ResponseModal rm = UaaClient.validateJwt(tokenPayload);
             if ("0000".equals(rm.getStatus_code())) {
                 String str = FastJsonUtil.objectToJson(rm.getResult());
