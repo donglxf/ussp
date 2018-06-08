@@ -48,6 +48,6 @@ Configuration:
     Logger: # 单独设置某些包的输出级别
       - name: com.ht.ussp.gateway.app.filter
         additivity: false #去除重复的Log
-        level: ERROR
+        level: INFO
         AppenderRef:
           - ref: CONSOLE
