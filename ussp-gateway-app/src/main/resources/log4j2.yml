@@ -1,6 +1,6 @@
 #8个级别，按照从低到高为：ALL < TRACE < DEBUG < INFO < WARN < ERROR < FATAL < OFF
 Configuration:  
-  status: ERROR   #打印级别
+  status: INFO   #打印级别
   monitorinterval: 10 #监测时间间隔，单位秒
   Properties: # 定义全局变量
     Property: # 缺省配置（用于开发环境）。其他环境需要在VM参数中指定，如下：  

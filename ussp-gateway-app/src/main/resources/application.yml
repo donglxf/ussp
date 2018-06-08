@@ -27,6 +27,9 @@ ribbon:
   MaxAutoRetriesNextServer: 0
   ServerListRefreshInterval: 1000
 zuul:
+  SendErrorFilter: 
+    post:
+      disable: true
   retryable: true
   host:
     maxTotalConnections: 2000
