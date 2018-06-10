@@ -231,11 +231,11 @@
 							-Xloggc:/logs/ussp_gateway_gc.log</JAVA_OPTS>
 					</env>
 					<!--<entryPoint>["java","-jar","/${project.build.finalName}.jar"]</entryPoint> -->
-					<entryPoint>[ "sh", "-c", "java $JAVA_OPTS
-						-Djava.security.egd=file:/dev/./urandom -Dfile.encoding=UTF-8
-						-Duser.timeZone=GMT+08 -Dcom.sun.management.jmxremote.port=8999
-						-Dcom.sun.management.jmxremote.authenticate=false
-						-Djava.rmi.server.hostname=172.16.200.110 -jar
+					<entryPoint>[ "sh", "-c", "java $JAVA_OPTS \
+						-Djava.security.egd=file:/dev/./urandom -Dfile.encoding=UTF-8 \
+						-Duser.timeZone=GMT+08 -Dcom.sun.management.jmxremote.port=8999 \
+						-Dcom.sun.management.jmxremote.authenticate=false \
+						-Djava.rmi.server.hostname=172.16.200.110 -jar \
 						${project.build.finalName}.jar" ]</entryPoint>
 					<resources>
 						<resource>
