@@ -195,4 +195,23 @@ public class OutUserResource{
 		HtBoaOutUser user = htBoaOutUserService.findByUserId(userId);
 		return Result.buildSuccess(user);
 	}
+	
+	@ApiOperation(value = "修改用户电话号码")
+	@PostMapping(value = "/changeMobile", produces = { "application/json" })
+	public Result changeMobile(String userId,String newMobile) {
+		HtBoaOutUser user = htBoaOutUserService.findByUserId(userId);
+		if(user!=null) {
+			if(StringUtils.isNotEmpty(newMobile)) {
+				HtBoaOutUser users = htBoaOutUserService.findByMobile(newMobile);
+				if(users!=null) {
+					if(!user.getUserId().equals(users.getUserId())) {
+						return Result.buildFail("9999", "电话号码已经被使用");
+					}
+				}
+				user.setMobile(newMobile);
+				htBoaOutUserService.saveUser(user);
+			}
+		}
+		return Result.buildSuccess();
+	}
 }
