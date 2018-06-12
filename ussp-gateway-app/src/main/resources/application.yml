@@ -17,6 +17,8 @@ hystrix:
       coreSize: 2000
   command:
     default:
+      circuitBreaker:
+        requestVolumeThreshold: 150
       execution:
         isolation:
           thread:
