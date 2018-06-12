@@ -1,12 +1,12 @@
 eureka:
   instance:
     prefer-ip-address: true
-server:
-  undertow:
-    io-threads: 8
-    direct-buffers: true
-    buffer-size: 256
-    worker-threads: 30
+#server:
+#  undertow:
+#    io-threads: 8
+#    direct-buffers: true
+#    buffer-size: 256
+#    worker-threads: 30
     
 feign:
   hystrix:
