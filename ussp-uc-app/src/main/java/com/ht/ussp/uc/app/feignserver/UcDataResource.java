@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
+import com.ht.ussp.uc.app.domain.HtBoaInBusinessOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.model.BoaInOrgInfo;
@@ -174,5 +175,18 @@ public class UcDataResource {
 			listBoaInRoleInfo = (List<BoaInRoleInfo>) result.getData();
 		}
 		return Result.buildSuccess(listBoaInRoleInfo);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@ApiOperation(value = "获取指定业务机构列表", notes = "orgLevel:20 公司层级  40 片区层级  60 分公司层级  80 部门层级  100 小组层级;busiOrgCode:传空则查询所有指定orgLevel业务机构信息,如果不为空则查询下级指定的orgLevel")
+	@PostMapping(value = { "/getBusiOrgList" }, produces = { "application/json" })
+	public Result getBusiOrgList(String orgLevel, String busiOrgCode) {
+		List<HtBoaInBusinessOrg> listHtBoaInOrg = null;
+		if (StringUtils.isNotEmpty(busiOrgCode)) { // 不为空则，查询下级
+			listHtBoaInOrg = htBoaInOrgBusinessService.findByParentOrgCodeAndOrgLevel(busiOrgCode, orgLevel);
+		} else {
+			listHtBoaInOrg = htBoaInOrgBusinessService.findByOrgLevel(orgLevel);
+		}
+		return Result.buildSuccess(listHtBoaInOrg);
 	}
 }
