@@ -121,6 +121,7 @@ public class OutSystemFilter extends ZuulFilter {
 				
 				//验证外部系统ACCESSTOKEN 
 				Result result=UaaClient.validateOutUserJwt(tokenPayload);
+				log.info("====validate out system token:"+tokenPayload);
 				if ("0000".equals(result.getReturnCode())) {
 					String str = FastJsonUtil.objectToJson(result.getData());
 					ValidateOutJwtVo voj = FastJsonUtil.jsonToPojo(str, ValidateOutJwtVo.class);
@@ -142,6 +143,7 @@ public class OutSystemFilter extends ZuulFilter {
 						}
 						return null;
 					}
+					log.info("====validate out system success,the userId is:"+userId);
 					ctx.addZuulRequestHeader("userId", userId);
 					ctx.addZuulRequestHeader("ieme", iemeTemp);
 					ctx.setSendZuulResponse(true);
@@ -173,7 +175,7 @@ public class OutSystemFilter extends ZuulFilter {
 					} 
 					return null;
 				}
-			}else {
+				}else {
 				//不是外部系统执行下一过滤器
 				ctx.set("isNotOutSystem", true);
 			}
