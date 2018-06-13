@@ -28,7 +28,7 @@ public interface HtBoaInOrgBusinessRepository
     @Query(value = "SELECT MAX(org_code) from HT_BOA_IN_ORG where parent_org_code=?1", nativeQuery = true)
 	public String getMaxOrgCode(String parentOrgCode);
 
-	public List<HtBoaInBusinessOrg> findByOrgLevel(String orgLevel);
+	public List<HtBoaInBusinessOrg> findByOrgLevel(Integer orgLevel);
 
 	public List<HtBoaInBusinessOrg> findByParentOrgCodeAndOrgLevel(String busiOrgCode, Integer orgLevel);
 

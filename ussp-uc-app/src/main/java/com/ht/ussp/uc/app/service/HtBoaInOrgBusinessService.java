@@ -224,7 +224,7 @@ public class HtBoaInOrgBusinessService {
 		return listHtBoaInOrg;
 	}
 
-	public List<HtBoaInBusinessOrg> findByOrgLevel(String orgLevel) {
+	public List<HtBoaInBusinessOrg> findByOrgLevel(Integer orgLevel) {
 		return htBoaInOrgBusinessRepository.findByOrgLevel(orgLevel);
 	}
 

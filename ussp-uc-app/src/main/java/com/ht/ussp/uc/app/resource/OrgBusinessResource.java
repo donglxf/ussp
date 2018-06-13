@@ -264,7 +264,7 @@ public class OrgBusinessResource {
       if(StringUtils.isNotEmpty(busiOrgCode)||"null".equals(busiOrgCode)) { //不为空则，查询下级
     	 listHtBoaInOrg = htBoaInOrgBusinessService.findByParentOrgCodeAndOrgLevel(busiOrgCode,Integer.parseInt(orgLevel));
        }else {
-    	 listHtBoaInOrg = htBoaInOrgBusinessService.findByOrgLevel(orgLevel);
+    	 listHtBoaInOrg = htBoaInOrgBusinessService.findByOrgLevel(Integer.parseInt(orgLevel));
        }
        return Result.buildSuccess(listHtBoaInOrg);
     }
