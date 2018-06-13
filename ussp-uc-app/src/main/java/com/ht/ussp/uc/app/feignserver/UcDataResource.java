@@ -178,12 +178,12 @@ public class UcDataResource {
 	}
 	
 	@SuppressWarnings("rawtypes")
-	@ApiOperation(value = "获取指定业务机构列表", notes = "orgLevel:20 公司层级  40 片区层级  60 分公司层级  80 部门层级  100 小组层级;busiOrgCode:传空则查询所有指定orgLevel业务机构信息,如果不为空则查询下级指定的orgLevel")
+	@ApiOperation(value = "获取业务机构", notes = "orgLevel:20 公司层级  40 片区层级  60 分公司层级  80 部门层级  100 小组层级;busiOrgCode:传空则查询所有指定orgLevel业务机构信息,如果不为空则查询下级指定的orgLevel")
 	@PostMapping(value = { "/getBusiOrgList" }, produces = { "application/json" })
-	public Result getBusiOrgList(String orgLevel, String busiOrgCode) {
-		List<HtBoaInBusinessOrg> listHtBoaInOrg = null;
-		if (StringUtils.isNotEmpty(busiOrgCode)) { // 不为空则，查询下级
-			listHtBoaInOrg = htBoaInOrgBusinessService.findByParentOrgCodeAndOrgLevel(busiOrgCode, orgLevel);
+	public Result getBusiOrgList(String orgLevel, String busiOrgCode) { List<HtBoaInBusinessOrg> listHtBoaInOrg = null;
+		orgLevel = StringUtils.isEmpty(orgLevel) ? "0" : orgLevel;
+		if (StringUtils.isNotEmpty(busiOrgCode) || "null".equals(busiOrgCode)) { // 不为空则，查询下级
+			listHtBoaInOrg = htBoaInOrgBusinessService.findByParentOrgCodeAndOrgLevel(busiOrgCode, Integer.parseInt(orgLevel));
 		} else {
 			listHtBoaInOrg = htBoaInOrgBusinessService.findByOrgLevel(orgLevel);
 		}

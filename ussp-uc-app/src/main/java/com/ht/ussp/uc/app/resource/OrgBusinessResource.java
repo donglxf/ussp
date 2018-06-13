@@ -260,8 +260,9 @@ public class OrgBusinessResource {
     @PostMapping(value = {"/getBusiOrgList" }, produces = {"application/json"} )
     public Result getBusiOrgList(String orgLevel,String busiOrgCode) {
       List<HtBoaInBusinessOrg> listHtBoaInOrg = null;
-      if(StringUtils.isNotEmpty(busiOrgCode)) { //不为空则，查询下级
-    	 listHtBoaInOrg = htBoaInOrgBusinessService.findByParentOrgCodeAndOrgLevel(busiOrgCode,orgLevel);
+      orgLevel = StringUtils.isEmpty(orgLevel)?"0":orgLevel;
+      if(StringUtils.isNotEmpty(busiOrgCode)||"null".equals(busiOrgCode)) { //不为空则，查询下级
+    	 listHtBoaInOrg = htBoaInOrgBusinessService.findByParentOrgCodeAndOrgLevel(busiOrgCode,Integer.parseInt(orgLevel));
        }else {
     	 listHtBoaInOrg = htBoaInOrgBusinessService.findByOrgLevel(orgLevel);
        }

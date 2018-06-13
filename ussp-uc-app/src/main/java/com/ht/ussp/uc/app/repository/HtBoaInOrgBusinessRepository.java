@@ -30,7 +30,7 @@ public interface HtBoaInOrgBusinessRepository
 
 	public List<HtBoaInBusinessOrg> findByOrgLevel(String orgLevel);
 
-	public List<HtBoaInBusinessOrg> findByParentOrgCodeAndOrgLevel(String busiOrgCode, String orgLevel);
+	public List<HtBoaInBusinessOrg> findByParentOrgCodeAndOrgLevel(String busiOrgCode, Integer orgLevel);
 
 	@Query("SELECT new com.ht.ussp.uc.app.model.BoaInOrgInfo (u.businessOrgCode, u.businessOrgName, u.parentOrgCode, u.sequence,  u.status, u.branchCode, u.districtCode,u.orgLevel, u.province,u.city,u.id) FROM HtBoaInBusinessOrg u  WHERE   u.parentOrgCode = ?1 and u.status=0   GROUP BY u")
 	public List<BoaInOrgInfo> listOrgByParentOrgCode(String parentOrg);
