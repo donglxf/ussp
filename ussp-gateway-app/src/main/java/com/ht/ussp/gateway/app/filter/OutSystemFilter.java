@@ -144,7 +144,7 @@ public class OutSystemFilter extends ZuulFilter {
 						}
 						return null;
 					}
-					log.debug("====validate out system success,the userId is:"+userId);
+ 					log.debug("====validate out system success,the userId is:"+userId);
 					ctx.addZuulRequestHeader("userId", userId);
 					ctx.addZuulRequestHeader("ieme", iemeTemp);
 					ctx.setSendZuulResponse(true);
