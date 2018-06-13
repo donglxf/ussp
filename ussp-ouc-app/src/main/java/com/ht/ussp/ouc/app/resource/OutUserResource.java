@@ -209,6 +209,7 @@ public class OutUserResource{
 					}
 				}
 				user.setMobile(newMobile);
+				user.setUserName(newMobile);
 				htBoaOutUserService.saveUser(user);
 			}
 		}

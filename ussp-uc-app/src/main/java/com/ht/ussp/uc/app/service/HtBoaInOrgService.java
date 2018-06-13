@@ -210,4 +210,33 @@ public class HtBoaInOrgService {
 		} 
 		return listHtBoaInOrg;
 	}
+	
+	
+	/**
+	 * 获取所有下级机构
+	 * @param orgCode
+	 * @return
+	 */
+	public List<BoaInOrgInfo> getSubOrgInfo(String orgCode) {
+		List<BoaInOrgInfo> listHtBoaInOrg = new ArrayList<BoaInOrgInfo>();
+		getSubOrg(listHtBoaInOrg,orgCode);
+		return listHtBoaInOrg;
+	}
+	
+	public List<BoaInOrgInfo> findAllSubOrgInfo(String keyword) {
+		List<BoaInOrgInfo> listHtBoaInOrg = htBoaInOrgRepository.listOrg("%"+keyword+"%");//获取下级机构
+		return listHtBoaInOrg;
+	}
+	
+	private List<BoaInOrgInfo> getSubOrg(List<BoaInOrgInfo> listHtBoaInOrg,String orgCode) {
+		List<BoaInOrgInfo> listSubHtBoaInOrg = htBoaInOrgRepository.listOrgByParentOrgCode(orgCode);//获取下级机构
+		if(listSubHtBoaInOrg!=null&&!listSubHtBoaInOrg.isEmpty()) {
+			listHtBoaInOrg.addAll(listSubHtBoaInOrg);
+			for(BoaInOrgInfo o :listSubHtBoaInOrg) {
+				return getSubOrg(listHtBoaInOrg, o.getOrgCode());
+			}
+		} 
+		return listHtBoaInOrg;
+	}
+
 }

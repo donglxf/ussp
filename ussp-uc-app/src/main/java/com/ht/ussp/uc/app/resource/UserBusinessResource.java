@@ -61,9 +61,9 @@ import lombok.extern.log4j.Log4j2;
  */
 
 @RestController
-@RequestMapping(value = "/user")
+@RequestMapping(value = "/userbusiness")
 @Log4j2
-public class UserResource{
+public class UserBusinessResource{
 
     @Autowired
     private HtBoaInUserService htBoaInUserService;
@@ -421,7 +421,7 @@ public class UserResource{
     @PostMapping("/getUserInfoByJobNumber")
     public Result getUserInfoByJobNumber(@RequestParam("jobNumber") String jobNumber) {
         if (jobNumber != null && !"".equals(jobNumber.trim())) {
-        	HtBoaInUser htBoaInUser = htBoaInUserService.findByJobNumber(jobNumber);
+        	HtBoaInUser htBoaInUser = htBoaInUserService.findByMobile(jobNumber);
         	return Result.buildSuccess(htBoaInUser);
         }
         return Result.buildFail();

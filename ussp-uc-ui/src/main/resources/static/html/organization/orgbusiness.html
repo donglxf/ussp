@@ -1,0 +1,229 @@
+<div class="layui-fluid" lay-filter="organization_busi_auth">
+    <div class="tree col-xs-3" style="">
+        <div>
+            <div class="tree_search">
+                <div class="input-group input-group-sm" id="organization_busi_btn_tree">
+                    <input type="text" id="organization_busi_search_tree_org" maxlength="60" class="form-control" placeholder="请输入机构名"/>
+                     <div data-type="expandAll" class="input-group-addon btn" title="展开所有">
+                        <i class="fa fa-plus-square"></i>
+                    </div>
+                    <div data-type="collapseAll" class="input-group-addon btn" title="收起所有">
+                        <i class="fa fa-minus-square"></i>
+                    </div>
+                    <div data-type="refresh" class="input-group-addon btn" title="刷新">
+                        <i class="fa fa-refresh"></i>
+                    </div>
+                </div>
+            </div>
+            <div id="organization_busi_org_ztree_left" class="ztree"></div>
+        </div>
+    </div>
+    <div class="col-xs-9">
+        <div class="row row-lg" id="organization_busi_table_tools">
+			<div class="toolbarBtn btn-group">
+				<button class="layui-btn layui-btn-sm" title="新增" data-type="add"  >新增</button>
+			</div>
+			<div class="pull-right col-xs-4 row">
+                <div class="input-group input-group-sm" id="organization_busi_table_tools">
+                    <input type="text" class="form-control" maxlength="60" id="organization_busi_search_keyword"  placeholder="请输入机构编号/机构名称"/>
+                    <div class="input-group-btn">
+                        <button type="button" class="layui-btn layui-btn-sm" data-type="search">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="div-advanced-search" style="display: none;">
+            <form class="form-horizontal well clearfix">
+                <div class="form-group">
+                    <label class="control-label col-xs-1">用户名：</label>
+                    <div class="col-xs-2">
+                        <input id="search_empCode" name="empCode" type="text" class="form-control  input-sm"
+                               aria-required="true">
+                    </div>
+                    <div class="btn-group pull-right" style="margin-right: 15px;">
+                        <button type="button" class="btn btn-primary btn-sm" id="btn-advanced-rest">
+                            <i class="fa fa-reset"></i> 重置
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm" id="btn-advanced-search">
+                            <i class="fa fa-search"></i> 查询
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="row row-lg">
+            <table id="organization_busi_datatable" lay-filter="filter_organization_busi_datatable">
+            </table>
+            <script type="text/html" id="organization_busi_datatable_bar">
+                <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" ht-auth="detail">查看</a>
+                <a class="layui-btn layui-btn-xs" lay-event="edit" ht-auth="edit">编辑</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" ht-auth="del">删除</a>
+            </script>
+            <script type="text/html" id="createTimeTpl">
+              {{new Date( d.createdDatetime ).Format('yyyy-MM-dd HH:mm:ss')}} 
+		    </script>
+		     <script type="text/html" id="orgStatusTpl">
+      {{#  if(d.status == '0'){ }}
+                      正常
+      {{#  } else { }}
+		<font color="red">已删除</font>
+      {{#  } }}
+	        </script>
+	        <script type="text/html" id="orgTypeTpl">            
+              {{#  if(d.orgLevel == '20'){ }}
+                                                        公司层级
+              {{#  } else if(d.orgLevel == '40'){  }}
+		                             片区层级
+              {{#  } else if(d.orgLevel == '60'){  }}
+		                             分公司层级
+			  {{#  } else if(d.orgLevel == '80'){  }}
+		                           部门层级
+			  {{#  } else if(d.orgLevel == '100'){  }}
+		                          小组层级
+			  {{#  } else if(d.orgLevel == '00'){  }}
+		       小组
+              {{#  } }}
+	        </script>
+	        
+	        
+        </div>
+    </div>
+    <!--新增表单-->
+    <div id="organization_busi_add_data_div" class="hide">
+        <form method="post" class="layui-form" lay-filter="filter_add_organization_busi_form">
+            <div class="layui-form-item">
+                <label class="layui-form-label">机构编号<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="orgCode" lay-verify="required|checkExistOrgCode"  maxlength="20" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">机构简称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="orgName"   maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">机构中文名称<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="orgNameCn" lay-verify="required" maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">机构类型<b>*</b></label>
+                <div class="layui-input-block">
+                   <!-- <select name="orgType" lay-verify="required">
+				        <option value=""></option>
+				        <option value="10">公司</option>
+				        <option value="20">中心</option>
+				        <option value="30">片区</option>
+				        <option value="40">分公司</option>
+				        <option value="50">部门</option>
+				        <option value="60">小组</option>
+				    </select> -->
+				    <input type="radio" name="orgType" value="60" title="小组">
+				    <input type="radio" name="orgType" value="50" title="部门" checked>
+				    <input type="radio" name="orgType" value="40" title="分公司">
+				    <input type="radio" name="orgType" value="30" title="片区" >
+				    <input type="radio" name="orgType" value="20" title="中心" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属机构<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text"   name="parentOrgNamcn" autocomplete="off"  lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="parentOrgCode" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="orgPath" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="rootOrgCode" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <button class="layui-btn hide" lay-submit="" lay-filter="filter_add_organization_busi_form"></button>
+        </form>
+    </div>
+    <!--修改表单-->
+    <div id="organization_busi_modify_data_div"   class="hide">
+        <form method="post" class="layui-form" lay-filter="filter_modify_organization_busi_form">
+            <div class="layui-form-item">
+                <label class="layui-form-label">机构编号<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="orgCode" lay-verify="required" maxlength="20" readonly autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm layui-bg-gray">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">机构简称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="orgName"  maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+             <div class="layui-form-item">
+                <label class="layui-form-label">机构中文名称 </label>
+                <div class="layui-input-block">
+                    <input type="text" name="orgNameCn"  maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">机构类型<b>*</b></label>
+                <div class="layui-input-block">
+				    <input type="radio" name="orgType" value="60" title="小组">
+				    <input type="radio" name="orgType" value="50" title="部门">
+				    <input type="radio" name="orgType" value="40" title="分公司">
+				    <input type="radio" name="orgType" value="30" title="片区" >
+				    <input type="radio" name="orgType" value="20" title="中心" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属机构<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text"   name="parentOrgCode" disabled autocomplete="off"  lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="orgPath" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="rootOrgCode" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="id" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="status" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <button class="layui-btn hide" lay-submit="" lay-filter="filter_modify_organization_busi_form"></button>
+        </form>
+    </div>
+    <!--查看表单-->
+    <div id="organization_busi_view_data_div"   class="hide">
+        <form method="post" class="layui-form" lay-filter="filter_view_organization_busi_form" >
+            <div class="layui-form-item">
+                <label class="layui-form-label">机构编号</label>
+                <div class="layui-input-block">
+                    <input type="text" name="orgCode" lay-verify="required"   readonly  autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">机构名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="orgName" lay-verify="required"   readonly maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+             <div class="layui-form-item">
+                <label class="layui-form-label">机构中文名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="orgNameCn" lay-verify="required"   readonly maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">机构类型</label>
+                <div class="layui-input-block">
+				    <input type="radio" name="orgType" value="60" title="小组" disabled="true" >
+				    <input type="radio" name="orgType" value="50" title="部门" disabled="true" >
+				    <input type="radio" name="orgType" value="40" title="分公司" disabled="true" >
+				    <input type="radio" name="orgType" value="30" title="片区"  disabled="true" >
+				    <input type="radio" name="orgType" value="20" title="中心"  disabled="true" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属机构</label>
+                <div class="layui-input-block">
+                    <input type="text" name="parentOrgCode"  readonly autocomplete="off"  lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+           </form>
+    </div>
+    <script src="/js/organization/orgbusiness.js"></script>
+</div>
