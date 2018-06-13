@@ -14,7 +14,7 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import lombok.AllArgsConstructor;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -26,7 +26,6 @@ import lombok.NoArgsConstructor;
  * @Date 2018/1/15 8:38
  */
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class UserMessageVo implements Serializable {
     //主键
@@ -76,6 +75,84 @@ public class UserMessageVo implements Serializable {
     
     //是否管理员  Y是  N不是
   	private String controller;
+  	
+ // 所属业务机构
+ 	private String bussinesOrgCode;
 
+ 	@ApiModelProperty(value = "所属分公司", dataType = "string")
+ 	String branchCode;
 
+ 	@ApiModelProperty(value = "所属片区", dataType = "string")
+ 	String districtCode;
+
+ 	@ApiModelProperty(value = "所属省", dataType = "string")
+ 	String province;
+
+ 	@ApiModelProperty(value = "所属市", dataType = "string")
+ 	String city;
+
+	public UserMessageVo(Long id, String userId, String jobNumber, String userName, String orgCode, String orgName,
+			String mobile, String email, String idNo, Integer delFlag, String createOperator, Date createdDatetime,
+			String updateOperator, Date lastModifiedDatetime, String status, Integer failedCount, Date pwdExpDate,
+			Date effectiveDate, String loginId, String orgPath, String rootOrgCode, String controller) {
+		super();
+		this.id = id;
+		this.userId = userId;
+		this.jobNumber = jobNumber;
+		this.userName = userName;
+		this.orgCode = orgCode;
+		this.orgName = orgName;
+		this.mobile = mobile;
+		this.email = email;
+		this.idNo = idNo;
+		this.delFlag = delFlag;
+		this.createOperator = createOperator;
+		this.createdDatetime = createdDatetime;
+		this.updateOperator = updateOperator;
+		this.lastModifiedDatetime = lastModifiedDatetime;
+		this.status = status;
+		this.failedCount = failedCount;
+		this.pwdExpDate = pwdExpDate;
+		this.effectiveDate = effectiveDate;
+		this.loginId = loginId;
+		this.orgPath = orgPath;
+		this.rootOrgCode = rootOrgCode;
+		this.controller = controller;
+	}
+
+	public UserMessageVo(Long id, String userId, String jobNumber, String userName, String orgCode, String orgName,
+			String mobile, String email, String idNo, Integer delFlag, String createOperator, Date createdDatetime,
+			String updateOperator, Date lastModifiedDatetime, String status, Integer failedCount, Date pwdExpDate,
+			Date effectiveDate, String loginId, String orgPath, String rootOrgCode, String controller,String bussinesOrgCode,String branchCode,String districtCode,String province,String city) {
+		super();
+		this.id = id;
+		this.userId = userId;
+		this.jobNumber = jobNumber;
+		this.userName = userName;
+		this.orgCode = orgCode;
+		this.orgName = orgName;
+		this.mobile = mobile;
+		this.email = email;
+		this.idNo = idNo;
+		this.delFlag = delFlag;
+		this.createOperator = createOperator;
+		this.createdDatetime = createdDatetime;
+		this.updateOperator = updateOperator;
+		this.lastModifiedDatetime = lastModifiedDatetime;
+		this.status = status;
+		this.failedCount = failedCount;
+		this.pwdExpDate = pwdExpDate;
+		this.effectiveDate = effectiveDate;
+		this.loginId = loginId;
+		this.orgPath = orgPath;
+		this.rootOrgCode = rootOrgCode;
+		this.controller = controller;
+		this.bussinesOrgCode = bussinesOrgCode;
+		this.branchCode = branchCode;
+		this.districtCode = districtCode;
+		this.province = province;
+		this.city = city;
+	}
+	 
+ 
 }

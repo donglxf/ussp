@@ -25,13 +25,17 @@ import com.ht.ussp.uc.app.service.DingDingService;
 import com.ht.ussp.uc.app.service.HtBoaInBmUserService;
 import com.ht.ussp.uc.app.service.HtBoaInContrastService;
 import com.ht.ussp.uc.app.service.HtBoaInLoginService;
+import com.ht.ussp.uc.app.service.HtBoaInUserBusinessService;
 import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.vo.BmUserVo;
 import com.ht.ussp.uc.app.vo.LoginInfoVo;
+import com.ht.ussp.uc.app.vo.UserMessageVo;
 import com.ht.ussp.util.md5.DESC;
 import com.ht.ussp.util.md5.DecodeResult;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 
@@ -55,7 +59,8 @@ public class UserFeignServer{
     private HtBoaInUserRoleService htBoaInUserRoleService;
     @Autowired
     private DingDingService dingDingService;
-    
+    @Autowired
+    private HtBoaInUserBusinessService htBoaInUserBusinessService;
     
     
     /**
@@ -179,6 +184,14 @@ public class UserFeignServer{
     	}else {
     		loginInfoVo = htBoaInUserService.queryUserInfo(userId,app);
     	}
+    	if(loginInfoVo!=null) {
+    		UserMessageVo userMessageVo = htBoaInUserBusinessService.getUserBusiByUserId(loginInfoVo.getUserId());
+    		loginInfoVo.setBussinesOrgCode(userMessageVo.getBussinesOrgCode());
+    		loginInfoVo.setBranchCode(userMessageVo.getBranchCode());
+    		loginInfoVo.setDistrictCode(userMessageVo.getDistrictCode());
+    		loginInfoVo.setProvince(userMessageVo.getProvince());
+    		loginInfoVo.setCity(userMessageVo.getCity());
+    	}
         return Result.buildSuccess(loginInfoVo);
     }
     
@@ -226,6 +239,14 @@ public class UserFeignServer{
 		return Result.buildSuccess(listHtBoaInUser);
 	}
     
+    @ApiOperation(value = "获取指定业务机构下用户列表",notes="")
+    @ApiImplicitParams({ @ApiImplicitParam(name = "busiOrgCode", paramType = "query",dataType = "String", required = true, value = "查询指定机构下用户"),
+		@ApiImplicitParam(name = "isAllSub", paramType = "query",dataType = "String", required = true, value = "传值（1，2） 1:只当前机构下所有用户  2:包括机构下以及所有子机构用户") })
+    @PostMapping(value = "/getUserListByBusiOrg")
+    public Result getUserListByBusiOrg(@RequestParam("busiOrgCode")String busiOrgCode, @RequestParam("isAllSub")String isAllSub) {
+    	List<UserMessageVo> listUserMessageVo = htBoaInUserBusinessService.getUserBusiListByBusiOrgCode(busiOrgCode,isAllSub);
+        return Result.buildSuccess(listUserMessageVo);
+    }
     
     @ApiOperation(value = "查询角色下所有用户", notes = "查询角色下所有用户")
 	@PostMapping(value = "/getAllDDUser")
