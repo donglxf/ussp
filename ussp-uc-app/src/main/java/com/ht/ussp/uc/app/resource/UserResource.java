@@ -421,7 +421,7 @@ public class UserResource{
     @PostMapping("/getUserInfoByJobNumber")
     public Result getUserInfoByJobNumber(@RequestParam("jobNumber") String jobNumber) {
         if (jobNumber != null && !"".equals(jobNumber.trim())) {
-        	HtBoaInUser htBoaInUser = htBoaInUserService.findByMobile(jobNumber);
+        	HtBoaInUser htBoaInUser = htBoaInUserService.findByJobNumber(jobNumber);
         	return Result.buildSuccess(htBoaInUser);
         }
         return Result.buildFail();
