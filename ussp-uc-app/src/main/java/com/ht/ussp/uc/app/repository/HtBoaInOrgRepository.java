@@ -39,7 +39,14 @@ public interface HtBoaInOrgRepository
     List<HtBoaInOrg> findByOrgCode(String orgCode);
     
     List<HtBoaInOrg> findByParentOrgCode(String parentOrgCode);
+    
+    //行政机构没有分公司 片区
+    @Query("SELECT new com.ht.ussp.uc.app.model.BoaInOrgInfo (u.orgCode, u.orgNameCn, u.parentOrgCode, u.sequence,  u.delFlag, u.rootOrgCode, u.rootOrgCode,u.delFlag, u.rootOrgCode,u.rootOrgCode,u.id) FROM HtBoaInOrg u  WHERE   u.parentOrgCode = ?1 and u.delFlag=0   GROUP BY u")
+    public List<BoaInOrgInfo> listOrgByParentOrgCode(String parentOrg);
 
+    @Query("SELECT new com.ht.ussp.uc.app.model.BoaInOrgInfo (u.orgCode, u.orgNameCn, u.parentOrgCode, u.sequence,  u.delFlag, u.rootOrgCode, u.rootOrgCode,u.delFlag, u.rootOrgCode,u.rootOrgCode,u.id) FROM HtBoaInOrg u  WHERE  (u.orgCode LIKE ?1 OR u.orgName LIKE ?1 OR u.orgNameCn LIKE ?1)  and u.delFlag=0   GROUP BY u")
+    public List<BoaInOrgInfo> listOrg(String search);
+    
     @Query(value="select * from HT_BOA_IN_ORG where LAST_MODIFIED_DATETIME BETWEEN ?1 AND ?2",nativeQuery=true)
 	public List<HtBoaInOrg> getByLastModifiedDatetime(String startTime, String endTime);
 

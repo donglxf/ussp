@@ -61,9 +61,9 @@ import lombok.extern.log4j.Log4j2;
  */
 
 @RestController
-@RequestMapping(value = "/user")
+@RequestMapping(value = "/userbusiness")
 @Log4j2
-public class UserResource{
+public class UserBusinessResource{
 
     @Autowired
     private HtBoaInUserService htBoaInUserService;

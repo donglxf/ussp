@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +26,14 @@ import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
+import com.ht.ussp.uc.app.domain.HtBoaInUserExt;
 import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
 import com.ht.ussp.uc.app.repository.HtBoaInBmUserRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInContrastRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInLoginRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInOrgRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInUserAppRepository;
+import com.ht.ussp.uc.app.repository.HtBoaInUserExtRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInUserRepository;
 import com.ht.ussp.uc.app.vo.BmUserVo;
 import com.ht.ussp.uc.app.vo.LoginInfoVo;
@@ -47,8 +50,10 @@ import com.ht.ussp.util.LogicUtil;
  */
 @Service
 public class HtBoaInUserService {
-    @Autowired
+	@Autowired
     private HtBoaInUserRepository htBoaInUserRepository;
+	@Autowired
+    private HtBoaInUserExtRepository htBoaInUserExtRepository;
     @Autowired
     private HtBoaInLoginRepository htBoaInLoginRepository;
     @Autowired
@@ -59,8 +64,10 @@ public class HtBoaInUserService {
     private HtBoaInUserAppRepository htBoaInUserAppRepository;
     @Autowired
     private HtBoaInBmUserRepository htBoaInBmUserRepository;
-    
+    @Autowired
+    private HtBoaInBmUserService htBoaInBmUserService;
 
+    
     /**
      * @return HtBoaInUser
      * @throws
@@ -809,4 +816,60 @@ public class HtBoaInUserService {
 		return this.htBoaInUserRepository.getUserListByTime(startTime,endTime);
 	}
 
+	//匹配信贷业务机构
+	public void convertUserBmOrg(String state) {
+		List<HtBoaInContrast>  listHtBoaInContrast = null;
+		List<String> listUserId = new ArrayList<String>();
+		List<HtBoaInUserExt>  listHtBoaInUserExt = new ArrayList<HtBoaInUserExt>();
+		//根据关联关系表，将信贷业务机构匹配到uc用户
+		List<HtBoaInContrast> listHtBoaInContrastAll = htBoaInContrastRepository.findByType("20");
+		List<HtBoaInBmUser> listHtBoaInBmUser = htBoaInBmUserService.getHtBoaInBmUserList();
+		listHtBoaInContrast = listHtBoaInContrastAll.stream().filter(u -> StringUtils.isNotEmpty(u.getUcBusinessId())&&StringUtils.isNotEmpty(u.getBmBusinessId())).collect(Collectors.toList());
+		if(listHtBoaInContrast!=null&&!listHtBoaInContrast.isEmpty()) {
+			for(HtBoaInContrast htBoaInContrast : listHtBoaInContrast) {
+				if(StringUtils.isNotEmpty(htBoaInContrast.getBmBusinessId())) {
+					HtBoaInBmUser htBoaInBmUser = null;
+					Optional<HtBoaInBmUser> htBoaInBmUserOptional = listHtBoaInBmUser.stream().filter(user -> htBoaInContrast.getBmBusinessId().equals(user.getUserId())).findFirst();
+					if(htBoaInBmUserOptional!=null&&htBoaInBmUserOptional.isPresent()) {
+						htBoaInBmUser = htBoaInBmUserOptional.get();
+					}
+					if(htBoaInBmUser!=null) {
+						HtBoaInUserExt htBoaInUserExt = null;
+						if("0".equals(state)) {
+							if(!listUserId.contains(htBoaInContrast.getUcBusinessId())) {
+								htBoaInUserExt = new HtBoaInUserExt();
+								htBoaInUserExt.setBmUserId(htBoaInContrast.getBmBusinessId());
+								htBoaInUserExt.setBusiOrgCode(htBoaInBmUser.getOrgCode());
+								htBoaInUserExt.setUserId(htBoaInContrast.getUcBusinessId());
+								htBoaInUserExt.setCreatedDatetime(new Date());
+								htBoaInUserExt.setLastModifiedDatetime(new Date());
+								htBoaInUserExt.setJpaVersion(0);
+								listHtBoaInUserExt.add(htBoaInUserExt);
+								listUserId.add(htBoaInContrast.getUcBusinessId());
+							}
+							
+						}else {
+							List<HtBoaInUserExt> list = htBoaInUserExtRepository.findByUserId(htBoaInContrast.getUcBusinessId());
+							if(list!=null&&!list.isEmpty()) {
+								htBoaInUserExt = list.get(0);
+							}
+							if(htBoaInUserExt==null) {
+								htBoaInUserExt = new HtBoaInUserExt();
+								htBoaInUserExt.setBmUserId(htBoaInContrast.getBmBusinessId());
+								htBoaInUserExt.setBusiOrgCode(htBoaInBmUser.getOrgCode());
+								htBoaInUserExt.setUserId(htBoaInContrast.getUcBusinessId());
+								htBoaInUserExt.setCreatedDatetime(new Date());
+								htBoaInUserExt.setLastModifiedDatetime(new Date());
+								htBoaInUserExt.setJpaVersion(0);
+								htBoaInUserExtRepository.save(htBoaInUserExt);
+							}
+						}
+					}
+				}
+			}
+			if(listHtBoaInUserExt!=null&&!listHtBoaInUserExt.isEmpty()) {
+				htBoaInUserExtRepository.save(listHtBoaInUserExt);
+			}
+		}
+	}
 }

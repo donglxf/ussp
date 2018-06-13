@@ -39,7 +39,7 @@ public class BoaInOrgInfo {
     String orgType;
 
     @ApiModelProperty(value = "顺序号", dataType = "int")
-    int sequence;
+    Integer sequence;
     
     @ApiModelProperty(value = "创建人", dataType = "string")
     String createOperator;
@@ -54,11 +54,26 @@ public class BoaInOrgInfo {
     Date lastModifiedDatetime;
     
     @ApiModelProperty(value = "状态", dataType = "int")
-    int delFlag;
+    Integer delFlag;
+    
+    @ApiModelProperty(value = "所属分公司", dataType = "string")
+    String branchCode;
 
+    @ApiModelProperty(value = "所属片区", dataType = "string")
+    String districtCode;
+    
+    @ApiModelProperty(value = "机构层级 (20-公司层级  40-片区层级  60-分公司层级  80-部门层级  100-小组层级)", dataType = "int")
+    Integer orgLevel;
+    
+    @ApiModelProperty(value = "所属省", dataType = "string")
+    String province;
+    
+    @ApiModelProperty(value = "所属市", dataType = "string")
+    String city;
+    
 	public BoaInOrgInfo(String orgCode, String orgName, String orgNameCn, String parentOrgCode,
-			String rootOrgCode, String orgPath, String orgType, int sequence,  String createOperator,
-			Date createdDatetime, String updateOperator, Date lastModifiedDatetime,int delFlag,long id) {
+			String rootOrgCode, String orgPath, String orgType, Integer sequence,  String createOperator,
+			Date createdDatetime, String updateOperator, Date lastModifiedDatetime,Integer delFlag,long id) {
 		this.orgCode = orgCode;
 		this.orgName = orgName;
 		this.orgNameCn = orgNameCn;
@@ -76,7 +91,7 @@ public class BoaInOrgInfo {
 	}
 
 	public BoaInOrgInfo(String orgCode, String orgName, String orgNameCn, String parentOrgCode,
-			String rootOrgCode, String orgPath, String orgType, int sequence,String createOperator) {
+			String rootOrgCode, String orgPath, String orgType, Integer sequence,String createOperator) {
 		this.orgCode = orgCode;
 		this.orgName = orgName;
 		this.orgNameCn = orgNameCn;
@@ -86,12 +101,20 @@ public class BoaInOrgInfo {
 		this.orgType = orgType;
 		this.sequence = sequence;
 		this.createOperator = createOperator;
-		this.createdDatetime = createdDatetime;
-		this.updateOperator = updateOperator;
-		this.lastModifiedDatetime = lastModifiedDatetime;
-		this.delFlag = delFlag;
-		this.id = id;
 	}
     
-
+	public BoaInOrgInfo(String orgCode, String orgName, String parentOrgCode, Integer sequence, Integer delFlag,
+			String branchCode, String districtCode, Integer orgLevel, String province, String city,long id) {
+		this.orgCode = orgCode;
+		this.orgName = orgName;
+		this.parentOrgCode = parentOrgCode;
+		this.sequence = sequence;
+		this.delFlag = delFlag;
+		this.branchCode = branchCode;
+		this.districtCode = districtCode;
+		this.orgLevel = orgLevel;
+		this.province = province;
+		this.city = city;
+		this.id = id;
+	}
 }

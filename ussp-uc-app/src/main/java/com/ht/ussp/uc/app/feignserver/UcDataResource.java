@@ -19,15 +19,19 @@ import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
+import com.ht.ussp.uc.app.model.BoaInOrgInfo;
 import com.ht.ussp.uc.app.model.BoaInPositionInfo;
 import com.ht.ussp.uc.app.model.BoaInRoleInfo;
 import com.ht.ussp.uc.app.model.PageConf;
+import com.ht.ussp.uc.app.service.HtBoaInOrgBusinessService;
 import com.ht.ussp.uc.app.service.HtBoaInOrgService;
 import com.ht.ussp.uc.app.service.HtBoaInPositionUserService;
 import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.vo.DataUserOrgVo;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 
@@ -43,6 +47,9 @@ public class UcDataResource {
 	
 	@Autowired
 	private HtBoaInOrgService htBoaInOrgService;
+	
+	@Autowired
+	private HtBoaInOrgBusinessService htBoaInOrgBusinessService;
 
 	@Autowired
 	private HtBoaInPositionUserService htBoaInPositionUserService;
@@ -86,13 +93,34 @@ public class UcDataResource {
 	}
 	
 	@SuppressWarnings("rawtypes")
-	@ApiOperation(value = "获取所有下级机构信息 ",notes="下级多节点")
-	@PostMapping(value = { "/org/getAllSubOrgInfo" })
-	public Result getAllSubOrgInfo(@RequestParam("orgCode") String orgCode) { 
-		List<HtBoaInOrg>  listSubHtBoaInOrg =  htBoaInOrgService.getAllSubOrgInfo(orgCode);
-		if(listSubHtBoaInOrg!=null&&!listSubHtBoaInOrg.isEmpty()) {
-			listSubHtBoaInOrg = listSubHtBoaInOrg.stream().filter(list -> list.getDelFlag()==0).collect(Collectors.toList());
+	@ApiOperation(value = "获取所有下级机构信息 ",notes="下级多节点,orgCode:为空则查询所有机构信息")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "orgCode", paramType = "query",dataType = "String", required = true, value = "查询指定orgCode下所有子节点，若传空字符串则查询所有机构信息"),
+		@ApiImplicitParam(name = "busiType", paramType = "query",dataType = "String", required = true, value = "传值1或者2 (1-UC行政机构  2-业务机构)") ,
+		@ApiImplicitParam(name = "keyword", paramType = "query",dataType = "String", required = true, value = "当keyword不为空 orgCode为空，则在所有机构中模糊查询机构名称，机构编码;orgCode不为空则查询所有下级机构") })
+	@PostMapping(value = { "/org/getOrgInfo" })
+	public Result getOrgInfo(@RequestParam("orgCode") String orgCode,@RequestParam("busiType") String busiType,@RequestParam("keyword") String keyword) { 
+		List<BoaInOrgInfo>  listSubHtBoaInOrg = null;
+		keyword = "null".equals(keyword)?"":keyword;
+		if("1".equals(busiType)) {//行政机构 2业务机构
+			if(StringUtils.isNotEmpty(orgCode)&&!"null".equals(orgCode)) {
+				listSubHtBoaInOrg = htBoaInOrgService.getSubOrgInfo(orgCode);
+				if(listSubHtBoaInOrg!=null&&!listSubHtBoaInOrg.isEmpty()) {
+					listSubHtBoaInOrg = listSubHtBoaInOrg.stream().filter(list -> list.getDelFlag()==0).collect(Collectors.toList());
+				}
+			}else {
+				listSubHtBoaInOrg = htBoaInOrgService.findAllSubOrgInfo(keyword);
+			}
+		}else {	
+			if(StringUtils.isNotEmpty(orgCode)&&!"null".equals(orgCode)) {
+				listSubHtBoaInOrg = htBoaInOrgBusinessService.getSubOrgInfo(orgCode);
+				if(listSubHtBoaInOrg!=null&&!listSubHtBoaInOrg.isEmpty()) {
+					listSubHtBoaInOrg = listSubHtBoaInOrg.stream().filter(list -> list.getDelFlag()==0).collect(Collectors.toList());
+				}
+			}else {
+				listSubHtBoaInOrg = htBoaInOrgBusinessService.findAllSubOrgInfo(keyword);
+			}
 		}
+		
 		return Result.buildSuccess(listSubHtBoaInOrg);
 	}
 	
