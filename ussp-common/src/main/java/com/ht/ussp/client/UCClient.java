@@ -187,5 +187,23 @@ public interface UCClient {
 	@GetMapping(value = "/apps/getAllApp")
 	Result getAllApp();
 
+	
+	////////////业务组织机构
+	@PostMapping("/datas/user/getUserOrg")
+	Result getUserOrg(@RequestParam("keyword") String keyword);
+	
+	@PostMapping("/datas/org/getOrgInfo")
+	Result getOrgInfo(@RequestParam("orgCode") String orgCode,@RequestParam("busiType") String busiType,@RequestParam("keyword") String keyword);
+	
+	@PostMapping("/datas/user/getUserRole")
+	Result getBusiUserRole(@RequestParam("keyword") String keyword);
+	
+	@PostMapping("/datas/user/getUserPosition")
+	Result getBusiUserPosition(@RequestParam("keyword") String keyword);
+	
+	@PostMapping("/datas/getBusiOrgList")
+	Result getBusiOrgList(@RequestParam("orgLevel") String orgLevel, @RequestParam("busiOrgCode") String busiOrgCode);
+	
+	
 }
 

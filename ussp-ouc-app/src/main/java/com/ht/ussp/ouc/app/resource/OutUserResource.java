@@ -240,15 +240,19 @@ public class OutUserResource{
 		if (userId != null && !"".equals(userId.trim())) {
 			if("0".equals(status)) {//恢复用户状态
 				HtBoaOutLogin u = htBoaOutLoginService.findByUserId(userId);
-				u.setStatus("0");
-				u.setLastModifiedDatetime(new Date());
-				htBoaOutLoginService.saveUserLogin(u);
+				if(u!=null) {
+					u.setStatus("0");
+					u.setLastModifiedDatetime(new Date());
+					htBoaOutLoginService.saveUserLogin(u);
+				}
 			} 
 			HtBoaOutUser user = htBoaOutUserService.findByUserId(userId);
-			user.setStatus(status);
-			htBoaOutUserService.delete(user);
+			if(user!=null) {
+				user.setStatus(status);
+				htBoaOutUserService.saveUser(user);
+			}
 		}
-		return Result.buildFail();
+		return Result.buildSuccess();
 	}
 	
 	@ApiOperation(value = "重置密码")
@@ -259,8 +263,10 @@ public class OutUserResource{
 		String newPassWordEncrypt = EncryptUtil.passwordEncrypt(newPassWord);
 		if (userId != null && userId != "" && userId.length() > 0) {
 			HtBoaOutLogin u = htBoaOutLoginService.findByUserId(userId);
-			u.setPassword(newPassWordEncrypt);
-			htBoaOutLoginService.saveUserLogin(u);
+			if(u!=null) {
+				u.setPassword(newPassWordEncrypt);
+				htBoaOutLoginService.saveUserLogin(u);
+			}
 
 			// 记录历史密码
 			HtBoaOutPwdHist htBoaOutPwdHist = new HtBoaOutPwdHist();
@@ -277,8 +283,10 @@ public class OutUserResource{
 	public Result delTrunc(String userId) {
 		if (userId != null && !"".equals(userId.trim())) {
 			HtBoaOutLogin u = htBoaOutLoginService.findByUserId(userId);
+			if(u!=null)
 			htBoaOutLoginService.delete(u);
 			HtBoaOutUser user = htBoaOutUserService.findByUserId(userId);
+			if(user!=null)
 			htBoaOutUserService.delete(user);
 		}
 		return Result.buildFail();
