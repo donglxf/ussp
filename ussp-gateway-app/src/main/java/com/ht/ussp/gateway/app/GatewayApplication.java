@@ -48,10 +48,10 @@ public class GatewayApplication {
     	return new CustomCorsFilter();
     }
     
-    @Bean
-    public ErrorException errorException() {
-    	return new ErrorException();
-    }
+//    @Bean
+//    public ErrorException errorException() {
+//    	return new ErrorException();
+//    }
     
     
 }

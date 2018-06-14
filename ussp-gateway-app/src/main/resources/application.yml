@@ -1,14 +1,8 @@
 eureka:
   instance:
     prefer-ip-address: true
-#server:
-#  undertow:
-#    io-threads: 8
-#    direct-buffers: true
-#    buffer-size: 256
-#    worker-threads: 30
-    
-feign:
+
+feign: 
   hystrix:
     enabled: true
 hystrix:
@@ -35,9 +29,6 @@ ribbon:
   MaxAutoRetriesNextServer: 0
   ServerListRefreshInterval: 1000
 zuul:
-  SendErrorFilter: 
-    post:
-      disable: true
   retryable: true
   host:
     maxTotalConnections: 2000
