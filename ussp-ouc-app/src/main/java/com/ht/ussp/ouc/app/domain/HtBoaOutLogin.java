@@ -78,7 +78,8 @@ public class HtBoaOutLogin implements Serializable {
     @Column(name = "UPDATE_OPERATOR")
     private String updateOperator;
 
-
-    
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "BLOCKED_DATETIME")
+    private Date blockedDateTime;
 
 }

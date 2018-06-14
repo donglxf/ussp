@@ -51,46 +51,18 @@ layui.use([ 'form',   'table', 'ht_config', 'ht_auth'], function () {
     //监听操作栏
     table.on('tool(filter_out_user_datatable)', function (obj) {
             var data = obj.data;
-            if (obj.event === 'detail') {
-                $.post(config.baseOucPath + "user/view?userId=" + data.userId,  null, function (result) {
-                    if (result["returnCode"] == "0000") {
-                        viewDialog = layer.open({
-                            type: 1,
-                            area: ['720px', '430px'],
-                            shadeClose: true,
-                            title: "用户详情",
-                            content: $("#user_view_data_div").html(),
-                            btn: ['取消'],
-                            btn2: function () {
-                                layer.closeAll('tips');
-                            },
-                            success: function (layero) {
-                                var status = result.data.status;
-                                result.data.status = status === "0" ? "正常" : (status === "2" ? "离职" : (status === "4" ? "冻结" : (status === "5" ? "锁定" : result.data.status)));
-                                $.each(result.data, function (name, value) {
-                                    var $input = $("input[name=" + name + "]", layero);
-                                    if ($input && $input.length == 1) {
-                                        $input.val(value);
-                                    }
-                                });
-                            }
-                        })
-                    } else {
-                        layer.msg(result.codeDesc);
-                    }
-                });
-            } else if (obj.event === 'del') {
-                layer.confirm('是否删除用户' + data.userName + "？", function (index) {
-                    $.post(config.baseOucPath + "user/delete?userId=" + data.userId, null, function (result) {
+            if (obj.event === 'disUsed') {
+            	layer.confirm("是否禁用用户？", function (index) {
+            		$.post(config.baseOucPath + "user/changeStatus?userId=" + data.userId+"&status=1", null, function (result) {
                         if (result["returnCode"] == "0000") {
-                            refreshOutUserTable();
-                            layer.close(index);
-                            layer.msg("删除用户成功。");
+                          layer.close(index);
+                       	  layer.msg("禁用用户成功");
+                       	  refreshOutUserTable();
                         } else {
                             layer.msg(result.codeDesc);
                         }
                     });
-                });
+            	 });
             } else if (obj.event === 'edit') {
                 layer.close(editDialog);
                 $.post(config.baseOucPath + "user/view?userId=" + data.userId, null, function (result) {
@@ -153,7 +125,7 @@ layui.use([ 'form',   'table', 'ht_config', 'ht_auth'], function () {
                 });
             }else if (obj.event === 'resetpwd') {
             	layer.confirm("确认重置用户 密码？", function (index) {
-            		$.post(config.baseOucPath + "user/sendEmailRestPwd?userId=" + data.userId, null, function (result) {
+            		$.post(config.baseOucPath + "user/resetpwd?userId=" + data.userId, null, function (result) {
                         if (result["returnCode"] == "0000") {
                           layer.close(index);
                        	  layer.msg("密码重置成功");
@@ -164,7 +136,7 @@ layui.use([ 'form',   'table', 'ht_config', 'ht_auth'], function () {
             	 });
             }else if (obj.event === 'restate') {
             	layer.confirm("确认恢复用户状态？", function (index) {
-            		$.post(config.baseOucPath + "user/changUserState?userId=" + data.userId+"&status=0", null, function (result) {
+            		$.post(config.baseOucPath + "user/changeStatus?userId=" + data.userId+"&status=0", null, function (result) {
                         if (result["returnCode"] == "0000") {
                           layer.close(index);
                        	  layer.msg("恢复用户状态成功");
@@ -174,23 +146,7 @@ layui.use([ 'form',   'table', 'ht_config', 'ht_auth'], function () {
                         }
                     });
             	 });
-            } else if (obj.event === 'rowClick') {
-            	var data = obj.data;
-                userapp_userId = data.userId;
-                userrole_userId = data.userId;
-                userpositionUserId = data.userId;
-            	 switch (selectBottomTabIndex) {
-                 case 0:
-                     refreshUserAppTable();
-                     break;
-                 case 1:
-                	 refreshuserpositionTable();
-                     break;
-                 case 2:
-                	 refreshUserRoleTable();
-                     break;
-             }
-            }
+            }  
         }
     );
     

@@ -19,18 +19,12 @@
 				<table id="out_user_datatable" lay-filter="filter_out_user_datatable">
 				</table>
 				<script type="text/html" id="out_user_datatable_bar">
-                <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" ht-auth="detail">查看</a>
-               
-                 {{#  if(d.status == '1'){ }}
-                 <a class="layui-btn   layui-btn-xs" lay-event="restate" ht-auth="restate">恢复</a>
-                {{#  } else if(d.status == '2') { }}
-                <a class="layui-btn   layui-btn-xs" lay-event="restate" ht-auth="restate">恢复</a>
-                {{#  } else if(d.status == '5') { }}
-               <a class="layui-btn   layui-btn-xs" lay-event="restate" ht-auth="restate">恢复</a>
-                {{#  } else { }}
-                 <a class="layui-btn layui-btn-xs" lay-event="edit" ht-auth="edit">编辑</a>
-                {{#  } }}
-                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" ht-auth="del">删除</a>
+                 {{#  if(d.status == '0'){ }}
+                  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="disUsed" ht-auth="disUsed">禁用</a>
+                {{#  }else{  }}
+                  <a class="layui-btn   layui-btn-xs" lay-event="restate" ht-auth="restate">恢复</a>
+                {{#  }  }}
+                
                 <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="resetpwd" ht-auth="resetpwd" >重置密码</a>
                
             </script>
@@ -40,13 +34,9 @@
                 {{#  } else if(d.status == '1') { }}
                 禁用
                 {{#  } else if(d.status == '2') { }}
-               离职
-                {{#  } else if(d.status == '4') { }}
-                冻结
-                {{#  } else if(d.status == '5') { }}
-                锁定
-                {{#  } else { }}
-                {{ d.status }}
+               锁定  
+                {{#  } else if(d.status == '3') { }}
+               删除
                 {{#  } }}
             </script>
 			</div>
