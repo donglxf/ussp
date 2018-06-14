@@ -29,8 +29,7 @@ ribbon:
   MaxAutoRetriesNextServer: 0
   ServerListRefreshInterval: 1000
 zuul:
-  retryable: true
-  host:
+  host: 
     maxTotalConnections: 2000
     maxPerRouteConnections: 800
     socket-timeout-millis: 60000
