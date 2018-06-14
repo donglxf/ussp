@@ -93,8 +93,8 @@ UCClient新增两个接口：
 
 ###0.0.27
 增加业务组织机构类型接口 BusinessHelper  
-1.根据用户id,手机号，用户姓名，email获取用户机构信息
-2.根据用户id,手机号，用户姓名，email获取用户角色信息
-3.根据用户id,手机号，用户姓名，email获取用户岗位信息
-4.获取所有下级机构信息
-5.获取业务机构
+1.根据用户id,手机号，用户姓名，email获取用户机构信息   getUserOrg
+2.根据用户id,手机号，用户姓名，email获取用户角色信息  getBusiUserRole
+3.根据用户id,手机号，用户姓名，email获取用户岗位信息 getBusiUserPosition
+4.获取所有下级机构信息  getSubOrgInfoByCode
+5.获取业务机构  getBusiOrgList
