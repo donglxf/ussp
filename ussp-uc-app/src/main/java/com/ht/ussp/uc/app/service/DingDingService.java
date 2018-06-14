@@ -53,6 +53,7 @@ import com.ht.ussp.uc.app.repository.DdDeptUserRepository;
 import com.ht.ussp.uc.app.repository.DdUserOperatorRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInPositionUserRepository;
 import com.ht.ussp.uc.app.repository.TbUserRoleRepository;
+import com.ht.ussp.uc.app.vo.DdUserVo;
 import com.ht.ussp.uc.app.vo.eip.DDGetTokenReqDto;
 import com.ht.ussp.util.EncryptUtil;
 import com.ht.ussp.util.HttpClientUtil;
@@ -269,7 +270,6 @@ public class DingDingService {
 	        		addDDDeptOperator.setSynFlag("0");
 	        		ddDeptOperatorList.add(addDDDeptOperator);
 	        	}
-	        	
 
 	        	for(DdDept ddDept : ddOrgList) {//得到钉钉删除的机构
 	        		List<HtBoaInContrast> sameOrgList  = listHtBoaInContrastOrg.stream().filter(ucOrg -> ddDept.getDeptId().equals(ucOrg.getDdBusinessId())).collect(Collectors.toList());
@@ -1520,6 +1520,10 @@ public class DingDingService {
 			}
 		}
 		return Result.buildSuccess();
+	}
+
+	public List<DdUserVo> getDdUserList() {
+		return ddDeptUserRepository.getDdUserList();
 	}
 
 	

@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,12 +25,14 @@ import com.ht.ussp.uc.app.model.BoaInOrgInfo;
 import com.ht.ussp.uc.app.model.BoaInPositionInfo;
 import com.ht.ussp.uc.app.model.BoaInRoleInfo;
 import com.ht.ussp.uc.app.model.PageConf;
+import com.ht.ussp.uc.app.service.DingDingService;
 import com.ht.ussp.uc.app.service.HtBoaInOrgBusinessService;
 import com.ht.ussp.uc.app.service.HtBoaInOrgService;
 import com.ht.ussp.uc.app.service.HtBoaInPositionUserService;
 import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.vo.DataUserOrgVo;
+import com.ht.ussp.uc.app.vo.DdUserVo;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -54,6 +57,10 @@ public class UcDataResource {
 
 	@Autowired
 	private HtBoaInPositionUserService htBoaInPositionUserService;
+	
+	@Autowired
+	private DingDingService dingDingService;
+	
 
 	// 根据用户id,手机号，用户姓名，email获取用户机构信息
 	@SuppressWarnings("rawtypes")
@@ -190,5 +197,11 @@ public class UcDataResource {
 		}
 		return Result.buildSuccess(listHtBoaInOrg);
 	} 
+	
+	@ApiOperation(value = "获取钉钉用户数据", notes = "")
+	@GetMapping(value = { "/getDdUserList" }, produces = { "application/json" })
+	public List<DdUserVo> getDdUserList(){
+		return dingDingService.getDdUserList();
+	}
 	
 }
