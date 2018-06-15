@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>用户权限管理系统</title>
+    <link rel="stylesheet" href="/plugins/bootstrap/css/bootstrap.min.css" media="all"/>
+    <!--<link rel="stylesheet" href="/plugins/bootstrap/fonts/font-awesome-4.5.0/css/font-awesome.min.css" media="all"/>-->
+    <link rel="stylesheet" href="/plugins/layui/css/layui.css" media="all"/>
+    <link rel="stylesheet" href="/plugins/font-awesome/css/font-awesome.min.css" media="all"/>
+    <link rel="stylesheet" href="/css/app.css" media="all"/>
+    <link rel="stylesheet" href="/css/themes/default.css" media="all" id="skin" kit-skin/>
+    <link rel="stylesheet" href="/css/ht.css" media="all"/>
+    <link rel="stylesheet" href="/css/ztree/metro/ztree.css" media="all"/>
+</head>
+<body>
+	<div>
+		<div class="tree_search">
+			<div class="input-group input-group-sm" id="user_btn_tree">
+				<input type="text" id="user_search_tree_org" class="form-control" placeholder="请输入机构名" />
+				<div data-type="expandAll" class="input-group-addon btn" title="展开所有">
+					<i class="fa fa-plus-square"></i>
+				</div>
+				<div data-type="collapseAll" class="input-group-addon btn" title="收起所有">
+					<i class="fa fa-minus-square"></i>
+				</div>
+				<div data-type="refresh" class="input-group-addon btn" title="刷新">
+					<i class="fa fa-refresh"></i>
+				</div>
+			</div>
+		</div>
+		<div id="user_org_ztree_main" class="ztree"></div>
+	</div>
+	<script src="/plugins/layui/layui.js"></script>
+	<script src="/common/config.js"></script>
+	<script src="/js/user/orgTreeDialog.js"></script>
+</body>
+</html>

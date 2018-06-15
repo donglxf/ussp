@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 
 import com.ht.ussp.gateway.app.filter.AccessFilter;
 import com.ht.ussp.gateway.app.filter.CustomCorsFilter;
+import com.ht.ussp.gateway.app.filter.ErrorException;
 import com.ht.ussp.gateway.app.filter.OutSystemFilter;
 
 import lombok.extern.log4j.Log4j2;
@@ -45,6 +46,11 @@ public class GatewayApplication {
     @Bean
     public CustomCorsFilter customCorsFilter() {
     	return new CustomCorsFilter();
+    }
+    
+    @Bean
+    public ErrorException errorException() {
+    	return new ErrorException();
     }
     
     

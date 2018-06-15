@@ -21,14 +21,14 @@
 		<start-class>com.ht.ussp.gateway.app.GatewayApplication</start-class>
 		<maven.deploy.skip>true</maven.deploy.skip>
 		<docker.image.prefix>ussp</docker.image.prefix>
-		
+
 		<docker-maven-plugin.version>1.0.0</docker-maven-plugin.version>
-        <docker.java.base.image>frolvlad/alpine-oraclejdk8:slim</docker.java.base.image>
-        <docker.repostory>172.16.200.101</docker.repostory>
-        <docker.registry.name>ht</docker.registry.name>
-        <docker.maintainer>xiayutai@hongte.info</docker.maintainer>
-        
-        <git-commit-id-plugin.version>2.2.4</git-commit-id-plugin.version>
+		<docker.java.base.image>frolvlad/alpine-oraclejdk8:slim</docker.java.base.image>
+		<docker.repostory>172.16.200.101</docker.repostory>
+		<docker.registry.name>ht</docker.registry.name>
+		<docker.maintainer>xiayutai@hongte.info</docker.maintainer>
+
+		<git-commit-id-plugin.version>2.2.4</git-commit-id-plugin.version>
 	</properties>
 
 	<dependencies>
@@ -64,17 +64,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-starter-tomcat</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-undertow</artifactId>
 		</dependency>
 
 		<dependency>
@@ -130,6 +119,10 @@
 		<dependency>  <!-- 支持识别yml配置 -->
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-yaml</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-web</artifactId>
 		</dependency>
 
 

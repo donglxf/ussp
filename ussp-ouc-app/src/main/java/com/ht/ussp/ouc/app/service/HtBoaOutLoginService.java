@@ -22,5 +22,9 @@ public class HtBoaOutLoginService {
 	public HtBoaOutLogin findByLoginId(String loginId) {
 		return htBoaOutLoginRepository.findByLoginId(loginId);
 	}
+
+	public void delete(HtBoaOutLogin u) {
+		htBoaOutLoginRepository.delete(u);
+	}
  
 }

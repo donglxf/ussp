@@ -2,7 +2,7 @@ eureka:
   instance:
     prefer-ip-address: true
 
-feign:
+feign: 
   hystrix:
     enabled: true
 hystrix:
@@ -11,6 +11,8 @@ hystrix:
       coreSize: 2000
   command:
     default:
+      circuitBreaker:
+        requestVolumeThreshold: 150
       execution:
         isolation:
           thread:
@@ -27,6 +29,9 @@ ribbon:
   MaxAutoRetriesNextServer: 0
   ServerListRefreshInterval: 1000
 zuul:
+  SendErrorFilter: 
+    post:
+      disable: true
   retryable: true
   host:
     maxTotalConnections: 2000

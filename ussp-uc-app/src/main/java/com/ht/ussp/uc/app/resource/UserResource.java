@@ -376,7 +376,7 @@ public class UserResource{
 			if (userMessageVo.getLoginId() != null) {
 				HtBoaInLogin htBoaInLogin = htBoaInLoginService.findByLoginId(userMessageVo.getLoginId());
 				if (htBoaInLogin != null && !htBoaInLogin.getUserId().equals(userMessageVo.getUserId())) {
-					return Result.buildFail("用户名已经存在或不可用", "用户名已经存在或不可用");
+					return Result.buildFail("登录Id已经存在或不可用", "登录Id已经存在或不可用");
 				} else if (htBoaInLogin != null && htBoaInLogin.getUserId().equals(userMessageVo.getUserId())) {
 					 
 				} else {
@@ -387,7 +387,10 @@ public class UserResource{
 
 			}
         	
-        	HtBoaInUser user = new HtBoaInUser();
+        	HtBoaInUser user = htBoaInUserService.findByUserId(userMessageVo.getUserId());
+        	if(user==null) {
+        		return Result.buildSuccess();
+        	}
         	user.setUserId(userMessageVo.getUserId());
             user.setEmail(userMessageVo.getEmail());
             user.setJobNumber(userMessageVo.getJobNumber());
@@ -398,8 +401,10 @@ public class UserResource{
             user.setRootOrgCode(userMessageVo.getRootOrgCode());
             user.setOrgPath(userMessageVo.getOrgPath());
             user.setUpdateOperator(loginUserId);
-            boolean isUpdate = htBoaInUserService.updateUserByUserId(user);
-            if (isUpdate) {
+            user.setLastModifiedDatetime(new Date());
+            HtBoaInUser u = htBoaInUserService.update(user);
+            //boolean isUpdate = htBoaInUserService.updateUserByUserId(user);
+            if (u !=null) {
                 return Result.buildSuccess();
             }
         }
@@ -410,6 +415,16 @@ public class UserResource{
     @GetMapping(value = "/getLoginUserInfo")
     public LoginInfoVo getLoginUserInfo(@RequestParam("userId") String userId,@RequestParam("app") String app) {
         return htBoaInUserService.queryUserInfo(userId,app);
+    }
+    
+    
+    @PostMapping("/getUserInfoByJobNumber")
+    public Result getUserInfoByJobNumber(@RequestParam("jobNumber") String jobNumber) {
+        if (jobNumber != null && !"".equals(jobNumber.trim())) {
+        	HtBoaInUser htBoaInUser = htBoaInUserService.findByJobNumber(jobNumber);
+        	return Result.buildSuccess(htBoaInUser);
+        }
+        return Result.buildFail();
     }
 
     @ApiOperation(value = "对内，获取用户信息")

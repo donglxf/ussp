@@ -67,7 +67,7 @@ public class OutSystemFilter extends ZuulFilter {
 		String app = request.getHeader("app");
 		String ieme=request.getHeader("ieme");
 		String uri = request.getRequestURI().toString();
-		log.info("----------------uri:"+request.getRequestURL());
+		log.info("----------------url:"+request.getRequestURL());
 		// 鉴权app不能为空
 		if (StringUtils.isEmpty(app)) {
 			// 不鉴权的URL直接路由
@@ -79,12 +79,12 @@ public class OutSystemFilter extends ZuulFilter {
 			try {
 				mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.APP_CANNOT_NULL));
 			} catch (IOException e) {
-				log.debug("write response result app cannot null:"+e.getMessage());
+				log.error("write response result app cannot null:"+e.getMessage());
 			}finally {
 				try {
 					ctx.getResponse().getWriter().close();
 				} catch (IOException e) {
-					log.debug("close io exception:"+e.getMessage());
+					log.error("close io exception:"+e.getMessage());
 				}
 			}
 			return null;
@@ -108,20 +108,21 @@ public class OutSystemFilter extends ZuulFilter {
 					try {
 						mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.TOKEN_AND_IEME_NOT_NULL));
 					} catch (Exception e) {
-						log.debug("write response result token and ieme not null:"+e.getMessage());
+						log.error("write response result token and ieme not null:"+e.getMessage());
 					}finally {
 						try {
 							ctx.getResponse().getWriter().close();
 						} catch (IOException e) {
-							log.debug("close io exception:"+e.getMessage());
+							log.error("close io exception:"+e.getMessage());
 						}
 					}
 					return null;
 				}
 				
 				//验证外部系统ACCESSTOKEN 
-				log.info("validate out system accesstoken:----------------"+tokenPayload);
+				log.debug("====validate out system token:"+tokenPayload);
 				Result result=UaaClient.validateOutUserJwt(tokenPayload);
+			
 				if ("0000".equals(result.getReturnCode())) {
 					String str = FastJsonUtil.objectToJson(result.getData());
 					ValidateOutJwtVo voj = FastJsonUtil.jsonToPojo(str, ValidateOutJwtVo.class);
@@ -133,16 +134,17 @@ public class OutSystemFilter extends ZuulFilter {
 						try {
 							mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.ORIGIN_VALID));
 						} catch (Exception e) {
-							log.debug("write response result origin valid:"+e.getMessage());
+							log.error("write response result origin valid:"+e.getMessage());
 						}finally {
 							try {
 								ctx.getResponse().getWriter().close();
 							} catch (IOException e) {
-								log.debug("close io exception:"+e.getMessage());
+								log.error("close io exception:"+e.getMessage());
 							}
 						}
 						return null;
 					}
+					log.debug("====validate out system success,the userId is:"+userId);
 					ctx.addZuulRequestHeader("userId", userId);
 					ctx.addZuulRequestHeader("ieme", iemeTemp);
 					ctx.setSendZuulResponse(true);
@@ -164,17 +166,17 @@ public class OutSystemFilter extends ZuulFilter {
 					try {
 						mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.TOKEN_IS_EXPIRED));
 					} catch (Exception e) {
-						log.debug("write response result token is expired:"+e.getMessage());
+						log.error("write response result token is expired:"+e.getMessage());
 					}finally {
 						try {
 							ctx.getResponse().getWriter().close();
 						} catch (IOException e) {
-							log.debug("close io exception:"+e.getMessage());
+							log.error("close io exception:"+e.getMessage());
 						}
 					} 
 					return null;
 				}
-			}else {
+				}else {
 				//不是外部系统执行下一过滤器
 				ctx.set("isNotOutSystem", true);
 			}

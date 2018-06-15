@@ -1,5 +1,6 @@
 package com.ht.ussp.ouc.app.resource;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.ussp.common.Constants;
@@ -19,10 +21,13 @@ import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.ouc.app.domain.HtBoaOutLogin;
+import com.ht.ussp.ouc.app.domain.HtBoaOutPwdHist;
 import com.ht.ussp.ouc.app.domain.HtBoaOutUser;
 import com.ht.ussp.ouc.app.service.HtBoaOutLoginService;
+import com.ht.ussp.ouc.app.service.HtBoaOutPwdHistService;
 import com.ht.ussp.ouc.app.service.HtBoaOutUserService;
 import com.ht.ussp.ouc.app.vo.PageVo;
+import com.ht.ussp.util.DateUtil;
 import com.ht.ussp.util.EncryptUtil;
 import com.ht.ussp.util.md5.Cryptography;
 
@@ -43,6 +48,9 @@ public class OutUserResource{
 	
 	@Autowired
 	HtBoaOutLoginService htBoaOutLoginService;
+	
+	@Autowired
+	HtBoaOutPwdHistService htBoaOutPwdHistService;
 
 	@ApiOperation(value = "外部用户注册", notes = "返回userId")
 	@ApiImplicitParams({ @ApiImplicitParam(name = "userName", paramType = "query",dataType = "String", required = true, value = "注册账号"),
@@ -145,13 +153,40 @@ public class OutUserResource{
 			htBoaOutLogin = htBoaOutLoginService.findByLoginId(userName);
 			if(htBoaOutLogin!=null) {
 				htBoaOutUser = htBoaOutUserService.findByUserId(htBoaOutLogin.getUserId());
+				if (htBoaOutUser == null) {
+					return Result.buildFail("9999", "找不到相关用户信息");
+				}
 			}
 		}else {
 			return Result.buildFail("9999","登录类型不存在【"+type+"】"); 
       	}
 		if (htBoaOutLogin != null) {
+			if(htBoaOutLogin.getFailedCount()>=5 && "2".equals(htBoaOutLogin.getStatus())) {
+				if(htBoaOutLogin.getBlockedDateTime()!=null) {
+					Date lockedTime = DateUtil.addHour2Date(24,htBoaOutLogin.getBlockedDateTime());
+					if(lockedTime.getTime()<=DateUtil.getNow().getTime()) { //如果锁定时间超过24小时则解锁
+						htBoaOutLogin.setFailedCount(0);
+						htBoaOutLogin.setBlockedDateTime(null);
+						htBoaOutLogin.setStatus("0");
+						htBoaOutLogin = htBoaOutLoginService.saveUserLogin(htBoaOutLogin);
+						if("2".equals(htBoaOutUser.getStatus())) {
+							htBoaOutUser.setStatus("0");
+							htBoaOutUserService.saveUser(htBoaOutUser);
+						}
+					}else {
+						if(!"2".equals(htBoaOutUser.getStatus())) { 
+							htBoaOutUser.setStatus("2");
+							htBoaOutUserService.saveUser(htBoaOutUser);
+						}
+						return Result.buildFail(SysStatus.PWD_LOCKING.getStatus(),SysStatus.PWD_LOCKING.getMsg());
+					}
+				}
+			}
 			//存量用户处理
     		if(htBoaOutUser!=null) {
+    			if(!"0".equals(htBoaOutUser.getStatus())) {
+    				return Result.buildFail(SysStatus.USER_NOT_FOUND.getStatus(),SysStatus.USER_NOT_FOUND.getMsg());
+    			}
     			if(StringUtils.isNotEmpty(htBoaOutUser.getUserType())) {
     				if("10".equals(htBoaOutUser.getUserType())) { //存量用户先验证原密码是否正确，然后转换为新的密码
     					try {
@@ -163,7 +198,14 @@ public class OutUserResource{
 									htBoaOutUser.setUserType("1");
 									htBoaOutUserService.saveUser(htBoaOutUser);
 								}else {
-									return Result.buildFail(SysStatus.PWD_INVALID.getStatus(),"密码输入不正确");
+									Integer failCount = htBoaOutLogin.getFailedCount()+1;
+									htBoaOutLogin.setFailedCount(failCount);
+									if(failCount>=5) {
+										htBoaOutLogin.setBlockedDateTime(new Date());
+										htBoaOutLogin.setStatus("2");
+									}
+									htBoaOutLogin = htBoaOutLoginService.saveUserLogin(htBoaOutLogin);
+									return Result.buildFail(SysStatus.PWD_INVALID.getStatus(),"密码输入不正确,错误次数="+failCount);
 								}
 							}
 						} catch (Exception e) {
@@ -174,14 +216,81 @@ public class OutUserResource{
     		}
 			//验证原密码是否正确
             if(!EncryptUtil.matches(password,htBoaOutLogin.getPassword())){
-            	return Result.buildFail(SysStatus.PWD_INVALID.getStatus(),"密码输入不正确");
+            	Integer failCount = htBoaOutLogin.getFailedCount()+1;
+				htBoaOutLogin.setFailedCount(failCount);
+				if(failCount>=5) {
+					htBoaOutLogin.setBlockedDateTime(new Date());
+					htBoaOutLogin.setStatus("2");
+				}
+				htBoaOutLogin = htBoaOutLoginService.saveUserLogin(htBoaOutLogin);
+				return Result.buildFail(SysStatus.PWD_INVALID.getStatus(),"密码输入不正确,错误次数="+failCount);
             }else {
+            	htBoaOutLogin.setFailedCount(0);
+            	htBoaOutLogin.setBlockedDateTime(null);
+				htBoaOutLogin = htBoaOutLoginService.saveUserLogin(htBoaOutLogin);
             	return Result.buildSuccess(htBoaOutLogin.getUserId());
             }
 		} else {
 			return Result.buildFail("9999", "找不到相关用户信息");
 		}
     }
+	
+	@PostMapping("/changeStatus")
+	public Result changeStatus(String userId,String status) {
+		if (userId != null && !"".equals(userId.trim())) {
+			if("0".equals(status)) {//恢复用户状态
+				HtBoaOutLogin u = htBoaOutLoginService.findByUserId(userId);
+				if(u!=null) {
+					u.setStatus("0");
+					u.setLastModifiedDatetime(new Date());
+					htBoaOutLoginService.saveUserLogin(u);
+				}
+			} 
+			HtBoaOutUser user = htBoaOutUserService.findByUserId(userId);
+			if(user!=null) {
+				user.setStatus(status);
+				htBoaOutUserService.saveUser(user);
+			}
+		}
+		return Result.buildSuccess();
+	}
+	
+	@ApiOperation(value = "重置密码")
+	@PostMapping(value = "/restPwd")
+	@ResponseBody
+	public Result restPwd(String userId) {
+		String newPassWord = "123456";// EncryptUtil.genRandomNum(6).toUpperCase();
+		String newPassWordEncrypt = EncryptUtil.passwordEncrypt(newPassWord);
+		if (userId != null && userId != "" && userId.length() > 0) {
+			HtBoaOutLogin u = htBoaOutLoginService.findByUserId(userId);
+			if(u!=null) {
+				u.setPassword(newPassWordEncrypt);
+				htBoaOutLoginService.saveUserLogin(u);
+			}
+
+			// 记录历史密码
+			HtBoaOutPwdHist htBoaOutPwdHist = new HtBoaOutPwdHist();
+			htBoaOutPwdHist.setUserId(u.getUserId());
+			htBoaOutPwdHist.setPassword(newPassWordEncrypt);
+			htBoaOutPwdHist.setPwdCreTime(new Timestamp(System.currentTimeMillis()));
+			htBoaOutPwdHist.setLastModifiedDatetime(new Date());
+			htBoaOutPwdHistService.save(htBoaOutPwdHist);
+		}
+		return Result.buildSuccess();
+	}
+
+	@PostMapping("/deleteTrunc")
+	public Result delTrunc(String userId) {
+		if (userId != null && !"".equals(userId.trim())) {
+			HtBoaOutLogin u = htBoaOutLoginService.findByUserId(userId);
+			if(u!=null)
+			htBoaOutLoginService.delete(u);
+			HtBoaOutUser user = htBoaOutUserService.findByUserId(userId);
+			if(user!=null)
+			htBoaOutUserService.delete(user);
+		}
+		return Result.buildFail();
+	}
 	
 	@ApiOperation(value = "外部用户信息分页查询")
 	@PostMapping(value = "/loadListByPage", produces = { "application/json" })
@@ -194,5 +303,25 @@ public class OutUserResource{
     public Result getCurUserInfo(@RequestHeader("userId") String userId) {
 		HtBoaOutUser user = htBoaOutUserService.findByUserId(userId);
 		return Result.buildSuccess(user);
+	}
+	
+	@ApiOperation(value = "修改用户电话号码")
+	@PostMapping(value = "/changeMobile", produces = { "application/json" })
+	public Result changeMobile(String userId,String newMobile) {
+		HtBoaOutUser user = htBoaOutUserService.findByUserId(userId);
+		if(user!=null) {
+			if(StringUtils.isNotEmpty(newMobile)) {
+				HtBoaOutUser users = htBoaOutUserService.findByMobile(newMobile);
+				if(users!=null) {
+					if(!user.getUserId().equals(users.getUserId())) {
+						return Result.buildFail("9999", "电话号码已经被使用");
+					}
+				}
+				user.setMobile(newMobile);
+				user.setUserName(newMobile);
+				htBoaOutUserService.saveUser(user);
+			}
+		}
+		return Result.buildSuccess();
 	}
 }

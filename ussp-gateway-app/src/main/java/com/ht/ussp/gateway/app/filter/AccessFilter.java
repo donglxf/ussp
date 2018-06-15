@@ -86,12 +86,12 @@ public class AccessFilter extends ZuulFilter {
             try {
                 mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_NULL));
             } catch (IOException e) {
-                log.debug("write response result token is null:" + e.getMessage());
+                log.error("write response result token is null:" + e.getMessage());
             } finally {
                 try {
                     ctx.getResponse().getWriter().close();
                 } catch (IOException e) {
-                    log.debug("close io exception:" + e.getMessage());
+                    log.error("close io exception:" + e.getMessage());
                 }
             }
             return null;
@@ -109,12 +109,12 @@ public class AccessFilter extends ZuulFilter {
                         try {
                             mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.APP_CANNOT_NULL));
                         } catch (IOException e) {
-                            log.debug("write response result app cannot null:" + e.getMessage());
+                            log.error("write response result app cannot null:" + e.getMessage());
                         } finally {
                             try {
                                 ctx.getResponse().getWriter().close();
                             } catch (IOException e) {
-                                log.debug("close io exception:" + e.getMessage());
+                                log.error("close io exception:" + e.getMessage());
                             }
                         }
                         return null;
@@ -129,12 +129,12 @@ public class AccessFilter extends ZuulFilter {
                         try {
                             mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_VALID));
                         } catch (IOException e) {
-                            log.debug("write response result token is valid:" + e.getMessage());
+                            log.error("write response result token is valid:" + e.getMessage());
                         } finally {
                             try {
                                 ctx.getResponse().getWriter().close();
                             } catch (IOException e) {
-                                log.debug("close io exception:" + e.getMessage());
+                                log.error("close io exception:" + e.getMessage());
                             }
                         }
                         return null;
@@ -143,12 +143,12 @@ public class AccessFilter extends ZuulFilter {
                         try {
                             mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_EXPIRED));
                         } catch (IOException e) {
-                            log.debug("write response result token is expired:" + e.getMessage());
+                            log.warn("write response result token is expired:" + e.getMessage());
                         } finally {
                             try {
                                 ctx.getResponse().getWriter().close();
                             } catch (IOException e) {
-                                log.debug("close io exception:" + e.getMessage());
+                                log.warn("close io exception:" + e.getMessage());
                             }
                         }
                         return null;
@@ -161,7 +161,7 @@ public class AccessFilter extends ZuulFilter {
         }
         // 如果请求的URL与htIgnoreApp不匹配，验证内部系统JWT
         try {
-            log.info("----------validate JWT START------------" + tokenPayload);
+            log.info("----------validate JWT START------------");
             ResponseModal rm = UaaClient.validateJwt(tokenPayload);
             if ("0000".equals(rm.getStatus_code())) {
                 String str = FastJsonUtil.objectToJson(rm.getResult());
@@ -175,12 +175,12 @@ public class AccessFilter extends ZuulFilter {
                 try {
                     mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_VALID));
                 } catch (IOException e) {
-                    log.debug("write response result token is valid:" + e.getMessage());
+                    log.error("write response result token is valid:" + e.getMessage());
                 } finally {
                     try {
                         ctx.getResponse().getWriter().close();
                     } catch (IOException e) {
-                        log.debug("close io exception:" + e.getMessage());
+                        log.error("close io exception:" + e.getMessage());
                     }
                 }
                 return null;
@@ -189,12 +189,12 @@ public class AccessFilter extends ZuulFilter {
                 try {
                     mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_EXPIRED));
                 } catch (IOException e) {
-                    log.debug("write response result token is expired:" + e.getMessage());
+                    log.error("write response result token is expired:" + e.getMessage());
                 } finally {
                     try {
                         ctx.getResponse().getWriter().close();
                     } catch (IOException e) {
-                        log.debug("close io exception:" + e.getMessage());
+                        log.error("close io exception:" + e.getMessage());
                     }
                 }
                 return null;
@@ -204,12 +204,12 @@ public class AccessFilter extends ZuulFilter {
             try {
                 mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.FAIL));
             } catch (IOException e) {
-                log.debug("write response result fail:" + e.getMessage());
+                log.error("write response result fail:" + e.getMessage());
             } finally {
                 try {
                     ctx.getResponse().getWriter().close();
                 } catch (IOException e) {
-                    log.debug("close io exception:" + e.getMessage());
+                    log.error("close io exception:" + e.getMessage());
                 }
             }
         }
@@ -228,12 +228,12 @@ public class AccessFilter extends ZuulFilter {
             try {
                 mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.HAS_NO_ACCESS));
             } catch (IOException e) {
-                log.debug("write response result has no access:" + e.getMessage());
+                log.error("write response result has no access:" + e.getMessage());
             } finally {
                 try {
                     ctx.getResponse().getWriter().close();
                 } catch (IOException e) {
-                    log.debug("close io exception:" + e.getMessage());
+                    log.error("close io exception:" + e.getMessage());
                 }
             }
             return null;

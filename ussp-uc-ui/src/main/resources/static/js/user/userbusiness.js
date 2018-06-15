@@ -19,10 +19,10 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
         , editDialog = 0 //修改弹出框的ID
         , resetPwdDialog = 0
         , selectBottomTabIndex = 0//当前选中的tab标签页
-        , userOrgTree //组织机构树控件
+        , userBusiOrgTree //组织机构树控件
         , active = {
         add: function () { //弹出用户新增弹出框
-            var nodes = userOrgTree.getSelectedNodes();
+            var nodes = userBusiOrgTree.getSelectedNodes();
             if (nodes.length == 0) {
                 layer.alert("请先选择一个组织机构。");
                 return false;
@@ -33,7 +33,7 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
                 area: ['400px', '400px'],
                 shadeClose: true,
                 title: "新增用户",
-                content: $("#user_add_data_div").html(),
+                content: $("#user_busi_add_data_div").html(),
                 btn: ['保存', '取消'],
                 yes: function (index, layero) {
                     var $submitBtn = $("button[lay-filter=filter_add_data_form]", layero);
@@ -49,7 +49,7 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
                 success: function (layero, index) {
                     //填充选中的组织机构
                     $("input[name=orgName]", layero).val(nodes[0]["orgNameCn"]);
-                    $("input[name=orgCode]", layero).val(nodes[0]["orgCode"]);
+                    $("input[name=businessOrgCode]", layero).val(nodes[0]["businessOrgCode"]);
                     $("input[name=orgPath]", layero).val(nodes[0]["orgPath"]);
                     $("input[name=rootOrgCode]", layero).val(nodes[0]["rootOrgCode"]);
                     form.render(null, "filter_add_data_form");
@@ -62,7 +62,7 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
                             success: function (result) {
                                 layer.close(index);
                                 if (result["returnCode"] == '0000') {
-                                    refreshTable();
+                                    refreshUserBusiTable();
                                     layer.alert("用户新增成功。");
                                 }
                             },
@@ -78,11 +78,11 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
         },
         search: function () {
             //执行重载
-            refreshTable($("#user_search_keyword").val());
+            refreshUserBusiTable($("#user_busi_search_keyword").val());
         },
          
         batchResetPwd: function () {
-        	 var nodes = userOrgTree.getSelectedNodes();
+        	 var nodes = userBusiOrgTree.getSelectedNodes();
              if (nodes.length == 0) {
                  layer.alert("请先选择一个组织机构。");
                  return false;
@@ -130,7 +130,7 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
                         , elem: $('#batch_resetpwd_dalog_datatable', layero)
                         , url: config.basePath + 'user/queryUserIsNullPwd'
                         ,where: {
-                        	orgCode: nodes[0]["orgCode"],
+                        	businessOrgCode: nodes[0]["businessOrgCode"],
                         }
                         , page: true
                         , height: "471"
@@ -161,7 +161,8 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
             });
         },
     };
-    
+    var orgTreeUrl = config.basePath +"orgbusiness/tree"; //机构列表
+    var loadListByPageUrl = config.basePath + 'userbusiness/loadListByPage'; //机构列表
   //自定义验证规则
 	form.verify({
 		//校验工号是否已经存在
@@ -307,24 +308,24 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
 	  	        }
 	  	   });
 	  }
-    var refreshTable = function (keyword) {
+    var refreshUserBusiTable = function (keyword) {
         if (!keyword) {
             keyword = null;
         }
-        var selectNodes = userOrgTree.getSelectedNodes();
+        var selectNodes = userBusiOrgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
-            table.reload('user_datatable', {
+            table.reload('user_busi_datatable', {
                 height: 'full-673',
                 page: {
                     curr: 1 //重新从第 1 页开始
                 }
                 , where: {
                     keyWord: keyword,
-                    orgCode: selectNodes[0]["orgCode"]
+                    orgCode: selectNodes[0]["businessOrgCode"]
                 }
             });
         }else{
-        	table.reload('user_datatable', {
+        	table.reload('user_busi_datatable', {
                 height: 'full-673',
                 page: {
                     curr: 1 //重新从第 1 页开始
@@ -339,7 +340,7 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
         if (!keyword) {
             keyword = null;
         }
-        var selectNodes = userOrgTree.getSelectedNodes();
+        var selectNodes = userBusiOrgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
         	 table.reload('batch_resetpwd_dalog_datatable', {
                  page: {
@@ -347,22 +348,22 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
                  }
                  , where: {
                      keyWord: keyword,
-                     orgCode: selectNodes[0]["orgCode"]
+                     businessOrgCode: selectNodes[0]["businessOrgCode"]
                  }
              });
         }
        
     };
     //渲染组织机构树
-    userOrgTree = $.fn.zTree.init($('#user_org_ztree_left'), {
+    userBusiOrgTree = $.fn.zTree.init($('#user_busi_org_ztree_left'), {
             async: {
                 enable: true,
-                url: config.basePath + "org/tree",
+                url: orgTreeUrl,
                 dataFilter: function (treeId, parentNode, childNodes) {
                     if (!childNodes) return null;
                     for (var i = 0, l = childNodes.length; i < l; i++) {
                     	//  childNodes[i].open = true;
-                        childNodes[i].name = childNodes[i]["orgNameCn"].replace(/\.n/g, '.');
+                    	childNodes[i].name = childNodes[i]["businessOrgName"].replace(/\.n/g, '.');
                     }
                     return childNodes;
                 }
@@ -381,19 +382,19 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
             , callback: {
                 onClick: function (event, treeId, treeNode) {
                     //执行重载
-                    refreshTable();
+                    refreshUserBusiTable();
                 },
                 onAsyncSuccess: function (event, treeId, treeNode) {
-                    var node = userOrgTree.getNodeByParam("level ", "0");
+                    var node = userBusiOrgTree.getNodeByParam("level ", "0");
                     if (node) {
-                        userOrgTree.selectNode(node);
+                        userBusiOrgTree.selectNode(node);
                     }
                 }
             },
             data: {
                 simpleData: {
                     enable: true
-                    , idKey: "orgCode"
+                    , idKey: "businessOrgCode"
                     , pIdKey: "parentOrgCode"
                 }
             }
@@ -401,12 +402,12 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
     );
     //渲染用户数据表格
     table.render({
-        id: 'user_datatable'
-        , elem: '#user_datatable'
-        , url: config.basePath + 'user/loadListByPage'
+        id: 'user_busi_datatable'
+        , elem: '#user_busi_datatable'
+        , url: loadListByPageUrl
         // , where: {
         //     query: {
-        //         orgCode: "DEV1"
+        //         businessOrgCode: "DEV1"
         //     }
         // }5
         , limit : 5
@@ -423,14 +424,14 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
             , {field: 'email',   title: '邮箱'}
             //, {field: 'idNo', minWidth: 100, title: '身份证',event: 'rowClick'}
             , {field: 'orgName',   title: '所属机构',event: 'rowClick'}
-            , {field: 'status', width: 60, title: '状态', templet: "#user_status_laytpl",event: 'rowClick'}
+            , {field: 'status', width: 60, title: '状态', templet: "#user_busi_status_laytpl",event: 'rowClick'}
            // , {field: 'updateOperator', width: 100, title: '更新人'}
            // , {field: 'lastModifiedDatetime', width: 150, title: '更新时间',event: 'rowClick'}
-            , {fixed: 'right', width: 230, title: '操作', align: 'center', toolbar: '#user_datatable_bar'}
+            , {fixed: 'right', width: 230, title: '操作', align: 'center', toolbar: '#user_busi_datatable_bar'}
         ]]
     });
     //监听操作栏
-    table.on('tool(filter_user_datatable)', function (obj) {
+    table.on('tool(filter_user_busi_datatable)', function (obj) {
             var data = obj.data;
             if (obj.event === 'detail') {
                 $.post(config.basePath + "user/view?userId=" + data.userId,  null, function (result) {
@@ -440,7 +441,7 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
                             area: ['720px', '430px'],
                             shadeClose: true,
                             title: "用户详情",
-                            content: $("#user_view_data_div").html(),
+                            content: $("#user_busi_view_data_div").html(),
                             btn: ['取消'],
                             btn2: function () {
                                 layer.closeAll('tips');
@@ -464,7 +465,7 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
                 layer.confirm('是否删除用户' + data.userName + "？", function (index) {
                     $.post(config.basePath + "user/delete?userId=" + data.userId, null, function (result) {
                         if (result["returnCode"] == "0000") {
-                            refreshTable();
+                            refreshUserBusiTable();
                             layer.close(index);
                             layer.msg("删除用户成功。");
                         } else {
@@ -481,10 +482,10 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
                             area: ['400px', '450px'],
                             shadeClose: false,
                             title: "修改用户",
-                            content: $("#user_modify_data_div").html(),
+                            content: $("#user_busi_modify_data_div").html(),
                             btn: ['保存', '取消'],
                             yes: function (index, layero) {
-                                var $submitBtn = $("button[lay-filter=user_filter_modify_data_form]", layero);
+                                var $submitBtn = $("button[lay-filter=user_busi_filter_modify_data_form]", layero);
                                 if ($submitBtn) {
                                     $submitBtn.click();
                                 } else {
@@ -518,8 +519,8 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
                                     })
                                 });
                                 
-                                form.render(null, "user_filter_modify_data_form");
-                                form.on('submit(user_filter_modify_data_form)', function (data) {
+                                form.render(null, "user_busi_filter_modify_data_form");
+                                form.on('submit(user_busi_filter_modify_data_form)', function (data) {
                                     $.ajax({
                                         type: "POST",
                                         url: config.basePath + "user/update",
@@ -528,7 +529,7 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
                                         success: function (result2) {
                                             if (result2["returnCode"] == '0000') {
                                             	layer.close(index);
-                                                refreshTable();
+                                                refreshUserBusiTable();
                                                 layer.alert("用户修改成功。");
                                             }else{
                                                  layer.msg(result2["msg"]);
@@ -565,7 +566,7 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
                         if (result["returnCode"] == "0000") {
                           layer.close(index);
                        	  layer.msg("恢复用户状态成功");
-                       	  refreshTable();
+                       	  refreshUserBusiTable();
                         } else {
                             layer.msg(result.codeDesc);
                         }
@@ -594,7 +595,7 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
     );
     
     //菜单和模块tab页切换事件
-    element.on('tab(user_bottom_tab)', function (data) {
+    element.on('tab(user_busi_bottom_tab)', function (data) {
     	selectBottomTabIndex = data.index;
         switch (data.index) {
             case 0:
@@ -609,54 +610,54 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
         }
     });
     
-    var $keywordInput = $("#user_search_keyword");
+    var $keywordInput = $("#user_busi_search_keyword");
     $keywordInput.keydown(function (e) {
         if (e.keyCode == 13) {
             var keyWord = $keywordInput.val();
-            refreshTable(keyWord);
+            refreshUserBusiTable(keyWord);
         }
     });
     
-    table.on('renderComplete(filter_user_datatable)', function (obj) {
-        ht_auth.render("user_auth");
+    table.on('renderComplete(filter_user_busi_datatable)', function (obj) {
+        ht_auth.render("user_busi_auth");
     });
     //监听工具栏
-    $('#user_table_tools .layui-btn').on('click', function () {
+    $('#user_busi_table_tools .layui-btn').on('click', function () {
         var type = $(this).data('type');
         active[type] ? active[type].call(this) : '';
     });
     //刷新树的数据
-   /* $('#user_btn_refresh_tree').on('click', function (e) {
-        if (userOrgTree) {
-            userOrgTree.reAsyncChildNodes(null, "refresh");
+   /* $('#user_busi_btn_refresh_tree').on('click', function (e) {
+        if (userBusiOrgTree) {
+            userBusiOrgTree.reAsyncChildNodes(null, "refresh");
         }
     });*/
     
-    $('#user_btn_tree .btn').on('click', function () {
+    $('#user_busi_btn_tree .btn').on('click', function () {
         var type = $(this).data('type');
         switch (type) {
             case "refresh":
-                if (userOrgTree) {
-                	userOrgTree.reAsyncChildNodes(null, "refresh");
+                if (userBusiOrgTree) {
+                	userBusiOrgTree.reAsyncChildNodes(null, "refresh");
                 }
                 break;
             case "expandAll":
-                if (userOrgTree) {
-                	userOrgTree.expandAll(true);
+                if (userBusiOrgTree) {
+                	userBusiOrgTree.expandAll(true);
                 }
                 break;
             case "collapseAll":
-                if (userOrgTree) {
-                	userOrgTree.expandAll(false);
+                if (userBusiOrgTree) {
+                	userBusiOrgTree.expandAll(false);
                 }
                 break;
         }
     });
     var nodeList = [];
     //搜索树的数据
-    $('#user_search_tree_org').bind('input', function (e) {
-        if (userOrgTree && $(this).val() != "") {
-            nodeList = userOrgTree.getNodesByParamFuzzy("name", $(this).val());
+    $('#user_busi_search_tree_org').bind('input', function (e) {
+        if (userBusiOrgTree && $(this).val() != "") {
+            nodeList = userBusiOrgTree.getNodesByParamFuzzy("name", $(this).val());
             updateNodes(true);
         } else {
             updateNodes(false);
@@ -667,12 +668,11 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
     function updateNodes(highlight) {
         for (var i = 0, l = nodeList.length; i < l; i++) {
             nodeList[i].highlight = highlight;
-            userOrgTree.updateNode(nodeList[i]);
+            userBusiOrgTree.updateNode(nodeList[i]);
             if (highlight) {
-                userOrgTree.expandNode(userOrgTree.getNodeByParam("orgCode", nodeList[i]["parentOrgCode"]), true, false, null, null);
+                userBusiOrgTree.expandNode(userBusiOrgTree.getNodeByParam("businessOrgCode", nodeList[i]["parentOrgCode"]), true, false, null, null);
             }
         }
     }
-
-    ht_auth.render("user_auth");
+    ht_auth.render("user_busi_auth");
 })

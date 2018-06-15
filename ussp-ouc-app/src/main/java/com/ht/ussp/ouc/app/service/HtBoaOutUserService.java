@@ -60,4 +60,8 @@ public class HtBoaOutUserService {
 	public HtBoaOutUser findByUserId(String userId) {
 		return htBoaOutUserRepository.findByUserId(userId);
 	}
+
+	public void delete(HtBoaOutUser user) {
+		htBoaOutUserRepository.delete(user);
+	}
 }

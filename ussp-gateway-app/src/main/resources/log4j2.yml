@@ -1,6 +1,7 @@
 #8个级别，按照从低到高为：ALL < TRACE < DEBUG < INFO < WARN < ERROR < FATAL < OFF
 Configuration:  
-  status: DEBUG
+  status: DEBUG   #打印级别
+  monitorinterval: 10 #监测时间间隔，单位秒
   Properties: # 定义全局变量
     Property: # 缺省配置（用于开发环境）。其他环境需要在VM参数中指定，如下：  
       #测试：-Dlog.level.console=warn
@@ -23,25 +24,30 @@ Configuration:
       target: SYSTEM_OUT
       PatternLayout:
         pattern: ${CONAOLE_LOG_PATTERN}
-    RollingFile: # 输出到文件，超过30MB分割
-     - name: ROLLING_FILE
-       fileName: ${LOG_HOME}/${PROJECT_NAME}.log
-       filePattern: ${LOG_HOME}/${PROJECT_NAME}_%d{yyyy-MM-dd}.log
-       PatternLayout: 
-         pattern: ${FILE_LOG_PATTERN}
-       Policies: 
-         TimeBasedTriggeringPolicy: 
-           interval: "1"
-           modulate: true
-  Loggers:
-    Root:  
+    RollingFile: # 输出到文件，超过100MB归档，定义超过指定大小自动删除旧日志，创建新日志
+      - name: ROLLING_FILE
+        immediateFlush: true
+        bufferedIO: true
+        bufferSize: 2097152
+        fileName: ${LOG_HOME}/${PROJECT_NAME}.log
+        filePattern: ${LOG_HOME}/${PROJECT_NAME}_%d{yyyy-MM-dd}.log  
+        PatternLayout:
+          pattern: ${FILE_LOG_PATTERN}
+        Policies:  #滚动日志的策略
+          TimeBasedTriggeringPolicy:  #按天分类，基于时间
+            interval: 1
+            modulate: true
+          SizeBasedTriggeringPolicy:  #基于大小
+            size: "100 MB"  
+  Loggers: 
+    Root:  #指定项目的根日志
       level: info
       AppenderRef:
         - ref: CONSOLE
         - ref: ROLLING_FILE #开发环境无需产生日志文件
-    Logger: # 为com.ht包配置特殊的Log级别，方便调试
-      - name: com.ht.ussp.gateway.app
-        additivity: false
+    Logger: # 单独设置某些包的输出级别
+      - name: com.ht.ussp.gateway.app.filter
+        additivity: false #去除重复的Log
         level: DEBUG
         AppenderRef:
           - ref: CONSOLE

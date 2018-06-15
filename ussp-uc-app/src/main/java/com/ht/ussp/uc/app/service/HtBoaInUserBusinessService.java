@@ -21,26 +21,23 @@ import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInBmUser;
+import com.ht.ussp.uc.app.domain.HtBoaInBusinessOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInContrast;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
-import com.ht.ussp.uc.app.domain.HtBoaInOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
-import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
 import com.ht.ussp.uc.app.domain.HtBoaInUserExt;
+import com.ht.ussp.uc.app.model.BoaInOrgInfo;
 import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
 import com.ht.ussp.uc.app.repository.HtBoaInBmUserRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInContrastRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInLoginRepository;
-import com.ht.ussp.uc.app.repository.HtBoaInOrgRepository;
-import com.ht.ussp.uc.app.repository.HtBoaInUserAppRepository;
+import com.ht.ussp.uc.app.repository.HtBoaInOrgBusinessRepository;
+import com.ht.ussp.uc.app.repository.HtBoaInUserBusinessRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInUserExtRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInUserRepository;
 import com.ht.ussp.uc.app.vo.BmUserVo;
-import com.ht.ussp.uc.app.vo.LoginInfoVo;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
-import com.ht.ussp.util.BeanUtils;
 import com.ht.ussp.util.EncryptUtil;
-import com.ht.ussp.util.LogicUtil;
 
 /**
  * @author wim qiuwenwu@hongte.info
@@ -49,19 +46,21 @@ import com.ht.ussp.util.LogicUtil;
  * @date 2018年1月8日 下午9:47:25
  */
 @Service
-public class HtBoaInUserService {
+public class HtBoaInUserBusinessService {
 	@Autowired
     private HtBoaInUserRepository htBoaInUserRepository;
+	@Autowired
+    private HtBoaInUserBusinessRepository htBoaInUserBusinessRepository;
+	@Autowired
+    private HtBoaInOrgBusinessService htBoaInOrgBusinessService;
 	@Autowired
     private HtBoaInUserExtRepository htBoaInUserExtRepository;
     @Autowired
     private HtBoaInLoginRepository htBoaInLoginRepository;
     @Autowired
-    private HtBoaInOrgRepository htBoaInOrgRepository;
+    private HtBoaInOrgBusinessRepository htBoaInOrgBusinessRepository;
     @Autowired
     private HtBoaInContrastRepository htBoaInContrastRepository;
-    @Autowired
-    private HtBoaInUserAppRepository htBoaInUserAppRepository;
     @Autowired
     private HtBoaInBmUserRepository htBoaInBmUserRepository;
     @Autowired
@@ -74,73 +73,18 @@ public class HtBoaInUserService {
      * @Title: findByUserName
      * @Description: 通过userId查询用户信息
      */
-    public HtBoaInUser findByUserId(String userId) {
-        return htBoaInUserRepository.findByUserId(userId);
+    public UserMessageVo getUserBusiByUserId(String userId) {
+        return htBoaInUserBusinessRepository.getUserBusiByUserId(userId);
     }
 
     /**
-     * 通过userId email Mobile 工号登录
-     * @param userId
-     * @return
+     * @return HtBoaInUser
+     * @throws
+     * @Title: findByUserName
+     * @Description: 通过userId查询用户信息
      */
-    public List<HtBoaInUser> findByUserIdOrEmailOrMobileOrJobNumber(String userId,String email,String mobile,String jboNumber){
-        return htBoaInUserRepository.findByUserIdOrEmailOrMobileOrJobNumber(userId, email, mobile, jboNumber);
-    }
-    
-    public LoginInfoVo queryUserInfo(String userId,String app) {
-        LoginInfoVo loginInfoVo = new LoginInfoVo();
-        UserMessageVo userMessageVo = htBoaInUserRepository.queryUserByUserId(userId);
-        if (LogicUtil.isNull(userMessageVo)) {
-            return null;
-        }
-        List<HtBoaInOrg> orgList = htBoaInOrgRepository.findByOrgCode(userMessageVo.getOrgCode());
-        if (orgList != null && !orgList.isEmpty()) {
-            userMessageVo.setOrgName(orgList.get(0).getOrgNameCn());
-        }
-        BeanUtils.deepCopy(userMessageVo, loginInfoVo);
-        //获取用户关联的信贷信息 
-        if(loginInfoVo!=null) {
-        	
-        	List<HtBoaInContrast> htBoaInContrastOrgList = htBoaInContrastRepository.findByUcBusinessIdAndType(loginInfoVo.getOrgCode(),"10");
-        	if(htBoaInContrastOrgList!=null&&!htBoaInContrastOrgList.isEmpty()) {
-        		loginInfoVo.setBmOrgCode(htBoaInContrastOrgList.get(0).getBmBusinessId());
-        		loginInfoVo.setDdOrgCode(htBoaInContrastOrgList.get(0).getDdBusinessId());
-        	}
-        	List<HtBoaInContrast> htBoaInContrastList = htBoaInContrastRepository.findByUcBusinessIdAndType(loginInfoVo.getUserId(),"20");
-        	if(htBoaInContrastList!=null&&!htBoaInContrastList.isEmpty()) {
-        		loginInfoVo.setBmUserId(htBoaInContrastList.get(0).getBmBusinessId());
-        		loginInfoVo.setDdUserId(htBoaInContrastList.get(0).getDdBusinessId());
-        		if(StringUtils.isEmpty(loginInfoVo.getBmOrgCode())&&StringUtils.isNoneEmpty(htBoaInContrastList.get(0).getBmBusinessId())) {
-        			List<HtBoaInBmUser> listHtBoaInBmUser = htBoaInBmUserRepository.findByUserId(htBoaInContrastList.get(0).getBmBusinessId());
-    				if(listHtBoaInBmUser!=null && !listHtBoaInBmUser.isEmpty()) {
-    					loginInfoVo.setBmOrgCode(listHtBoaInBmUser.get(0).getOrgCode());
-    				}
-        		}
-        	}else {
-        		List<HtBoaInBmUser> listHtBoaInBmUser = htBoaInBmUserRepository.findByMobile(userMessageVo.getMobile());
-				if(listHtBoaInBmUser!=null && !listHtBoaInBmUser.isEmpty()) {
-					if(loginInfoVo!=null) {
-						loginInfoVo.setBmOrgCode(listHtBoaInBmUser.get(0).getOrgCode());
-						loginInfoVo.setBmUserId(listHtBoaInBmUser.get(0).getUserId());
-					}
-				}
-        	}
-        	
-        	//获取用户是否是系统管理员
-        	if(StringUtils.isNotEmpty(app)) {
-        		HtBoaInUserApp htBoaInUserApp = null;
-        		List<HtBoaInUserApp> userAppList = htBoaInUserAppRepository.findByUserIdAndApp(userId, app);
-        		if(userAppList!=null&&!userAppList.isEmpty()) {
-        			htBoaInUserApp = userAppList.get(0);
-        		}
-        		if(htBoaInUserApp!=null) {
-        			loginInfoVo.setController(htBoaInUserApp.getController());
-        		}else {
-        			loginInfoVo.setController("");
-        		}
-        	}
-        }
-        return loginInfoVo;
+    public HtBoaInUser findByUserId(String userId) {
+        return htBoaInUserRepository.findByUserId(userId);
     }
 
     /**
@@ -158,59 +102,51 @@ public class HtBoaInUserService {
         Page<UserMessageVo> pageData = null;
         Page<UserMessageVo> pageDataAll = null;
         List<UserMessageVo> listUserMessageVo = new ArrayList<UserMessageVo>();
-        List<HtBoaInOrg> orgList = null;
+        List<HtBoaInBusinessOrg> orgList = null;
         if(StringUtils.isEmpty(orgCode)&&StringUtils.isNotEmpty(keyWord)) { //查全局
-        	orgList = htBoaInOrgRepository.findAll();
-        	pageDataAll = htBoaInUserRepository.queryUserPageAll( keyWord, pageRequest);
+        	orgList = htBoaInOrgBusinessRepository.findAll();
+        	pageDataAll = htBoaInUserBusinessRepository.queryUserPageAll( keyWord, pageRequest);
         }
         if(StringUtils.isNotEmpty(orgCode)&&StringUtils.isNotEmpty(keyWord)) {
-        	if("D01".equals(orgCode)) {//顶级机构查全局
-        		orgList = htBoaInOrgRepository.findAll();
-        		pageDataAll = htBoaInUserRepository.queryUserPageAll( keyWord, pageRequest);
+        	List<HtBoaInBusinessOrg> listTopHtBoaInBusinessOrg = htBoaInOrgBusinessRepository.findByBusinessOrgCode(orgCode);
+        	HtBoaInBusinessOrg topOrg =null;
+        	boolean isTop = false;
+        	if(listTopHtBoaInBusinessOrg!=null&&!listTopHtBoaInBusinessOrg.isEmpty()) {
+        		topOrg = listTopHtBoaInBusinessOrg.get(0);
+        		if(topOrg!=null) {
+        			if(topOrg.getBusinessOrgCode().equals(topOrg.getParentOrgCode())||StringUtils.isEmpty(topOrg.getParentOrgCode())) {//是顶级机构
+        				isTop = true;
+        			}
+        		}
+        	}
+        	if(isTop) {//顶级机构查全局
+        		orgList = htBoaInOrgBusinessRepository.findAll();
+        		pageDataAll = htBoaInUserBusinessRepository.queryUserPageAll( keyWord, pageRequest);
         	}else {//按条件查询
-        		pageData = htBoaInUserRepository.queryUserPage(orgCode, keyWord, pageRequest);
+        		pageData = htBoaInUserBusinessRepository.queryUserPage(orgCode, keyWord, pageRequest);
         	}
         }
         if(StringUtils.isNotEmpty(orgCode)&&StringUtils.isEmpty(keyWord)) {//按条件查询
-        	pageData = htBoaInUserRepository.queryUserPage(orgCode, keyWord, pageRequest);
+        	pageData = htBoaInUserBusinessRepository.queryUserPage(orgCode, keyWord, pageRequest);
         }
-//        Page<HtBoaInUser> pageData = null;
-//        if (query != null && query.size() > 0 && query.get("orgCode") != null) {
-//            if (!StringUtil.isEmpty(keyWord)) {
-//                Specification<HtBoaInUser> specification = (root, query1, cb) -> {
-//                    Predicate p1 = cb.like(root.get("jobNumber").as(String.class), "%" + keyWord + "%");
-//                    Predicate p2 = cb.like(root.get("userName").as(String.class), "%" + keyWord + "%");
-//                    Predicate p3 = cb.like(root.get("mobile").as(String.class), "%" + keyWord + "%");
-//                    Predicate p4 = cb.equal(root.get("orgCode").as(String.class), query.get("orgCode"));
-////                    Join<HtBoaInUser, HtBoaInLogin> join = root.join("htBoaInLogin", JoinType.LEFT);
-////                    Predicate p5 = cb.equal(join.get("userId").as(String.class), root.get("userId").as(String.class));
-//                    //把Predicate应用到CriteriaQuery中去,因为还可以给CriteriaQuery添加其他的功能，比如排序、分组啥的
-//                    query1.where(cb.and(cb.or(p1, p2, p3), p4));
-//                    return query1.getRestriction();
-//                };
-//                pageData = htBoaInUserRepository.findAll(specification, pageRequest);
-//            } else {//高级查询
-//                //创建查询条件数据对象
-//                HtBoaInUser customer = DtoUtil.mapToEntity(query, new HtBoaInUser());
-//                //创建匹配器，即如何使用查询条件
-//                ExampleMatcher matcher = ExampleMatcher.matching() //构建对象
-//                        // 忽略 id 和 createTime 字段。
-//                        .withIgnorePaths("id", "createdDatetime", "orgPath", "jpaVersion")
-//                        // 忽略为空字段。
-//                        .withIgnoreNullValues();
-//                //创建实例
-//                Example<HtBoaInUser> ex = Example.of(customer, matcher);
-//                pageData = htBoaInUserRepository.findAll(ex, pageRequest);
-//            }
-//        }
         if (pageData != null) {
             result.count(pageData.getTotalElements()).data(pageData.getContent());
         }else {
         	if(pageDataAll!=null) {
         		for(UserMessageVo userMessageVo : pageDataAll.getContent()) {
         			if(orgList!=null) {
-        				HtBoaInOrg o = orgList.stream().filter(org -> org.getOrgCode().equals(userMessageVo.getOrgCode())).findFirst().get();
-        				userMessageVo.setOrgName(o.getOrgNameCn());
+        				HtBoaInBusinessOrg o =null;
+        				Optional<HtBoaInBusinessOrg> htBoaInBusinessOrgOptional = orgList.stream().filter(org -> org.getBusinessOrgCode().equals(userMessageVo.getBussinesOrgCode())).findFirst();
+        				if(htBoaInBusinessOrgOptional!=null&&htBoaInBusinessOrgOptional.isPresent()) {
+        					o = htBoaInBusinessOrgOptional.get();
+        					if(o!=null) {
+        						userMessageVo.setOrgName(o.getBusinessOrgName());
+        						userMessageVo.setBranchCode(o.getBranchCode());
+        						userMessageVo.setDistrictCode(o.getDistrictCode());
+        						userMessageVo.setProvince(o.getProvince());
+        						userMessageVo.setCity(o.getCity());
+        					}
+        				}
         				listUserMessageVo.add(userMessageVo);
         			}
         		}
@@ -872,4 +808,21 @@ public class HtBoaInUserService {
 			}
 		}
 	}
+
+	//isAllSub 1:只当前机构下所有用户  2:包括机构下以及所有子机构用户
+	public List<UserMessageVo> getUserBusiListByBusiOrgCode(String busiOrgCode,String isAllSub) {
+		List<String> listBusiOrgCode = new ArrayList<String>();
+		listBusiOrgCode.add(busiOrgCode);
+	    if("2".equals(isAllSub)){
+	    	List<BoaInOrgInfo>	listSubHtBoaInOrg = htBoaInOrgBusinessService.getSubOrgInfo(busiOrgCode);
+	    	for(BoaInOrgInfo b : listSubHtBoaInOrg) {
+	    		listBusiOrgCode.add(b.getOrgCode());
+	    	}
+    	}
+		if(listBusiOrgCode!=null&&!listBusiOrgCode.isEmpty()) {
+			return htBoaInUserBusinessRepository.getUserBusiListByBusiOrgCode(listBusiOrgCode);
+		}
+		return null;
+	}
+	 
 }
