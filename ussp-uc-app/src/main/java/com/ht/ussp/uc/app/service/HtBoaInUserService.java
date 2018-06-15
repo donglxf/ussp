@@ -209,8 +209,15 @@ public class HtBoaInUserService {
         	if(pageDataAll!=null) {
         		for(UserMessageVo userMessageVo : pageDataAll.getContent()) {
         			if(orgList!=null) {
-        				HtBoaInOrg o = orgList.stream().filter(org -> org.getOrgCode().equals(userMessageVo.getOrgCode())).findFirst().get();
-        				userMessageVo.setOrgName(o.getOrgNameCn());
+        				/*HtBoaInOrg o = orgList.stream().filter(org -> org.getOrgCode().equals(userMessageVo.getOrgCode())).findFirst().get();
+        				userMessageVo.setOrgName(o.getOrgNameCn());*/
+        				Optional<HtBoaInOrg> htBoaInOrgOptional = orgList.stream().filter(org -> org.getOrgCode().equals(userMessageVo.getOrgCode())).findFirst();
+        				if(htBoaInOrgOptional!=null&&htBoaInOrgOptional.isPresent()) {
+        					HtBoaInOrg o = htBoaInOrgOptional.get();
+        					if(o!=null) {
+        						userMessageVo.setOrgName(o.getOrgNameCn());
+        					}
+        				}
         				listUserMessageVo.add(userMessageVo);
         			}
         		}
@@ -231,7 +238,7 @@ public class HtBoaInUserService {
      * @Date 2018/1/13 16:49
      */
     @Transactional
-    public boolean saveUserInfoAndLoginInfo(HtBoaInUser user, HtBoaInLogin logininfo) {
+    public boolean saveUserInfoAndLoginInfo(HtBoaInUser user, HtBoaInLogin logininfo,UserMessageVo userMessageVo) {
     	String userId = "";
     	int isOrgUser = 1;
     	if (user.getJobNumber() != null && user.getJobNumber().contains("HX-")) {
@@ -249,6 +256,22 @@ public class HtBoaInUserService {
         htBoaInUserRepository.save(user);
         logininfo.setUserId(userId);
         htBoaInLoginRepository.save(logininfo);
+        try {
+			if(!StringUtils.isEmpty(userMessageVo.getBussinesOrgCode())) {
+				List<HtBoaInUserExt> listHtBoaInUserExt = htBoaInUserExtRepository.findByUserId(userId);
+				if(listHtBoaInUserExt.isEmpty()) {
+					HtBoaInUserExt htBoaInUserExt = new HtBoaInUserExt();
+					htBoaInUserExt.setBusiOrgCode(userMessageVo.getBussinesOrgCode());
+					htBoaInUserExt.setUserId(userId);
+					htBoaInUserExt.setCreatedDatetime(new Date());
+					htBoaInUserExt.setJpaVersion(0);
+					htBoaInUserExt.setLastModifiedDatetime(new Date());
+					htBoaInUserExtRepository.save(htBoaInUserExt);
+				}
+			}
+		} catch (Exception e) {
+			
+		}
         return true;
     }
    

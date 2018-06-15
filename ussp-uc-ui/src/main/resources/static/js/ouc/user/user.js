@@ -27,7 +27,9 @@ layui.use([ 'form',   'table', 'ht_config', 'ht_auth'], function () {
                 curr: 1 //重新从第 1 页开始
             }
             , where: {
-                keyWord: keyword,
+            	query:{
+            		keyWord: keyword
+            	}
             }
         });
     };

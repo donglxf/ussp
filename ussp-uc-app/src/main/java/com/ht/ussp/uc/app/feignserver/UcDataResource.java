@@ -198,7 +198,7 @@ public class UcDataResource {
 		return Result.buildSuccess(listHtBoaInOrg);
 	} 
 	
-	@ApiOperation(value = "获取钉钉用户数据", notes = "")
+	@ApiOperation(value = "获取钉钉用户数据", notes = "提供给运维")
 	@GetMapping(value = { "/getDdUserList" }, produces = { "application/json" })
 	public List<DdUserVo> getDdUserList(){
 		return dingDingService.getDdUserList();

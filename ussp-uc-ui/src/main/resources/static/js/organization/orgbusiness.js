@@ -201,7 +201,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
             , {field: 'businessOrgName',   title: '机构名称'}
             , {field: 'orgType', width: 100,   title: '机构类型',templet:'#orgTypeTpl',}
             , {field: 'parentOrgCode', width: 220, title: '所属机构'}
-            , {field: 'delFlag', templet: '#orgStatusTpl', width: 100, title: '状态'}
+            , {field: 'delFlag', templet: '#orgBusiStatusTpl', width: 100, title: '状态'}
             , {field: 'createOperator', width: 100, title: '创建人'}
             , {field: 'createdDatetime',   templet:'#createTimeTpl', title: '创建时间'}
             , {fixed: 'right', width: 178, title: '操作', align: 'center', toolbar: '#organization_busi_datatable_bar'}

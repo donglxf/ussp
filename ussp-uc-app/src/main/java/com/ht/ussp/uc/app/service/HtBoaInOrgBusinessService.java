@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.persistence.criteria.Predicate;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -87,14 +88,26 @@ public class HtBoaInOrgBusinessService {
         String keyWordSp = keyWord == null?"":keyWord;
         if (null != pageable) {
             PageResult result = new PageResult();
-    		Specification<HtBoaInBusinessOrg> specification = (root, query1, cb) -> {
-    			Predicate p1 = cb.like(root.get("businessOrgName").as(String.class), "%" + keyWordSp + "%");
-    			Predicate p2 = cb.like(root.get("businessOrgCode").as(String.class), "%" + keyWordSp + "%" );
-    			Predicate p3 = cb.equal(root.get("parentOrgCode").as(String.class),   orgCodeSp );
-    			// 把Predicate应用到CriteriaQuery中去,因为还可以给CriteriaQuery添加其他的功能，比如排序、分组啥的
-    			query1.where(cb.and(cb.or(p1, p2),p3));
-    			return query1.getRestriction();
-    		};
+    		Specification<HtBoaInBusinessOrg> specification = null;
+    		
+    		if(StringUtils.isNotEmpty(orgCodeSp)) {
+    			specification = (root, query1, cb) -> {
+        			Predicate p1 = cb.like(root.get("businessOrgName").as(String.class), "%" + keyWordSp + "%");
+        			Predicate p2 = cb.like(root.get("businessOrgCode").as(String.class), "%" + keyWordSp + "%" );
+        			Predicate p3 = cb.equal(root.get("parentOrgCode").as(String.class),   orgCodeSp );
+        			// 把Predicate应用到CriteriaQuery中去,因为还可以给CriteriaQuery添加其他的功能，比如排序、分组啥的
+        			query1.where(cb.and(cb.or(p1, p2),p3));
+        			return query1.getRestriction();
+    			};
+    		}else {
+    			specification = (root, query1, cb) -> {
+        			Predicate p1 = cb.like(root.get("businessOrgName").as(String.class), "%" + keyWordSp + "%");
+        			Predicate p2 = cb.like(root.get("businessOrgCode").as(String.class), "%" + keyWordSp + "%" );
+        			// 把Predicate应用到CriteriaQuery中去,因为还可以给CriteriaQuery添加其他的功能，比如排序、分组啥的
+        			query1.where(cb.or(p1, p2));
+        			return query1.getRestriction();
+    			};
+    		}
     		Page<HtBoaInBusinessOrg> pageData = htBoaInOrgBusinessRepository.findAll(specification, pageable);
     		if (pageData != null) {
     			result.count(pageData.getTotalElements()).data(pageData.getContent());
@@ -257,5 +270,9 @@ public class HtBoaInOrgBusinessService {
 			}
 		} 
 		return listHtBoaInOrg;
+	}
+
+	public void delete(HtBoaInBusinessOrg u) {
+		htBoaInOrgBusinessRepository.delete(u);
 	}
 }

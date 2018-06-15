@@ -824,5 +824,17 @@ public class HtBoaInUserBusinessService {
 		}
 		return null;
 	}
+	
+	public List<HtBoaInUserExt> getUserBusiListByBusiOrgCode(String busiOrgCode) {
+		return htBoaInUserExtRepository.findByBusiOrgCode(busiOrgCode);
+	}
+	
+	public List<HtBoaInUserExt> findHtBoaInUserExtByUserId(String userId) {
+		return htBoaInUserExtRepository.findByUserId(userId);
+	}
+
+	public HtBoaInUserExt save(HtBoaInUserExt htBoaInUserExt) {
+		return htBoaInUserExtRepository.save(htBoaInUserExt);
+	}
 	 
 }

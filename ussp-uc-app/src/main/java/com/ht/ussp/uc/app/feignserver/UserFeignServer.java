@@ -248,7 +248,7 @@ public class UserFeignServer{
         return Result.buildSuccess(listUserMessageVo);
     }
     
-    @ApiOperation(value = "查询角色下所有用户", notes = "查询角色下所有用户")
+    @ApiOperation(value = "获取钉钉用户数据", notes = "获取钉钉用户数据，pms")
 	@PostMapping(value = "/getAllDDUser")
 	public Result getAllDDUser() { 
     	List<DdUser> listDDUser = dingDingService.getDDUserList();
