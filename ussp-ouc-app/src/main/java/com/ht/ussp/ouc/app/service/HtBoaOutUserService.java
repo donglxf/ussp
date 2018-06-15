@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.persistence.criteria.Predicate;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,7 +41,11 @@ public class HtBoaOutUserService {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public PageResult<List<HtBoaOutUser>> getUserListPage(PageRequest pageRequest, Map<String, String> query) {
 		PageResult result = new PageResult();
-		String keyWord = "";
+		String keyWords = "";
+		if(query!=null) {
+			keyWords = StringUtils.isEmpty(query.get("keyWord"))?"":query.get("keyWord");
+		}
+		String keyWord = keyWords;
 		Specification<HtBoaOutUser> specification = (root, query1, cb) -> {
 			Predicate p1 = cb.like(root.get("userName").as(String.class), "%" + keyWord + "%");
 			Predicate p2 = cb.like(root.get("email").as(String.class), "%" + keyWord + "%");

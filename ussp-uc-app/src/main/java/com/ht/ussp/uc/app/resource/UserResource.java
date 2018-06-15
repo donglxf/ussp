@@ -31,6 +31,7 @@ import com.ht.ussp.uc.app.domain.HtBoaInContrast;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
+import com.ht.ussp.uc.app.domain.HtBoaInUserExt;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
 import com.ht.ussp.uc.app.service.HtBoaInBmUserService;
@@ -38,6 +39,7 @@ import com.ht.ussp.uc.app.service.HtBoaInContrastService;
 import com.ht.ussp.uc.app.service.HtBoaInLoginService;
 import com.ht.ussp.uc.app.service.HtBoaInPwdHistService;
 import com.ht.ussp.uc.app.service.HtBoaInUserAppService;
+import com.ht.ussp.uc.app.service.HtBoaInUserBusinessService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.vo.EmailVo;
 import com.ht.ussp.uc.app.vo.LoginInfoVo;
@@ -79,6 +81,8 @@ public class UserResource{
    	private HtBoaInContrastService htBoaInContrastService;
     @Autowired
     private HtBoaInBmUserService htBoaInBmUserService;
+    @Autowired
+    private HtBoaInUserBusinessService htBoaInUserBusinessService;
     
     @ApiOperation(value = "对内：用户个人信息查询", notes = "已登录用户查看自己的个人信息")
     @ApiImplicitParam(name = "userId", value = "用户ID", required = true, paramType = "path", dataType = "int")
@@ -310,7 +314,7 @@ public class UserResource{
             loginInfo.setDelFlag(0);
             loginInfo.setCreatedDatetime(new Date());
             loginInfo.setLastModifiedDatetime(new Date());
-            boolean isAdd = htBoaInUserService.saveUserInfoAndLoginInfo(user, loginInfo);
+            boolean isAdd = htBoaInUserService.saveUserInfoAndLoginInfo(user, loginInfo,userMessageVo);
             if (isAdd) {
                 return Result.buildSuccess();
             }
@@ -403,6 +407,20 @@ public class UserResource{
             user.setUpdateOperator(loginUserId);
             user.setLastModifiedDatetime(new Date());
             HtBoaInUser u = htBoaInUserService.update(user);
+            try {
+            	if(!StringUtils.isEmpty(userMessageVo.getBussinesOrgCode())) {
+    				List<HtBoaInUserExt> listHtBoaInUserExt = htBoaInUserBusinessService.findHtBoaInUserExtByUserId(userMessageVo.getUserId());
+    				if(listHtBoaInUserExt!=null&&!listHtBoaInUserExt.isEmpty()) {
+    					HtBoaInUserExt htBoaInUserExt = listHtBoaInUserExt.get(0);
+    					htBoaInUserExt.setBusiOrgCode(userMessageVo.getBussinesOrgCode());
+    					htBoaInUserExt.setUserId(userMessageVo.getUserId());
+    					htBoaInUserExt.setLastModifiedDatetime(new Date());
+    					htBoaInUserBusinessService.save(htBoaInUserExt);
+    				}
+    			}
+			} catch (Exception e) {
+				
+			}
             //boolean isUpdate = htBoaInUserService.updateUserByUserId(user);
             if (u !=null) {
                 return Result.buildSuccess();

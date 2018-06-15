@@ -30,7 +30,7 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
             layer.close(addDialog);
             addDialog = layer.open({
                 type: 1,
-                area: ['400px', '400px'],
+                area: ['600px', '600px'],
                 shadeClose: true,
                 title: "新增用户",
                 content: $("#user_add_data_div").html(),
@@ -478,7 +478,7 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
                     if (result["returnCode"] == "0000") {
                         editDialog = layer.open({
                             type: 1,
-                            area: ['400px', '450px'],
+                            area: ['600px', '600px'],
                             shadeClose: false,
                             title: "修改用户",
                             content: $("#user_modify_data_div").html(),

@@ -29,11 +29,13 @@ import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInBusinessOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInPosition;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
+import com.ht.ussp.uc.app.domain.HtBoaInUserExt;
 import com.ht.ussp.uc.app.model.BoaInOrgInfo;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.service.HtBoaInOrgBusinessService;
 import com.ht.ussp.uc.app.service.HtBoaInPositionService;
+import com.ht.ussp.uc.app.service.HtBoaInUserBusinessService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.vo.PageVo;
 
@@ -53,6 +55,9 @@ import lombok.extern.log4j.Log4j2;
 public class OrgBusinessResource {
     @Autowired
     private HtBoaInOrgBusinessService htBoaInOrgBusinessService;
+    
+    @Autowired
+    private HtBoaInUserBusinessService htBoaInUserBusinessService;
 
     @Autowired
     private HtBoaInUserService htBoaInUserService;
@@ -147,30 +152,31 @@ public class OrgBusinessResource {
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.debug(logStart, "codes: " + id, sl);
         HtBoaInBusinessOrg u = htBoaInOrgBusinessService.findById(id);
+        if(u==null) {
+        	return Result.buildFail("9999", "没有相关信息");
+        }
         //机构下有机构，有人员， 有岗位都不可以删除
-        HtBoaInBusinessOrg htBoaInOrg = new HtBoaInBusinessOrg();
-        //htBoaInOrg.setParentOrgCode(u.getOrgCode());
- 		List<HtBoaInBusinessOrg> listHtBoaInOrg = htBoaInOrgBusinessService.findAll(htBoaInOrg);
-		if(!listHtBoaInOrg.isEmpty()) {
+ 		List<HtBoaInBusinessOrg> listHtBoaInOrg = htBoaInOrgBusinessService.findByParentOrgCode(u.getBusinessOrgCode());
+		if(listHtBoaInOrg!=null&&!listHtBoaInOrg.isEmpty()) {
 			return Result.buildFail("该机构下存在子机构，不可删除！", "该机构下存在子机构，不可删除！");
 		}
-		HtBoaInUser htBoaInUser = new HtBoaInUser();
-		//htBoaInUser.setOrgCode(u.getOrgCode());
-		List<HtBoaInUser>  listHtBoaInUser = htBoaInUserService.findAll(htBoaInUser);
-		if (!listHtBoaInUser.isEmpty()) {
+		List<HtBoaInUserExt>  listHtBoaInUserExt = htBoaInUserBusinessService.getUserBusiListByBusiOrgCode(u.getBusinessOrgCode());
+		if (listHtBoaInUserExt!=null&&!listHtBoaInUserExt.isEmpty()) {
 			return Result.buildFail("该机构下存在用户，不可删除！", "该机构下存在用户，不可删除！");
 		}
-		HtBoaInPosition htBoaInPosition = new HtBoaInPosition();
+		/*HtBoaInPosition htBoaInPosition = new HtBoaInPosition();
 		//htBoaInPosition.setParentOrgCode(u.getOrgCode());
 		List<HtBoaInPosition> listHtBoaInPosition = htBoaInPositionService.findAll(htBoaInPosition);
 		if (!listHtBoaInPosition.isEmpty()) {
 			return Result.buildFail("该机构下存在可用岗位，不可删除！", "该机构下存在可用岗位，不可删除！");
-		}
+		}*/
 		
         //u.setDelFlag(Constants.DEL_1);
-        u.setUpdateOperator(userId);
+       /* u.setUpdateOperator(userId);
         u.setLastModifiedDatetime(new Date());
-        htBoaInOrgBusinessService.update(u);
+        htBoaInOrgBusinessService.update(u);*/
+		
+		htBoaInOrgBusinessService.delete(u);
         el = System.currentTimeMillis();
         log.debug(logEnd, "codes: " + id, msg, el, el - sl);
         return Result.buildSuccess();

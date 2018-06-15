@@ -1,16 +1,6 @@
-var userapp_userId = "";
-var userrole_userId = "";
-var userpositionUserId = "";
-var refreshUserAppTable = "";
-var refreshUserRoleTable = "";
-var refreshuserpositionTable="";
-var $1;
-var layeroEdit;
-layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
-	$1 = layui.jquery;
+layui.use([ 'form', 'ztree', 'table', 'ht_config', 'ht_auth'], function () {
     var $ = layui.jquery
         , config = layui.ht_config
-        , element = layui.element
         , form = layui.form
         , table = layui.table
         , ht_auth = layui.ht_auth
@@ -79,86 +69,6 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
         search: function () {
             //执行重载
             refreshUserBusiTable($("#user_busi_search_keyword").val());
-        },
-         
-        batchResetPwd: function () {
-        	 var nodes = userBusiOrgTree.getSelectedNodes();
-             if (nodes.length == 0) {
-                 layer.alert("请先选择一个组织机构。");
-                 return false;
-             }
-            layer.close(resetPwdDialog);
-            resetPwdDialog = layer.open({
-                type: 1,
-                area: ['1000px', '645px'],
-                shadeClose: true,
-                title: "设置用户密码",
-                content: $("#batch_resetpwd_data_div").html(),
-                btn: ['设置密码', '取消'],
-                yes: function (index, layero) {
-                    var checkStatus = table.checkStatus('batch_resetpwd_dalog_datatable');
-                    var resetPwdUserdata = checkStatus.data;
-                    if(resetPwdUserdata.length>0){
-                    	 $.ajax({
-                             type: "POST",
-                             url: config.basePath + 'user/sendEmailRestPwdBatch',
-                             data: JSON.stringify({
-                                 resetPwdUserdata: resetPwdUserdata
-                             }),
-                             contentType: "application/json; charset=utf-8",
-                             success: function (result) {
-                                 layer.close(index);
-                                 if (result["returnCode"] == '0000') {
-                                     layer.msg("密码设置成功");
-                                 }
-                             },
-                             error: function (result) {
-                                 console.error(result);
-                             }
-                         })
-                    }else{
-                    	layer.msg("请选择用户");
-                    }
-                    
-                },
-                btn2: function () {
-                    layer.closeAll('tips');
-                },
-                success: function (layero, index) {
-                    table.render({
-                        id: 'batch_resetpwd_dalog_datatable'
-                        , elem: $('#batch_resetpwd_dalog_datatable', layero)
-                        , url: config.basePath + 'user/queryUserIsNullPwd'
-                        ,where: {
-                        	businessOrgCode: nodes[0]["businessOrgCode"],
-                        }
-                        , page: true
-                        , height: "471"
-                        , cols: [[
-                            {type: 'numbers'}
-                            , {type: 'checkbox'}
-                            , {field: 'userId', width: 100, title: '用户编号',}
-                            , {field: 'userName', width: 100, title: '用户姓名'}
-                            , {field: 'jobNumber', width: 100, title: '工号'}
-                            , {field: 'mobile', width: 120, title: '手机'}
-                            , {field: 'email',   title: '邮箱'}
-                            , {field: 'idNo', minWidth: 100, title: '身份证'}
-                            , {field: 'orgName', minWidth: 100, title: '所属机构'}
-                        ]]
-                    });
-                    var $keywordInput = $("#batch_resetpwd_search_keyword", layero);
-                    $('#batch_resetpwd_dialog_search', layero).on('click', function () {
-                        var keyWord = $keywordInput.val();
-                        refreshDalogBatchResetDataTable(keyWord);
-                    });
-                    $keywordInput.keydown(function (e) {
-                        if (e.keyCode == 13) {
-                            var keyWord = $keywordInput.val();
-                            refreshDalogBatchResetDataTable( keyWord);
-                        }
-                    });
-                }
-            });
         },
     };
     var orgTreeUrl = config.basePath +"orgbusiness/tree"; //机构列表
@@ -251,63 +161,7 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
 		  },
 		  
 	});
-	//刷新用户系统 refreshUserAppTable
-	   refreshUserAppTable = function (keyword) {
-	        if (!keyword) {
-	            keyword = null;
-	        }
-	        if(!userapp_userId){
-	        	return;
-	        }
-	        table.reload('userapp_app_datatable', {
-	   		 height: 'full-600' ,
-	   	        page: {
-	   	            curr: 1 //重新从第 1 页开始
-	   	        }
-	   	        , where: {
-	   	        	query: {
-	             		   keyWord: keyword,
-	                       userId:userapp_userId
-	                  }
-	   	        }
-	   	   });
-	    };
-	  //刷新用户岗位
-	      refreshuserpositionTable = function (keyword) {
-	        if (!keyword) {
-	            keyword = null;
-	        }
-	        table.reload('userposition_position_datatable', {
-	   		 height: 'full-600',
-	   	        page: {
-	   	            curr: 1 //重新从第 1 页开始
-	   	        }
-	   	        , where: {
-	   	        	query: {
-	             		   keyWord: keyword,
-	                       userId:userpositionUserId
-	                  }
-	   	        }
-	   	   });
-	    };
-	  //刷新用户角色 refreshUserRoleTable 
-	    refreshUserRoleTable = function (keyword) {
-	        if (!keyword) {
-	            keyword = null;
-	        }
-	        table.reload('userrole_role_datatable', {
-	  		  height: 'full-600',
-	  	        page: {
-	  	            curr: 1 //重新从第 1 页开始
-	  	        }
-	  	        , where: {
-	  	        	query: {
-	            		    keyWord: keyword,
-	                      userId:userrole_userId
-	                 }
-	  	        }
-	  	   });
-	  }
+ 
     var refreshUserBusiTable = function (keyword) {
         if (!keyword) {
             keyword = null;
@@ -315,7 +169,7 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
         var selectNodes = userBusiOrgTree.getSelectedNodes();
         if (selectNodes && selectNodes.length == 1) {
             table.reload('user_busi_datatable', {
-                height: 'full-673',
+                height: 'full-200',
                 page: {
                     curr: 1 //重新从第 1 页开始
                 }
@@ -326,7 +180,7 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
             });
         }else{
         	table.reload('user_busi_datatable', {
-                height: 'full-673',
+                height: 'full-200',
                 page: {
                     curr: 1 //重新从第 1 页开始
                 }
@@ -410,10 +264,10 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
         //         businessOrgCode: "DEV1"
         //     }
         // }5
-        , limit : 5
-        , limits :[5, 10, 20, 30, 40, 50]
+        , limit : 15
+        , limits :[5, 10,15, 20, 30, 40, 50]
         , page: true
-        , height: 'full-673'
+        , height: 'full-200'
         , cols: [[
             {type: 'numbers',event: 'rowClick'}
             , {field: 'userId', width: 110, title: '用户编号',event: 'rowClick'}
@@ -503,7 +357,6 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
                                         $input.val(value);
                                     }
                                 });
-                                layeroEdit = layero;
                                 $('#orgNameEdit',layero).on('click', function () {
                                 	layer.open({
                                         type: 2,
@@ -572,43 +425,10 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
                         }
                     });
             	 });
-            } else if (obj.event === 'rowClick') {
-            	var data = obj.data;
-                userapp_userId = data.userId;
-                userrole_userId = data.userId;
-                userpositionUserId = data.userId;
-            	 switch (selectBottomTabIndex) {
-                 case 0:
-                     refreshUserAppTable();
-                     break;
-                 case 1:
-                	 refreshuserpositionTable();
-                     break;
-                 case 2:
-                	 refreshUserRoleTable();
-                     break;
-             }
-                //刷新用户角色 refreshUserRoleTable 刷新用户系统 refreshUserAppTable
-
-            }
+            }  
         }
     );
     
-    //菜单和模块tab页切换事件
-    element.on('tab(user_busi_bottom_tab)', function (data) {
-    	selectBottomTabIndex = data.index;
-        switch (data.index) {
-            case 0:
-            	refreshUserAppTable();
-                break;
-            case 1:
-            	refreshuserpositionTable();
-                break;
-            case 2:
-            	refreshUserRoleTable();
-                break;
-        }
-    });
     
     var $keywordInput = $("#user_busi_search_keyword");
     $keywordInput.keydown(function (e) {

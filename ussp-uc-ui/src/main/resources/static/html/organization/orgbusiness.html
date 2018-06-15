@@ -64,7 +64,7 @@
             <script type="text/html" id="createTimeTpl">
               {{new Date( d.createdDatetime ).Format('yyyy-MM-dd HH:mm:ss')}} 
 		    </script>
-		     <script type="text/html" id="orgStatusTpl">
+		     <script type="text/html" id="orgBusiStatusTpl">
       {{#  if(d.status == '0'){ }}
                       正常
       {{#  } else { }}
@@ -114,22 +114,13 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">机构类型<b>*</b></label>
                 <div class="layui-input-block">
-                   <!-- <select name="orgType" lay-verify="required">
-				        <option value=""></option>
-				        <option value="10">公司</option>
-				        <option value="20">中心</option>
-				        <option value="30">片区</option>
-				        <option value="40">分公司</option>
-				        <option value="50">部门</option>
-				        <option value="60">小组</option>
-				    </select> -->
-				    <input type="radio" name="orgType" value="60" title="小组">
-				    <input type="radio" name="orgType" value="50" title="部门" checked>
-				    <input type="radio" name="orgType" value="40" title="分公司">
-				    <input type="radio" name="orgType" value="30" title="片区" >
-				    <input type="radio" name="orgType" value="20" title="中心" >
+				    <input type="radio" name="orgLevel" value="100" title="小组">
+				    <input type="radio" name="orgLevel" value="80" title="部门">
+				    <input type="radio" name="orgLevel" value="60" title="分公司">
+				    <input type="radio" name="orgLevel" value="40" title="片区" >
+				    <input type="radio" name="orgLevel" value="20" title="公司" >
                 </div>
-            </div>
+            </div> 
             <div class="layui-form-item">
                 <label class="layui-form-label">所属机构<b>*</b></label>
                 <div class="layui-input-block">
@@ -166,11 +157,11 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">机构类型<b>*</b></label>
                 <div class="layui-input-block">
-				    <input type="radio" name="orgType" value="60" title="小组">
-				    <input type="radio" name="orgType" value="50" title="部门">
-				    <input type="radio" name="orgType" value="40" title="分公司">
-				    <input type="radio" name="orgType" value="30" title="片区" >
-				    <input type="radio" name="orgType" value="20" title="中心" >
+				    <input type="radio" name="orgLevel" value="60" title="小组">
+				    <input type="radio" name="orgLevel" value="50" title="部门">
+				    <input type="radio" name="orgLevel" value="40" title="分公司">
+				    <input type="radio" name="orgLevel" value="30" title="片区" >
+				    <input type="radio" name="orgLevel" value="20" title="中心" >
                 </div>
             </div>
             <div class="layui-form-item">
@@ -192,13 +183,13 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">机构编号</label>
                 <div class="layui-input-block">
-                    <input type="text" name="orgCode" lay-verify="required"   readonly  autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="text" name="businessOrgCode" lay-verify="required"   readonly  autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">机构名称</label>
                 <div class="layui-input-block">
-                    <input type="text" name="orgName" lay-verify="required"   readonly maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="text" name="businessOrgName" lay-verify="required"   readonly maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
             </div>
              <div class="layui-form-item">
@@ -210,11 +201,11 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">机构类型</label>
                 <div class="layui-input-block">
-				    <input type="radio" name="orgType" value="60" title="小组" disabled="true" >
-				    <input type="radio" name="orgType" value="50" title="部门" disabled="true" >
-				    <input type="radio" name="orgType" value="40" title="分公司" disabled="true" >
-				    <input type="radio" name="orgType" value="30" title="片区"  disabled="true" >
-				    <input type="radio" name="orgType" value="20" title="中心"  disabled="true" >
+				    <input type="radio" name="orgLevel" value="60" title="小组" disabled="true" >
+				    <input type="radio" name="orgLevel" value="50" title="部门" disabled="true" >
+				    <input type="radio" name="orgLevel" value="40" title="分公司" disabled="true" >
+				    <input type="radio" name="orgLevel" value="30" title="片区"  disabled="true" >
+				    <input type="radio" name="orgLevel" value="20" title="中心"  disabled="true" >
                 </div>
             </div>
             <div class="layui-form-item">

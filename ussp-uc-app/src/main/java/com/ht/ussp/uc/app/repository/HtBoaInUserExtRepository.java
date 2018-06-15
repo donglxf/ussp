@@ -14,4 +14,7 @@ public interface HtBoaInUserExtRepository extends JpaSpecificationExecutor<HtBoa
 
 	List<HtBoaInUserExt> findByUserId(String userId );
 
+	List<HtBoaInUserExt> findByBusiOrgCode(String busiOrgCode);
+	
+
 }
