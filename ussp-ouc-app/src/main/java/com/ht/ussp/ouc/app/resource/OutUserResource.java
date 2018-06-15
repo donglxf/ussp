@@ -190,7 +190,7 @@ public class OutUserResource{
     			if(StringUtils.isNotEmpty(htBoaOutUser.getUserType())) {
     				if("10".equals(htBoaOutUser.getUserType())) { //存量用户先验证原密码是否正确，然后转换为新的密码
     					try {
-							String oldPwd = Cryptography.tripleDESEncrypt(password, "~#^&tuandai*%#housebaby#111!"); //微信加密key
+							String oldPwd = password;// 前端已经加密，此处不需要再加密 Cryptography.tripleDESEncrypt(password, "~#^&tuandai*%#housebaby#111!"); //微信加密key
 							if(StringUtils.isNotEmpty(oldPwd)) {
 								if(oldPwd.equals(htBoaOutLogin.getOldPassword())) {
 									htBoaOutLogin.setPassword(EncryptUtil.passwordEncrypt(password));
