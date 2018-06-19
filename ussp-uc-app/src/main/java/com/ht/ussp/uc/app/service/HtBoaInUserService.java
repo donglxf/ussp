@@ -1,5 +1,6 @@
 package com.ht.ussp.uc.app.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,7 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
+import com.ht.ussp.core.Result;
 import com.ht.ussp.core.ReturnCodeEnum;
+import com.ht.ussp.uc.app.domain.DdDeptOperator;
 import com.ht.ussp.uc.app.domain.HtBoaInBmUser;
 import com.ht.ussp.uc.app.domain.HtBoaInContrast;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
@@ -857,12 +860,20 @@ public class HtBoaInUserService {
 						htBoaInBmUser = htBoaInBmUserOptional.get();
 					}
 					if(htBoaInBmUser!=null) {
+						String bdOrgCOde="";//业务机构代码
+						List<HtBoaInContrast> listHtBoaInContrastBm = htBoaInContrastRepository.findByBmBusinessIdAndType(htBoaInBmUser.getOrgCode(), "10");
+						if(listHtBoaInContrastBm!=null&&!listHtBoaInContrastBm.isEmpty()) {
+							HtBoaInContrast htBoaInContrastBm = listHtBoaInContrastBm.get(0);
+							bdOrgCOde = htBoaInContrastBm.getUcBusinessId();
+						}
+						bdOrgCOde = bdOrgCOde==null?htBoaInBmUser.getOrgCode():bdOrgCOde;
+						
 						HtBoaInUserExt htBoaInUserExt = null;
 						if("0".equals(state)) {
 							if(!listUserId.contains(htBoaInContrast.getUcBusinessId())) {
 								htBoaInUserExt = new HtBoaInUserExt();
 								htBoaInUserExt.setBmUserId(htBoaInContrast.getBmBusinessId());
-								htBoaInUserExt.setBusiOrgCode(htBoaInBmUser.getOrgCode());
+								htBoaInUserExt.setBusiOrgCode(bdOrgCOde);
 								htBoaInUserExt.setUserId(htBoaInContrast.getUcBusinessId());
 								htBoaInUserExt.setCreatedDatetime(new Date());
 								htBoaInUserExt.setLastModifiedDatetime(new Date());
@@ -879,9 +890,15 @@ public class HtBoaInUserService {
 							if(htBoaInUserExt==null) {
 								htBoaInUserExt = new HtBoaInUserExt();
 								htBoaInUserExt.setBmUserId(htBoaInContrast.getBmBusinessId());
-								htBoaInUserExt.setBusiOrgCode(htBoaInBmUser.getOrgCode());
+								htBoaInUserExt.setBusiOrgCode(bdOrgCOde);
 								htBoaInUserExt.setUserId(htBoaInContrast.getUcBusinessId());
 								htBoaInUserExt.setCreatedDatetime(new Date());
+								htBoaInUserExt.setLastModifiedDatetime(new Date());
+								htBoaInUserExt.setJpaVersion(0);
+								htBoaInUserExtRepository.save(htBoaInUserExt);
+							}else {
+								htBoaInUserExt.setBmUserId(htBoaInContrast.getBmBusinessId());
+								htBoaInUserExt.setBusiOrgCode(bdOrgCOde);
 								htBoaInUserExt.setLastModifiedDatetime(new Date());
 								htBoaInUserExt.setJpaVersion(0);
 								htBoaInUserExtRepository.save(htBoaInUserExt);
@@ -895,4 +912,6 @@ public class HtBoaInUserService {
 			}
 		}
 	}
+
+	
 }

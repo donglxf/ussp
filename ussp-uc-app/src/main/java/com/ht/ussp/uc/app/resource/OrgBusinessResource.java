@@ -62,10 +62,6 @@ public class OrgBusinessResource {
     @Autowired
     private HtBoaInUserService htBoaInUserService;
 
-    @Autowired
-    private HtBoaInPositionService htBoaInPositionService;
-
-
     @PostMapping(value = "/tree", produces = {"application/json"})
     public List<HtBoaInBusinessOrg> getOrgTreeList(String parenOrgCode) {
         return htBoaInOrgBusinessService.getOrgTreeList(parenOrgCode);
@@ -114,7 +110,7 @@ public class OrgBusinessResource {
         } else {
             u = new HtBoaInBusinessOrg();
         }
-        u.setLastModifiedDatetime(new Date());
+        u.setUpdateDatetime(new Date());
         /*u.setOrgCode(boaInOrgInfo.getOrgCode());
         u.setOrgName(boaInOrgInfo.getOrgName());
         u.setOrgNameCn(boaInOrgInfo.getOrgNameCn());
@@ -193,7 +189,7 @@ public class OrgBusinessResource {
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.debug(logStart, "codes: " + id, sl);
         HtBoaInBusinessOrg u = htBoaInOrgBusinessService.findById(id);
-        u.setLastModifiedDatetime(new Date());
+        u.setUpdateDatetime(new Date());
         u.setUpdateOperator(userId);
         htBoaInOrgBusinessService.update(u);
         el = System.currentTimeMillis();
@@ -288,6 +284,21 @@ public class OrgBusinessResource {
     public Result getUserInfoByUserId(String userId) {
     	HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(userId);
        return Result.buildSuccess(htBoaInUser);
+    }
+    
+    @SuppressWarnings("rawtypes")
+   	@ApiOperation(value = "信贷机构转换UC机构",notes="将信贷机构转换为UC对应机构信息")
+    @PostMapping(value = {"/convertBmOrg" }, produces = {"application/json"} )
+    public Result convertBmOrg( ) {
+       return htBoaInOrgBusinessService.convertBmOrg( );
+    }
+    
+    @SuppressWarnings("rawtypes")
+   	@ApiOperation(value = "分公司 业务片区转换",notes="分公司 业务片区转换")
+    @PostMapping(value = {"/convertBmBranch" }, produces = {"application/json"} )
+    public Result convertBmBranch( ) {
+       htBoaInOrgBusinessService.convertBmBranch( );
+       return Result.buildSuccess();
     }
     
     @SuppressWarnings("rawtypes")
