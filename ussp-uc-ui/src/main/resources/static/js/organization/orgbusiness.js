@@ -98,7 +98,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
 			  var isExist="1";
 			  if(value){
 					  $.ajax({
-						url : checkOrgCodeExistUrl + "?businessOrgCode=" + value,
+						url : checkOrgCodeExistUrl + "?orgCode=" + value,
 						type : 'POST',
 						async : false,
 						success : function(result) {
@@ -227,9 +227,9 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
                          if ($input && $input.length == 1) {
                              $input.val(value);
                          }
-                         if("orgType"==name){
+                         if("orgLevel"==name){
                         	 if(value){
-                        		 $("input:radio[name='orgType'][value="+value+"]", layero).attr("checked",true);
+                        		 $("input:radio[name='orgLevel'][value="+value+"]", layero).attr("checked",true);
                         	 }
                         }
                      });
@@ -276,9 +276,9 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
                         if ($input && $input.length == 1) {
                             $input.val(value);
                         }
-                        if("orgType"==name){
+                        if("orgLevel"==name){
                         	 if(value){
-                        		 $("input:radio[name='orgType'][value="+value+"]", layero).attr("checked",true);
+                        		 $("input:radio[name='orgLevel'][value="+value+"]", layero).attr("checked",true);
                         	 }
                         }
                        

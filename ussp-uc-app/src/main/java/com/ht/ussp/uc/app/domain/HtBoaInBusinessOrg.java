@@ -75,6 +75,7 @@ public class HtBoaInBusinessOrg implements Serializable {
 	@Column(name="DATA_SOURCE")
 	private Integer dataSource;
 	
+	//数据来源(1：用户权限系统；2：钉钉同步,3：信贷系统机构)
 	@Column(name="CREATE_OPERATOR")
 	private String createOperator;
 	
@@ -90,7 +91,7 @@ public class HtBoaInBusinessOrg implements Serializable {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="UPDATE_DATETIME", insertable = false, updatable = false)
-	private Date lastModifiedDatetime;
+	private Date updateDatetime;
 
 	@Column(name="UPDATE_OPERATOR")
 	private String updateOperator;

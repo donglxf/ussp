@@ -27,14 +27,12 @@ import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInBusinessOrg;
-import com.ht.ussp.uc.app.domain.HtBoaInPosition;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.domain.HtBoaInUserExt;
 import com.ht.ussp.uc.app.model.BoaInOrgInfo;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.service.HtBoaInOrgBusinessService;
-import com.ht.ussp.uc.app.service.HtBoaInPositionService;
 import com.ht.ussp.uc.app.service.HtBoaInUserBusinessService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.vo.PageVo;
@@ -61,10 +59,6 @@ public class OrgBusinessResource {
 
     @Autowired
     private HtBoaInUserService htBoaInUserService;
-
-    @Autowired
-    private HtBoaInPositionService htBoaInPositionService;
-
 
     @PostMapping(value = "/tree", produces = {"application/json"})
     public List<HtBoaInBusinessOrg> getOrgTreeList(String parenOrgCode) {
@@ -97,46 +91,43 @@ public class OrgBusinessResource {
     @SuppressWarnings({"unused", "rawtypes"})
     @ApiOperation(value = "对内：新增/编辑机构记录")
     @PostMapping(value = {"/add"}, produces = {"application/json"})
-    public Result add(@RequestBody BoaInOrgInfo boaInOrgInfo, @RequestHeader("userId") String userId) {
+    public Result add(@RequestBody HtBoaInBusinessOrg htBoaInBusinessOrg, @RequestHeader("userId") String userId) {
         long sl = System.currentTimeMillis(), el = 0L;
         ResponseModal r = null;
         String msg = "成功";
         String logHead = "机构记录查询：org/add param-> {}";
         String logStart = logHead + " | START:{}";
         String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.debug(logStart, "boaInOrgInfo: " + boaInOrgInfo, sl);
+        log.debug(logStart, "boaInOrgInfo: " + htBoaInBusinessOrg, sl);
         HtBoaInBusinessOrg u = null;
-        if (boaInOrgInfo.getId() > 0) {
-            u = htBoaInOrgBusinessService.findById(boaInOrgInfo.getId());
-            if (u == null) {
-                u = new HtBoaInBusinessOrg();
-            }
-        } else {
-            u = new HtBoaInBusinessOrg();
+        List<HtBoaInBusinessOrg> listHtBoaInBusinessOrg = htBoaInOrgBusinessService.findByOrgCode(htBoaInBusinessOrg.getBusinessOrgCode());
+        if(listHtBoaInBusinessOrg!=null&&!listHtBoaInBusinessOrg.isEmpty()) {
+        	u = listHtBoaInBusinessOrg.get(0);
+        	u.setBusinessOrgName(htBoaInBusinessOrg.getBusinessOrgName());
+        	u.setActivityCode(htBoaInBusinessOrg.getActivityCode());
+        	u.setApprovalCode(htBoaInBusinessOrg.getApprovalCode());
+        	u.setOrgLevel(htBoaInBusinessOrg.getOrgLevel());
+        	u.setBranchCode(htBoaInBusinessOrg.getBranchCode());
+        	u.setBusinessGroup(htBoaInBusinessOrg.getBusinessGroup());
+        	u.setCity(htBoaInBusinessOrg.getCity());
+        	u.setCounty(htBoaInBusinessOrg.getCounty());
+        	u.setDistrictCode(htBoaInBusinessOrg.getDistrictCode());
+        	u.setFinanceCode(htBoaInBusinessOrg.getFinanceCode());
+        	u.setParentOrgCode(StringUtils.isEmpty(htBoaInBusinessOrg.getParentOrgCode())?null:htBoaInBusinessOrg.getParentOrgCode());
+        	u.setSequence(htBoaInBusinessOrg.getSequence());
         }
-        u.setLastModifiedDatetime(new Date());
-        /*u.setOrgCode(boaInOrgInfo.getOrgCode());
-        u.setOrgName(boaInOrgInfo.getOrgName());
-        u.setOrgNameCn(boaInOrgInfo.getOrgNameCn());
-        u.setOrgType(boaInOrgInfo.getOrgType());
-        u.setParentOrgCode(boaInOrgInfo.getParentOrgCode());
-        u.setRootOrgCode(boaInOrgInfo.getRootOrgCode());
-        u.setOrgPath(boaInOrgInfo.getOrgPath());*/
+        if(u==null) {
+           u = htBoaInBusinessOrg;
+           u.setCreatedDatetime(new Date());
+        } 
+        u.setUpdateDatetime(new Date());
+        u.setJpaVersion(0);
+        u.setStatus(0);
+        u.setCreateOperator(userId);
         u.setDataSource(Constants.USER_DATASOURCE_1);
-        if (boaInOrgInfo.getId() > 0) {
-            u.setId(boaInOrgInfo.getId());
-            u.setUpdateOperator(userId);
-            u = htBoaInOrgBusinessService.update(u);
-        } else {
-        	//u.setDelFlag(Constants.DEL_0);
-            u.setCreatedDatetime(new Date());
-            u.setCreateOperator(userId);
-           // u.setOrgPath(boaInOrgInfo.getOrgPath() + boaInOrgInfo.getOrgCode() + "/");
-            u = htBoaInOrgBusinessService.add(u);
-        }
-
+        u=htBoaInOrgBusinessService.add(u);
         el = System.currentTimeMillis();
-        log.debug(logEnd, "boaInOrgInfo: " + boaInOrgInfo, msg, el, el - sl);
+        log.debug(logEnd, "boaInOrgInfo: " + u, msg, el, el - sl);
         return Result.buildSuccess();
     }
 
@@ -193,7 +184,7 @@ public class OrgBusinessResource {
         String logEnd = logHead + " {} | END:{}, COST:{}";
         log.debug(logStart, "codes: " + id, sl);
         HtBoaInBusinessOrg u = htBoaInOrgBusinessService.findById(id);
-        u.setLastModifiedDatetime(new Date());
+        u.setUpdateDatetime(new Date());
         u.setUpdateOperator(userId);
         htBoaInOrgBusinessService.update(u);
         el = System.currentTimeMillis();
@@ -288,6 +279,21 @@ public class OrgBusinessResource {
     public Result getUserInfoByUserId(String userId) {
     	HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(userId);
        return Result.buildSuccess(htBoaInUser);
+    }
+    
+    @SuppressWarnings("rawtypes")
+   	@ApiOperation(value = "信贷机构转换UC机构",notes="将信贷机构转换为UC对应机构信息")
+    @PostMapping(value = {"/convertBmOrg" }, produces = {"application/json"} )
+    public Result convertBmOrg( ) {
+       return htBoaInOrgBusinessService.convertBmOrg( );
+    }
+    
+    @SuppressWarnings("rawtypes")
+   	@ApiOperation(value = "分公司 业务片区转换",notes="分公司 业务片区转换")
+    @PostMapping(value = {"/convertBmBranch" }, produces = {"application/json"} )
+    public Result convertBmBranch( ) {
+       htBoaInOrgBusinessService.convertBmBranch( );
+       return Result.buildSuccess();
     }
     
     @SuppressWarnings("rawtypes")

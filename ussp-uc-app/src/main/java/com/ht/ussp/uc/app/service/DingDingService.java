@@ -1523,8 +1523,50 @@ public class DingDingService {
 	}
 
 	public List<DdUserVo> getDdUserList() {
-		return ddDeptUserRepository.getDdUserList();
+		List<DdUserVo> listDdUser = new ArrayList<DdUserVo>();
+		List<DdUserVo> listDdUserVo = ddDeptUserRepository.getDdUserList();
+		List<DdDept>  listDdDept = ddDeptRepository.findAll();
+		for(DdUserVo ddUserVo :listDdUserVo) {
+			String deptName =   getDDOrgPath(ddUserVo.getDeptId(),listDdDept);
+			ddUserVo.setDeptName(deptName);
+			listDdUser.add(ddUserVo);
+		}
+		return listDdUser;
 	}
+	
+	private String getDDOrgPath(String ddDeptId,List<DdDept> listDdDept) {
+		DdDept ddDept = null;
+		if(listDdDept!=null&&!listDdDept.isEmpty()&&StringUtils.isNotEmpty(ddDeptId)) {
+		  Optional<DdDept> ddDeptOptional = listDdDept.stream().filter(dept -> ddDeptId.equals(dept.getDeptId())).findFirst();
+		  if(ddDeptOptional!=null&&ddDeptOptional.isPresent()) {
+			  ddDept = ddDeptOptional.get();
+		  }
+		}
+		if(ddDept!=null) {
+			try {
+				if("58800327".equals(ddDept.getParentId())) {
+					return  ddDept.getDeptName();
+				} else {
+					DdDept ddDeptP = null;// findByDeptId(ddDept.getParentId());
+					if(listDdDept!=null&&!listDdDept.isEmpty()&&StringUtils.isNotEmpty(ddDept.getParentId())) {
+						  String parentDeptId = ddDept.getParentId();
+						  Optional<DdDept> ddDeptPOptional = listDdDept.stream().filter(dept -> parentDeptId.equals(dept.getDeptId())).findFirst();
+						  if(ddDeptPOptional!=null&&ddDeptPOptional.isPresent()) {
+							  ddDeptP = ddDeptPOptional.get();
+						  }
+					}
+					if(ddDeptP!=null) {
+						return getDDOrgPath(ddDeptP.getDeptId(),listDdDept)+"-"+ddDept.getDeptName();
+					}
+				}
+			} catch (Exception e) {
+				 System.out.println(ddDept);
+			}
+		}
+		return "";
+	} 
+	
 
+	
 	
 }

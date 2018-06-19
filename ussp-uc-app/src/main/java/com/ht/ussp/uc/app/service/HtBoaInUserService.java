@@ -1,5 +1,6 @@
 package com.ht.ussp.uc.app.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,7 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
+import com.ht.ussp.core.Result;
 import com.ht.ussp.core.ReturnCodeEnum;
+import com.ht.ussp.uc.app.domain.DdDeptOperator;
 import com.ht.ussp.uc.app.domain.HtBoaInBmUser;
 import com.ht.ussp.uc.app.domain.HtBoaInContrast;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
@@ -66,7 +69,8 @@ public class HtBoaInUserService {
     private HtBoaInBmUserRepository htBoaInBmUserRepository;
     @Autowired
     private HtBoaInBmUserService htBoaInBmUserService;
-
+    @Autowired
+    private HtBoaInUserBusinessService htBoaInUserBusinessService;
     
     /**
      * @return HtBoaInUser
@@ -158,14 +162,12 @@ public class HtBoaInUserService {
         Page<UserMessageVo> pageData = null;
         Page<UserMessageVo> pageDataAll = null;
         List<UserMessageVo> listUserMessageVo = new ArrayList<UserMessageVo>();
-        List<HtBoaInOrg> orgList = null;
+        List<HtBoaInOrg> orgList = htBoaInOrgRepository.findAll();
         if(StringUtils.isEmpty(orgCode)&&StringUtils.isNotEmpty(keyWord)) { //查全局
-        	orgList = htBoaInOrgRepository.findAll();
         	pageDataAll = htBoaInUserRepository.queryUserPageAll( keyWord, pageRequest);
         }
         if(StringUtils.isNotEmpty(orgCode)&&StringUtils.isNotEmpty(keyWord)) {
         	if("D01".equals(orgCode)) {//顶级机构查全局
-        		orgList = htBoaInOrgRepository.findAll();
         		pageDataAll = htBoaInUserRepository.queryUserPageAll( keyWord, pageRequest);
         	}else {//按条件查询
         		pageData = htBoaInUserRepository.queryUserPage(orgCode, keyWord, pageRequest);
@@ -204,19 +206,37 @@ public class HtBoaInUserService {
 //            }
 //        }
         if (pageData != null) {
-            result.count(pageData.getTotalElements()).data(pageData.getContent());
+        	for(UserMessageVo userMessageVo : pageData.getContent()) {
+    			if(orgList!=null) {
+    				Optional<HtBoaInOrg> htBoaInOrgOptional = orgList.stream().filter(org -> org.getOrgCode().equals(userMessageVo.getOrgCode())).findFirst();
+    				if(htBoaInOrgOptional!=null&&htBoaInOrgOptional.isPresent()) {
+    					HtBoaInOrg o = htBoaInOrgOptional.get();
+    					if(o!=null) {
+    						userMessageVo.setOrgName(o.getOrgNameCn());
+    					}
+    				}
+    				List<HtBoaInUserExt>  listHtBoaInUserExt = htBoaInUserBusinessService.findHtBoaInUserExtByUserId(userMessageVo.getUserId());
+    				if(listHtBoaInUserExt!=null&&!listHtBoaInUserExt.isEmpty()) {
+    					userMessageVo.setBussinesOrgCode(listHtBoaInUserExt.get(0).getBusiOrgCode());
+    				}
+    				listUserMessageVo.add(userMessageVo);
+    			}
+    		}
+            result.count(pageData.getTotalElements()).data(listUserMessageVo);
         }else {
         	if(pageDataAll!=null) {
         		for(UserMessageVo userMessageVo : pageDataAll.getContent()) {
         			if(orgList!=null) {
-        				/*HtBoaInOrg o = orgList.stream().filter(org -> org.getOrgCode().equals(userMessageVo.getOrgCode())).findFirst().get();
-        				userMessageVo.setOrgName(o.getOrgNameCn());*/
         				Optional<HtBoaInOrg> htBoaInOrgOptional = orgList.stream().filter(org -> org.getOrgCode().equals(userMessageVo.getOrgCode())).findFirst();
         				if(htBoaInOrgOptional!=null&&htBoaInOrgOptional.isPresent()) {
         					HtBoaInOrg o = htBoaInOrgOptional.get();
         					if(o!=null) {
         						userMessageVo.setOrgName(o.getOrgNameCn());
         					}
+        				}
+        				List<HtBoaInUserExt>  listHtBoaInUserExt = htBoaInUserBusinessService.findHtBoaInUserExtByUserId(userMessageVo.getUserId());
+        				if(listHtBoaInUserExt!=null&&!listHtBoaInUserExt.isEmpty()) {
+        					userMessageVo.setBussinesOrgCode(listHtBoaInUserExt.get(0).getBusiOrgCode());
         				}
         				listUserMessageVo.add(userMessageVo);
         			}
@@ -857,12 +877,20 @@ public class HtBoaInUserService {
 						htBoaInBmUser = htBoaInBmUserOptional.get();
 					}
 					if(htBoaInBmUser!=null) {
+						String bdOrgCOde="";//业务机构代码
+						List<HtBoaInContrast> listHtBoaInContrastBm = htBoaInContrastRepository.findByBmBusinessIdAndType(htBoaInBmUser.getOrgCode(), "10");
+						if(listHtBoaInContrastBm!=null&&!listHtBoaInContrastBm.isEmpty()) {
+							HtBoaInContrast htBoaInContrastBm = listHtBoaInContrastBm.get(0);
+							bdOrgCOde = htBoaInContrastBm.getUcBusinessId();
+						}
+						bdOrgCOde = bdOrgCOde==null?htBoaInBmUser.getOrgCode():bdOrgCOde;
+						
 						HtBoaInUserExt htBoaInUserExt = null;
 						if("0".equals(state)) {
 							if(!listUserId.contains(htBoaInContrast.getUcBusinessId())) {
 								htBoaInUserExt = new HtBoaInUserExt();
 								htBoaInUserExt.setBmUserId(htBoaInContrast.getBmBusinessId());
-								htBoaInUserExt.setBusiOrgCode(htBoaInBmUser.getOrgCode());
+								htBoaInUserExt.setBusiOrgCode(bdOrgCOde);
 								htBoaInUserExt.setUserId(htBoaInContrast.getUcBusinessId());
 								htBoaInUserExt.setCreatedDatetime(new Date());
 								htBoaInUserExt.setLastModifiedDatetime(new Date());
@@ -879,9 +907,15 @@ public class HtBoaInUserService {
 							if(htBoaInUserExt==null) {
 								htBoaInUserExt = new HtBoaInUserExt();
 								htBoaInUserExt.setBmUserId(htBoaInContrast.getBmBusinessId());
-								htBoaInUserExt.setBusiOrgCode(htBoaInBmUser.getOrgCode());
+								htBoaInUserExt.setBusiOrgCode(bdOrgCOde);
 								htBoaInUserExt.setUserId(htBoaInContrast.getUcBusinessId());
 								htBoaInUserExt.setCreatedDatetime(new Date());
+								htBoaInUserExt.setLastModifiedDatetime(new Date());
+								htBoaInUserExt.setJpaVersion(0);
+								htBoaInUserExtRepository.save(htBoaInUserExt);
+							}else {
+								htBoaInUserExt.setBmUserId(htBoaInContrast.getBmBusinessId());
+								htBoaInUserExt.setBusiOrgCode(bdOrgCOde);
 								htBoaInUserExt.setLastModifiedDatetime(new Date());
 								htBoaInUserExt.setJpaVersion(0);
 								htBoaInUserExtRepository.save(htBoaInUserExt);
@@ -895,4 +929,6 @@ public class HtBoaInUserService {
 			}
 		}
 	}
+
+	
 }

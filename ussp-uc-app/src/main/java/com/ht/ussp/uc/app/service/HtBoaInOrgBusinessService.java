@@ -1,11 +1,14 @@
 package com.ht.ussp.uc.app.service;
 
-import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.criteria.Predicate;
 
@@ -21,16 +24,19 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.ht.ussp.bean.ExcelBean;
 import com.ht.ussp.core.PageResult;
+import com.ht.ussp.core.Result;
 import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInBusinessOrg;
+import com.ht.ussp.uc.app.domain.HtBoaInContrast;
+import com.ht.ussp.uc.app.domain.TbDepartment;
 import com.ht.ussp.uc.app.model.BoaInOrgInfo;
 import com.ht.ussp.uc.app.model.PageConf;
+import com.ht.ussp.uc.app.repository.HtBoaInContrastRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInOrgBusinessRepository;
+import com.ht.ussp.uc.app.repository.TbDepartmentRepository;
 import com.ht.ussp.util.ExcelUtils;
 
 @Service
@@ -38,6 +44,14 @@ public class HtBoaInOrgBusinessService {
 
 	@Autowired
     private HtBoaInOrgBusinessRepository htBoaInOrgBusinessRepository;
+	
+	@Autowired
+    private TbDepartmentRepository tbDepartmentRepository;
+	
+	@Autowired
+    private HtBoaInContrastRepository htBoaInContrastRepository;
+	
+	
 	
     public HtBoaInBusinessOrg findById(Long id) {
         return this.htBoaInOrgBusinessRepository.findById(id);
@@ -191,27 +205,6 @@ public class HtBoaInOrgBusinessService {
         return book;
     }
 
-    @Transactional
-    public void importOrgExcel(InputStream in, MultipartFile file, String userId) {
-        try {
-            List<List<Object>> listob = ExcelUtils.getBankListByExcel(in, file.getOriginalFilename());
-            for (int i = 0; i < listob.size(); i++) {
-                List<Object> ob = listob.get(i);
-                HtBoaInBusinessOrg u = new HtBoaInBusinessOrg();
-                u.setLastModifiedDatetime(new Date());
-               // u.setOrgCode(String.valueOf(ob.get(0)));
-                //u.setOrgNameCn(String.valueOf(ob.get(1)));
-                u.setParentOrgCode(String.valueOf(ob.get(2)));
-                u.setCreatedDatetime(new Date());
-               // u.setDelFlag(Constants.DEL_0);
-                u.setCreateOperator(userId);
-                u = add(u);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 	public String getMaxOrgCode(String parentOrgCode) {
 		return  this.htBoaInOrgBusinessRepository.getMaxOrgCode(parentOrgCode);
 	}
@@ -275,4 +268,222 @@ public class HtBoaInOrgBusinessService {
 	public void delete(HtBoaInBusinessOrg u) {
 		htBoaInOrgBusinessRepository.delete(u);
 	}
+	
+	private String getBmOrgPath(String bmDeptId,List<TbDepartment> listTbDepartment) {
+		TbDepartment tbDepartment = null;
+		if(listTbDepartment!=null&&!listTbDepartment.isEmpty()&&StringUtils.isNotEmpty(bmDeptId)) {
+		  Optional<TbDepartment> tbDepartmentOptional = listTbDepartment.stream().filter(dept -> bmDeptId.equals(dept.getDeptId())).findFirst();
+		  if(tbDepartmentOptional!=null&&tbDepartmentOptional.isPresent()) {
+			  tbDepartment = tbDepartmentOptional.get();
+		  }
+		}
+		if(tbDepartment!=null) {
+			try {
+				if(tbDepartment.getDeptId().equals(tbDepartment.getParentOrgCode())) {
+					return  tbDepartment.getDeptId();
+				} else {
+					TbDepartment tbDepartmentP = null;// findByDeptId(ddDept.getParentId());
+					if(listTbDepartment!=null&&!listTbDepartment.isEmpty()&&StringUtils.isNotEmpty(tbDepartment.getParentOrgCode())) {
+						  String parentDeptId = tbDepartment.getParentOrgCode();
+						  Optional<TbDepartment> tbDepartmentPOptional = listTbDepartment.stream().filter(dept -> parentDeptId.equals(dept.getDeptId())).findFirst();
+						  if(tbDepartmentPOptional!=null&&tbDepartmentPOptional.isPresent()) {
+							  tbDepartmentP = tbDepartmentPOptional.get();
+						  }
+					}
+					if(tbDepartmentP!=null) {
+						return getBmOrgPath(tbDepartmentP.getDeptId(),listTbDepartment)+"/"+tbDepartment.getDeptId();
+					}
+				}
+			} catch (Exception e) {
+				 
+			}
+		}
+		return "";
+	} 
+	
+	public Result convertBmOrg( ) {
+		try {
+			Sort sort = new Sort(new Order(Direction.ASC, "orgLevel"));
+			List<TbDepartment> listTbDepartment = tbDepartmentRepository.findAll(sort);
+			List<TbDepartment> listTbDepartmentDeal = new ArrayList<TbDepartment>();
+				for(TbDepartment tbDepartment :listTbDepartment) {
+					String path = getBmOrgPath(tbDepartment.getDeptId(),listTbDepartment);
+					Integer level = 0;
+					if (path != null) {
+						// 根据指定的字符构建正则
+						Pattern pattern = Pattern.compile("/");
+						// 构建字符串和正则的匹配
+						Matcher matcher = pattern.matcher(path);
+						int count = 0;
+						// 循环依次往下匹配
+						while (matcher.find()) { // 如果匹配,则数量+1
+							count++;
+						}
+						level = count + 2;
+					}
+					if (StringUtils.isEmpty(tbDepartment.getParentOrgCode())) {
+						level = 1;
+					}
+					tbDepartment.setBusinessRegion(level+"");
+					listTbDepartmentDeal.add(tbDepartment);
+				}
+				if(listTbDepartmentDeal!=null&&!listTbDepartmentDeal.isEmpty()) {
+					Collections.sort(listTbDepartmentDeal, (a, b) -> a.getBusinessRegion().compareTo(b.getBusinessRegion())); //升序排序
+					//按等级进行保存
+					for(TbDepartment tbDepartment :listTbDepartmentDeal) {
+						HtBoaInBusinessOrg htBoaInBusinessOrgNew = null;
+						String newOrgCode ="";
+						String newParentOrgCode ="";
+						if(tbDepartment.getDeptId().equals(tbDepartment.getParentOrgCode())) {//顶级机构
+							newOrgCode = "BD01";
+							newParentOrgCode = newOrgCode;
+						}else {
+							HtBoaInContrast htBoaInContrastP  = null;
+							List<HtBoaInContrast> listHtBoaInContrastP = htBoaInContrastRepository.findByBmBusinessIdAndType(tbDepartment.getParentOrgCode(), "10");
+				            if(listHtBoaInContrastP!=null&&!listHtBoaInContrastP.isEmpty()) {
+				            	htBoaInContrastP = listHtBoaInContrastP.get(0);
+				            }
+				            if(htBoaInContrastP!=null) {
+				            	List<HtBoaInBusinessOrg> listP = htBoaInOrgBusinessRepository.findByBusinessOrgCode(htBoaInContrastP.getUcBusinessId());
+				            	HtBoaInBusinessOrg htBoaInBusinessOrgP = null;
+				            	if(listP!=null&&!listP.isEmpty()) {
+				            		htBoaInBusinessOrgP = listP.get(0);
+				            	}
+				            	if(htBoaInBusinessOrgP!=null) {
+				            		newParentOrgCode = htBoaInBusinessOrgP.getBusinessOrgCode();
+				            		List<HtBoaInBusinessOrg> listSub =  htBoaInOrgBusinessRepository.findByParentOrgCode(htBoaInContrastP.getUcBusinessId());
+					            	if(listSub!=null&&!listSub.isEmpty()) {
+					            		newOrgCode = String.format("%s%02d", htBoaInBusinessOrgP.getBusinessOrgCode(), listSub.size()+1);
+					            	}else {
+					            		newOrgCode = String.format("%s%02d", htBoaInBusinessOrgP.getBusinessOrgCode(),  1);
+					            	}
+				            	}
+				            } 
+						}
+						List<HtBoaInContrast> listHtBoaInContrastBm = htBoaInContrastRepository.findByBmBusinessIdAndType(tbDepartment.getDeptId(), "10");
+			            if(listHtBoaInContrastBm!=null&&!listHtBoaInContrastBm.isEmpty()) {
+			            	continue;//已经转换的则不再转换
+			            }
+						if(StringUtils.isEmpty(newOrgCode)) {
+							newOrgCode = "BD01";
+						}
+						List<HtBoaInBusinessOrg> listNew = htBoaInOrgBusinessRepository.findByBusinessOrgCode(newOrgCode);
+		            	if(listNew!=null&&!listNew.isEmpty()) {
+		            		htBoaInBusinessOrgNew = listNew.get(0);
+		            	} 
+						if(htBoaInBusinessOrgNew==null) {
+							htBoaInBusinessOrgNew = new HtBoaInBusinessOrg();
+							htBoaInBusinessOrgNew.setBusinessOrgCode(newOrgCode);
+						}
+						htBoaInBusinessOrgNew.setParentOrgCode(newParentOrgCode);
+						htBoaInBusinessOrgNew.setBusinessOrgName(tbDepartment.getDeptName());
+						htBoaInBusinessOrgNew.setBusinessGroup(tbDepartment.getBusinessGroup());
+						htBoaInBusinessOrgNew.setBranchCode(tbDepartment.getBranchCode());
+						htBoaInBusinessOrgNew.setDistrictCode(tbDepartment.getDistrictCode());
+						htBoaInBusinessOrgNew.setFinanceCode(tbDepartment.getFinanceCode());
+						htBoaInBusinessOrgNew.setApprovalCode(tbDepartment.getApprovalCode());
+						htBoaInBusinessOrgNew.setActivityCode(tbDepartment.getActivityCode());
+						htBoaInBusinessOrgNew.setBmOrgCode(tbDepartment.getDeptId());
+						htBoaInBusinessOrgNew.setOrgLevel(tbDepartment.getOrgLevel());
+						htBoaInBusinessOrgNew.setStatus(0);
+						htBoaInBusinessOrgNew.setProvince(tbDepartment.getProvince());
+						htBoaInBusinessOrgNew.setCity(tbDepartment.getCity());
+						htBoaInBusinessOrgNew.setCounty(tbDepartment.getCounty());
+						htBoaInBusinessOrgNew.setDataSource(3);
+						htBoaInBusinessOrgNew.setCreatedDatetime(new Date());
+						htBoaInBusinessOrgNew.setUpdateDatetime(new Date());
+						htBoaInBusinessOrgNew.setJpaVersion(0);
+						htBoaInBusinessOrgNew = htBoaInOrgBusinessRepository.save(htBoaInBusinessOrgNew);
+						
+						//添加机构与钉钉的关联
+						HtBoaInContrast htBoaInContrast = null;
+		                List<HtBoaInContrast> listHtBoaInContrast = htBoaInContrastRepository.findByUcBusinessIdAndType(newOrgCode, "10");
+		            	if(listHtBoaInContrast!=null&&!listHtBoaInContrast.isEmpty()) {
+		            		htBoaInContrast = listHtBoaInContrast.get(0);
+		            	} 
+		                if(htBoaInContrast==null) {
+		                	htBoaInContrast = new HtBoaInContrast();
+		                	htBoaInContrast.setType("10");
+		                    htBoaInContrast.setUcBusinessId(newOrgCode);
+		                    htBoaInContrast.setBmBusinessId(tbDepartment.getDeptId());
+		                    htBoaInContrast.setContrast("信贷自动对照");
+		                    htBoaInContrast.setContrastDatetime(new Date());
+		                }else {
+		                	htBoaInContrast.setUcBusinessId(newOrgCode);
+		                    htBoaInContrast.setBmBusinessId(tbDepartment.getDeptId());
+		                    htBoaInContrast.setContrastDatetime(new Date());
+		                }
+		                htBoaInContrastRepository.save(htBoaInContrast);
+					}
+
+				}
+				System.out.println("转换完成");
+	    	return Result.buildSuccess();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Result.buildFail("9999", e.getMessage());
+		}
+	}
+
+	public void convertBmBranch() {
+		//List<HtBoaInContrast> listHtBoaInContrast = htBoaInContrastRepository.findByType("10");
+		List<HtBoaInBusinessOrg> listHtBoaInBusinessOrg = htBoaInOrgBusinessRepository.findAll();
+		List<HtBoaInBusinessOrg> listHtBoaInBusinessOrgUpdate = new ArrayList<HtBoaInBusinessOrg>();
+		for(HtBoaInBusinessOrg htBoaInBusinessOrg : listHtBoaInBusinessOrg) {
+			HtBoaInContrast htBoaInContrastBranch = null;
+			HtBoaInContrast htBoaInContrastDispatch = null;
+			HtBoaInContrast htBoaInContrastApprove = null;
+			HtBoaInContrast htBoaInContrastActivi = null;
+			HtBoaInContrast htBoaInContrastFinance = null;
+			if(StringUtils.isNotEmpty(htBoaInBusinessOrg.getDistrictCode())) { //片区
+				List<HtBoaInContrast> list = htBoaInContrastRepository.findByBmBusinessIdAndType(htBoaInBusinessOrg.getDistrictCode(), "10");
+				if(list!=null&&!list.isEmpty()) {
+					htBoaInContrastDispatch = list.get(0);
+				}
+				if(htBoaInContrastDispatch!=null) {
+					htBoaInBusinessOrg.setDistrictCode(htBoaInContrastDispatch.getUcBusinessId());
+				}
+			}
+			if(StringUtils.isNotEmpty(htBoaInBusinessOrg.getBranchCode())) {//分公司
+				List<HtBoaInContrast> list = htBoaInContrastRepository.findByBmBusinessIdAndType(htBoaInBusinessOrg.getBranchCode(), "10");
+				if(list!=null&&!list.isEmpty()) {
+					htBoaInContrastBranch = list.get(0);
+				}
+				if(htBoaInContrastBranch!=null) {
+					htBoaInBusinessOrg.setBranchCode(htBoaInContrastBranch.getUcBusinessId());
+				}
+			}
+			if(StringUtils.isNotEmpty(htBoaInBusinessOrg.getActivityCode())) {//流程中心
+				List<HtBoaInContrast> list = htBoaInContrastRepository.findByBmBusinessIdAndType(htBoaInBusinessOrg.getActivityCode(), "10");
+				if(list!=null&&!list.isEmpty()) {
+					htBoaInContrastActivi = list.get(0);
+				}
+				if(htBoaInContrastActivi!=null) {
+					htBoaInBusinessOrg.setActivityCode(htBoaInContrastActivi.getUcBusinessId());
+				}
+			}
+			if(StringUtils.isNotEmpty(htBoaInBusinessOrg.getApprovalCode())) {//审批中心
+				List<HtBoaInContrast> list = htBoaInContrastRepository.findByBmBusinessIdAndType(htBoaInBusinessOrg.getApprovalCode(), "10");
+				if(list!=null&&!list.isEmpty()) {
+					htBoaInContrastApprove = list.get(0);
+				}
+				if(htBoaInContrastApprove!=null) {
+					htBoaInBusinessOrg.setApprovalCode(htBoaInContrastApprove.getUcBusinessId());
+				}
+			}
+			if(StringUtils.isNotEmpty(htBoaInBusinessOrg.getFinanceCode())) {//财务中心
+				List<HtBoaInContrast> list = htBoaInContrastRepository.findByBmBusinessIdAndType(htBoaInBusinessOrg.getFinanceCode(), "10");
+				if(list!=null&&!list.isEmpty()) {
+					htBoaInContrastFinance = list.get(0);
+				}
+				if(htBoaInContrastFinance!=null) {
+					htBoaInBusinessOrg.setFinanceCode(htBoaInContrastFinance.getUcBusinessId());
+				}
+			}
+			listHtBoaInBusinessOrgUpdate.add(htBoaInBusinessOrg);
+		}
+		htBoaInOrgBusinessRepository.save(listHtBoaInBusinessOrgUpdate);
+		System.out.println("转换完成");
+	}
+ 
 }
