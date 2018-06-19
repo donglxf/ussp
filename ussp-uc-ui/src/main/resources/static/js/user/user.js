@@ -433,33 +433,34 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
     table.on('tool(filter_user_datatable)', function (obj) {
             var data = obj.data;
             if (obj.event === 'detail') {
-                $.post(config.basePath + "user/view?userId=" + data.userId,  null, function (result) {
+                /*$.post(config.basePath + "user/view?userId=" + data.userId,  null, function (result) {
                     if (result["returnCode"] == "0000") {
-                        viewDialog = layer.open({
-                            type: 1,
-                            area: ['720px', '430px'],
-                            shadeClose: true,
-                            title: "用户详情",
-                            content: $("#user_view_data_div").html(),
-                            btn: ['取消'],
-                            btn2: function () {
-                                layer.closeAll('tips');
-                            },
-                            success: function (layero) {
-                                var status = result.data.status;
-                                result.data.status = status === "0" ? "正常" : (status === "2" ? "离职" : (status === "4" ? "冻结" : (status === "5" ? "锁定" : result.data.status)));
-                                $.each(result.data, function (name, value) {
-                                    var $input = $("input[name=" + name + "]", layero);
-                                    if ($input && $input.length == 1) {
-                                        $input.val(value);
-                                    }
-                                });
-                            }
-                        })
+                       
                     } else {
                         layer.msg(result.codeDesc);
                     }
-                });
+                });*/
+                viewDialog = layer.open({
+                    type: 1,
+                    area: ['720px', '430px'],
+                    shadeClose: true,
+                    title: "用户详情",
+                    content: $("#user_view_data_div").html(),
+                    btn: ['取消'],
+                    btn2: function () {
+                        layer.closeAll('tips');
+                    },
+                    success: function (layero) {
+                        var status = data.status;
+                        data.status = status === "0" ? "正常" : (status === "2" ? "离职" : (status === "4" ? "冻结" : (status === "5" ? "锁定" : result.data.status)));
+                        $.each(data, function (name, value) {
+                            var $input = $("input[name=" + name + "]", layero);
+                            if ($input && $input.length == 1) {
+                                $input.val(value);
+                            }
+                        });
+                    }
+                })
             } else if (obj.event === 'del') {
                 layer.confirm('是否删除用户' + data.userName + "？", function (index) {
                     $.post(config.basePath + "user/delete?userId=" + data.userId, null, function (result) {
@@ -474,80 +475,81 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
                 });
             } else if (obj.event === 'edit') {
                 layer.close(editDialog);
-                $.post(config.basePath + "user/view?userId=" + data.userId, null, function (result) {
+                /*$.post(config.basePath + "user/view?userId=" + data.userId, null, function (result) {
                     if (result["returnCode"] == "0000") {
-                        editDialog = layer.open({
-                            type: 1,
-                            area: ['600px', '600px'],
-                            shadeClose: false,
-                            title: "修改用户",
-                            content: $("#user_modify_data_div").html(),
-                            btn: ['保存', '取消'],
-                            yes: function (index, layero) {
-                                var $submitBtn = $("button[lay-filter=user_filter_modify_data_form]", layero);
-                                if ($submitBtn) {
-                                    $submitBtn.click();
-                                } else {
-                                    throw new Error("没有找到submit按钮。");
-                                }
-                            },
-                            btn2: function () {
-                                layer.closeAll('tips');
-                            },
-                            success: function (layero, index) {
-                                //表单数据填充
-                                $.each(result.data, function (name, value) {
-                                    var $input = $("input[name=" + name + "]", layero);
-                                    if ($input && $input.length == 1) {
-                                        $input.val(value);
-                                    }
-                                });
-                                layeroEdit = layero;
-                                $('#orgNameEdit',layero).on('click', function () {
-                                	layer.open({
-                                        type: 2,
-                                        area: ['400px', '600px'],
-                                        maxmin: true,
-                                        shadeClose: true,
-                                        title: "选择机构",
-                                        content: "/html/user/orgTreeDialog.html",
-                                        success: function (layero, index) {
-                                       	 /* 渲染表单 */
-                                            form.render();
-                                        }
-                                    })
-                                });
-                                
-                                form.render(null, "user_filter_modify_data_form");
-                                form.on('submit(user_filter_modify_data_form)', function (data) {
-                                    $.ajax({
-                                        type: "POST",
-                                        url: config.basePath + "user/update",
-                                        data: JSON.stringify(data.field),
-                                        contentType: "application/json; charset=utf-8",
-                                        success: function (result2) {
-                                            if (result2["returnCode"] == '0000') {
-                                            	layer.close(index);
-                                                refreshTable();
-                                                layer.alert("用户修改成功。");
-                                            }else{
-                                                 layer.msg(result2["msg"]);
-                                            }
-                                        },
-                                        error: function (message) {
-                                            layer.msg("用户新增发生异常，请联系管理员。");
-                                            layer.close(index);
-                                            console.error(message);
-                                        }
-                                    });
-                                    return false;
-                                });
-                            }
-                        })
+                        
                     } else {
                         layer.msg(result.codeDesc);
                     }
-                });
+                });*/
+                editDialog = layer.open({
+                    type: 1,
+                    area: ['600px', '600px'],
+                    shadeClose: false,
+                    title: "修改用户",
+                    content: $("#user_modify_data_div").html(),
+                    btn: ['保存', '取消'],
+                    yes: function (index, layero) {
+                        var $submitBtn = $("button[lay-filter=user_filter_modify_data_form]", layero);
+                        if ($submitBtn) {
+                            $submitBtn.click();
+                        } else {
+                            throw new Error("没有找到submit按钮。");
+                        }
+                    },
+                    btn2: function () {
+                        layer.closeAll('tips');
+                    },
+                    success: function (layero, index) {
+                        //表单数据填充
+                        $.each(data, function (name, value) {
+                            var $input = $("input[name=" + name + "]", layero);
+                            if ($input && $input.length == 1) {
+                                $input.val(value);
+                            }
+                        });
+                        layeroEdit = layero;
+                        $('#orgNameEdit',layero).on('click', function () {
+                        	layer.open({
+                                type: 2,
+                                area: ['400px', '600px'],
+                                maxmin: true,
+                                shadeClose: true,
+                                title: "选择机构",
+                                content: "/html/user/orgTreeDialog.html",
+                                success: function (layero, index) {
+                               	 /* 渲染表单 */
+                                    form.render();
+                                }
+                            })
+                        });
+                        
+                        form.render(null, "user_filter_modify_data_form");
+                        form.on('submit(user_filter_modify_data_form)', function (data_form) {
+                            $.ajax({
+                                type: "POST",
+                                url: config.basePath + "user/update",
+                                data: JSON.stringify(data_form.field),
+                                contentType: "application/json; charset=utf-8",
+                                success: function (result2) {
+                                    if (result2["returnCode"] == '0000') {
+                                    	layer.close(index);
+                                        refreshTable();
+                                        layer.alert("用户修改成功。");
+                                    }else{
+                                         layer.msg(result2["msg"]);
+                                    }
+                                },
+                                error: function (message) {
+                                    layer.msg("用户新增发生异常，请联系管理员。");
+                                    layer.close(index);
+                                    console.error(message);
+                                }
+                            });
+                            return false;
+                        });
+                    }
+                })
             }else if (obj.event === 'resetpwd') {
             	layer.confirm("确认重置用户 密码？", function (index) {
             		$.post(config.basePath + "user/sendEmailRestPwd?userId=" + data.userId, null, function (result) {

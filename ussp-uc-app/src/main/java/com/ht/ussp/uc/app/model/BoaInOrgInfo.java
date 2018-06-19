@@ -22,6 +22,12 @@ public class BoaInOrgInfo {
 
     @ApiModelProperty(value = "机构名称", dataType = "string")
     String orgName;
+    
+    @ApiModelProperty(value = "业务机构编号", dataType = "string")
+    String businessOrgCode;
+
+    @ApiModelProperty(value = "业务机构名称", dataType = "string")
+    String businessOrgName;
 
     @ApiModelProperty(value = "机构名称中文", dataType = "string")
     String orgNameCn;

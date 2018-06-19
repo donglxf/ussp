@@ -69,7 +69,8 @@ public class HtBoaInUserService {
     private HtBoaInBmUserRepository htBoaInBmUserRepository;
     @Autowired
     private HtBoaInBmUserService htBoaInBmUserService;
-
+    @Autowired
+    private HtBoaInUserBusinessService htBoaInUserBusinessService;
     
     /**
      * @return HtBoaInUser
@@ -161,14 +162,12 @@ public class HtBoaInUserService {
         Page<UserMessageVo> pageData = null;
         Page<UserMessageVo> pageDataAll = null;
         List<UserMessageVo> listUserMessageVo = new ArrayList<UserMessageVo>();
-        List<HtBoaInOrg> orgList = null;
+        List<HtBoaInOrg> orgList = htBoaInOrgRepository.findAll();
         if(StringUtils.isEmpty(orgCode)&&StringUtils.isNotEmpty(keyWord)) { //查全局
-        	orgList = htBoaInOrgRepository.findAll();
         	pageDataAll = htBoaInUserRepository.queryUserPageAll( keyWord, pageRequest);
         }
         if(StringUtils.isNotEmpty(orgCode)&&StringUtils.isNotEmpty(keyWord)) {
         	if("D01".equals(orgCode)) {//顶级机构查全局
-        		orgList = htBoaInOrgRepository.findAll();
         		pageDataAll = htBoaInUserRepository.queryUserPageAll( keyWord, pageRequest);
         	}else {//按条件查询
         		pageData = htBoaInUserRepository.queryUserPage(orgCode, keyWord, pageRequest);
@@ -207,19 +206,37 @@ public class HtBoaInUserService {
 //            }
 //        }
         if (pageData != null) {
-            result.count(pageData.getTotalElements()).data(pageData.getContent());
+        	for(UserMessageVo userMessageVo : pageData.getContent()) {
+    			if(orgList!=null) {
+    				Optional<HtBoaInOrg> htBoaInOrgOptional = orgList.stream().filter(org -> org.getOrgCode().equals(userMessageVo.getOrgCode())).findFirst();
+    				if(htBoaInOrgOptional!=null&&htBoaInOrgOptional.isPresent()) {
+    					HtBoaInOrg o = htBoaInOrgOptional.get();
+    					if(o!=null) {
+    						userMessageVo.setOrgName(o.getOrgNameCn());
+    					}
+    				}
+    				List<HtBoaInUserExt>  listHtBoaInUserExt = htBoaInUserBusinessService.findHtBoaInUserExtByUserId(userMessageVo.getUserId());
+    				if(listHtBoaInUserExt!=null&&!listHtBoaInUserExt.isEmpty()) {
+    					userMessageVo.setBussinesOrgCode(listHtBoaInUserExt.get(0).getBusiOrgCode());
+    				}
+    				listUserMessageVo.add(userMessageVo);
+    			}
+    		}
+            result.count(pageData.getTotalElements()).data(listUserMessageVo);
         }else {
         	if(pageDataAll!=null) {
         		for(UserMessageVo userMessageVo : pageDataAll.getContent()) {
         			if(orgList!=null) {
-        				/*HtBoaInOrg o = orgList.stream().filter(org -> org.getOrgCode().equals(userMessageVo.getOrgCode())).findFirst().get();
-        				userMessageVo.setOrgName(o.getOrgNameCn());*/
         				Optional<HtBoaInOrg> htBoaInOrgOptional = orgList.stream().filter(org -> org.getOrgCode().equals(userMessageVo.getOrgCode())).findFirst();
         				if(htBoaInOrgOptional!=null&&htBoaInOrgOptional.isPresent()) {
         					HtBoaInOrg o = htBoaInOrgOptional.get();
         					if(o!=null) {
         						userMessageVo.setOrgName(o.getOrgNameCn());
         					}
+        				}
+        				List<HtBoaInUserExt>  listHtBoaInUserExt = htBoaInUserBusinessService.findHtBoaInUserExtByUserId(userMessageVo.getUserId());
+        				if(listHtBoaInUserExt!=null&&!listHtBoaInUserExt.isEmpty()) {
+        					userMessageVo.setBussinesOrgCode(listHtBoaInUserExt.get(0).getBusiOrgCode());
         				}
         				listUserMessageVo.add(userMessageVo);
         			}
