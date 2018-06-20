@@ -1,16 +1,14 @@
 package com.ht.ussp.uc.app.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.ht.ussp.uc.app.domain.HtBoaInApp;
 import com.ht.ussp.uc.app.model.BoaInAppInfo;
-import com.ht.ussp.uc.app.model.BoaInRoleInfo;
-
-import org.springframework.data.jpa.repository.Query;
-
-import java.util.List;
 
 /**
  * @author wim qiuwenwu@hongte.info
@@ -72,7 +70,7 @@ public interface HtBoaInAppRepository extends JpaRepository<HtBoaInApp, Long> {
     List<Object[]> queryAppAndRoleTree();
 
 
-    @Query("SELECT new com.ht.ussp.uc.app.model.BoaInAppInfo(u.app, u.name, u.nameCn,  u.status, u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,u.delFlag,u.id,u.isOS) "
+    @Query("SELECT new com.ht.ussp.uc.app.model.BoaInAppInfo(u.app, u.name, u.nameCn,  u.status, u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,u.delFlag,u.id,u.isOS,u.maxLoginCount,u.tips,u.sysToken) "
             + "FROM HtBoaInApp u    WHERE ( u.app LIKE ?1 OR u.name LIKE ?1 OR u.nameCn LIKE ?1 )  AND  u.delFlag=0  GROUP BY u")
     public Page<BoaInAppInfo> listAllAppByPage(Pageable arg0, String search);
 
