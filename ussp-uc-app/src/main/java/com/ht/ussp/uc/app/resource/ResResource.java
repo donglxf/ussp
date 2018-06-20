@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,6 +46,7 @@ import com.ht.ussp.uc.app.service.HtBoaInRoleResService;
 import com.ht.ussp.uc.app.service.HtBoaInRoleService;
 import com.ht.ussp.uc.app.vo.AnalysisResModel;
 import com.ht.ussp.uc.app.vo.AppAndResourceVo;
+import com.ht.ussp.uc.app.vo.PageVo;
 import com.ht.ussp.uc.app.vo.RelevanceApiVo;
 import com.ht.ussp.uc.app.vo.ResourcePageVo;
 import com.ht.ussp.util.JsonUtil;
@@ -490,5 +493,32 @@ public class ResResource {
             e.printStackTrace();
             return Result.buildFail(e.getLocalizedMessage(),e.getMessage());
         }
+    }
+    
+    @ApiOperation(value = "资源列表维护-查询分页", notes = "列出所有记录列表信息")
+    @PostMapping(value = "/listByPage", produces = { "application/json" })
+	public PageResult<List<HtBoaInResource>> listByPage(PageVo page) {
+    	List<Sort.Order> orders = new ArrayList<>();
+		orders.add(new Sort.Order(Sort.Direction.DESC, "resType"));
+		orders.add(new Sort.Order(Sort.Direction.ASC, "resCode"));
+		Sort sort = new Sort(orders);
+		return htBoaInResourceService.listByPage(new PageRequest(page.getPage(), page.getLimit(),sort), page.getQuery());
+	}
+    
+    @PostMapping("/deleteTrunc")
+    public Result deleteTrunc(Long id) {
+        HtBoaInResource resource = htBoaInResourceService.getOne(id);
+        try {
+        	htBoaInResourceService.delete(id);
+		} catch (Exception e) {
+			return Result.buildFail(e.getLocalizedMessage(), e.getMessage());
+		}
+        return Result.buildSuccess();
+    }
+    
+    @ApiOperation(value = "根据资源编码获取资源信息", notes = "验证资源编码是否存在")
+    @PostMapping("/getResByResCode")
+    public Result getResByResCode(String resCode) {
+        return Result.buildSuccess(htBoaInResourceService.findByResCodeAndApp(resCode));
     }
 }

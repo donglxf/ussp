@@ -88,6 +88,24 @@
 				    <input type="radio" name="isOS" value="0" title="外部系统" >
                 </div>
             </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">登录次数 </label>
+                <div class="layui-input-block">
+                    <input type="text" name="maxLoginCount" lay-verify="number"   maxlength="10" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">提示信息 </label>
+                <div class="layui-input-block">
+                    <input type="text" name="tips"   maxlength="120" autocomplete="off" lay-verType="tips" placeholder="{0}获取错误次数占位符"  class="layui-input layui-input-sm">
+                </div>
+            </div>
+             <div class="layui-form-item">
+                <label class="layui-form-label">token</label>
+                <div class="layui-input-block">
+                    <input type="text" name="sysToken"   maxlength="60" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
             <button class="layui-btn hide" lay-submit="" lay-filter="filter_add_app_form"></button>
         </form>
     </div>
@@ -104,6 +122,24 @@
                 <label class="layui-form-label">系统名称<b>*</b></label>
                 <div class="layui-input-block">
                     <input type="text" name="nameCn" lay-verify="required" maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">登录次数 </label>
+                <div class="layui-input-block">
+                    <input type="text" name="maxLoginCount"  lay-verify="number"  maxlength="10" placeholder="通过{0}获取错误次数占位符"  autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">提示信息 </label>
+                <div class="layui-input-block">
+                    <input type="text" name="tips"   maxlength="120" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+             <div class="layui-form-item">
+                <label class="layui-form-label">token</label>
+                <div class="layui-input-block">
+                    <input type="text" name="sysToken"   maxlength="60" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
             </div>
             <input type="hidden" name="id"   readonly  >
@@ -123,6 +159,24 @@
                 <label class="layui-form-label">系统名称<b>*</b></label>
                 <div class="layui-input-block">
                     <input type="text" name="nameCn" lay-verify="required" readonly maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">登录次数 </label>
+                <div class="layui-input-block">
+                    <input type="text" name="maxLoginCount"  readonly maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">提示信息 </label>
+                <div class="layui-input-block">
+                    <input type="text" name="tips"  readonly  maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+             <div class="layui-form-item">
+                <label class="layui-form-label">token</label>
+                <div class="layui-input-block">
+                    <input type="text" name="sysToken"   maxlength="60" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
             </div>
         </form>

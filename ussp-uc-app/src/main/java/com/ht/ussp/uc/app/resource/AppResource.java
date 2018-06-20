@@ -11,6 +11,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,6 +115,9 @@ public class AppResource {
 		u.setLastModifiedDatetime(new Date());
 		u.setName(boaInAppInfo.getNameCn());
 		u.setNameCn(boaInAppInfo.getNameCn());
+		u.setMaxLoginCount(StringUtils.isNotEmpty(boaInAppInfo.getMaxLoginCount()+"")?boaInAppInfo.getMaxLoginCount():0);
+		u.setTips(boaInAppInfo.getTips());
+		u.setSysToken(boaInAppInfo.getSysToken());
 		if (boaInAppInfo.getId() > 0) {
 			u.setId(boaInAppInfo.getId());
 			u.setUpdateOperator(userId);

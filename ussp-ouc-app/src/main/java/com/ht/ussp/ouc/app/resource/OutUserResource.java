@@ -1,6 +1,7 @@
 package com.ht.ussp.ouc.app.resource;
 
 import java.sql.Timestamp;
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -20,6 +21,7 @@ import com.ht.ussp.common.Constants;
 import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
+import com.ht.ussp.ouc.app.domain.HtBoaInApp;
 import com.ht.ussp.ouc.app.domain.HtBoaOutLogin;
 import com.ht.ussp.ouc.app.domain.HtBoaOutPwdHist;
 import com.ht.ussp.ouc.app.domain.HtBoaOutUser;
@@ -29,7 +31,6 @@ import com.ht.ussp.ouc.app.service.HtBoaOutUserService;
 import com.ht.ussp.ouc.app.vo.PageVo;
 import com.ht.ussp.util.DateUtil;
 import com.ht.ussp.util.EncryptUtil;
-import com.ht.ussp.util.md5.Cryptography;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -160,8 +161,22 @@ public class OutUserResource{
 		}else {
 			return Result.buildFail("9999","登录类型不存在【"+type+"】"); 
       	}
+		
 		if (htBoaOutLogin != null) {
-			if(htBoaOutLogin.getFailedCount()>=5 && "2".equals(htBoaOutLogin.getStatus())) {
+			//获取系统登录最大次数
+			Integer maxLoginCount = 0;
+			String  msg = "";
+			HtBoaInApp htBoaInApp = null;
+			List<HtBoaInApp> listHtBoaInApp = htBoaOutLoginService.getHtBoaInApp(app);
+			if(listHtBoaInApp!=null&&!listHtBoaInApp.isEmpty()) {
+				htBoaInApp = listHtBoaInApp.get(0);
+			}
+			if(htBoaInApp!=null) {
+				maxLoginCount = htBoaInApp.getMaxLoginCount()==null?0:htBoaInApp.getMaxLoginCount();
+				msg =  htBoaInApp.getTips();
+			}
+			
+			if(maxLoginCount>0&&htBoaOutLogin.getFailedCount()>=maxLoginCount && "2".equals(htBoaOutLogin.getStatus())) {
 				if(htBoaOutLogin.getBlockedDateTime()!=null) {
 					Date lockedTime = DateUtil.addHour2Date(24,htBoaOutLogin.getBlockedDateTime());
 					if(lockedTime.getTime()<=DateUtil.getNow().getTime()) { //如果锁定时间超过24小时则解锁
@@ -200,12 +215,16 @@ public class OutUserResource{
 								}else {
 									Integer failCount = htBoaOutLogin.getFailedCount()+1;
 									htBoaOutLogin.setFailedCount(failCount);
-									if(failCount>=5) {
+									if(maxLoginCount>0&&failCount>=maxLoginCount) {
 										htBoaOutLogin.setBlockedDateTime(new Date());
 										htBoaOutLogin.setStatus("2");
 									}
 									htBoaOutLogin = htBoaOutLoginService.saveUserLogin(htBoaOutLogin);
-									return Result.buildFail(SysStatus.PWD_INVALID.getStatus(),"密码输入不正确,错误次数="+failCount);
+									if(StringUtils.isNotEmpty(msg)) {
+										return Result.buildFail(SysStatus.PWD_INVALID.getStatus(),MessageFormat.format(msg, failCount));
+									}else {
+										return Result.buildFail(SysStatus.PWD_INVALID.getStatus(),"密码输入不正确,错误次数="+failCount);
+									}
 								}
 							}
 						} catch (Exception e) {
@@ -218,12 +237,16 @@ public class OutUserResource{
             if(!EncryptUtil.matches(password,htBoaOutLogin.getPassword())){
             	Integer failCount = htBoaOutLogin.getFailedCount()+1;
 				htBoaOutLogin.setFailedCount(failCount);
-				if(failCount>=5) {
+				if(maxLoginCount>0&&failCount>=maxLoginCount) {
 					htBoaOutLogin.setBlockedDateTime(new Date());
 					htBoaOutLogin.setStatus("2");
 				}
 				htBoaOutLogin = htBoaOutLoginService.saveUserLogin(htBoaOutLogin);
-				return Result.buildFail(SysStatus.PWD_INVALID.getStatus(),"密码输入不正确,错误次数="+failCount);
+				if(StringUtils.isNotEmpty(msg)) {
+					return Result.buildFail(SysStatus.PWD_INVALID.getStatus(),MessageFormat.format(msg, failCount));
+				}else {
+					return Result.buildFail(SysStatus.PWD_INVALID.getStatus(),"密码输入不正确,错误次数="+failCount);
+				}
             }else {
             	htBoaOutLogin.setFailedCount(0);
             	htBoaOutLogin.setBlockedDateTime(null);

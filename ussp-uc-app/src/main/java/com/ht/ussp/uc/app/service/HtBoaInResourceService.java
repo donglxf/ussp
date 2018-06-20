@@ -83,6 +83,10 @@ public class HtBoaInResourceService {
 	public List<HtBoaInResource> findByResCodeAndApp(String resCode, String app) {
 		return htBoaInResourceRepository.findByResCodeAndApp(resCode, app);
 	}
+	
+	public List<HtBoaInResource>  findByResCodeAndApp(String resCode) {
+		return htBoaInResourceRepository.findByResCode(resCode);
+	}
 
 	public List<HtBoaInResource> findByResNameCnAndResContentAndAppAndRemark(String resNameCn, String resContent, String app,String remark) {
 		return htBoaInResourceRepository.findByResNameCnAndResContentAndAppAndRemark(resNameCn, resContent, app,remark);
@@ -851,4 +855,52 @@ public class HtBoaInResourceService {
 			htBoaInPublish.setIsdown("0");
 			htBoaInPublishRepository.save(htBoaInPublish);
 	}
+
+	public PageResult<List<HtBoaInResource>> listByPage(PageRequest pageRequest, Map<String, String> query) {
+		PageResult result = new PageResult();
+		String keyWords = "";
+		String apps = "";
+		String resTypes = "";
+		if(query!=null) {
+			keyWords = StringUtils.isEmpty(query.get("keyWord"))?"":query.get("keyWord");
+			apps = StringUtils.isEmpty(query.get("app"))?"":query.get("app");
+			if(!StringUtils.isEmpty(keyWords)) {
+				if(keyWords.contains("resType=")) {
+					resTypes = keyWords.substring(keyWords.indexOf("resType=")+"resType=".length(),keyWords.length());
+					keyWords="";
+				}
+			}
+		}
+		String keyWord = keyWords;
+		String app = apps;
+		String resType = resTypes;
+		Specification<HtBoaInResource> specification = null;
+		if(StringUtils.isEmpty(resType)) {
+			 specification = (root, query1, cb) -> {
+					Predicate p1 = cb.like(root.get("resCode").as(String.class), "%" + keyWord + "%");
+					Predicate p2 = cb.like(root.get("resNameCn").as(String.class), "%" + keyWord + "%");
+					Predicate p3 = cb.equal(root.get("app").as(String.class),   app  );
+					// 把Predicate应用到CriteriaQuery中去,因为还可以给CriteriaQuery添加其他的功能，比如排序、分组啥的
+					query1.where(cb.and(cb.or(p1, p2),p3));
+					return query1.getRestriction();
+			};
+		}else {
+			specification = (root, query1, cb) -> {
+				Predicate p1 = cb.like(root.get("resCode").as(String.class), "%" + keyWord + "%");
+				Predicate p2 = cb.like(root.get("resNameCn").as(String.class), "%" + keyWord + "%");
+				Predicate p3 = cb.equal(root.get("app").as(String.class),   app  );
+				Predicate p4 = cb.equal(root.get("resType").as(String.class),   resType  );
+				// 把Predicate应用到CriteriaQuery中去,因为还可以给CriteriaQuery添加其他的功能，比如排序、分组啥的
+				query1.where(cb.and(cb.or(p1, p2),p3,p4));
+				return query1.getRestriction();
+		    };
+		}
+		Page<HtBoaInResource> pageData = htBoaInResourceRepository.findAll(specification, pageRequest);
+		if (pageData != null) {
+			result.count(pageData.getTotalElements()).data(pageData.getContent());
+		}
+		result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
+		return result;
+	}
+
 }

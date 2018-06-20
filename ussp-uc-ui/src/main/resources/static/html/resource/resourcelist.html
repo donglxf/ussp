@@ -1,0 +1,61 @@
+<div class="layui-fluid" lay-filter="resLists_auth">
+    <div class="tree col-xs-3" style="">
+        <div>
+            <div class="tree_search">
+                <div class="input-group input-group-sm">
+                    <input type="text" id="resLists_app_search_tree" maxlength="60" class="form-control" placeholder="请输入系统名称"/>
+                    <div id="resLists_app_btn_refresh_tree" class="input-group-addon btn" title="刷新">
+                        <i class="fa fa-refresh"></i>
+                    </div>
+                </div>
+            </div>
+            <div id="resLists_app_ztree_left" class="ztree"></div>
+        </div>
+    </div>
+    <div class="col-xs-9">
+	<div class="layui-form-item" style="padding-left: 15px;padding-right: 15px;">
+		<div class="row row-lg" id="resLists_table_tools">
+				<div class="pull-right col-xs-4 row">
+                <div class="input-group input-group-sm">
+                    <input type="text" class="form-control input-sm" maxlength="60" id="resLists_search_keyword" placeholder=" " />
+                    <div class="input-group-btn">
+                        <button type="button" class="layui-btn layui-btn-sm" data-type="search">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+		</div>
+		<div class="row row-lg">
+			<table id="resLists_datatable" lay-filter="filter_resLists_datatable"> </table>
+			<script type="text/html" id="resLists_datatable_bar">
+                <a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+            </script>
+		</div>
+	</div>
+	<!--修改表单-->
+    <div id="resLists_modify_data_div"  class="hide">
+        <form method="post" class="layui-form" lay-filter="filter_modify_resLists_form">
+           <div class="layui-form-item" >
+                <label class="layui-form-label">资源编号<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="resCode" lay-verify="required|checkResCodeIsExist"  maxlength="20" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm  ">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">资源名称<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="resNameCn"   maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <input type="hidden" name="id"   readonly  >
+            <button class="layui-btn hide" lay-submit="" lay-filter="filter_modify_resLists_form"></button>
+        </form>
+    </div>
+    <script src="/js/resource/resourcelist.js"></script>
+	<script type="text/html" id="createTimeTpl">
+ {{new Date( d.createdDatetime ).Format('yyyy-MM-dd HH:mm:ss')}} 
+</script>
+</div>
+</div>
