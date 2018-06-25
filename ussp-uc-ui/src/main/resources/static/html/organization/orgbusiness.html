@@ -57,9 +57,9 @@
             <table id="organization_busi_datatable" lay-filter="filter_organization_busi_datatable">
             </table>
             <script type="text/html" id="organization_busi_datatable_bar">
-                <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" ht-auth="detail">查看</a>
-                <a class="layui-btn layui-btn-xs" lay-event="edit" ht-auth="edit">编辑</a>
-                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" ht-auth="del">删除</a>
+                <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail"  >查看</a>
+                <a class="layui-btn layui-btn-xs" lay-event="edit"  >编辑</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"  >删除</a>
             </script>
             <script type="text/html" id="createTimeTpl">
               {{new Date( d.createdDatetime ).Format('yyyy-MM-dd HH:mm:ss')}} 
@@ -114,7 +114,39 @@
 				    <input type="radio" name="orgLevel" value="40" title="片区" >
 				    <input type="radio" name="orgLevel" value="20" title="公司" >
                 </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否总部部门</label>
+                <div class="layui-input-block">
+				    <input type="radio" name="isHeadDept" value="0" title="否">
+				    <input type="radio" name="isHeadDept" value="1" title="是">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否审批中心</label>
+                <div class="layui-input-block">
+				    <input type="radio" name="isAppRovalDept" value="0" title="否">
+				    <input type="radio" name="isAppRovalDept" value="1" title="是">
+                </div>
             </div> 
+            <div class="layui-form-item">
+                <label class="layui-form-label">机构地址</label>
+                <div class="layui-input-block">
+                    <input type="text" name="deptAddress" maxlength="100" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">机构电话</label>
+                <div class="layui-input-block">
+                    <input type="text" name="deptTel"   maxlength="30" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">部门负责人</label>
+                <div class="layui-input-block">
+                    <input type="text" name="deptUser" maxlength="30" autocomplete="off" placeholder="请输入部门负责人用户编号" class="layui-input layui-input-sm">
+                </div>
+            </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">所属机构<b>*</b></label>
                 <div class="layui-input-block">
@@ -152,6 +184,38 @@
 				    <input type="radio" name="orgLevel" value="20" title="公司" >
                 </div>
             </div> 
+             <div class="layui-form-item">
+                <label class="layui-form-label">是否总部部门</label>
+                <div class="layui-input-block">
+				    <input type="radio" name="isHeadDept" value="0" title="否">
+				    <input type="radio" name="isHeadDept" value="1" title="是">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否审批中心</label>
+                <div class="layui-input-block">
+				    <input type="radio" name="isAppRovalDept" value="0" title="否">
+				    <input type="radio" name="isAppRovalDept" value="1" title="是">
+                </div>
+            </div> 
+            <div class="layui-form-item">
+                <label class="layui-form-label">机构地址</label>
+                <div class="layui-input-block">
+                    <input type="text" name="deptAddress" maxlength="100" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">机构电话</label>
+                <div class="layui-input-block">
+                    <input type="text" name="deptTel"   maxlength="30" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">部门负责人</label>
+                <div class="layui-input-block">
+                    <input type="text" name="deptUser" maxlength="30" autocomplete="off" placeholder="请输入部门负责人用户编号" class="layui-input layui-input-sm">
+                </div>
+            </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">所属机构<b>*</b></label>
                 <div class="layui-input-block">
@@ -190,6 +254,38 @@
 				    <input type="radio" name="orgLevel" value="20" title="公司" disabled="true">
                 </div>
             </div> 
+             <div class="layui-form-item">
+                <label class="layui-form-label">是否总部部门</label>
+                <div class="layui-input-block">
+				    <input type="radio" name="isHeadDept" value="0" title="否" disabled="true">
+				    <input type="radio" name="isHeadDept" value="1" title="是" disabled="true">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否审批中心</label>
+                <div class="layui-input-block">
+				    <input type="radio" name="isAppRovalDept" value="0" title="否" disabled="true">
+				    <input type="radio" name="isAppRovalDept" value="1" title="是" disabled="true">
+                </div>
+            </div> 
+            <div class="layui-form-item">
+                <label class="layui-form-label">机构地址</label>
+                <div class="layui-input-block">
+                    <input type="text" name="deptAddress" maxlength="100" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm" disabled="true">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">机构电话</label>
+                <div class="layui-input-block">
+                    <input type="text" name="deptTel"   maxlength="30" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm" disabled="true">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">部门负责人</label>
+                <div class="layui-input-block">
+                    <input type="text" name="deptUser" maxlength="30" autocomplete="off" placeholder="请输入部门负责人用户编号" class="layui-input layui-input-sm" disabled="true">
+                </div>
+            </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">所属机构</label>
                 <div class="layui-input-block">

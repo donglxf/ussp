@@ -95,5 +95,19 @@ public class HtBoaInBusinessOrg implements Serializable {
 
 	@Column(name="UPDATE_OPERATOR")
 	private String updateOperator;
-
+	
+	@Column(name="IS_HEAD_DEPT")
+	private Integer isHeadDept;
+	
+	@Column(name="IS_APPROVAL_DEPT")
+	private Integer isAppRovalDept;
+	
+	@Column(name="DEPT_ADDRESS")
+	private String deptAddress;
+	
+	@Column(name="DEPT_TEL")
+	private String deptTel;
+	
+	@Column(name="DEPT_USER")
+	private String deptUser;
 }

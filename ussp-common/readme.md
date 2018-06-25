@@ -98,3 +98,8 @@ UCClient新增两个接口：
 3.根据用户id,手机号，用户姓名，email获取用户岗位信息 getBusiUserPosition
 4.获取所有下级机构信息  getSubOrgInfoByCode
 5.获取业务机构  getBusiOrgList
+
+###0.0.28
+增加业务组织机构类型接口 BusinessHelper  
+1. 获取指定业务机构下用户列表 getUserListByBusiOrg
+2.查询角色下所有用户 getUserInfoForRole

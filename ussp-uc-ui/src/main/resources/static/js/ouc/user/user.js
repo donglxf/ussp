@@ -46,7 +46,7 @@ layui.use([ 'form',   'table', 'ht_config', 'ht_auth'], function () {
             , {field: 'mobile', width: 200,   title: '手机',event: 'rowClick'}
             , {field: 'email', width: 300,   title: '邮箱'}
             , {field: 'dataSource', width: 200,  title: '注册系统'}
-            , {field: 'status', width: 150, title: '状态', templet: "#user_status_laytpl",event: 'rowClick'}
+            , {field: 'status', width: 150, title: '状态', templet: "#ouser_status_laytpl",event: 'rowClick'}
             , {fixed: 'right', width: 250, title: '操作', align: 'center', toolbar: '#out_user_datatable_bar'}
         ]]
     });

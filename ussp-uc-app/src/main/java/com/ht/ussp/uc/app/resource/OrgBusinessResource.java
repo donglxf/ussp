@@ -29,7 +29,6 @@ import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInBusinessOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.domain.HtBoaInUserExt;
-import com.ht.ussp.uc.app.model.BoaInOrgInfo;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.service.HtBoaInOrgBusinessService;
@@ -102,8 +101,8 @@ public class OrgBusinessResource {
         HtBoaInBusinessOrg u = null;
         List<HtBoaInBusinessOrg> listHtBoaInBusinessOrg = htBoaInOrgBusinessService.findByOrgCode(htBoaInBusinessOrg.getBusinessOrgCode());
         if(listHtBoaInBusinessOrg!=null&&!listHtBoaInBusinessOrg.isEmpty()) {
-        	u = listHtBoaInBusinessOrg.get(0);
-        	u.setBusinessOrgName(htBoaInBusinessOrg.getBusinessOrgName());
+        	u = htBoaInBusinessOrg;
+        	/*u.setBusinessOrgName(htBoaInBusinessOrg.getBusinessOrgName());
         	u.setActivityCode(htBoaInBusinessOrg.getActivityCode());
         	u.setApprovalCode(htBoaInBusinessOrg.getApprovalCode());
         	u.setOrgLevel(htBoaInBusinessOrg.getOrgLevel());
@@ -114,7 +113,7 @@ public class OrgBusinessResource {
         	u.setDistrictCode(htBoaInBusinessOrg.getDistrictCode());
         	u.setFinanceCode(htBoaInBusinessOrg.getFinanceCode());
         	u.setParentOrgCode(StringUtils.isEmpty(htBoaInBusinessOrg.getParentOrgCode())?null:htBoaInBusinessOrg.getParentOrgCode());
-        	u.setSequence(htBoaInBusinessOrg.getSequence());
+        	u.setSequence(htBoaInBusinessOrg.getSequence());*/
         }
         if(u==null) {
            u = htBoaInBusinessOrg;
