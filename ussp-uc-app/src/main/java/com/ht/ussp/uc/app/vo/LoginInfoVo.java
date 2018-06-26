@@ -1,5 +1,7 @@
 package com.ht.ussp.uc.app.vo;
 
+import javax.persistence.Column;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -46,9 +48,14 @@ public class LoginInfoVo {
 
 	// 所属业务机构
 	private String bussinesOrgCode;
+	
+	// 所属业务机构
+	private String bussinesOrgName;
 
 	@ApiModelProperty(value = "所属分公司", dataType = "string")
 	String branchCode;
+	
+	String branchName;
 
 	@ApiModelProperty(value = "所属片区", dataType = "string")
 	String districtCode;
@@ -58,6 +65,13 @@ public class LoginInfoVo {
 
 	@ApiModelProperty(value = "所属市", dataType = "string")
 	String city;
+	
+	@ApiModelProperty(value = "是否是总部", dataType = "string")
+	String isHeadDept;
+	
+	@ApiModelProperty(value = "是否是审批中心", dataType = "string")
+	String isAppRovalDept;
+	
 
 	public LoginInfoVo(String userId, String jobNumber, String userName, String orgCode, String orgName, String email,
 			String idNo, String mobile, String ddUserId, String bmUserId, String ddOrgCode, String bmOrgCode,

@@ -98,3 +98,12 @@ UCClient新增两个接口：
 3.根据用户id,手机号，用户姓名，email获取用户岗位信息 getBusiUserPosition
 4.获取所有下级机构信息  getSubOrgInfoByCode
 5.获取业务机构  getBusiOrgList
+
+###0.0.28
+增加业务组织机构类型接口 BusinessHelper  
+1.获取指定业务机构下用户列表 getUserListByBusiOrg
+2.查询角色下所有用户 getUserInfoForRole
+
+###0.0.29
+1.获取登录接口信息增加分公司 业务组织机构代码  片区 是否是总部的标记 LoginUserInfoHelper#getLoginInfo()
+2.新增BusinessHelper getBusiOrgInfoByOrgType 获取指定业务机构所属的 片区，分公司 (20-公司层级  40-片区层级  60-分公司层级  80-部门层级  100-小组层级)

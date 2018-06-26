@@ -203,7 +203,14 @@ public interface UCClient {
 	
 	@PostMapping("/datas/getBusiOrgList")
 	Result getBusiOrgList(@RequestParam("orgLevel") String orgLevel, @RequestParam("busiOrgCode") String busiOrgCode);
+
+	@PostMapping("/userFeignServer/getUserInfoForRole")
+	Result getUserInfoForRole(@RequestParam("roleCode") String roleCode, @RequestParam("keyword") String keyword);
+
+	@PostMapping("/userFeignServer/getUserListByBusiOrg")
+	Result getUserBusiListByBusiOrgCode(@RequestParam("busiOrgCode") String busiOrgCode, @RequestParam("isAllSub") String isAllSub);
 	
-	
+	@PostMapping("/orgbusiness/getBusiOrgInfoByOrgType")
+	Result getBusiOrgInfoByOrgType(@RequestParam("orgCode")String orgCode,@RequestParam("orgType") String orgType);
 }
 

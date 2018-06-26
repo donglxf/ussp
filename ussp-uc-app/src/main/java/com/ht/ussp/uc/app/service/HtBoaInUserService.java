@@ -1,6 +1,5 @@
 package com.ht.ussp.uc.app.service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,10 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
-import com.ht.ussp.core.Result;
 import com.ht.ussp.core.ReturnCodeEnum;
-import com.ht.ussp.uc.app.domain.DdDeptOperator;
 import com.ht.ussp.uc.app.domain.HtBoaInBmUser;
+import com.ht.ussp.uc.app.domain.HtBoaInBusinessOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInContrast;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInOrg;
@@ -34,6 +32,7 @@ import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
 import com.ht.ussp.uc.app.repository.HtBoaInBmUserRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInContrastRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInLoginRepository;
+import com.ht.ussp.uc.app.repository.HtBoaInOrgBusinessRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInOrgRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInUserAppRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInUserExtRepository;
@@ -71,6 +70,8 @@ public class HtBoaInUserService {
     private HtBoaInBmUserService htBoaInBmUserService;
     @Autowired
     private HtBoaInUserBusinessService htBoaInUserBusinessService;
+    @Autowired
+    private HtBoaInOrgBusinessRepository htBoaInOrgBusinessRepository;
     
     /**
      * @return HtBoaInUser
@@ -143,10 +144,39 @@ public class HtBoaInUserService {
         			loginInfoVo.setController("");
         		}
         	}
+        	//获取业务组织机构，所属分公司，所属片区，
+        	if(StringUtils.isNotEmpty(loginInfoVo.getUserId())) {
+        		List<HtBoaInUserExt> listHtBoaInUserExt = htBoaInUserExtRepository.findByUserId(loginInfoVo.getUserId());
+        		if(listHtBoaInUserExt!=null&&!listHtBoaInUserExt.isEmpty()) {
+        			HtBoaInUserExt htBoaInUserExt = listHtBoaInUserExt.get(0);
+        			if(htBoaInUserExt!=null) {
+        				List<HtBoaInBusinessOrg>  listHtBoaInBusinessOrg = htBoaInOrgBusinessRepository.findByBusinessOrgCode(htBoaInUserExt.getBusiOrgCode());
+        				if(listHtBoaInBusinessOrg!=null&&!listHtBoaInBusinessOrg.isEmpty()) {
+        					HtBoaInBusinessOrg htBoaInBusinessOrg = listHtBoaInBusinessOrg.get(0);
+        					if(htBoaInBusinessOrg!=null) {
+        						loginInfoVo.setBussinesOrgCode(htBoaInBusinessOrg.getBusinessOrgCode());
+        						loginInfoVo.setBussinesOrgName(htBoaInBusinessOrg.getBusinessOrgName());
+        						loginInfoVo.setBranchCode(htBoaInBusinessOrg.getBranchCode());
+        						if(StringUtils.isNotEmpty(htBoaInBusinessOrg.getBranchCode())) {
+        							List<HtBoaInBusinessOrg>  listHtBoaInBusinessOrgBranch = htBoaInOrgBusinessRepository.findByBusinessOrgCode(htBoaInBusinessOrg.getBranchCode());
+        							if(listHtBoaInBusinessOrgBranch!=null&&!listHtBoaInBusinessOrgBranch.isEmpty()) {
+        								loginInfoVo.setBranchName(listHtBoaInBusinessOrgBranch.get(0).getBusinessOrgName());
+        							}
+        						}
+        						loginInfoVo.setDistrictCode(htBoaInBusinessOrg.getDistrictCode());
+        						loginInfoVo.setProvince(htBoaInBusinessOrg.getProvince());
+        						loginInfoVo.setCity(htBoaInBusinessOrg.getCity());
+        						loginInfoVo.setIsAppRovalDept(htBoaInBusinessOrg.getIsAppRovalDept()+"");
+        						loginInfoVo.setIsHeadDept(htBoaInBusinessOrg.getIsHeadDept()+"");
+        					}
+        				}
+        			}
+        		}
+        	}
         }
         return loginInfoVo;
     }
-
+    
     /**
      * 用户信息分页查询<br>
      *

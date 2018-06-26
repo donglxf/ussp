@@ -29,13 +29,13 @@ import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInBusinessOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.domain.HtBoaInUserExt;
-import com.ht.ussp.uc.app.model.BoaInOrgInfo;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.service.HtBoaInOrgBusinessService;
 import com.ht.ussp.uc.app.service.HtBoaInUserBusinessService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.vo.PageVo;
+import com.ht.ussp.util.JsonUtil;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
@@ -102,8 +102,8 @@ public class OrgBusinessResource {
         HtBoaInBusinessOrg u = null;
         List<HtBoaInBusinessOrg> listHtBoaInBusinessOrg = htBoaInOrgBusinessService.findByOrgCode(htBoaInBusinessOrg.getBusinessOrgCode());
         if(listHtBoaInBusinessOrg!=null&&!listHtBoaInBusinessOrg.isEmpty()) {
-        	u = listHtBoaInBusinessOrg.get(0);
-        	u.setBusinessOrgName(htBoaInBusinessOrg.getBusinessOrgName());
+        	u = htBoaInBusinessOrg;
+        	/*u.setBusinessOrgName(htBoaInBusinessOrg.getBusinessOrgName());
         	u.setActivityCode(htBoaInBusinessOrg.getActivityCode());
         	u.setApprovalCode(htBoaInBusinessOrg.getApprovalCode());
         	u.setOrgLevel(htBoaInBusinessOrg.getOrgLevel());
@@ -114,7 +114,7 @@ public class OrgBusinessResource {
         	u.setDistrictCode(htBoaInBusinessOrg.getDistrictCode());
         	u.setFinanceCode(htBoaInBusinessOrg.getFinanceCode());
         	u.setParentOrgCode(StringUtils.isEmpty(htBoaInBusinessOrg.getParentOrgCode())?null:htBoaInBusinessOrg.getParentOrgCode());
-        	u.setSequence(htBoaInBusinessOrg.getSequence());
+        	u.setSequence(htBoaInBusinessOrg.getSequence());*/
         }
         if(u==null) {
            u = htBoaInBusinessOrg;
@@ -205,13 +205,13 @@ public class OrgBusinessResource {
     }
     
     @ApiOperation(value = "根据机构编码查询机构信息")
-    @GetMapping(value = "/getOrgInfoByCode")
-    public HtBoaInBusinessOrg getOrgInfoByCode(String orgCode) {
+    @PostMapping(value = "/getOrgInfoByCode")
+    public Result getOrgInfoByCode(String orgCode) {
     	List<HtBoaInBusinessOrg> listHtBoaInOrg = htBoaInOrgBusinessService.findByOrgCode(orgCode);
     	if(listHtBoaInOrg==null||listHtBoaInOrg.isEmpty()) {
     		return null;
-    	} 
-        return listHtBoaInOrg.get(0);
+    	}  
+        return Result.buildSuccess(JsonUtil.obj2Str(listHtBoaInOrg.get(0)));
     }
         
     @ApiOperation(value = "根据机构编码查询下级机构信息")
@@ -289,10 +289,18 @@ public class OrgBusinessResource {
     }
     
     @SuppressWarnings("rawtypes")
-   	@ApiOperation(value = "分公司 业务片区转换",notes="分公司 业务片区转换")
+   	@ApiOperation(value = "分公司 业务片区转换",notes="分公司 业务片区转换 根据信贷机构转换")
     @PostMapping(value = {"/convertBmBranch" }, produces = {"application/json"} )
     public Result convertBmBranch( ) {
        htBoaInOrgBusinessService.convertBmBranch( );
+       return Result.buildSuccess();
+    }
+    
+    @SuppressWarnings("rawtypes")
+   	@ApiOperation(value = "分公司 业务片区转换(全量)",notes="全量转换")
+    @PostMapping(value = {"/convertBmBranchAll" }, produces = {"application/json"} )
+    public Result convertBmBranchAll( ) {
+       htBoaInOrgBusinessService.convertBmBranchAll( );
        return Result.buildSuccess();
     }
     
@@ -304,4 +312,12 @@ public class OrgBusinessResource {
        return Result.buildSuccess();
     }
     
+    
+    @SuppressWarnings("rawtypes")
+   	@ApiOperation(value = "获取业务机构所属分公司/片区",notes="获取业务机构所属分公司/片区")
+    @PostMapping(value = {"/getBusiOrgInfoByOrgType" }, produces = {"application/json"} )
+    public Result getBusiOrgInfoByOrgType(String orgCode, String orgType) {
+       return Result.buildSuccess(htBoaInOrgBusinessService.getOrgInfoByOrgType(orgCode, orgType));
+    }
+ 
 }

@@ -20,9 +20,9 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
             layer.close(addDialog);
             addDialog = layer.open({
                 type: 1,
-                area: ['600px', '400px'],
+                area: ['700px', '500px'],
                 maxmin: true,
-                shadeClose: true,
+                shadeClose: false,
                 title: "新增机构",
                 content: $("#organization_busi_add_data_div").html(),
                 btn: ['保存', '取消'],
@@ -213,7 +213,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
         if (obj.event === 'detail') {
         	 viewDialog = layer.open({
                  type: 1,
-                 area: ['600px', '400px'],
+                  area: ['700px', '500px'],
                  shadeClose: true,
                  title: "机构详情",
                  content: $("#organization_busi_view_data_div").html(),
@@ -232,6 +232,12 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
                         		 $("input:radio[name='orgLevel'][value="+value+"]", layero).attr("checked",true);
                         	 }
                         }
+                        if("isHeadDept"==name){
+                        	 $("input:radio[name='isHeadDept'][value="+value+"]", layero).attr("checked",true);
+                       }
+                        if("isAppRovalDept"==name){
+                        	$("input:radio[name='isAppRovalDept'][value="+value+"]", layero).attr("checked",true);
+                       }
                      });
                      form.render(null, "filter_view_organization_busi_form");
                  }
@@ -252,7 +258,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
         } else if (obj.event === 'edit') {
             editDialog = layer.open({
             	 type: 1,
-            	 area: ['600px', '400px'],
+            	  area: ['700px', '500px'],
                  maxmin: true,
                  shadeClose: true,
                  title: "修改机构",
@@ -281,6 +287,12 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
                         		 $("input:radio[name='orgLevel'][value="+value+"]", layero).attr("checked",true);
                         	 }
                         }
+                        if("isHeadDept"==name){
+                        	 $("input:radio[name='isHeadDept'][value="+value+"]", layero).attr("checked",true);
+                       }
+                        if("isAppRovalDept"==name){
+                        	$("input:radio[name='isAppRovalDept'][value="+value+"]", layero).attr("checked",true);
+                       }
                        
                     });
                     

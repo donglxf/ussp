@@ -415,6 +415,15 @@ public class UserResource{
     					htBoaInUserExt.setBusiOrgCode(userMessageVo.getBussinesOrgCode());
     					htBoaInUserExt.setUserId(userMessageVo.getUserId());
     					htBoaInUserExt.setLastModifiedDatetime(new Date());
+    					htBoaInUserExt.setUpdateOperator(loginUserId);
+    					htBoaInUserBusinessService.save(htBoaInUserExt);
+    				}else {
+    					HtBoaInUserExt htBoaInUserExt = new HtBoaInUserExt();
+    					htBoaInUserExt.setBusiOrgCode(userMessageVo.getBussinesOrgCode());
+    					htBoaInUserExt.setUserId(userMessageVo.getUserId());
+    					htBoaInUserExt.setLastModifiedDatetime(new Date());
+    					htBoaInUserExt.setCreatedDatetime(new Date());
+    					htBoaInUserExt.setCreateOperator(loginUserId);
     					htBoaInUserBusinessService.save(htBoaInUserExt);
     				}
     			}
@@ -634,7 +643,7 @@ public class UserResource{
     public Result getDtoUserInfo(String userId,String bmuserId) {
     	LoginInfoDto l = loginUserInfoHelper.getUserInfoByUserId(userId, bmuserId); 
     	//return Result.buildSuccess(loginUserInfoHelper.getLoginInfo());
-    	return Result.buildSuccess(l);
+    	return Result.buildSuccess(loginUserInfoHelper.getLoginInfo());
     }
     
 }

@@ -19,7 +19,6 @@ import com.ht.ussp.ouc.app.service.HtBoaOutLoginService;
 import com.ht.ussp.ouc.app.service.HtBoaOutPwdHistService;
 import com.ht.ussp.ouc.app.service.HtBoaOutUserService;
 import com.ht.ussp.util.EncryptUtil;
-import com.ht.ussp.util.md5.Cryptography;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;

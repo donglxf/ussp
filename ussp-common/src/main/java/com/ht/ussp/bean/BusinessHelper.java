@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.ht.ussp.client.UCClient;
+import com.ht.ussp.common.OrgBusiTypeEnum;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.util.JsonUtil;
 
@@ -186,4 +187,81 @@ public class BusinessHelper {
         return Result.buildSuccess();
     }
  
+    /**
+     * 查询角色下所有用户 
+     * @param roleCode
+     * @param keyword
+     * @return
+     */
+    public Result<String> getUserInfoForRole(String roleCode,String keyword) {
+        if (ucClient == null) {
+            log.warn("可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
+        }
+        roleCode = roleCode==null?"":roleCode;
+        keyword = keyword==null?"":keyword;
+        try { 
+        	Result result = ucClient.getUserInfoForRole(roleCode, keyword);
+        	if(result!=null) {
+        		if(result.getData()!=null) {
+        			return Result.buildSuccess(JsonUtil.obj2Str(result.getData()));
+        		}
+        	}else {
+        		return Result.buildFailConvert("9999", "null");
+        	}
+        } catch (Exception ex) {
+            return Result.buildFailConvert(ex.getLocalizedMessage(), ex.getMessage());
+        }
+        return Result.buildSuccess();
+    }
+    
+    /**
+     * 获取指定业务机构下用户列表 getUserListByBusiOrg
+     * @param busiOrgCode 查询指定业务机构下用户
+     * @param isAllSub 传值（1，2） 1:只当前机构下所有用户  2:包括机构下以及所有子机构用户
+     * @return
+     */
+    public Result<String> getUserListByBusiOrg(String busiOrgCode,String isAllSub) {
+        if (ucClient == null) {
+            log.warn("可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
+        }
+        busiOrgCode = busiOrgCode==null?"":busiOrgCode;
+        isAllSub = isAllSub==null?"":isAllSub;
+        try { 
+        	Result result = ucClient.getUserBusiListByBusiOrgCode(busiOrgCode, isAllSub);
+        	if(result!=null) {
+        		if(result.getData()!=null) {
+        			return Result.buildSuccess(JsonUtil.obj2Str(result.getData()));
+        		}
+        	}else {
+        		return Result.buildFailConvert("9999", "null");
+        	}
+        } catch (Exception ex) {
+            return Result.buildFailConvert(ex.getLocalizedMessage(), ex.getMessage());
+        }
+        return Result.buildSuccess();
+    }
+    
+    /**
+     * 获取指定业务机构所属的 片区，分公司 (20-公司层级  40-片区层级  60-分公司层级  80-部门层级  100-小组层级)
+     *  资源类型枚举值： OrgBusiTypeEnum
+     * @return
+     */
+    public Result<String> getBusiOrgInfoByOrgType(String orgCode,OrgBusiTypeEnum orgType) {
+        if (ucClient == null) {
+            log.warn("无法获取用户所属机构类型信息，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
+        }
+        try { 
+        	Result result = ucClient.getBusiOrgInfoByOrgType(orgCode,orgType.getReturnCode());
+        	if(result!=null) {
+        		if(result.getData()!=null) {
+        			return Result.buildSuccess(JsonUtil.obj2Str(result.getData()));
+        		}
+        	}else {
+        		return Result.buildFailConvert("9999", "null");
+        	}
+        } catch (Exception ex) {
+            return Result.buildFailConvert(ex.getLocalizedMessage(), ex.getMessage());
+        }
+        return Result.buildSuccess();
+    }
 }
