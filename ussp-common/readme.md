@@ -101,7 +101,7 @@ UCClient新增两个接口：
 
 ###0.0.28
 增加业务组织机构类型接口 BusinessHelper  
-1. 获取指定业务机构下用户列表 getUserListByBusiOrg
+1.获取指定业务机构下用户列表 getUserListByBusiOrg
 2.查询角色下所有用户 getUserInfoForRole
 
 ###0.0.29
