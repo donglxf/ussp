@@ -48,9 +48,14 @@ public class LoginInfoVo {
 
 	// 所属业务机构
 	private String bussinesOrgCode;
+	
+	// 所属业务机构
+	private String bussinesOrgName;
 
 	@ApiModelProperty(value = "所属分公司", dataType = "string")
 	String branchCode;
+	
+	String branchName;
 
 	@ApiModelProperty(value = "所属片区", dataType = "string")
 	String districtCode;

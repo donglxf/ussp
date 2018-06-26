@@ -47,6 +47,10 @@ public class LoginInfoDto {
  // 所属业务机构
  	private String bussinesOrgCode;
   	
+ // 所属业务机构
+ 	private String bussinesOrgName;
+ 	
+ 	private String branchName;
   	//所属分公司
   	private String branchCode;
 

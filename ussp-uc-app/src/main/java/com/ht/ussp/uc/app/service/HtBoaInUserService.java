@@ -155,7 +155,14 @@ public class HtBoaInUserService {
         					HtBoaInBusinessOrg htBoaInBusinessOrg = listHtBoaInBusinessOrg.get(0);
         					if(htBoaInBusinessOrg!=null) {
         						loginInfoVo.setBussinesOrgCode(htBoaInBusinessOrg.getBusinessOrgCode());
+        						loginInfoVo.setBussinesOrgName(htBoaInBusinessOrg.getBusinessOrgName());
         						loginInfoVo.setBranchCode(htBoaInBusinessOrg.getBranchCode());
+        						if(StringUtils.isNotEmpty(htBoaInBusinessOrg.getBranchCode())) {
+        							List<HtBoaInBusinessOrg>  listHtBoaInBusinessOrgBranch = htBoaInOrgBusinessRepository.findByBusinessOrgCode(htBoaInUserExt.getBusiOrgCode());
+        							if(listHtBoaInBusinessOrgBranch!=null&&!listHtBoaInBusinessOrgBranch.isEmpty()) {
+        								loginInfoVo.setBranchName(listHtBoaInBusinessOrgBranch.get(0).getBusinessOrgName());
+        							}
+        						}
         						loginInfoVo.setDistrictCode(htBoaInBusinessOrg.getDistrictCode());
         						loginInfoVo.setProvince(htBoaInBusinessOrg.getProvince());
         						loginInfoVo.setCity(htBoaInBusinessOrg.getCity());

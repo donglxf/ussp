@@ -265,6 +265,8 @@ public class OutUserResource{
 				HtBoaOutLogin u = htBoaOutLoginService.findByUserId(userId);
 				if(u!=null) {
 					u.setStatus("0");
+					u.setBlockedDateTime(null);
+					u.setFailedCount(0);
 					u.setLastModifiedDatetime(new Date());
 					htBoaOutLoginService.saveUserLogin(u);
 				}

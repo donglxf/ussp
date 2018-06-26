@@ -103,3 +103,7 @@ UCClient新增两个接口：
 增加业务组织机构类型接口 BusinessHelper  
 1. 获取指定业务机构下用户列表 getUserListByBusiOrg
 2.查询角色下所有用户 getUserInfoForRole
+
+###0.0.29
+LoginUserInfoHelper#getLoginInfo()
+获取登录接口信息增加分公司 业务组织机构代码  片区 是否是总部的标记
