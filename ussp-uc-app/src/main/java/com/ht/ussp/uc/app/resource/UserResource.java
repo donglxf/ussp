@@ -634,7 +634,7 @@ public class UserResource{
     public Result getDtoUserInfo(String userId,String bmuserId) {
     	LoginInfoDto l = loginUserInfoHelper.getUserInfoByUserId(userId, bmuserId); 
     	//return Result.buildSuccess(loginUserInfoHelper.getLoginInfo());
-    	return Result.buildSuccess(l);
+    	return Result.buildSuccess(loginUserInfoHelper.getLoginInfo());
     }
     
 }

@@ -43,4 +43,25 @@ public class LoginInfoDto {
     
     //是否管理员  Y是  N不是
   	private String controller;
+  	
+ // 所属业务机构
+ 	private String bussinesOrgCode;
+  	
+  	//所属分公司
+  	private String branchCode;
+
+	//所属片区
+  	private String districtCode;
+
+	//所属省
+  	private String province;
+
+	//所属市
+  	private String city;
+	
+	//是否是总部
+  	private String isHeadDept;
+	
+	//是否是审批中心
+  	private String isAppRovalDept;
 }
