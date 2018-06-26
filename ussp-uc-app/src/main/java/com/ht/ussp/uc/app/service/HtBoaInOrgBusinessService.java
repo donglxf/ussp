@@ -162,7 +162,7 @@ public class HtBoaInOrgBusinessService {
         return this.htBoaInOrgBusinessRepository.findByParentOrgCode(parentOrgCode);
     }
     
-    public HtBoaInBusinessOrg getOrgInfoByOrgType(String orgCode, String orgType) {
+    /*public HtBoaInBusinessOrg getOrgInfoByOrgType(String orgCode, String orgType) {
 		return getParentOrgs(orgCode,orgType);
 	}
 
@@ -172,15 +172,15 @@ public class HtBoaInOrgBusinessService {
 		if(listHtBoaInOrg!=null&&!listHtBoaInOrg.isEmpty()) {
 			htBoaInBusinessOrg = listHtBoaInOrg.get(0);
 		}
-		/*if(htBoaInBusinessOrg!=null && orgType.equals(htBoaInOrg.getOrgType())) {
+		if(htBoaInBusinessOrg!=null && orgType.equals(htBoaInOrg.getOrgType())) {
 			return htBoaInBusinessOrg;
-		}*/
+		}
 		if("D01".equals(orgCode)) {
 			return htBoaInBusinessOrg;
 		} else {
 			return  getParentOrgs(htBoaInBusinessOrg.getParentOrgCode(),orgType);
 		}
-	}
+	}*/
 
     public List<HtBoaInBusinessOrg> getOrgListByTime(String startTime, String endTime) {
 		return this.htBoaInOrgBusinessRepository.getByLastModifiedDatetime(startTime,endTime);
@@ -484,6 +484,59 @@ public class HtBoaInOrgBusinessService {
 		}
 		htBoaInOrgBusinessRepository.save(listHtBoaInBusinessOrgUpdate);
 		System.out.println("转换完成");
+	}
+	
+	public void convertBmBranchAll() {
+		List<HtBoaInBusinessOrg> listHtBoaInBusinessOrg = htBoaInOrgBusinessRepository.findAll();
+		List<HtBoaInBusinessOrg> listHtBoaInBusinessOrgUpdate = new ArrayList<HtBoaInBusinessOrg>();
+		for(HtBoaInBusinessOrg htBoaInBusinessOrg : listHtBoaInBusinessOrg) {
+			if(htBoaInBusinessOrg.getOrgLevel()>40) { //片区以下的需要挂靠片区
+				HtBoaInBusinessOrg dispatch = getOrgInfoByOrgType(htBoaInBusinessOrg.getBusinessOrgCode(),"40"); //分公司 小组 部门 需要找到对应的所属片区
+				if(dispatch!=null) {
+					htBoaInBusinessOrg.setDistrictCode(dispatch.getBusinessOrgCode());
+				}
+			}
+			if(htBoaInBusinessOrg.getOrgLevel()==60) { //如果是分公司下的分公司则取上级分公司
+            	if(StringUtils.isNotEmpty(htBoaInBusinessOrg.getParentOrgCode())) {
+            		HtBoaInBusinessOrg branchP = getOrgInfoByOrgType(htBoaInBusinessOrg.getParentOrgCode(),"60"); //  小组 部门 需要找到对应的所属分公司
+    				if(branchP!=null) {
+    					if(branchP.getOrgLevel()==60) {
+    						htBoaInBusinessOrg.setBranchCode(branchP.getBusinessOrgCode());
+    					}
+    				}
+            	}
+			}
+            if(htBoaInBusinessOrg.getOrgLevel()>60) { //公司以下的还需要挂靠到分公司
+            	HtBoaInBusinessOrg branch = getOrgInfoByOrgType(htBoaInBusinessOrg.getBusinessOrgCode(),"60"); //  小组 部门 需要找到对应的所属分公司
+				if(branch!=null) {
+					htBoaInBusinessOrg.setBranchCode(branch.getBusinessOrgCode());
+				}
+			}
+            
+			listHtBoaInBusinessOrgUpdate.add(htBoaInBusinessOrg);
+		}
+		htBoaInOrgBusinessRepository.save(listHtBoaInBusinessOrgUpdate);
+		System.out.println("转换完成");
+	}
+	
+	public HtBoaInBusinessOrg getOrgInfoByOrgType(String orgCode, String orgType) {
+		return getParentOrgs(orgCode,orgType);
+	}
+
+    private HtBoaInBusinessOrg getParentOrgs(String orgCode,String orgType) {
+    	HtBoaInBusinessOrg htBoaInBusinessOrg = null;
+    	List<HtBoaInBusinessOrg>  listHtBoaInBusinessOrg = this.htBoaInOrgBusinessRepository.findByBusinessOrgCode(orgCode);
+		if(listHtBoaInBusinessOrg!=null&&!listHtBoaInBusinessOrg.isEmpty()) {
+			htBoaInBusinessOrg = listHtBoaInBusinessOrg.get(0);
+		}
+		if(htBoaInBusinessOrg!=null && orgType.equals(htBoaInBusinessOrg.getOrgLevel()+"")) {
+			return htBoaInBusinessOrg;
+		}
+		if("BD01".equals(orgCode)) {
+			return htBoaInBusinessOrg;
+		} else {
+			return  getParentOrgs(htBoaInBusinessOrg.getParentOrgCode(),orgType);
+		}
 	}
  
 }

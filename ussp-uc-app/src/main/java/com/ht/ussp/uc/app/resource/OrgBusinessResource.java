@@ -289,10 +289,18 @@ public class OrgBusinessResource {
     }
     
     @SuppressWarnings("rawtypes")
-   	@ApiOperation(value = "分公司 业务片区转换",notes="分公司 业务片区转换")
+   	@ApiOperation(value = "分公司 业务片区转换",notes="分公司 业务片区转换 根据信贷机构转换")
     @PostMapping(value = {"/convertBmBranch" }, produces = {"application/json"} )
     public Result convertBmBranch( ) {
        htBoaInOrgBusinessService.convertBmBranch( );
+       return Result.buildSuccess();
+    }
+    
+    @SuppressWarnings("rawtypes")
+   	@ApiOperation(value = "分公司 业务片区转换(全量)",notes="全量转换")
+    @PostMapping(value = {"/convertBmBranchAll" }, produces = {"application/json"} )
+    public Result convertBmBranchAll( ) {
+       htBoaInOrgBusinessService.convertBmBranchAll( );
        return Result.buildSuccess();
     }
     
@@ -304,4 +312,12 @@ public class OrgBusinessResource {
        return Result.buildSuccess();
     }
     
+    
+    @SuppressWarnings("rawtypes")
+   	@ApiOperation(value = "获取业务机构所属分公司/片区",notes="获取业务机构所属分公司/片区")
+    @PostMapping(value = {"/getBusiOrgInfoByOrgType" }, produces = {"application/json"} )
+    public Result getBusiOrgInfoByOrgType(String orgCode, String orgType) {
+       return Result.buildSuccess(htBoaInOrgBusinessService.getOrgInfoByOrgType(orgCode, orgType));
+    }
+ 
 }

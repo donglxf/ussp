@@ -210,6 +210,7 @@ public interface UCClient {
 	@PostMapping("/userFeignServer/getUserListByBusiOrg")
 	Result getUserBusiListByBusiOrgCode(@RequestParam("busiOrgCode") String busiOrgCode, @RequestParam("isAllSub") String isAllSub);
 	
-	
+	@PostMapping("/orgbusiness/getBusiOrgInfoByOrgType")
+	Result getBusiOrgInfoByOrgType(@RequestParam("orgCode")String orgCode,@RequestParam("orgType") String orgType);
 }
 

@@ -158,7 +158,7 @@ public class HtBoaInUserService {
         						loginInfoVo.setBussinesOrgName(htBoaInBusinessOrg.getBusinessOrgName());
         						loginInfoVo.setBranchCode(htBoaInBusinessOrg.getBranchCode());
         						if(StringUtils.isNotEmpty(htBoaInBusinessOrg.getBranchCode())) {
-        							List<HtBoaInBusinessOrg>  listHtBoaInBusinessOrgBranch = htBoaInOrgBusinessRepository.findByBusinessOrgCode(htBoaInUserExt.getBusiOrgCode());
+        							List<HtBoaInBusinessOrg>  listHtBoaInBusinessOrgBranch = htBoaInOrgBusinessRepository.findByBusinessOrgCode(htBoaInBusinessOrg.getBranchCode());
         							if(listHtBoaInBusinessOrgBranch!=null&&!listHtBoaInBusinessOrgBranch.isEmpty()) {
         								loginInfoVo.setBranchName(listHtBoaInBusinessOrgBranch.get(0).getBusinessOrgName());
         							}
@@ -177,26 +177,6 @@ public class HtBoaInUserService {
         return loginInfoVo;
     }
     
-    public HtBoaInBusinessOrg getOrgInfoByOrgType(String orgCode, String orgType) {
-		return getParentOrgs(orgCode,orgType);
-	}
-
-    private HtBoaInBusinessOrg getParentOrgs(String orgCode,String orgType) {
-    	HtBoaInBusinessOrg htBoaInBusinessOrg = null;
-    	List<HtBoaInBusinessOrg>  listHtBoaInBusinessOrg = this.htBoaInOrgBusinessRepository.findByBusinessOrgCode(orgCode);
-		if(listHtBoaInBusinessOrg!=null&&!listHtBoaInBusinessOrg.isEmpty()) {
-			htBoaInBusinessOrg = listHtBoaInBusinessOrg.get(0);
-		}
-		if(htBoaInBusinessOrg!=null && orgType.equals(htBoaInBusinessOrg.getOrgLevel()+"")) {
-			return htBoaInBusinessOrg;
-		}
-		if("BD01".equals(orgCode)) {
-			return htBoaInBusinessOrg;
-		} else {
-			return  getParentOrgs(htBoaInBusinessOrg.getParentOrgCode(),orgType);
-		}
-	}
-
     /**
      * 用户信息分页查询<br>
      *

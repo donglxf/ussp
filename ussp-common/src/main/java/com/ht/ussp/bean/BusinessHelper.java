@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.ht.ussp.client.UCClient;
+import com.ht.ussp.common.OrgBusiTypeEnum;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.util.JsonUtil;
 
@@ -227,6 +228,30 @@ public class BusinessHelper {
         isAllSub = isAllSub==null?"":isAllSub;
         try { 
         	Result result = ucClient.getUserBusiListByBusiOrgCode(busiOrgCode, isAllSub);
+        	if(result!=null) {
+        		if(result.getData()!=null) {
+        			return Result.buildSuccess(JsonUtil.obj2Str(result.getData()));
+        		}
+        	}else {
+        		return Result.buildFailConvert("9999", "null");
+        	}
+        } catch (Exception ex) {
+            return Result.buildFailConvert(ex.getLocalizedMessage(), ex.getMessage());
+        }
+        return Result.buildSuccess();
+    }
+    
+    /**
+     * 获取指定业务机构所属的 片区，分公司 (20-公司层级  40-片区层级  60-分公司层级  80-部门层级  100-小组层级)
+     *  资源类型枚举值： OrgBusiTypeEnum
+     * @return
+     */
+    public Result<String> getBusiOrgInfoByOrgType(String orgCode,OrgBusiTypeEnum orgType) {
+        if (ucClient == null) {
+            log.warn("无法获取用户所属机构类型信息，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
+        }
+        try { 
+        	Result result = ucClient.getBusiOrgInfoByOrgType(orgCode,orgType.getReturnCode());
         	if(result!=null) {
         		if(result.getData()!=null) {
         			return Result.buildSuccess(JsonUtil.obj2Str(result.getData()));
