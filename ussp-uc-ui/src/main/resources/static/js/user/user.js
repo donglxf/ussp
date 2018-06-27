@@ -160,6 +160,16 @@ layui.use(['element','form', 'ztree', 'table', 'ht_config', 'ht_auth'], function
                 }
             });
         },
+        searchs: function () {
+        	 $.ajax({
+				  url : config.basePath + "user/getDtoUserInfo",
+				type : 'POST',
+				async : false,
+				success : function(result) {
+					console.log(result);
+				}
+			});
+        },
     };
     
   //自定义验证规则
