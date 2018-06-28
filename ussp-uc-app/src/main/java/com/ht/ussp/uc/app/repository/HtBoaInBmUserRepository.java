@@ -22,4 +22,6 @@ public interface HtBoaInBmUserRepository extends JpaSpecificationExecutor<HtBoaI
 	List<HtBoaInBmUser> findByStatus(String status);
 
 	List<HtBoaInBmUser> findByMobile(String mobile);
+
+	List<HtBoaInBmUser> findByEmail(String email);
 }
