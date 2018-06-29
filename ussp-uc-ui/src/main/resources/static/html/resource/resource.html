@@ -245,6 +245,9 @@
             </div>
         </div>
         <script type="text/html" id="resource_table_btn">
+{{#  if(d.resType === 'api'){ }}
+<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="rule">规则</a>
+{{#  } }}
             <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
             <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
             <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
@@ -512,6 +515,18 @@
                     <input type="hidden" name="app">
                 </div>
             </div>
+             <div class="layui-form-item">
+                <label class="layui-form-label">权限编码</label>
+                <div class="layui-input-block">
+                    <input type="text" name="ruleNum" readonly class="layui-input layui-input-sm">
+                </div>
+            </div>
+             <div class="layui-form-item">
+                <label class="layui-form-label">权限名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="ruleNumName" readonly class="layui-input layui-input-sm">
+                </div>
+            </div>
             <button class="layui-btn hide" lay-submit="" lay-filter="resource_api_add_data_form"></button>
         </form>
     </div>
@@ -644,6 +659,25 @@
         </div>
         <div class="row-lg">
             <table id="resource_api_dalog_datatable" lay-filter="resource_api_dalog_datatable">
+            </table>
+        </div>
+    </div>
+    
+    <div id="resource_api_rule_data_div" class="hide">
+        <div class="row-lg" style="height:35px;">
+            <div class="pull-right col-xs-4">
+                <div class="input-group input-group-sm row">
+                    <input type="text" class="form-control" id="resource_api_rule_dialog_search_keyword"  placeholder="请输入规则名称"/>
+                    <div class="input-group-btn">
+                        <button type="button" class="layui-btn layui-btn-sm" id="resource_dalog_api_rule_search" data-type="searchRule">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row-lg">
+            <table id="resource_api_rule_dalog_datatable" lay-filter="resource_api_rule_dalog_datatable">
             </table>
         </div>
     </div>

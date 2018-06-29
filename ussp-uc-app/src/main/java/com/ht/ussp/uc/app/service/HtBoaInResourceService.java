@@ -31,6 +31,7 @@ import com.ht.ussp.uc.app.domain.HtBoaInPublish;
 import com.ht.ussp.uc.app.domain.HtBoaInResource;
 import com.ht.ussp.uc.app.domain.HtBoaInRoleRes;
 import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
+import com.ht.ussp.uc.app.feignclients.DssClient;
 import com.ht.ussp.uc.app.repository.HtBoaInPublishRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInResourceRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInRoleRepository;
@@ -59,6 +60,8 @@ public class HtBoaInResourceService {
 	private HtBoaInRoleResRepository htBoaInRoleResRepository;
 	@Autowired
 	private HtBoaInPublishRepository htBoaInPublishRepository;
+	@Autowired
+	private DssClient dssClient;
 
 	public List<ResVo> queryResForN(List<String> res_code, List<String> res_type, String app) {
 		return htBoaInResourceRepository.queryResForN(res_code, res_type, app);
@@ -84,7 +87,7 @@ public class HtBoaInResourceService {
 		return htBoaInResourceRepository.findByResCodeAndApp(resCode, app);
 	}
 	
-	public List<HtBoaInResource>  findByResCodeAndApp(String resCode) {
+	public List<HtBoaInResource>  findByResCode(String resCode) {
 		return htBoaInResourceRepository.findByResCode(resCode);
 	}
 
@@ -193,6 +196,7 @@ public class HtBoaInResourceService {
 	 */
 	public List<ResVo> loadByUserIdAndApp(String userId, String app, String[] resTypes) {
 		List<ResVo> resVoList;
+		List<String > ruleNumList = new ArrayList<String>();
 		HtBoaInUserApp userApp = null;
 		List<HtBoaInUserApp> userAppList = htBoaInUserAppRepository.findByUserIdAndApp(userId, app);
 		if(userAppList!=null&&!userAppList.isEmpty()) {
@@ -220,6 +224,41 @@ public class HtBoaInResourceService {
 			}
 			// 通过角色查询资源
 			resVoList = htBoaInResourceRepository.queryResForN(resCodeList, Arrays.asList(resTypes), app);
+		}
+		//获取数据权限规则
+		try {
+			if(resVoList!=null) {
+				for(ResVo resvo : resVoList) {
+					if(Constants.RES_TYPE_API.equals(resvo.getResType())) {
+						if(!StringUtils.isEmpty(resvo.getRuleNum())) {
+							ruleNumList.add(resvo.getRuleNum());
+						}
+					}
+				}
+				if(ruleNumList!=null&&!ruleNumList.isEmpty()) {
+					ruleNumList.add("CMP3");
+					userId = "0111200805";
+					//获取数据权限规则
+					Map<String, Object> paramter = new HashMap<String, Object>();
+			    	paramter.put("ruleNums", ruleNumList);
+			    	paramter.put("userId", userId);
+			    	Map<String, Object> reslut = dssClient.getRuleInfoByUserId(paramter);
+			    	if(reslut!=null) {
+			    		Map<String, Object> data = (Map)reslut.get("data");
+			    		if(data!=null) {
+			    			for(ResVo resvo : resVoList) {
+			    				if(Constants.RES_TYPE_API.equals(resvo.getResType())) {
+									if(!StringUtils.isEmpty(resvo.getRuleNum())) {
+										resvo.setRuleContent(data.get(resvo.getRuleNum())+"");
+									}
+								}
+			    			}
+			    		}
+			    	}
+				}
+			}
+		} catch (Exception e) {
+			
 		}
 		return resVoList;
 	}
