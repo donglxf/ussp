@@ -176,7 +176,7 @@ public class OutUserResource{
 				msg =  htBoaInApp.getTips();
 			}
 			
-			if(maxLoginCount>0&&htBoaOutLogin.getFailedCount()>=maxLoginCount && "2".equals(htBoaOutLogin.getStatus())) {
+			if(maxLoginCount>0&&(htBoaOutLogin.getFailedCount()>=maxLoginCount || "2".equals(htBoaOutLogin.getStatus()))) {
 				if(htBoaOutLogin.getBlockedDateTime()!=null) {
 					Date lockedTime = DateUtil.addHour2Date(24,htBoaOutLogin.getBlockedDateTime());
 					if(lockedTime.getTime()<=DateUtil.getNow().getTime()) { //如果锁定时间超过24小时则解锁
