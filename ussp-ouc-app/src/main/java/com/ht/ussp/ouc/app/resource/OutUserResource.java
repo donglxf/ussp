@@ -177,7 +177,7 @@ public class OutUserResource{
 			}
 			
 			if(maxLoginCount>0&&(htBoaOutLogin.getFailedCount()>=maxLoginCount || "2".equals(htBoaOutLogin.getStatus()))) {
-				if(htBoaOutLogin.getBlockedDateTime()!=null) {
+				if(htBoaOutLogin.getBlockedDateTime()!=null) {  //解锁
 					Date lockedTime = DateUtil.addHour2Date(24,htBoaOutLogin.getBlockedDateTime());
 					if(lockedTime.getTime()<=DateUtil.getNow().getTime()) { //如果锁定时间超过24小时则解锁
 						htBoaOutLogin.setFailedCount(0);
@@ -196,6 +196,14 @@ public class OutUserResource{
 						return Result.buildFail(SysStatus.PWD_LOCKING.getStatus(),SysStatus.PWD_LOCKING.getMsg());
 					}
 				}
+			}
+			if(maxLoginCount>0&&htBoaOutLogin.getFailedCount()>maxLoginCount) {  //超过次数的要锁定
+				if(!"2".equals(htBoaOutUser.getStatus())) { 
+					htBoaOutUser.setStatus("2");
+					htBoaOutLogin.setBlockedDateTime(new Date());
+					htBoaOutUserService.saveUser(htBoaOutUser);
+				}
+				return Result.buildFail(SysStatus.PWD_LOCKING.getStatus(),SysStatus.PWD_LOCKING.getMsg());
 			}
 			//存量用户处理
     		if(htBoaOutUser!=null) {
