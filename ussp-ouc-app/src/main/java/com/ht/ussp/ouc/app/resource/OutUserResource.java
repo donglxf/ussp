@@ -5,10 +5,13 @@ import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -53,6 +56,66 @@ public class OutUserResource{
 	@Autowired
 	HtBoaOutPwdHistService htBoaOutPwdHistService;
 
+	@Autowired
+	protected RedisTemplate<String, String> redis;
+	
+	@Value("${tokenTime}")
+	private int tokenTime;
+	
+	/**
+	 * 
+	 * @Title: saveTokenToRedis 
+	 * @Description: 保存用户token至redis,供鸿特金服APP使用 
+	 * @return Result
+	 * @throws
+	 * @author wim qiuwenwu@hongte.info 
+	 * @date 2018年6月28日 下午3:30:32
+	 */
+	@ApiOperation(value = "保存用户token至redis")
+	@GetMapping("/saveTokenToRedis")
+	public Boolean saveTokenToRedis(@RequestParam("userId") String userId, @RequestParam("token") String token) {
+		Boolean flag=false;
+		try {
+		redis.opsForValue().set(userId + ":token" , token, tokenTime, TimeUnit.DAYS);
+		}catch (Exception e) {
+			log.error("----保存token至redis异常：" + e);
+			flag = false;
+		}
+		flag=true;
+		return flag;
+				
+	}
+	
+	/**
+	 * 
+	 * @Title: validateToken 
+	 * @Description: 验证保存至redis的token 
+	 * @return Result
+	 * @throws
+	 * @author wim qiuwenwu@hongte.info 
+	 * @date 2018年6月28日 下午3:40:07
+	 */
+	@ApiOperation(value = "验证token")
+	@GetMapping("/validateToken")
+	public Result validateToken(@RequestParam("userId") String userId, @RequestParam("token") String token) {
+		try {
+			String result = redis.opsForValue().get(userId + ":token");
+			//redis中不存在，验证结果：无效
+			if(StringUtils.isBlank(result)) {
+				return Result.buildFail(SysStatus.REDIS_TOKEN_NULL.getStatus(), SysStatus.REDIS_TOKEN_NULL.getMsg());				
+			}else if(result.equals(token)){
+				return Result.buildSuccess();
+			}else {
+			// token不相等，授权失败
+			return Result.buildFail(SysStatus.REDIS_TOKEN_VALID.getStatus(), SysStatus.REDIS_TOKEN_VALID.getMsg());
+			} 
+		} catch (Exception e) {
+			log.error("连接----redis异常-----：" + e);
+			return Result.buildFail();	
+		}
+		
+	}
+	
 	@ApiOperation(value = "外部用户注册", notes = "返回userId")
 	@ApiImplicitParams({ @ApiImplicitParam(name = "userName", paramType = "query",dataType = "String", required = true, value = "注册账号"),
 			@ApiImplicitParam(name = "password", paramType = "query",dataType = "String", required = true, value = "密码"),
