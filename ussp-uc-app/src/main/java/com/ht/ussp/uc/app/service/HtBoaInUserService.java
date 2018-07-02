@@ -721,9 +721,6 @@ public class HtBoaInUserService {
 					        	htBoaInContrast = htBoaInContrastRepository.save(htBoaInContrast);
 							}
 			    	 }
-					
-					
-					
 				}
 			}
 		} catch (Exception e) {
@@ -732,6 +729,17 @@ public class HtBoaInUserService {
     	return htBoaInUser;
     }
     
+    public HtBoaInUserExt saveHtBoaInUserExt(HtBoaInUserExt htBoaInUserExt) {
+		List<HtBoaInUserExt> listHtBoaInUserExt= htBoaInUserExtRepository.findByUserId(htBoaInUserExt.getUserId());
+		if(listHtBoaInUserExt ==null|| listHtBoaInUserExt.isEmpty()) {
+			List<HtBoaInContrast> listHtBoaInContrast = htBoaInContrastRepository.findByBmBusinessIdAndType(htBoaInUserExt.getBusiOrgCode(), "10");
+			if(listHtBoaInContrast!=null&&!listHtBoaInContrast.isEmpty()) {
+				htBoaInUserExt.setBusiOrgCode(listHtBoaInContrast.get(0).getUcBusinessId());
+			}
+			htBoaInUserExtRepository.save(htBoaInUserExt);
+		}
+		return htBoaInUserExt;
+    }
     
     private String generateNumber(int length) {
         String no = "";

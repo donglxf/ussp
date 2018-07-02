@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -83,6 +84,9 @@ public class UserResource{
     private HtBoaInBmUserService htBoaInBmUserService;
     @Autowired
     private HtBoaInUserBusinessService htBoaInUserBusinessService;
+    
+    @Value(value="${bm.bmApi.apiUrl}")
+    private String bmApiUrl;
     
     @ApiOperation(value = "对内：用户个人信息查询", notes = "已登录用户查看自己的个人信息")
     @ApiImplicitParam(name = "userId", value = "用户ID", required = true, paramType = "path", dataType = "int")
@@ -453,7 +457,7 @@ public class UserResource{
         }
         return Result.buildFail();
     }
-
+    
     @ApiOperation(value = "对内，获取用户信息")
     @GetMapping(value = "/getUserInfoByUserId")
     public LoginInfoVo getUserInfoByUserId(@RequestParam("userId")String userId, @RequestParam("bmUserId")String bmUserId, @RequestParam("app") String app) {
@@ -464,6 +468,11 @@ public class UserResource{
     			if(!StringUtils.isEmpty(bmUserId)) {
         			if(loginInfoVo==null) {
         				List<HtBoaInBmUser> listHtBoaInBmUser = htBoaInBmUserService.getHtBoaInBmUserByUserId(bmUserId);
+        				//如果本地没有则连接信贷系统获取信贷用户
+        				if(listHtBoaInBmUser==null||listHtBoaInBmUser.isEmpty()) {
+        					listHtBoaInBmUser = htBoaInBmUserService.createBmUserInfo(bmUserId,bmApiUrl);
+        				}
+        				
         				if(listHtBoaInBmUser!=null && !listHtBoaInBmUser.isEmpty()) {
         					loginInfoVo = new LoginInfoVo();
         					loginInfoVo.setBmOrgCode(listHtBoaInBmUser.get(0).getOrgCode());
@@ -477,6 +486,15 @@ public class UserResource{
         						if(u!=null) {
         							loginInfoVo.setUserId(u.getUserId());
         							loginInfoVo.setMobile(u.getMobile());
+        							HtBoaInUserExt htBoaInUserExt = new HtBoaInUserExt();
+        							htBoaInUserExt.setUserId(u.getUserId());
+        							htBoaInUserExt.setBmUserId(listHtBoaInBmUser.get(0).getUserId());
+        							htBoaInUserExt.setBusiOrgCode(listHtBoaInBmUser.get(0).getOrgCode());
+        							htBoaInUserExt.setJpaVersion(0);
+        							htBoaInUserExt.setCreatedDatetime(new Date());
+        							htBoaInUserExt.setLastModifiedDatetime(new Date());
+        							htBoaInUserService.saveHtBoaInUserExt(htBoaInUserExt);
+        							loginInfoVo = htBoaInUserService.queryUserInfo(u.getUserId(),app);
         						}
 							} catch (Exception e) {
 								 e.printStackTrace();
@@ -641,9 +659,9 @@ public class UserResource{
   
     @PostMapping(value = "/getDtoUserInfo")
     public Result getDtoUserInfo(String userId,String bmuserId) {
-    	LoginInfoDto l = loginUserInfoHelper.getUserInfoByUserId(userId, bmuserId); 
+    	LoginInfoDto l = loginUserInfoHelper.getLoginInfo(); 
     	//return Result.buildSuccess(loginUserInfoHelper.getLoginInfo());
-    	return Result.buildSuccess(loginUserInfoHelper.getLoginInfo());
+    	return Result.buildSuccess(l);
     }
     
 }

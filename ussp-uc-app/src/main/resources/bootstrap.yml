@@ -26,6 +26,13 @@ eureka:
   client:
     serviceUrl:
       defaultZone: ${EUREKA_SERVER_ADDRESS:http://localhost:30101/eureka/}
+
+bm:
+  bmApi:
+    sign: 67902e2fd52504f3859065f8c58d654b
+    disturbKey: YInLLGcrVnv
+    apiUrl: http://172.16.200.104:8084/apitest/api/ltgproject/dod
+      
 xxl:
   job:
     admin.addresses: http://172.16.200.111:31801/xxl-job-admin
@@ -55,6 +62,11 @@ eureka:
     ip-address: 172.16.200.110
     status-page-url: http://${eureka.instance.ip-address}:${server.port}${status-page-url-path:/info}
     health-check-url: http://${eureka.instance.ip-address}:${server.port}${health-check-url-path:/health}
+bm:
+  bmApi:
+    sign: 67902e2fd52504f3859065f8c58d654b
+    disturbKey: YInLLGcrVnv
+    apiUrl: http://172.16.200.104:8084/apitest/api/ltgproject/dod
 xxl:
   job:
     admin.addresses: http://172.16.200.111:31801/xxl-job-admin
@@ -81,6 +93,11 @@ eureka:
     ip-address: 172.16.200.112
     status-page-url: http://${eureka.instance.ip-address}:${server.port}${status-page-url-path:/info}
     health-check-url: http://${eureka.instance.ip-address}:${server.port}${health-check-url-path:/health}
+bm:
+  bmApi:
+    sign: 67902e2fd52504f3859065f8c58d654b
+    disturbKey: YInLLGcrVnv
+    apiUrl: http://172.16.200.106:8084/apitest3/api/ltgproject/dod    
 xxl:
   job:
     admin.addresses: http://172.16.200.113:31801/xxl-job-admin
@@ -104,6 +121,12 @@ eureka:
   client:
     serviceUrl:
       defaultZone: ${EUREKA_SERVER_ADDRESS}
+
+bm:
+  bmApi:
+    sign: 67902e2fd52504f3859065f8c58d654b
+    disturbKey: YInLLGcrVnv
+    apiUrl: http://uat.hongte.info:8082/api/ltgproject/dod      
 
 xxl:
   job:
@@ -129,6 +152,11 @@ eureka:
   client:
     serviceUrl:
       defaultZone: ${EUREKA_SERVER_ADDRESS}
+bm:
+  bmApi:
+    sign: 67902e2fd52504f3859065f8c58d654b
+    disturbKey: YInLLGcrVnv
+    apiUrl: http://bmapi.hongte.info/api/ltgproject/dod      
 xxl:
   job:
     admin.addresses: http://39.108.59.169:31801/xxl-job-admin
