@@ -96,7 +96,15 @@ public class HtBoaInResource implements Serializable {
 
     @Column(name = "UPDATE_OPERATOR")
     private String updateOperator;
-
+    
+    //规则编码
+    @Column(name = "RULE_NUM")
+    private String ruleNum;
+    
+    //规则编码
+    @Column(name = "RULE_NUM_NAME")
+    private String ruleNumName;
+    
     public HtBoaInResource() {
     }
 
