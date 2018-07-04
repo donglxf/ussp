@@ -33,7 +33,7 @@ zuul:
     post:
       disable: true
   retryable: true
-  SendResponseFilter: 
+  ResponseFilter: 
     post: 
       disable: true
   host:
