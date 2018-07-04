@@ -161,13 +161,13 @@ public class HtBoaInUserService {
         							List<HtBoaInBusinessOrg>  listHtBoaInBusinessOrgBranch = htBoaInOrgBusinessRepository.findByBusinessOrgCode(htBoaInBusinessOrg.getBranchCode());
         							if(listHtBoaInBusinessOrgBranch!=null&&!listHtBoaInBusinessOrgBranch.isEmpty()) {
         								loginInfoVo.setBranchName(listHtBoaInBusinessOrgBranch.get(0).getBusinessOrgName());
+        								loginInfoVo.setIsAppRovalDept(listHtBoaInBusinessOrgBranch.get(0).getIsAppRovalDept()+"");
+                						loginInfoVo.setIsHeadDept(listHtBoaInBusinessOrgBranch.get(0).getIsHeadDept()+"");
         							}
         						}
         						loginInfoVo.setDistrictCode(htBoaInBusinessOrg.getDistrictCode());
         						loginInfoVo.setProvince(htBoaInBusinessOrg.getProvince());
         						loginInfoVo.setCity(htBoaInBusinessOrg.getCity());
-        						loginInfoVo.setIsAppRovalDept(htBoaInBusinessOrg.getIsAppRovalDept()+"");
-        						loginInfoVo.setIsHeadDept(htBoaInBusinessOrg.getIsHeadDept()+"");
         					}
         				}
         			}

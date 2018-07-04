@@ -208,12 +208,16 @@ public class OrgBusinessResource {
     @PostMapping(value = "/getOrgInfoByCode")
     public Result getOrgInfoByCode(String orgCode) {
     	List<HtBoaInBusinessOrg> listHtBoaInOrg = htBoaInOrgBusinessService.findByOrgCode(orgCode);
-    	if(listHtBoaInOrg==null||listHtBoaInOrg.isEmpty()) {
-    		return null;
-    	}  
-        return Result.buildSuccess(JsonUtil.obj2Str(listHtBoaInOrg.get(0)));
+        return Result.buildSuccess(listHtBoaInOrg);
     }
         
+    @ApiOperation(value = "根据机构名称查询机构信息",notes="档案管理系统使用")
+    @PostMapping(value = "/getOrgInfoByOrgName")
+    public Result getOrgInfoByOrgName(String orgName) {
+    	List<HtBoaInBusinessOrg> listHtBoaInOrg = htBoaInOrgBusinessService.findByBusinessOrgName(orgName);
+        return Result.buildSuccess(listHtBoaInOrg);
+    }
+    
     @ApiOperation(value = "根据机构编码查询下级机构信息")
     @GetMapping(value = "/getSubOrgInfoByCode")
     public List<HtBoaInBusinessOrg> getSubOrgInfoByCode(String parentOrgCode) {

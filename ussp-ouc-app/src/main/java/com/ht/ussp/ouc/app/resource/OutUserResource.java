@@ -127,7 +127,7 @@ public class OutUserResource{
 		if(StringUtils.isEmpty(userName)) {
 			return Result.buildFail(); 
 		}
-		String userId = UUID.randomUUID().toString().replace("-", "");
+		String userId = UUID.randomUUID().toString();// 信贷需要校验‘-’ 所以不能去掉 .replace("-", "");
 		HtBoaOutUser htBoaOutUser = new HtBoaOutUser();
 		htBoaOutUser.setUserId(userId);
 		htBoaOutUser.setUserName(userName);

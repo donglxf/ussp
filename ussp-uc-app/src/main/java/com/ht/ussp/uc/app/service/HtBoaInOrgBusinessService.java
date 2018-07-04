@@ -157,6 +157,10 @@ public class HtBoaInOrgBusinessService {
     public List<HtBoaInBusinessOrg> findByOrgCode(String orgCode) {
         return this.htBoaInOrgBusinessRepository.findByBusinessOrgCode(orgCode);
     }
+    
+    public List<HtBoaInBusinessOrg> findByBusinessOrgName(String orgName) {
+        return this.htBoaInOrgBusinessRepository.findByBusinessOrgName(orgName);
+    }
 
     public List<HtBoaInBusinessOrg> findByParentOrgCode(String parentOrgCode) {
         return this.htBoaInOrgBusinessRepository.findByParentOrgCode(parentOrgCode);

@@ -19,6 +19,8 @@ public interface HtBoaInOrgBusinessRepository
     List<HtBoaInBusinessOrg> findByParentOrgCode(String parentOrgCode, Sort sort);
     
     List<HtBoaInBusinessOrg> findByBusinessOrgCode(String orgCode);
+
+    List<HtBoaInBusinessOrg> findByBusinessOrgName(String orgName);
     
     List<HtBoaInBusinessOrg> findByParentOrgCode(String parentOrgCode);
 
