@@ -12,6 +12,7 @@ import org.springframework.cloud.netflix.zuul.filters.ZuulProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.core.Result;
+import com.ht.ussp.gateway.app.feignClients.OucClient;
 import com.ht.ussp.gateway.app.feignClients.RoleClient;
 import com.ht.ussp.gateway.app.feignClients.UaaClient;
 import com.ht.ussp.gateway.app.model.ValidateOutJwtVo;
@@ -53,6 +54,8 @@ public class OutSystemFilter extends ZuulFilter {
 	@Autowired
 	private UaaClient UaaClient;
 
+	@Autowired
+	private OucClient oucClient;
 	
 	@Override
 	public boolean shouldFilter() {
@@ -61,6 +64,7 @@ public class OutSystemFilter extends ZuulFilter {
 
 	@Override
 	public Object run() {
+		 final  String HEADER_PREFIX = "Bearer ";
 		RequestContext ctx = RequestContext.getCurrentContext();
 		ctx.getResponse().setCharacterEncoding("UTF-8");
 		HttpServletRequest request = ctx.getRequest();
@@ -68,6 +72,7 @@ public class OutSystemFilter extends ZuulFilter {
 		String ieme=request.getHeader("ieme");
 		String uri = request.getRequestURI().toString();
 		log.info("----------------url:"+request.getRequestURL());
+	
 		// 鉴权app不能为空
 		if (StringUtils.isEmpty(app)) {
 			// 不鉴权的URL直接路由
@@ -144,6 +149,59 @@ public class OutSystemFilter extends ZuulFilter {
 						}
 						return null;
 					}
+					
+					String token=tokenPayload.substring(HEADER_PREFIX.length(), tokenPayload.length());
+					log.info("---------extract tokenPayload's token:"+token);
+					Result validateResult=oucClient.validateToken(userId, token);
+					String returnCode=validateResult.getReturnCode();
+					
+					if(!"0000".equals(returnCode)){
+						switch(returnCode) {
+						case "9936":
+							try {
+								mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.REDIS_TOKEN_NULL));
+							} catch (Exception e) {
+								log.debug("缓存中没有该TOKEN:"+e.getMessage());
+							}finally {
+								try {
+									ctx.getResponse().getWriter().close();
+								} catch (IOException e) {
+									log.debug("close io exception:"+e.getMessage());
+								}
+							}
+							break;	
+						case "9937":
+							try {
+								mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.REDIS_TOKEN_VALID));
+							} catch (Exception e) {
+								log.debug("TOKEN与缓存中的不匹配:"+e.getMessage());
+							}finally {
+								try {
+									ctx.getResponse().getWriter().close();
+								} catch (IOException e) {
+									log.debug("close io exception:"+e.getMessage());
+								}
+							} 
+							break;
+						default:
+							try {
+								mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.REDIS_TOKEN_FAIL));
+							} catch (Exception e) {
+								log.debug("执行失败:"+e.getMessage());
+							}finally {
+								try {
+									ctx.getResponse().getWriter().close();
+								} catch (IOException e) {
+									log.debug("close io exception:"+e.getMessage());
+								}
+							} 
+							break;
+							
+						}
+						ctx.setSendZuulResponse(false);
+						return null;
+					}
+					
 					log.debug("====validate out system success,the userId is:"+userId);
 					ctx.addZuulRequestHeader("userId", userId);
 					ctx.addZuulRequestHeader("ieme", iemeTemp);

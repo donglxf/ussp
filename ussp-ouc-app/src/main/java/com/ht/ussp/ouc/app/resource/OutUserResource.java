@@ -102,12 +102,12 @@ public class OutUserResource{
 			String result = redis.opsForValue().get(userId + ":token");
 			//redis中不存在，验证结果：无效
 			if(StringUtils.isBlank(result)) {
-				return Result.buildFail(SysStatus.REDIS_TOKEN_NULL.getStatus(), SysStatus.REDIS_TOKEN_NULL.getMsg());				
+				return Result.buildFail(SysStatus.REDIS_TOKEN_NULL);				
 			}else if(result.equals(token)){
 				return Result.buildSuccess();
 			}else {
 			// token不相等，授权失败
-			return Result.buildFail(SysStatus.REDIS_TOKEN_VALID.getStatus(), SysStatus.REDIS_TOKEN_VALID.getMsg());
+			return Result.buildFail(SysStatus.REDIS_TOKEN_VALID);
 			} 
 		} catch (Exception e) {
 			log.error("连接----redis异常-----：" + e);
