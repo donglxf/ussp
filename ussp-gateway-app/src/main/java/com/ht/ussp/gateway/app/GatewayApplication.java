@@ -11,6 +11,7 @@ import com.ht.ussp.gateway.app.filter.AccessFilter;
 import com.ht.ussp.gateway.app.filter.CustomCorsFilter;
 import com.ht.ussp.gateway.app.filter.ErrorException;
 import com.ht.ussp.gateway.app.filter.OutSystemFilter;
+import com.ht.ussp.gateway.app.filter.ResponseFilter;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -51,6 +52,12 @@ public class GatewayApplication {
     @Bean
     public ErrorException errorException() {
     	return new ErrorException();
+    }
+    
+    //根踪返回结果使用
+    @Bean
+    public ResponseFilter responseFilter() {
+        return new ResponseFilter();
     }
     
     

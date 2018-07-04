@@ -33,6 +33,9 @@ zuul:
     post:
       disable: true
   retryable: true
+  ResponseFilter: 
+    post: 
+      disable: true
   host:
     maxTotalConnections: 2000
     maxPerRouteConnections: 800

@@ -14,7 +14,7 @@ uaa:
       appTokenTime: 365 #天，系统级鉴权token失效时间
       tokenIssuer: qiuwenwu@hongte.info
       tokenSigningKey: xm8EV6Hy5RMFK4EEACIDAwQus
-      outUserTokenTime: 120  #外部用户token失效时间  单位：分钟
+      outUserTokenTime: 1000  #外部用户token失效时间  单位：年，目前主要针对鸿特金服APP的需求
       outRefreshTokenExpTime: 129600  #90天，可保存到外部系统的数据库
       outTokenSigningKey: V6bEDZuckEx5DdCEFuyBO8oGHvIKSh
       
