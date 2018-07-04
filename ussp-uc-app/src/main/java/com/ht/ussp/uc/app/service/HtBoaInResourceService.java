@@ -843,17 +843,18 @@ public class HtBoaInResourceService {
 					fallbacksbf.append("-- 回滚添加 " + enter);
 					for (HtBoaInResource addHtBoaInResource : sourceListHtBoaInResource) {
 						sbf.append( "INSERT INTO `HT_BOA_IN_RESOURCE` (`RES_CODE`, `RES_NAME_CN`, `SEQUENCE`, `RES_TYPE`, `RES_PARENT`, `REMARK`, `STATUS`, `RES_ICON`, `FONT_ICON`, `RES_CONTENT`, `APP`, `JPA_VERSION`, `DEL_FLAG`) VALUES (");
-						sbf.append("'" + addHtBoaInResource.getResCode() + "',");
+						sbf.append((addHtBoaInResource.getResCode() == null ? null : "'" + addHtBoaInResource.getResCode() + "'") + ",");
 						sbf.append("'" + addHtBoaInResource.getResNameCn() + "',");
-						sbf.append("'" + addHtBoaInResource.getSequence() + "',");
+						sbf.append((addHtBoaInResource.getSequence() == null ? null : "'" + addHtBoaInResource.getSequence() + "'") + ",");
 						sbf.append("'" + addHtBoaInResource.getResType() + "',");
-						sbf.append("'" + addHtBoaInResource.getResParent() + "',");
+						sbf.append((addHtBoaInResource.getResParent() == null ? null : "'" + addHtBoaInResource.getResParent() + "'") + ",");
 						sbf.append("'" + addHtBoaInResource.getRemark() + "',");
-						sbf.append("'" + addHtBoaInResource.getStatus() + "',");
+						sbf.append((addHtBoaInResource.getStatus() == null ? '0' : "'" + addHtBoaInResource.getStatus() + "'") + ",");
 						sbf.append((addHtBoaInResource.getResIcon() == null ? null : "'" + addHtBoaInResource.getResIcon() + "'") + ",");
 						sbf.append((addHtBoaInResource.getFontIcon() == null ? null : "'" + addHtBoaInResource.getFontIcon() + "'") + ",");
 						sbf.append("'" + addHtBoaInResource.getResContent() + "',");
-						sbf.append("'" + addHtBoaInResource.getApp() + "',");
+						sbf.append((addHtBoaInResource.getApp() == null ? null : "'" + addHtBoaInResource.getApp() + "'") + "," );
+						sbf.append((addHtBoaInResource.getJpaVersion() == null ? null : "'" + addHtBoaInResource.getJpaVersion() + "'") + ",");
 						sbf.append("'" + addHtBoaInResource.getJpaVersion() + "',");
 						sbf.append("0");
 						sbf.append(");" + enter);
