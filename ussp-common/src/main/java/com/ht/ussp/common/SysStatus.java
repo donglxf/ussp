@@ -41,7 +41,10 @@ public enum SysStatus {
 	CLIENT_IS_VALID("9933","客户端信息错误"),
 	TOKEN_AND_IEME_NOT_NULL("9934","TOKEN和IEME不能为空"),
 	ORIGIN_VALID("9935","来源非法"),
-
+	REDIS_TOKEN_NULL("9936","缓存中没有该TOKEN"),	
+	REDIS_TOKEN_VALID("9937","TOKEN与缓存中的不匹配"),
+	
+	
 	NO_RESULT("9996","查无数据"),
 	ERROR_PARAM("9997", "参数错误"),
 	EXCEPTION("9998", "执行异常"),
