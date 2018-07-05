@@ -855,7 +855,6 @@ public class HtBoaInResourceService {
 						sbf.append("'" + addHtBoaInResource.getResContent() + "',");
 						sbf.append((addHtBoaInResource.getApp() == null ? null : "'" + addHtBoaInResource.getApp() + "'") + "," );
 						sbf.append((addHtBoaInResource.getJpaVersion() == null ? null : "'" + addHtBoaInResource.getJpaVersion() + "'") + ",");
-						sbf.append("'" + addHtBoaInResource.getJpaVersion() + "',");
 						sbf.append("0");
 						sbf.append(");" + enter);
 						fallbacksbf.append( "DELETE FROM  HT_BOA_IN_RESOURCE WHERE RES_CODE='" + addHtBoaInResource.getResCode() + "' AND RES_PARENT='" + addHtBoaInResource.getResParent() + "'" + " AND APP='" + addHtBoaInResource.getApp() + "'" + ";" + enter);
