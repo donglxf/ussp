@@ -311,7 +311,7 @@ public class SynDataResource {
     
     @ApiOperation(value = "处理错误数据")
    	@PostMapping(value = "/dealLoginIdNull", produces = { "application/json" })
-   	public Result dealLoginIdNull() {
-   		return dingDingService.dealLoginIdNull();
+   	public Result dealLoginIdNull(String all) {
+   		return dingDingService.dealLoginIdNull(all);
    	}
 }

@@ -201,19 +201,12 @@ public class OrgResource {
     @SuppressWarnings("rawtypes")
     @ApiOperation(value = "对内：禁用/启用机构")
     @PostMapping(value = {"/stop"}, produces = {"application/json"})
-    public Result stop(long id, String status, @RequestHeader("userId") String userId) {
-        long sl = System.currentTimeMillis(), el = 0L;
-        String msg = "成功";
-        String logHead = "机构记录删除：org/delete param-> {}";
-        String logStart = logHead + " | START:{}";
-        String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.debug(logStart, "codes: " + id, sl);
+    public Result stop(long id, Integer status, @RequestHeader("userId") String userId) {
         HtBoaInOrg u = htBoaInOrgService.findById(id);
+        u.setDelFlag(status);
         u.setLastModifiedDatetime(new Date());
         u.setUpdateOperator(userId);
         htBoaInOrgService.update(u);
-        el = System.currentTimeMillis();
-        log.debug(logEnd, "codes: " + id, msg, el, el - sl);
         return Result.buildSuccess();
     }
     
