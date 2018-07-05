@@ -157,14 +157,21 @@ public class HtBoaInUserService {
         						loginInfoVo.setBussinesOrgCode(htBoaInBusinessOrg.getBusinessOrgCode());
         						loginInfoVo.setBussinesOrgName(htBoaInBusinessOrg.getBusinessOrgName());
         						loginInfoVo.setBranchCode(htBoaInBusinessOrg.getBranchCode());
-        						if(StringUtils.isNotEmpty(htBoaInBusinessOrg.getBranchCode())) {
-        							List<HtBoaInBusinessOrg>  listHtBoaInBusinessOrgBranch = htBoaInOrgBusinessRepository.findByBusinessOrgCode(htBoaInBusinessOrg.getBranchCode());
-        							if(listHtBoaInBusinessOrgBranch!=null&&!listHtBoaInBusinessOrgBranch.isEmpty()) {
-        								loginInfoVo.setBranchName(listHtBoaInBusinessOrgBranch.get(0).getBusinessOrgName());
-        								loginInfoVo.setIsAppRovalDept(listHtBoaInBusinessOrgBranch.get(0).getIsAppRovalDept()==null?"0":listHtBoaInBusinessOrgBranch.get(0).getIsAppRovalDept()+"");
-                						loginInfoVo.setIsHeadDept(listHtBoaInBusinessOrgBranch.get(0).getIsHeadDept()==null?"0":listHtBoaInBusinessOrgBranch.get(0).getIsHeadDept()+"");
-        							}
+        						if(60==htBoaInBusinessOrg.getOrgLevel()) {
+        							loginInfoVo.setBranchName(htBoaInBusinessOrg.getBusinessOrgName());
+    								loginInfoVo.setIsAppRovalDept(htBoaInBusinessOrg.getIsAppRovalDept()==null?"0":htBoaInBusinessOrg.getIsAppRovalDept()+"");
+            						loginInfoVo.setIsHeadDept(htBoaInBusinessOrg.getIsHeadDept()==null?"0":htBoaInBusinessOrg.getIsHeadDept()+"");
+        						}else {
+        							if(StringUtils.isNotEmpty(htBoaInBusinessOrg.getBranchCode())) {
+            							List<HtBoaInBusinessOrg>  listHtBoaInBusinessOrgBranch = htBoaInOrgBusinessRepository.findByBusinessOrgCode(htBoaInBusinessOrg.getBranchCode());
+            							if(listHtBoaInBusinessOrgBranch!=null&&!listHtBoaInBusinessOrgBranch.isEmpty()) {
+            								loginInfoVo.setBranchName(listHtBoaInBusinessOrgBranch.get(0).getBusinessOrgName());
+            								loginInfoVo.setIsAppRovalDept(listHtBoaInBusinessOrgBranch.get(0).getIsAppRovalDept()==null?"0":listHtBoaInBusinessOrgBranch.get(0).getIsAppRovalDept()+"");
+                    						loginInfoVo.setIsHeadDept(listHtBoaInBusinessOrgBranch.get(0).getIsHeadDept()==null?"0":listHtBoaInBusinessOrgBranch.get(0).getIsHeadDept()+"");
+            							}
+            						}
         						}
+        						
         						loginInfoVo.setDistrictCode(htBoaInBusinessOrg.getDistrictCode());
         						loginInfoVo.setProvince(htBoaInBusinessOrg.getProvince());
         						loginInfoVo.setCity(htBoaInBusinessOrg.getCity());
