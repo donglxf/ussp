@@ -55,10 +55,10 @@ public class GatewayApplication {
     }
     
     //根踪返回结果使用
-    @Bean
-    public ResponseFilter responseFilter() {
-        return new ResponseFilter();
-    }
+//    @Bean
+//    public ResponseFilter responseFilter() {
+//        return new ResponseFilter();
+//   }
     
     
 }

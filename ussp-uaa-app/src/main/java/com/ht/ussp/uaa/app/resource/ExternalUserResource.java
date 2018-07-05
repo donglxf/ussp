@@ -97,7 +97,7 @@ public class ExternalUserResource {
 		if ("0000".equals(result.getReturnCode())) {
 			String userId = result.getData().toString();
 			JwtToken accessToken = createAccessJwtToken(userId, ieme);
-			if(outUserClient.saveTokenToRedis(userId, accessToken.getToken())) {
+			if(outUserClient.saveTokenToRedis(app,userId, accessToken.getToken())) {
 				map.put("accessToken", accessToken.getToken());
 			}
 			

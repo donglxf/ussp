@@ -23,7 +23,7 @@ public interface OutUserClient {
 	public Result getClientInfo(@RequestParam("app")String app);
 	
 	@RequestMapping(value = "/user/saveTokenToRedis")
-	public Boolean saveTokenToRedis(@RequestParam("userId") String userId, @RequestParam("token") String token);
+	public Boolean saveTokenToRedis(@RequestParam("app") String app,@RequestParam("userId") String userId, @RequestParam("token") String token);
 	
 	@RequestMapping(value = "/user/validateToken")
 	public Result validateToken(@RequestParam("userId") String userId, @RequestParam("token") String token);

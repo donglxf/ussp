@@ -71,6 +71,7 @@ public class OutSystemFilter extends ZuulFilter {
 		String ieme=request.getHeader("ieme");
 		String uri = request.getRequestURI().toString();
 		log.info("----------------url:"+request.getRequestURL());
+	
 		// 鉴权app不能为空
 		if (StringUtils.isEmpty(app)) {
 			// 不鉴权的URL直接路由
@@ -147,9 +148,11 @@ public class OutSystemFilter extends ZuulFilter {
 						}
 						return null;
 					}
-			
 					
-					Result validateResult=oucClient.validateToken(userId, tokenPayload);
+					final  String HEADER_PREFIX = "Bearer ";
+					String token=tokenPayload.substring(HEADER_PREFIX.length(), tokenPayload.length());
+					log.info("---------extract tokenPayload's token:"+token);
+					Result validateResult=oucClient.validateToken(app, userId, token);
 					String returnCode=validateResult.getReturnCode();
 					
 					if(!"0000".equals(returnCode)){
@@ -182,7 +185,7 @@ public class OutSystemFilter extends ZuulFilter {
 							break;
 						default:
 							try {
-								mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.FAIL));
+								mapper.writeValue(ctx.getResponse().getWriter(), Result.buildFail(SysStatus.REDIS_TOKEN_FAIL));
 							} catch (Exception e) {
 								log.debug("执行失败:"+e.getMessage());
 							}finally {

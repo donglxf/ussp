@@ -130,7 +130,7 @@
 		<dependency>
 			<artifactId>ussp-common</artifactId>
 			<groupId>com.ht.ussp</groupId>
-			<version>20180629-SNAPSHOT</version>
+			<version>0.0.30</version>
 		</dependency>
 		<dependency>
 			<artifactId>taobao-sdk-java-auto_1479188381469</artifactId>

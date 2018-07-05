@@ -98,6 +98,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
     var orgListByPageUrl=config.basePath +"org/list"; //列出所有机构记录列表信息  
     var addOrganizationUrl=config.basePath +"org/add"; //添加机构信息
     var delOrganizationUrl=config.basePath +"org/delete"; //添加机构信息
+    var stopOrganizationUrl=config.basePath +"org/stop"; //添加机构信息
     var orgTreeUrl = config.basePath +"org/tree"; //机构列表
     var checkOrgCodeExistUrl = config.basePath +"org/isExistOrgCode"; //校验岗位编码是否已经存在
     var exportOrgExcelUrl = config.basePath +"org/exportOrgExcel"; //导出
@@ -290,7 +291,20 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth','upload'], function (
                      }*/
                  });
             });
-        } else if (obj.event === 'edit') {
+        }else if (obj.event === 'resetState') {
+            layer.confirm('是否确认恢复机构？', function (index) {
+           	 $.post(stopOrganizationUrl+"?status=0&id=" + data.id, null, function (result) {
+                    if (result["returnCode"] == "0000") {
+                        layer.close(index);
+                        layer.msg("恢复机构成功");
+                    } else {
+                        layer.msg(result.codeDesc);
+                    }
+                    refreshOrgTable();
+                });
+           });
+           
+       } else if (obj.event === 'edit') {
             editDialog = layer.open({
             	 type: 1,
             	 area: ['600px', '400px'],

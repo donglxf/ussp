@@ -129,7 +129,7 @@
 		<dependency>
 			<groupId>com.ht.ussp</groupId>
 			<artifactId>ussp-common</artifactId>
-			<version>20180629-SNAPSHOT</version>
+			<version>0.0.30</version>
 		</dependency>
 	</dependencies>
 
