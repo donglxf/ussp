@@ -123,6 +123,19 @@ public class SynDataResource {
     }
     
     /**
+     * 用户转换
+     * @param page
+     * @return
+     */
+    @SuppressWarnings({ "rawtypes"})
+    @ApiOperation(value="06-钉钉数据处理完成",notes="钉钉数据处理完成，将删除的机构隐藏")
+    @RequestMapping(value = {"/dealDelOrg" }, method = RequestMethod.POST)
+    public Result  dealDelOrg() { 
+    	return dingDingService.dealDelOrg();
+    }
+    
+    
+    /**
      * 用户岗位关联转换
      * @param page
      * @return

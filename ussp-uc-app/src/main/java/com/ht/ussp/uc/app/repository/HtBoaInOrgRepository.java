@@ -55,6 +55,8 @@ public interface HtBoaInOrgRepository
 
     @Query(value = "SELECT MAX(org_code) from HT_BOA_IN_ORG where parent_org_code=?1", nativeQuery = true)
 	public String getMaxOrgCode(String parentOrgCode);
+
+	public List<HtBoaInOrg> findByDelFlag(Integer delFlag);
     
     
 /*    @Query("SELECT new com.ht.ussp.uc.app.model.BoaInOrgInfo (u.orgCode, u.orgName, u.orgNameCn, u.parentOrgCode, u.rootOrgCode, u.orgPath, u.orgType, u.sequence,  u.createOperator) FROM HtBoaInOrg u  WHERE  u.orgCode LIKE ?1 OR u.orgName LIKE ?1 OR u.orgNameCn LIKE ?1    GROUP BY u")

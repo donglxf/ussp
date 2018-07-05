@@ -128,6 +128,11 @@ public class HtBoaInOrgService {
         return this.htBoaInOrgRepository.findByParentOrgCode(parentOrgCode);
     }
     
+    public List<HtBoaInOrg> findByDelFlag(Integer delFlag) {
+        return this.htBoaInOrgRepository.findByDelFlag(delFlag);
+    }
+    
+    
     public HtBoaInOrg getOrgInfoByOrgType(String orgCode, String orgType) {
 		return getParentOrgs(orgCode,orgType);
 	}
