@@ -19,5 +19,5 @@ public interface OucClient {
 	 * @date 2018年7月2日 下午8:38:21
 	 */
 	@GetMapping(value = "/user/validateToken")
-	Result validateToken(@RequestParam("userId") String userId, @RequestParam("token") String token);
+	Result validateToken(@RequestParam("app") String app,@RequestParam("userId") String userId, @RequestParam("token") String token);
 }

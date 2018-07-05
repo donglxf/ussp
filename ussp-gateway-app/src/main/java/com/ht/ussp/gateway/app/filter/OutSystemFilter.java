@@ -64,7 +64,6 @@ public class OutSystemFilter extends ZuulFilter {
 
 	@Override
 	public Object run() {
-		 final  String HEADER_PREFIX = "Bearer ";
 		RequestContext ctx = RequestContext.getCurrentContext();
 		ctx.getResponse().setCharacterEncoding("UTF-8");
 		HttpServletRequest request = ctx.getRequest();
@@ -150,9 +149,10 @@ public class OutSystemFilter extends ZuulFilter {
 						return null;
 					}
 					
+					final  String HEADER_PREFIX = "Bearer ";
 					String token=tokenPayload.substring(HEADER_PREFIX.length(), tokenPayload.length());
 					log.info("---------extract tokenPayload's token:"+token);
-					Result validateResult=oucClient.validateToken(userId, token);
+					Result validateResult=oucClient.validateToken(app, userId, token);
 					String returnCode=validateResult.getReturnCode();
 					
 					if(!"0000".equals(returnCode)){
