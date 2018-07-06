@@ -124,6 +124,33 @@ public class OutUserResource {
 		}
 
 	}
+	
+	@ApiOperation(value = "删除redis中 token")
+	@GetMapping("/deleteToken")
+	public Boolean deleteToken(@RequestParam("app") String app,@RequestParam("userId") String userId) {
+		Boolean flag = false;
+		if(StringUtils.isBlank(app)||StringUtils.isBlank(userId)) {
+			log.info("-------参数不能为空！");
+			return flag;
+		}
+		String key=app+":"+userId + ":token";
+	
+		try {
+			if(redis.hasKey(key)) {
+				redis.delete(key);
+			}else {
+				log.error("---------redis中没有该key:"+key);
+			}
+		
+		} catch (Exception e) {
+			log.error("----保存token至redis异常：" + e);
+			flag = false;
+		}
+		flag = true;
+		return flag;
+
+	}
+	
 
 	@ApiOperation(value = "外部用户注册", notes = "返回userId")
 	@ApiImplicitParams({
