@@ -127,11 +127,10 @@ public class OutUserResource {
 	
 	@ApiOperation(value = "删除redis中 token")
 	@GetMapping("/deleteToken")
-	public Boolean deleteToken(@RequestParam("app") String app,@RequestParam("userId") String userId) {
-		Boolean flag = false;
+	public Result deleteToken(@RequestParam("app") String app,@RequestParam("userId") String userId) {
 		if(StringUtils.isBlank(app)||StringUtils.isBlank(userId)) {
 			log.info("-------参数不能为空！");
-			return flag;
+			return Result.buildFail(SysStatus.ERROR_PARAM);
 		}
 		String key=app+":"+userId + ":token";
 	
@@ -144,10 +143,9 @@ public class OutUserResource {
 		
 		} catch (Exception e) {
 			log.error("----保存token至redis异常：" + e);
-			flag = false;
+			return Result.buildFail();
 		}
-		flag = true;
-		return flag;
+		return Result.buildSuccess();
 
 	}
 	
