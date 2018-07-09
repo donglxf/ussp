@@ -1,8 +1,12 @@
 package com.ht.ussp.uc.app.resource;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,12 +18,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
+import com.ht.ussp.uc.app.config.AmqpConfig;
+import com.ht.ussp.uc.app.domain.HtBoaInApp;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
+import com.ht.ussp.uc.app.service.HtBoaInAppService;
 import com.ht.ussp.uc.app.service.HtBoaInUserAppService;
 import com.ht.ussp.uc.app.vo.PageVo;
+import com.ht.ussp.util.JsonUtil;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
@@ -36,7 +44,10 @@ public class UserAppResource {
 
     @Autowired
     private HtBoaInUserAppService htBoaInUserAppService;
-
+    @Autowired
+    private HtBoaInAppService htBoaInAppService;
+   
+    
     @SuppressWarnings({ "rawtypes", "unchecked" })
    	@ApiOperation(value = "对内：根据UserId查询用户系统", notes = "根据UserId查询用户系统")
     @PostMapping(value = {"/listUserAppByPage" }, produces = { "application/json" })
@@ -112,6 +123,9 @@ public class UserAppResource {
 			u.setCreateOperator(userId);
 			u.setController("N");
 			u = htBoaInUserAppService.add(u);
+			if(u!=null) {
+				htBoaInUserAppService.pushMq(htBoaInUserApp.getApp(), "addAppUser", JsonUtil.obj2Str(u));
+			}
 		}
        
         el = System.currentTimeMillis();
@@ -173,18 +187,14 @@ public class UserAppResource {
     
     @ApiOperation(value = "对内：删除用户系统记录", notes = "提交角色编号，可批量删除")
     @RequestMapping(value = {"/delete" }, method = RequestMethod.POST)
-    public Result delete( int id) {
+    public Result delete(long id) {
         long sl = System.currentTimeMillis(), el = 0L;
-        String msg = "成功";
-        String logHead = "角色记录删除：role/in/delete param-> {}";
-        String logStart = logHead + " | START:{}";
-        String logEnd = logHead + " {} | END:{}, COST:{}";
-        log.debug(logStart, "codes: " + id, sl);
-        HtBoaInUserApp u = new HtBoaInUserApp();
-        u.setId((long) id);
-        htBoaInUserAppService.delete(u);
+        HtBoaInUserApp u = htBoaInUserAppService.findById(id);
+        if(u!=null) {
+        	htBoaInUserAppService.delete(u);
+			htBoaInUserAppService.pushMq(u.getApp(), "delAppUser", JsonUtil.obj2Str(u));
+		}
         el = System.currentTimeMillis();
-        log.debug(logEnd, "codes: " + id, msg, el, el - sl);
         return Result.buildSuccess();
     }
     
