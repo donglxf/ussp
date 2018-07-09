@@ -426,6 +426,7 @@ public class UserResource{
             		m.put("idNo", u.getIdNo());
             		m.put("oldOrgCode", oldOrgCode);
             		m.put("newOrgCode", u.getOrgCode());
+            		m.put("lastModifiedDatetime", u.getLastModifiedDatetime()+"");
             		htBoaInUserAppService.pushMq("", "updateUserOrg", JsonUtil.obj2Str(m));
             	}
             }
