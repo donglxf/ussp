@@ -1,7 +1,9 @@
 package com.ht.ussp.uc.app.model;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -54,22 +56,22 @@ public class SelfBoaInUserInfo {
     String orgType;
 
     @ApiModelProperty(value = "岗位编码", dataType = "string")
-    Set<String> positionCodes = new HashSet<String>(0);
+    List<String> positionCodes = new ArrayList<String>();
 
     @ApiModelProperty(value = "岗位名称", dataType = "string")
-    Set<String> positionNames = new HashSet<String>(0);
+    List<String> positionNames = new ArrayList<String>();
 
     @ApiModelProperty(value = "岗位名称中文", dataType = "string")
-    Set<String> positionNameChs = new HashSet<String>(0);
+    List<String> positionNameChs = new ArrayList<String>();
 
     @ApiModelProperty(value = "角色编码", dataType = "string")
-    Set<String> roleCodes = new HashSet<String>(0);
+    List<String> roleCodes = new ArrayList<String>();
 
     @ApiModelProperty(value = "角色英文名", dataType = "string")
-    Set<String> roleNames = new HashSet<String>(0);
+    List<String> roleNames = new ArrayList<String>();
 
     @ApiModelProperty(value = "角色中文名", dataType = "string")
-    Set<String> roleNameChs = new HashSet<String>(0);
+    List<String> roleNameChs = new ArrayList<String>();
 
     @ApiModelProperty(value = "工号", dataType = "string")
     String jobNumber;

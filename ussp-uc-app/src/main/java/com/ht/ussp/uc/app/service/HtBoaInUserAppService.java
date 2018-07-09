@@ -151,6 +151,10 @@ public class HtBoaInUserAppService {
         return result;
     }
 
+    public List<SelfBoaInUserInfo> getUserInfoForApp(String appCode) {
+        return this.htBoaInUserAppRepository.getUserInfoForApp( appCode);
+    }
+    
     @SuppressWarnings({"rawtypes", "unchecked"})
     public PageResult listAllUserAppByPage(PageConf pageConf, Map<String, String> query) {
         PageResult result = new PageResult();
