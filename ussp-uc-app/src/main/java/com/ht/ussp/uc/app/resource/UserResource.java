@@ -2,8 +2,10 @@ package com.ht.ussp.uc.app.resource;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +52,7 @@ import com.ht.ussp.uc.app.vo.UserMessageVo;
 import com.ht.ussp.uc.app.vo.UserVo;
 import com.ht.ussp.util.BeanUtils;
 import com.ht.ussp.util.EncryptUtil;
+import com.ht.ussp.util.JsonUtil;
 import com.ht.ussp.util.LogicUtil;
 
 import io.swagger.annotations.ApiImplicitParam;
@@ -399,6 +402,7 @@ public class UserResource{
         	if(user==null) {
         		return Result.buildSuccess();
         	}
+        	String oldOrgCode = user.getOrgCode(); //原来的机构
         	user.setUserId(userMessageVo.getUserId());
             user.setEmail(userMessageVo.getEmail());
             user.setJobNumber(userMessageVo.getJobNumber());
@@ -411,6 +415,21 @@ public class UserResource{
             user.setUpdateOperator(loginUserId);
             user.setLastModifiedDatetime(new Date());
             HtBoaInUser u = htBoaInUserService.update(user);
+            if(u!=null&&u.getOrgCode()!=null) {
+            	if(!u.getOrgCode().equals(oldOrgCode)) { //机构变动了 则发送mq消息
+            		Map<String,String> m = new HashMap<String,String>();
+            		m.put("userId", u.getUserId());
+            		m.put("userName", u.getUserName());
+            		m.put("mobile", u.getMobile());
+            		m.put("jobNum", u.getJobNumber());
+            		m.put("email", u.getEmail());
+            		m.put("idNo", u.getIdNo());
+            		m.put("oldOrgCode", oldOrgCode);
+            		m.put("newOrgCode", u.getOrgCode());
+            		m.put("lastModifiedDatetime", u.getLastModifiedDatetime()+"");
+            		htBoaInUserAppService.pushMq("", "updateUserOrg", JsonUtil.obj2Str(m));
+            	}
+            }
             try {
             	if(!StringUtils.isEmpty(userMessageVo.getBussinesOrgCode())) {
     				List<HtBoaInUserExt> listHtBoaInUserExt = htBoaInUserBusinessService.findHtBoaInUserExtByUserId(userMessageVo.getUserId());

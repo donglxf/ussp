@@ -35,7 +35,6 @@ import com.ht.ussp.uc.app.service.HtBoaInOrgBusinessService;
 import com.ht.ussp.uc.app.service.HtBoaInUserBusinessService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.vo.PageVo;
-import com.ht.ussp.util.JsonUtil;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;

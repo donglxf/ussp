@@ -124,6 +124,41 @@ public class OutUserResource {
 		}
 
 	}
+	
+	/**
+	 * 
+	 * @Title: deleteToken 
+	 * @Description: 删除token,供鸿特金服APP退出登录使用 
+	 * @return Result
+	 * @throws
+	 * @author wim qiuwenwu@hongte.info 
+	 * @date 2018年7月6日 下午5:10:54
+	 */
+	@ApiOperation(value = "删除redis中 token")
+	@GetMapping("/deleteToken")
+	public Result deleteToken(@RequestParam("app") String app,@RequestParam("userId") String userId) {
+		if(StringUtils.isBlank(app)||StringUtils.isBlank(userId)) {
+			log.info("-------参数不能为空！");
+			return Result.buildFail(SysStatus.ERROR_PARAM);
+		}
+		String key=app+":"+userId + ":token";
+	
+		try {
+			if(redis.hasKey(key)) {
+				redis.delete(key);
+			}else {
+				//无key，不需要返回code,后台记录提示
+				log.error("---------redis中没有该key:"+key);
+			}
+		
+		} catch (Exception e) {
+			log.error("----删除token至redis异常：" + e);
+			return Result.buildFail();
+		}
+		return Result.buildSuccess();
+
+	}
+	
 
 	@ApiOperation(value = "外部用户注册", notes = "返回userId")
 	@ApiImplicitParams({

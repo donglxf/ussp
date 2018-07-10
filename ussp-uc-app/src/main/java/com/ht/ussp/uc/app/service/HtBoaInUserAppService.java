@@ -1,9 +1,12 @@
 package com.ht.ussp.uc.app.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,10 +17,13 @@ import org.springframework.stereotype.Service;
 
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.ReturnCodeEnum;
+import com.ht.ussp.uc.app.config.AmqpConfig;
+import com.ht.ussp.uc.app.domain.HtBoaInApp;
 import com.ht.ussp.uc.app.domain.HtBoaInUserApp;
 import com.ht.ussp.uc.app.model.BoaInAppInfo;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
+import com.ht.ussp.uc.app.repository.HtBoaInAppRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInUserAppRepository;
 import com.ht.ussp.uc.app.vo.ResVo;
 
@@ -29,9 +35,12 @@ import com.ht.ussp.uc.app.vo.ResVo;
  */
 @Service
 public class HtBoaInUserAppService {
-    @Autowired
+	@Autowired
     private HtBoaInUserAppRepository htBoaInUserAppRepository;
-
+	@Autowired
+    private HtBoaInAppRepository htBoaInAppRepository;
+	@Autowired
+	private RabbitMessagingTemplate rabbitMessagingTemplate;
 
     //resType:view\group\module\btn\tab\api
     public List<ResVo> getResVoList(String app, String userId, String resType) {
@@ -151,6 +160,10 @@ public class HtBoaInUserAppService {
         return result;
     }
 
+    public List<SelfBoaInUserInfo> getUserInfoForApp(String appCode) {
+        return this.htBoaInUserAppRepository.getUserInfoForApp( appCode);
+    }
+    
     @SuppressWarnings({"rawtypes", "unchecked"})
     public PageResult listAllUserAppByPage(PageConf pageConf, Map<String, String> query) {
         PageResult result = new PageResult();
@@ -218,5 +231,31 @@ public class HtBoaInUserAppService {
 	
 	public List<HtBoaInUserApp> findByUserIdAndApp(String userId,String app) {
 		return htBoaInUserAppRepository.findByUserIdAndApp(userId, app);
+	}
+	
+	/**
+	 * 
+	 * @param app  为空则都要推送
+	 * @param opType  addAppUser/delAppUser:用户关联系统      addUserRole/delUserRole用户角色   updateUserOrg
+	 * @param o
+	 */
+	public void pushMq(String app,String opType,String o) {
+		if(StringUtils.isNotEmpty(app)) {
+			List<HtBoaInApp> listHtBoaInApp =  htBoaInAppRepository.findByApp(app);
+			if(listHtBoaInApp!=null&&!listHtBoaInApp.isEmpty()) {
+				HtBoaInApp htBoaInApp = listHtBoaInApp.get(0);
+				if(htBoaInApp!=null) {
+					if("0".equals(htBoaInApp.getStatus())&&"1".equals(htBoaInApp.getIsPush())) { //推送添加的人员
+						Map<String,String> reMap = new HashMap<String,String>();
+						reMap.put(opType, o);
+						rabbitMessagingTemplate.convertAndSend(AmqpConfig.UC_EXCHANGE, AmqpConfig.UC_ROUTING_NODELAY,reMap);
+					}
+				}
+			}
+		}else {
+			Map<String,String> reMap = new HashMap<String,String>();
+			reMap.put(opType, o);
+			rabbitMessagingTemplate.convertAndSend(AmqpConfig.UC_EXCHANGE, AmqpConfig.UC_ROUTING_NODELAY,reMap);
+		}
 	}
 }

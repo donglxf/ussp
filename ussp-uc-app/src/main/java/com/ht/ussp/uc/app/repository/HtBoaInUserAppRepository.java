@@ -35,7 +35,7 @@ public interface HtBoaInUserAppRepository extends JpaRepository<HtBoaInUserApp,L
 			+ "FROM HtBoaInUserApp ur ,HtBoaInApp u    WHERE  ur.app = u.app AND  (u.app LIKE ?1 OR u.name LIKE ?1 OR u.nameCn LIKE ?1 ) and ur.userId=?2 GROUP BY u")
 	Page<BoaInAppInfo> listUserAppByPageWeb(Pageable arg0, String search,String userId);
 	
-	@Query("SELECT new com.ht.ussp.uc.app.model.BoaInAppInfo(u.app, u.name, u.nameCn,  u.status, u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,u.delFlag,u.id,u.isOS,u.maxLoginCount,u.tips,u.sysToken) "
+	@Query("SELECT new com.ht.ussp.uc.app.model.BoaInAppInfo(u.app, u.name, u.nameCn,  u.status, u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,u.delFlag,u.id,u.isOS,u.maxLoginCount,u.tips,u.sysToken,u.isPush) "
 			+ "FROM HtBoaInApp u    WHERE ( u.app LIKE ?1 OR u.name LIKE ?1 OR u.nameCn LIKE ?1 ) AND u.status=0 AND  u.delFlag=0  GROUP BY u")
 	Page<BoaInAppInfo> listAllUserAppByPage(Pageable arg0, String search);
 
@@ -61,4 +61,6 @@ public interface HtBoaInUserAppRepository extends JpaRepository<HtBoaInUserApp,L
 	@Query("SELECT new com.ht.ussp.uc.app.model.SelfBoaInUserInfo(u.userId, u.userName, u.email, u.idNo, u.mobile, u.orgCode, u.jobNumber,a.app,u.status ) FROM HtBoaInUser u,  HtBoaInUserApp a  WHERE a.userId = u.userId AND  (u.userId LIKE ?1 OR  u.userName LIKE ?1 OR u.email LIKE ?1 OR u.mobile LIKE ?1 OR u.jobNumber LIKE ?1 ) AND a.app = ?2  ")
 	public Page<SelfBoaInUserInfo> getUserInfoForAppByPage(Pageable pageable, String search, String appCode);
 
+	@Query("SELECT new com.ht.ussp.uc.app.model.SelfBoaInUserInfo(u.userId, u.userName, u.email, u.idNo, u.mobile, u.orgCode, u.jobNumber,a.app,u.status ) FROM HtBoaInUser u,  HtBoaInUserApp a  WHERE a.userId = u.userId AND a.app = ?1  ")
+	public List<SelfBoaInUserInfo> getUserInfoForApp( String appCode);
 }

@@ -25,10 +25,12 @@ import com.ht.ussp.uc.app.model.BoaInOrgInfo;
 import com.ht.ussp.uc.app.model.BoaInPositionInfo;
 import com.ht.ussp.uc.app.model.BoaInRoleInfo;
 import com.ht.ussp.uc.app.model.PageConf;
+import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
 import com.ht.ussp.uc.app.service.DingDingService;
 import com.ht.ussp.uc.app.service.HtBoaInOrgBusinessService;
 import com.ht.ussp.uc.app.service.HtBoaInOrgService;
 import com.ht.ussp.uc.app.service.HtBoaInPositionUserService;
+import com.ht.ussp.uc.app.service.HtBoaInUserAppService;
 import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.vo.DataUserOrgVo;
@@ -51,6 +53,9 @@ public class UcDataResource {
 	
 	@Autowired
 	private HtBoaInOrgService htBoaInOrgService;
+	
+	@Autowired
+	private HtBoaInUserAppService htBoaInUserAppService;
 	
 	@Autowired
 	private HtBoaInOrgBusinessService htBoaInOrgBusinessService;
@@ -204,4 +209,17 @@ public class UcDataResource {
 		return dingDingService.getDdUserList();
 	}
 	
+	//获取对应系统下所有用户信息  almsUsersSnchronized
+	@SuppressWarnings("rawtypes")
+	@PostMapping(value = { "/getUserInfoForApp" }, produces = { "application/json" })
+	public Result getUserInfoForApp(String appCode) { 
+		List<SelfBoaInUserInfo> listSelfBoaInUserInfo = htBoaInUserAppService.getUserInfoForApp(appCode);
+		for(SelfBoaInUserInfo selfBoaInUserInfo : listSelfBoaInUserInfo) {
+			//获取用户角色
+			selfBoaInUserInfo.setRoleCodes(htBoaInUserRoleService.getAllRoleCodes(selfBoaInUserInfo.getUserId()));
+			//获取用户岗位
+			selfBoaInUserInfo.setPositionCodes(htBoaInPositionUserService.queryRoleCodes(selfBoaInUserInfo.getUserId()));
+		}
+		return Result.buildSuccess(listSelfBoaInUserInfo);
+	} 
 }

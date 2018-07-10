@@ -72,7 +72,7 @@ xxl:
     admin.addresses: http://172.16.200.111:31801/xxl-job-admin
     executor.appname: ussp-uc-app
     executor.ip: 
-    executor.port: 9999
+    executor.port: 40126
     accessToken: 
     executor.logpath: /data/applogs/xxl-job/jobhandler/
     executor.logretentiondays: -1
@@ -103,7 +103,7 @@ xxl:
     admin.addresses: http://172.16.200.113:31801/xxl-job-admin
     executor.appname: ussp-uc-app
     executor.ip: 
-    executor.port: 9999
+    executor.port: 40126
     accessToken: 
     executor.logpath: /data/applogs/xxl-job/jobhandler/
     executor.logretentiondays: -1    
@@ -133,7 +133,7 @@ xxl:
     admin.addresses: http://120.79.128.28:31801/xxl-job-admin
     executor.appname: ussp-uc-app
     executor.ip: 
-    executor.port: 9999
+    executor.port: 40126
     accessToken: 
     executor.logpath: /data/applogs/xxl-job/jobhandler/
     executor.logretentiondays: -1      
@@ -162,7 +162,7 @@ xxl:
     admin.addresses: http://39.108.59.169:31801/xxl-job-admin
     executor.appname: ussp-uc-app
     executor.ip: 
-    executor.port: 9999
+    executor.port: 40126
     accessToken: 
     executor.logpath: /data/applogs/xxl-job/jobhandler/
     executor.logretentiondays: -1      

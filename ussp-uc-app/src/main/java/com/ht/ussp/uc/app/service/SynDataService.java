@@ -2,6 +2,8 @@ package com.ht.ussp.uc.app.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -19,8 +21,11 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ht.ussp.core.PageResult;
+import com.ht.ussp.core.Result;
 import com.ht.ussp.core.ReturnCodeEnum;
+import com.ht.ussp.uc.app.domain.DdUserOperator;
 import com.ht.ussp.uc.app.domain.HtBoaInBmOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInBmUser;
 import com.ht.ussp.uc.app.domain.HtBoaInContrast;
@@ -32,6 +37,8 @@ import com.ht.ussp.uc.app.repository.HtBoaInBmUserRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInContrastRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInUserRepository;
 import com.ht.ussp.uc.app.vo.UserContrastVo;
+import com.ht.ussp.util.HttpClientUtil;
+import com.ht.ussp.util.JsonUtil;
 
 @Service
 public class SynDataService {
@@ -172,5 +179,26 @@ public class SynDataService {
 
 	public void addBmUser(HtBoaInContrast htBoaInContrast) {
 		htBoaInContrastRepository.saveAndFlush(htBoaInContrast);
+	}
+	
+	public static void main(String[] args) throws Exception {
+	    Map<String, String> map = new TreeMap<>();
+	    map.put("app", "UC");
+        map.put("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJVc2VyIEF1dGhvcml6ZSIsInVzZXJJZCI6IjAxMTExMTAwMDAiLCJvcmdDb2RlIjoiRDAxIiwiaXNzIjoicWl1d2Vud3VAaG9uZ3RlLmluZm8iLCJpYXQiOjE1MzExMjA5MzcsImV4cCI6MTUzMTEyMjczNywiYXVkIjoi57uf5LiA55So5oi35p2D6ZmQ57O757uf566h55CG5ZGYIn0.itTlJxoFpstp8FG8Cy35u9ANKxykJvD0Lx8ZgfyhDlVXYxQgucXSDWQiv2__2r3TCrJVi2vhF8osh89hRr6Ibg");
+        map.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        Map<String, String> paramMap = new TreeMap<>();
+        paramMap.put("page", "1");
+        paramMap.put("limit", "2000");
+        paramMap.put("query.keyWord", "optype=1syntype=0");
+		String  apiResult = HttpClientUtil.getInstance().doPostWithMap("http://47.106.46.65:30111/uc/syndata/loadSynUserListByPage", paramMap, map);
+		Result result =  JsonUtil.json2Obj(apiResult, Result.class);
+		List<DdUserOperator> listDdUserOperator = (List<DdUserOperator>) result.getData();
+		for(int i = 0;i<listDdUserOperator.size();i++) {
+			DdUserOperator d = JsonUtil.json2Obj(JSONObject.toJSONString(listDdUserOperator.get(i)), DdUserOperator.class);
+			paramMap.put("id", d.getId()+"");
+			String  apiResult2 = HttpClientUtil.getInstance().doPostWithMap("http://47.106.46.65:30111/uc/syndata/synUserDataToUc?id="+d.getId(), paramMap, map);
+			System.out.println(apiResult2);
+		}
+		System.out.println("完成");
 	}
 }

@@ -168,8 +168,9 @@ layui.use(['form',   'table', 'ht_config','ht_auth','upload' ], function () {
             {type: 'numbers'}
             , {field: 'app', width: '10%', title: '系统编号', event:'getAppUsers'}
             , {field: 'nameCn',  width: '20%', title: '系统名称', event:'getAppUsers'}
-            , {field: 'isOS', width: '15%', templet: '#isOSTpl', title: '系统类型', event:'getAppUsers'}
-            , {field: 'status', width: '15%',templet: '#statusTpl', title: '状态', event:'getAppUsers'}
+            , {field: 'isOS', width: '10%', templet: '#isOSTpl', title: '系统类型', event:'getAppUsers'}
+            , {field: 'status', width: '10%',templet: '#statusTpl', title: '状态', event:'getAppUsers'}
+            , {field: 'isPush', width: '10%',templet: '#isPushTpl', title: '消息推送', event:'getAppUsers'}
             , {field: 'createOperator', width: '10%',  title: '创建人', event:'getAppUsers'}
             , {field: 'createdDatetime', width: '10%',templet: '#createTimeTpl', title: '创建时间', event:'getAppUsers'}
             , {fixed: 'right', width: '14%', title: '操作',   toolbar: '#app_datatable_bar'}
@@ -284,9 +285,16 @@ layui.use(['form',   'table', 'ht_config','ht_auth','upload' ], function () {
                         if ($input && $input.length == 1) {
                             $input.val(value);
                         }
+                        if(name=="isPush"){
+                        	 if(value){
+                        		 $("input:radio[name='isPush'][value="+value+"]", layero).attr("checked",true);
+                        	 }else{
+                        		 $("input:radio[name='isPush'][value='0']", layero).attr("checked",true);
+                        	 }
+                        }
                     });
                     
-                    form.render(null, "filter_modify_app_form");
+                    form.render(null, "filter_modify_data_form");
                     form.on('submit(filter_modify_app_form)', function (data) {
                         $.ajax({
                             type: "POST",

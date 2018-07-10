@@ -932,6 +932,31 @@ public class DingDingService {
 		}
     }
     
+    public Result dealDelOrg(){
+    	//1.先找到已经删除的机构 2.然后在递归执行处理
+    	List<HtBoaInOrg>  listHtBoaInOrgDel = htBoaInOrgService.findByDelFlag(1);
+    	for(HtBoaInOrg htBoaInOrg : listHtBoaInOrgDel) {
+			dealDelOrg(htBoaInOrg);
+		}
+    	return Result.buildSuccess("ok");
+    }
+    
+    private void dealDelOrg(HtBoaInOrg htBoaInOrgP) {
+    	if(htBoaInOrgP!=null) {
+    		List<HtBoaInOrg> htBoaInOrgList = htBoaInOrgService.findByParentOrgCode(htBoaInOrgP.getOrgCode());
+    		if(htBoaInOrgList!=null&&!htBoaInOrgList.isEmpty()) {
+    			if(StringUtils.isNotEmpty(htBoaInOrgList.get(0).getOrgCode())) {
+    				//先处理掉
+    				if(htBoaInOrgList.get(0).getDelFlag()==0) {
+    					htBoaInOrgList.get(0).setDelFlag(1);
+    					htBoaInOrgService.add(htBoaInOrgList.get(0));
+    				}
+    				dealDelOrg(htBoaInOrgList.get(0));
+    			}
+    		}
+    	}
+    }
+    
     public Result convertUserPosition() {
     	try {
         	List<HtBoaInPosition> listHtBoaInPosition = htBoaInPositionService.findAll();
