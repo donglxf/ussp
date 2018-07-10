@@ -118,6 +118,7 @@ public class AppResource {
 		u.setMaxLoginCount(StringUtils.isNotEmpty(boaInAppInfo.getMaxLoginCount()+"")?boaInAppInfo.getMaxLoginCount():0);
 		u.setTips(boaInAppInfo.getTips());
 		u.setSysToken(boaInAppInfo.getSysToken());
+		u.setIsPush(boaInAppInfo.getIsPush());
 		if (boaInAppInfo.getId() > 0) {
 			u.setId(boaInAppInfo.getId());
 			u.setUpdateOperator(userId);

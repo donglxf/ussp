@@ -91,19 +91,26 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">登录次数 </label>
                 <div class="layui-input-block">
-                    <input type="text" name="maxLoginCount" lay-verify="number"   maxlength="10" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="text" name="maxLoginCount" lay-verify="number" placeholder="0则不限制登录次数" value="0"   maxlength="10" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">提示信息 </label>
                 <div class="layui-input-block">
-                    <input type="text" name="tips"   maxlength="120" autocomplete="off" lay-verType="tips" placeholder="{0}获取错误次数占位符"  class="layui-input layui-input-sm">
+                    <input type="text" name="tips" maxlength="120" autocomplete="off" lay-verType="tips" placeholder="{0}获取错误次数占位符"  class="layui-input layui-input-sm">
                 </div>
             </div>
              <div class="layui-form-item">
                 <label class="layui-form-label">token</label>
                 <div class="layui-input-block">
                     <input type="text" name="sysToken"   maxlength="60" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">消息推送</label>
+                <div class="layui-input-block">
+                   <input type="radio" name="isPush" value="1" title="是">
+				    <input type="radio" name="isPush" value="0" title="否" >
                 </div>
             </div>
             <button class="layui-btn hide" lay-submit="" lay-filter="filter_add_app_form"></button>
@@ -127,19 +134,26 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">登录次数 </label>
                 <div class="layui-input-block">
-                    <input type="text" name="maxLoginCount"  lay-verify="number"  maxlength="10" placeholder="通过{0}获取错误次数占位符"  autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="text" name="maxLoginCount"  lay-verify="number"  maxlength="10" placeholder="0则不限制登录次数"  autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">提示信息 </label>
                 <div class="layui-input-block">
-                    <input type="text" name="tips"   maxlength="120" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="text" name="tips"   maxlength="120" autocomplete="off" placeholder="通过{0}获取错误次数占位符" lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
             </div>
              <div class="layui-form-item">
                 <label class="layui-form-label">token</label>
                 <div class="layui-input-block">
                     <input type="text" name="sysToken"   maxlength="60" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">消息推送</label>
+                <div class="layui-input-block">
+                   <input type="radio" name="isPush" value="1" title="是">
+				    <input type="radio" name="isPush" value="0" title="否" >
                 </div>
             </div>
             <input type="hidden" name="id"   readonly  >
@@ -194,6 +208,13 @@
                     内部系统
       {{#  } else { }}
                    外部系统
+      {{#  } }}
+	</script>
+	<script type="text/html" id="isPushTpl">
+      {{#  if(d.isPush == '1'){ }}
+                    推送
+      {{#  } else { }}
+                   不推送
       {{#  } }}
 	</script>
 	<script type="text/html" id="createTimeTpl">

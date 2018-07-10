@@ -213,7 +213,7 @@
                    	    	top.location.href = config.indexPath; 
                    	    	return false;
                         }else if(data.code=='0009'){
-                         	layer.confirm('您得密码为初始密码，请重新设置密码后再登录。', {
+                         	layer.confirm('您的密码为初始密码，请重新设置密码后再登录。', {
                          		btn: ['确认'] 
                          		}, function(index, layero){
                          			top.location.href = config.changePwdPath+"?token="+data["token"]+"&urls="+config.loginPath;
