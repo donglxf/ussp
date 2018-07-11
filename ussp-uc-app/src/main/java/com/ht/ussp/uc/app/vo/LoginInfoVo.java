@@ -1,7 +1,5 @@
 package com.ht.ussp.uc.app.vo;
 
-import javax.persistence.Column;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;

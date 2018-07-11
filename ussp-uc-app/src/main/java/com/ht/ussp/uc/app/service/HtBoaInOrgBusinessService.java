@@ -263,7 +263,7 @@ public class HtBoaInOrgBusinessService {
 		if(listSubHtBoaInOrg!=null&&!listSubHtBoaInOrg.isEmpty()) {
 			listHtBoaInOrg.addAll(listSubHtBoaInOrg);
 			for(BoaInOrgInfo o :listSubHtBoaInOrg) {
-				return getSubOrg(listHtBoaInOrg, o.getOrgCode());
+				getSubOrg(listHtBoaInOrg, o.getOrgCode());
 			}
 		} 
 		return listHtBoaInOrg;

@@ -1,9 +1,12 @@
 package com.ht.ussp.uc.app.feignserver;
 
 import java.net.URLDecoder;
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -255,6 +258,8 @@ public class UserFeignServer{
     @PostMapping(value = "/getUserListByBusiOrg")
     public Result getUserListByBusiOrg(@RequestParam("busiOrgCode")String busiOrgCode, @RequestParam("isAllSub")String isAllSub) {
     	List<UserMessageVo> listUserMessageVo = htBoaInUserBusinessService.getUserBusiListByBusiOrgCode(busiOrgCode,isAllSub);
+    	Collections.sort(listUserMessageVo,(UserMessageVo o1,UserMessageVo o2)-> Collator.getInstance(Locale.CHINESE).compare(o1.getUserName(),o2.getUserName()));
+        //testEntities.forEach((TestEntity t)->System.out.println(t.toString()));
         return Result.buildSuccess(listUserMessageVo);
     }
     

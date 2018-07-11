@@ -186,6 +186,7 @@ public class UserAppResource {
         HtBoaInUserApp u = htBoaInUserAppService.findById(id);
         if(u!=null) {
         	htBoaInUserAppService.delete(u);
+        	u.setLastModifiedDatetime(new Date());
 			htBoaInUserAppService.pushMq(u.getApp(), "delAppUser", JsonUtil.obj2Str(u));
 		}
         el = System.currentTimeMillis();

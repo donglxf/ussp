@@ -34,6 +34,7 @@ import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.service.HtBoaInOrgBusinessService;
 import com.ht.ussp.uc.app.service.HtBoaInUserBusinessService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
+import com.ht.ussp.uc.app.vo.LoginInfoVo;
 import com.ht.ussp.uc.app.vo.PageVo;
 
 import io.swagger.annotations.ApiOperation;
@@ -280,8 +281,9 @@ public class OrgBusinessResource {
    	@ApiOperation(value = "根据userId获取用户信息",notes="返回所属分公司")
     @PostMapping(value = {"/getUserInfoByUserId" }, produces = {"application/json"} )
     public Result getUserInfoByUserId(String userId) {
-    	HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(userId);
-       return Result.buildSuccess(htBoaInUser);
+      // HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(userId);
+       LoginInfoVo loginInfoVo = htBoaInUserService.queryUserInfo(userId,"");
+       return Result.buildSuccess(loginInfoVo);
     }
     
     @SuppressWarnings("rawtypes")
