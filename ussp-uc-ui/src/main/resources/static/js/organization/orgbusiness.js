@@ -41,8 +41,6 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
                     //填充选中的组织机构
                     $("input[name=parentOrgNamcn]", layero).val(nodes[0]["businessOrgName"]);
                     $("input[name=parentOrgCode]", layero).val(nodes[0]["businessOrgCode"]);
-                    $("input[name=orgPath]", layero).val(nodes[0]["orgPath"]);
-                    $("input[name=rootOrgCode]", layero).val(nodes[0]["rootOrgCode"]);
                     $.ajax({
                         type: "GET",
                         url: getNewOrgCodeUrl,
