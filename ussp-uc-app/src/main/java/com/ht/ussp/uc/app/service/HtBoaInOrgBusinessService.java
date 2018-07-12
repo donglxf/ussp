@@ -494,7 +494,7 @@ public class HtBoaInOrgBusinessService {
 		List<HtBoaInBusinessOrg> listHtBoaInBusinessOrg = htBoaInOrgBusinessRepository.findAll();
 		List<HtBoaInBusinessOrg> listHtBoaInBusinessOrgUpdate = new ArrayList<HtBoaInBusinessOrg>();
 		for(HtBoaInBusinessOrg htBoaInBusinessOrg : listHtBoaInBusinessOrg) {
-			if(htBoaInBusinessOrg.getOrgLevel()>40) { //片区以下的需要挂靠片区
+			if(htBoaInBusinessOrg.getOrgLevel()>=40) { //片区以下的需要挂靠片区
 				HtBoaInBusinessOrg dispatch = getOrgInfoByOrgType(htBoaInBusinessOrg.getBusinessOrgCode(),"40"); //分公司 小组 部门 需要找到对应的所属片区
 				if(dispatch!=null) {
 					htBoaInBusinessOrg.setDistrictCode(dispatch.getBusinessOrgCode());
@@ -507,6 +507,8 @@ public class HtBoaInOrgBusinessService {
     					if(branchP.getOrgLevel()==60) {
     						htBoaInBusinessOrg.setBranchCode(branchP.getBusinessOrgCode());
     					}
+    				}else {
+    					htBoaInBusinessOrg.setBranchCode(htBoaInBusinessOrg.getBusinessOrgCode());
     				}
             	}
 			}
@@ -537,7 +539,7 @@ public class HtBoaInOrgBusinessService {
 			return htBoaInBusinessOrg;
 		}
 		if("BD01".equals(orgCode)) {
-			return htBoaInBusinessOrg;
+			return null;
 		} else {
 			return  getParentOrgs(htBoaInBusinessOrg.getParentOrgCode(),orgType);
 		}

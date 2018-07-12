@@ -20,7 +20,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
             layer.close(addDialog);
             addDialog = layer.open({
                 type: 1,
-                area: ['700px', '500px'],
+                area: ['700px', '720px'],
                 maxmin: true,
                 shadeClose: false,
                 title: "新增机构",
@@ -41,6 +41,8 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
                     //填充选中的组织机构
                     $("input[name=parentOrgNamcn]", layero).val(nodes[0]["businessOrgName"]);
                     $("input[name=parentOrgCode]", layero).val(nodes[0]["businessOrgCode"]);
+                    $("input[name=districtCode]", layero).val(nodes[0]["districtCode"]);
+                    $("input[name=branchCode]", layero).val(nodes[0]["branchCode"]);
                     $.ajax({
                         type: "GET",
                         url: getNewOrgCodeUrl,
@@ -256,7 +258,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
         } else if (obj.event === 'edit') {
             editDialog = layer.open({
             	 type: 1,
-            	  area: ['700px', '500px'],
+            	  area: ['700px', '720px'],
                  maxmin: true,
                  shadeClose: true,
                  title: "修改机构",

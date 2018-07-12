@@ -102,8 +102,8 @@ public class OrgBusinessResource {
         HtBoaInBusinessOrg u = null;
         List<HtBoaInBusinessOrg> listHtBoaInBusinessOrg = htBoaInOrgBusinessService.findByOrgCode(htBoaInBusinessOrg.getBusinessOrgCode());
         if(listHtBoaInBusinessOrg!=null&&!listHtBoaInBusinessOrg.isEmpty()) {
-        	u = htBoaInBusinessOrg;
-        	/*u.setBusinessOrgName(htBoaInBusinessOrg.getBusinessOrgName());
+        	u = listHtBoaInBusinessOrg.get(0);
+        	u.setBusinessOrgName(htBoaInBusinessOrg.getBusinessOrgName());
         	u.setActivityCode(htBoaInBusinessOrg.getActivityCode());
         	u.setApprovalCode(htBoaInBusinessOrg.getApprovalCode());
         	u.setOrgLevel(htBoaInBusinessOrg.getOrgLevel());
@@ -114,17 +114,17 @@ public class OrgBusinessResource {
         	u.setDistrictCode(htBoaInBusinessOrg.getDistrictCode());
         	u.setFinanceCode(htBoaInBusinessOrg.getFinanceCode());
         	u.setParentOrgCode(StringUtils.isEmpty(htBoaInBusinessOrg.getParentOrgCode())?null:htBoaInBusinessOrg.getParentOrgCode());
-        	u.setSequence(htBoaInBusinessOrg.getSequence());*/
+        	u.setSequence(htBoaInBusinessOrg.getSequence());
         }
         if(u==null) {
            u = htBoaInBusinessOrg;
+           u.setDataSource(Constants.USER_DATASOURCE_1);
            u.setCreatedDatetime(new Date());
         } 
         u.setUpdateDatetime(new Date());
         u.setJpaVersion(0);
         u.setStatus(0);
         u.setCreateOperator(userId);
-        u.setDataSource(Constants.USER_DATASOURCE_1);
         u=htBoaInOrgBusinessService.add(u);
         el = System.currentTimeMillis();
         log.debug(logEnd, "boaInOrgInfo: " + u, msg, el, el - sl);
