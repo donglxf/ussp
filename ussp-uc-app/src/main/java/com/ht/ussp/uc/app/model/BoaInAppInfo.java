@@ -56,14 +56,16 @@ public class BoaInAppInfo {
     @ApiModelProperty(value = "登录次数", dataType = "int")//0外部系统 1内部系统
     private Integer maxLoginCount;
     
-    
     @ApiModelProperty(value = "token", dataType = "string")
     private String sysToken ;
+    
+    @ApiModelProperty(value = "isPush", dataType = "string")// 是否推送mq消息  0不推送 1推送
+    private String isPush ;
     
     public BoaInAppInfo(String app, String name, String nameCn,
             String status, String createOperator,
             Date createdDatetime, String updateOperator,
-            Date lastModifiedDatetime,Integer delFlag,Long id,Integer isOS,Integer maxLoginCount,String tips,String sysToken) {
+            Date lastModifiedDatetime,Integer delFlag,Long id,Integer isOS,Integer maxLoginCount,String tips,String sysToken,String isPush) {
         this.app = app;
         this.name = name;
         this.nameCn = nameCn;
@@ -78,6 +80,7 @@ public class BoaInAppInfo {
         this.maxLoginCount = maxLoginCount;
         this.tips = tips;
         this.sysToken = sysToken;
+        this.isPush = isPush;
     }
     
     public BoaInAppInfo(String app, String name, String nameCn,

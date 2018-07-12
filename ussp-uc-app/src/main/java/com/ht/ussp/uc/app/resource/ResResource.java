@@ -37,9 +37,11 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.ht.ussp.bean.LoginUserInfoHelper;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
+import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInResource;
 import com.ht.ussp.uc.app.domain.HtBoaInRole;
 import com.ht.ussp.uc.app.domain.HtBoaInRoleRes;
+import com.ht.ussp.uc.app.feignclients.DssClient;
 import com.ht.ussp.uc.app.service.HtBoaInAppService;
 import com.ht.ussp.uc.app.service.HtBoaInResourceService;
 import com.ht.ussp.uc.app.service.HtBoaInRoleResService;
@@ -78,7 +80,8 @@ public class ResResource {
     private HtBoaInRoleResService htBoaInRoleResService;
     @Autowired
     private HtBoaInRoleService htBoaInRoleService;
-    
+    @Autowired
+    private DssClient dssClient;
     
 
     @PostMapping("/app/load")
@@ -519,6 +522,37 @@ public class ResResource {
     @ApiOperation(value = "根据资源编码获取资源信息", notes = "验证资源编码是否存在")
     @PostMapping("/getResByResCode")
     public Result getResByResCode(String resCode) {
-        return Result.buildSuccess(htBoaInResourceService.findByResCodeAndApp(resCode));
+        return Result.buildSuccess(htBoaInResourceService.findByResCode(resCode));
     }
+    
+    
+    @ApiOperation(value = "数据权限规则列表", notes = "列出所有数据权限规则")
+    @PostMapping(value = "/listRuleByPage", produces = { "application/json" })
+	public PageResult  listRuleByPage(PageVo page) {
+    	PageResult pageResult = new PageResult();
+    	Map<String, Object> paramter = new HashMap<String, Object>();
+    	paramter.put("keyWord", page.getKeyWord());
+    	paramter.put("limit", page.getLimit());
+    	paramter.put("page",page.getPage()+1 );
+    	Map<String, Object> reslut = dssClient.getRuleInfos(paramter);
+    	if(reslut!=null) {
+    		Integer count = Integer.parseInt(reslut.get("count")==null?"0":reslut.get("count")+"");
+    		pageResult.count(count).data(reslut.get("data"));
+    	}
+    	pageResult.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
+		return pageResult;
+	}
+    
+    @ApiOperation(value = "添加数据权限规则", notes = "添加数据权限规则")
+    @PostMapping(value = "/addApiRule", produces = { "application/json" })
+	public Result  addApiRule(String resCode,String num,String numName) {
+    	List<HtBoaInResource>  listHtBoaInResource = htBoaInResourceService.findByResCode(resCode);
+    	if(listHtBoaInResource!=null&&!listHtBoaInResource.isEmpty()) {
+    		HtBoaInResource u = listHtBoaInResource.get(0);
+    		u.setRuleNum(num);
+    		u.setRuleNumName(numName);
+    		htBoaInResourceService.save(u);
+    	}
+		return Result.buildSuccess();
+	}
 }

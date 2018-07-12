@@ -253,9 +253,11 @@ public class DingDingService {
 
 	        	//增量步骤：1、对比已经存在的机构 如果钉钉有多出的机构 则新增 如果UC多出了机构则要为无效
 	        	for(HtBoaInContrast htBoaInContrast : listHtBoaInContrastOrg) { //钉钉多出了机构
-	        		List<DdDept> sameOrgList = ddOrgList.stream().filter(ddOrg -> htBoaInContrast.getDdBusinessId().equals(ddOrg.getDeptId())).collect(Collectors.toList());
-	        		ddDeptOperatorListUpdate.addAll(sameOrgList);
-	        		ddAddOrgList.removeAll(sameOrgList);//得到钉钉新增的机构
+	        		if(StringUtils.isNotEmpty(htBoaInContrast.getDdBusinessId())) {
+	        			List<DdDept> sameOrgList = ddOrgList.stream().filter(ddOrg -> htBoaInContrast.getDdBusinessId().equals(ddOrg.getDeptId())).collect(Collectors.toList());
+		        		ddDeptOperatorListUpdate.addAll(sameOrgList);
+		        		ddAddOrgList.removeAll(sameOrgList);//得到钉钉新增的机构
+	        		}
 	        	}
 	        	
 	        	for(DdDept ddDept : ddAddOrgList) {
@@ -276,7 +278,14 @@ public class DingDingService {
 	        		ddDelOrgList.removeAll(sameOrgList);
 	        	}
 	        	for(HtBoaInContrast delHtBoaInContrast : ddDelOrgList) {
-	        		HtBoaInOrg delOrg =  htBoaInOrgList.stream().filter(org -> delHtBoaInContrast.getUcBusinessId().equals(org.getOrgCode())).findFirst().get();
+	        		HtBoaInOrg delOrg =  null;
+	        		Optional<HtBoaInOrg> optionalHtBoaInOrgDel = htBoaInOrgList.stream().filter(org -> delHtBoaInContrast.getUcBusinessId().equals(org.getOrgCode())).findFirst();
+					if(optionalHtBoaInOrgDel!=null && optionalHtBoaInOrgDel.isPresent()) { 
+						delOrg = optionalHtBoaInOrgDel.get();
+					}
+	        		if(delOrg==null) {
+	        			continue;
+	        		}
 	        		if(delOrg.getDelFlag()==0 && "2".equals(delOrg.getDataSource()+"")) { //已经删除的不在处理
 	        			DdDeptOperator addDDDeptOperator = new DdDeptOperator();
 	            		addDDDeptOperator.setDeptId(delHtBoaInContrast.getUcBusinessId()); //保存uc待删除的org_code
@@ -341,7 +350,14 @@ public class DingDingService {
 	    	}
 	    	
 	    	for(HtBoaInContrast delHtBoaInContrast : ddDelUserList) {
-	    		HtBoaInUser delUser =  htBoaInUserList.stream().filter(user -> delHtBoaInContrast.getUcBusinessId().equals(user.getUserId())).findFirst().get();
+	    		HtBoaInUser delUser =  null;
+	    		Optional<HtBoaInUser> optionalHtBoaInUserDel = htBoaInUserList.stream().filter(user -> delHtBoaInContrast.getUcBusinessId().equals(user.getUserId())).findFirst();
+				if(optionalHtBoaInUserDel!=null && optionalHtBoaInUserDel.isPresent()) { 
+					delUser = optionalHtBoaInUserDel.get();
+				}
+        		if(delUser==null) {
+        			continue;
+        		}
 	    		if(delUser.getDelFlag()==0 && "0".equals(delUser.getStatus())&& "2".equals(delUser.getDataSource()+"")) { //已经删除(离职)的不在处理
 	    			DdUserOperator ddUserOperator = new DdUserOperator();
 	        		ddUserOperator.setUserId(delHtBoaInContrast.getUcBusinessId());
@@ -916,6 +932,31 @@ public class DingDingService {
 		}
     }
     
+    public Result dealDelOrg(){
+    	//1.先找到已经删除的机构 2.然后在递归执行处理
+    	List<HtBoaInOrg>  listHtBoaInOrgDel = htBoaInOrgService.findByDelFlag(1);
+    	for(HtBoaInOrg htBoaInOrg : listHtBoaInOrgDel) {
+			dealDelOrg(htBoaInOrg);
+		}
+    	return Result.buildSuccess("ok");
+    }
+    
+    private void dealDelOrg(HtBoaInOrg htBoaInOrgP) {
+    	if(htBoaInOrgP!=null) {
+    		List<HtBoaInOrg> htBoaInOrgList = htBoaInOrgService.findByParentOrgCode(htBoaInOrgP.getOrgCode());
+    		if(htBoaInOrgList!=null&&!htBoaInOrgList.isEmpty()) {
+    			if(StringUtils.isNotEmpty(htBoaInOrgList.get(0).getOrgCode())) {
+    				//先处理掉
+    				if(htBoaInOrgList.get(0).getDelFlag()==0) {
+    					htBoaInOrgList.get(0).setDelFlag(1);
+    					htBoaInOrgService.add(htBoaInOrgList.get(0));
+    				}
+    				dealDelOrg(htBoaInOrgList.get(0));
+    			}
+    		}
+    	}
+    }
+    
     public Result convertUserPosition() {
     	try {
         	List<HtBoaInPosition> listHtBoaInPosition = htBoaInPositionService.findAll();
@@ -1390,7 +1431,11 @@ public class DingDingService {
     
     public PageResult<List<DdDeptOperator>> loadSynDeptListByPage(PageRequest pageRequest, Map<String, String> query) {
     	PageResult result = new PageResult();
-		String keyWord = "";
+		String keyWordTmp = "";
+		if(query!=null) {
+			keyWordTmp = query.get("keyWord");
+		}
+		String keyWord = keyWordTmp;
 		Specification<DdDeptOperator> specification = (root, query1, cb) -> {
 			Predicate p1 = cb.like(root.get("parentId").as(String.class), "%" + keyWord + "%");
 			Predicate p2 = cb.like(root.get("deptName").as(String.class), "%" + keyWord + "%");
@@ -1493,29 +1538,56 @@ public class DingDingService {
 		return Result.buildSuccess();
 	}
 
-	public Result dealLoginIdNull() {
-		List<HtBoaInLogin> listHtBoaInLogin = htBoaInLoginService.findByLoginIdIsNull();
-		for(HtBoaInLogin htBoaInLogin : listHtBoaInLogin) {
-			String loginId=UUID.randomUUID().toString().replace("-", "");
-			String loginIdTmp="";
-			HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(htBoaInLogin.getUserId());
-			if(htBoaInUser!=null) {
-				try {
-					if(StringUtils.isNotEmpty(htBoaInUser.getEmail())) {
-						if(htBoaInUser.getEmail().indexOf("@")>0) {
-							loginIdTmp =  htBoaInUser.getEmail().substring(0, htBoaInUser.getEmail().indexOf("@"));
+	public Result dealLoginIdNull(String all) {
+		if("all".equals(all)) {
+			List<HtBoaInLogin> listHtBoaInLogin = htBoaInLoginService.findAll();
+			for(HtBoaInLogin htBoaInLogin : listHtBoaInLogin) {
+				String loginIdTmp="";
+				HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(htBoaInLogin.getUserId());
+				if(htBoaInUser!=null) {
+					try {
+						if(StringUtils.isNotEmpty(htBoaInUser.getEmail())&&StringUtils.isNotEmpty(htBoaInLogin.getLoginId())) {
+							if(htBoaInUser.getEmail().indexOf("@")>0) {
+								loginIdTmp =  htBoaInUser.getEmail().substring(0, htBoaInUser.getEmail().indexOf("@"));
+							}
 						}
-					}
-					if(StringUtils.isNotEmpty(loginIdTmp)) {
-						HtBoaInLogin l = htBoaInLoginService.findByLoginId(loginIdTmp);
-						if(l==null) {
-							loginId = loginIdTmp;
+						if(StringUtils.isNotEmpty(loginIdTmp)&&htBoaInLogin.getLoginId().length()>30) {
+								HtBoaInLogin l = htBoaInLoginService.findByLoginId(loginIdTmp);
+								if(l==null) {
+									htBoaInLogin.setLoginId(loginIdTmp);
+									htBoaInLoginService.add(htBoaInLogin);
+								}
 						}
+						
+					} catch (Exception e) {
+						continue;
 					}
-					htBoaInLogin.setLoginId(loginId);
-					htBoaInLoginService.add(htBoaInLogin);
-				} catch (Exception e) {
-					continue;
+				}
+			}
+		}else {
+			List<HtBoaInLogin> listHtBoaInLogin = htBoaInLoginService.findByLoginIdIsNull();
+			for(HtBoaInLogin htBoaInLogin : listHtBoaInLogin) {
+				String loginId=UUID.randomUUID().toString().replace("-", "");
+				String loginIdTmp="";
+				HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(htBoaInLogin.getUserId());
+				if(htBoaInUser!=null) {
+					try {
+						if(StringUtils.isNotEmpty(htBoaInUser.getEmail())) {
+							if(htBoaInUser.getEmail().indexOf("@")>0) {
+								loginIdTmp =  htBoaInUser.getEmail().substring(0, htBoaInUser.getEmail().indexOf("@"));
+							}
+						}
+						if(StringUtils.isNotEmpty(loginIdTmp)) {
+							HtBoaInLogin l = htBoaInLoginService.findByLoginId(loginIdTmp);
+							if(l==null) {
+								loginId = loginIdTmp;
+							}
+						}
+						htBoaInLogin.setLoginId(loginId);
+						htBoaInLoginService.add(htBoaInLogin);
+					} catch (Exception e) {
+						continue;
+					}
 				}
 			}
 		}

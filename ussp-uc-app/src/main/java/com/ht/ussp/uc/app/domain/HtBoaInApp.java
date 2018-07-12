@@ -81,6 +81,9 @@ public class HtBoaInApp implements Serializable {
 	@Column(name = "SYS_TOKEN")
 	private String sysToken;
 	
+	@Column(name = "IS_PUSH") //是否推送rabbit消息  0否 1需要推送
+	private String isPush;
+	
 	public HtBoaInApp() {
 	}
 

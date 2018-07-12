@@ -1,10 +1,15 @@
 package com.ht.ussp.uc.app.feignserver;
 
 import java.net.URLDecoder;
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +23,7 @@ import com.ht.ussp.uc.app.domain.DdUser;
 import com.ht.ussp.uc.app.domain.HtBoaInBmUser;
 import com.ht.ussp.uc.app.domain.HtBoaInContrast;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
+import com.ht.ussp.uc.app.domain.HtBoaInUserExt;
 import com.ht.ussp.uc.app.domain.HtBoaInUserRole;
 import com.ht.ussp.uc.app.feignclients.UaaClient;
 import com.ht.ussp.uc.app.model.ResponseModal;
@@ -62,6 +68,8 @@ public class UserFeignServer{
     @Autowired
     private HtBoaInUserBusinessService htBoaInUserBusinessService;
     
+    @Value(value="${bm.bmApi.apiUrl}")
+    private String bmApiUrl;
     
     /**
      * 保存信贷用户信息<br>
@@ -157,6 +165,10 @@ public class UserFeignServer{
     			if(!StringUtils.isEmpty(bmUserId)) {
         			if(loginInfoVo==null) {
         				List<HtBoaInBmUser> listHtBoaInBmUser = htBoaInBmUserService.getHtBoaInBmUserByUserId(bmUserId);
+        				//如果本地没有则连接信贷系统获取信贷用户
+        				if(listHtBoaInBmUser==null||listHtBoaInBmUser.isEmpty()) {
+        					listHtBoaInBmUser = htBoaInBmUserService.createBmUserInfo(bmUserId,bmApiUrl);
+        				}
         				if(listHtBoaInBmUser!=null && !listHtBoaInBmUser.isEmpty()) {
         					loginInfoVo = new LoginInfoVo();
         					loginInfoVo.setBmOrgCode(listHtBoaInBmUser.get(0).getOrgCode());
@@ -170,6 +182,15 @@ public class UserFeignServer{
         						if(u!=null) {
         							loginInfoVo.setUserId(u.getUserId());
         							loginInfoVo.setMobile(u.getMobile());
+        							HtBoaInUserExt htBoaInUserExt = new HtBoaInUserExt();
+        							htBoaInUserExt.setUserId(u.getUserId());
+        							htBoaInUserExt.setBmUserId(listHtBoaInBmUser.get(0).getUserId());
+        							htBoaInUserExt.setBusiOrgCode(listHtBoaInBmUser.get(0).getOrgCode());
+        							htBoaInUserExt.setJpaVersion(0);
+        							htBoaInUserExt.setCreatedDatetime(new Date());
+        							htBoaInUserExt.setLastModifiedDatetime(new Date());
+        							htBoaInUserService.saveHtBoaInUserExt(htBoaInUserExt);
+        							loginInfoVo = htBoaInUserService.queryUserInfo(userId,app);
         						}
 							} catch (Exception e) {
 								 e.printStackTrace();
@@ -183,14 +204,6 @@ public class UserFeignServer{
     		}
     	}else {
     		loginInfoVo = htBoaInUserService.queryUserInfo(userId,app);
-    	}
-    	if(loginInfoVo!=null) {
-    		UserMessageVo userMessageVo = htBoaInUserBusinessService.getUserBusiByUserId(loginInfoVo.getUserId());
-    		loginInfoVo.setBussinesOrgCode(userMessageVo.getBussinesOrgCode());
-    		loginInfoVo.setBranchCode(userMessageVo.getBranchCode());
-    		loginInfoVo.setDistrictCode(userMessageVo.getDistrictCode());
-    		loginInfoVo.setProvince(userMessageVo.getProvince());
-    		loginInfoVo.setCity(userMessageVo.getCity());
     	}
         return Result.buildSuccess(loginInfoVo);
     }
@@ -245,6 +258,8 @@ public class UserFeignServer{
     @PostMapping(value = "/getUserListByBusiOrg")
     public Result getUserListByBusiOrg(@RequestParam("busiOrgCode")String busiOrgCode, @RequestParam("isAllSub")String isAllSub) {
     	List<UserMessageVo> listUserMessageVo = htBoaInUserBusinessService.getUserBusiListByBusiOrgCode(busiOrgCode,isAllSub);
+    	Collections.sort(listUserMessageVo,(UserMessageVo o1,UserMessageVo o2)-> Collator.getInstance(Locale.CHINESE).compare(o1.getUserName(),o2.getUserName()));
+        //testEntities.forEach((TestEntity t)->System.out.println(t.toString()));
         return Result.buildSuccess(listUserMessageVo);
     }
     

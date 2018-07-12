@@ -19,14 +19,18 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ht.ussp.common.Constants;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
+import com.ht.ussp.uc.app.domain.HtBoaInRole;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.domain.HtBoaInUserRole;
 import com.ht.ussp.uc.app.model.BoaInRoleInfo;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
+import com.ht.ussp.uc.app.service.HtBoaInRoleService;
+import com.ht.ussp.uc.app.service.HtBoaInUserAppService;
 import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.vo.PageVo;
+import com.ht.ussp.util.JsonUtil;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -44,9 +48,13 @@ public class UserRoleResource {
 
 	@Autowired
     private HtBoaInUserRoleService htBoaInUserRoleService;
-	
+	@Autowired
+    private HtBoaInRoleService htBoaInRoleService;
 	@Autowired
     private HtBoaInUserService htBoaInUserService;
+	@Autowired
+    private HtBoaInUserAppService htBoaInUserAppService;
+	
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@ApiOperation(value = "对内：根据UserId查询用户角色", notes = "根据UserId查询用户角色")
@@ -154,8 +162,13 @@ public class UserRoleResource {
 			u.setCreatedDatetime(new Date());
 			u.setCreateOperator(userId);
 			u = htBoaInUserRoleService.add(u);
+			if(u!=null) {
+				List<HtBoaInRole> listHtBoaInRole = htBoaInRoleService.findByRoleCode(htBoaInUserRole.getRoleCode());
+				if(listHtBoaInRole!=null&&!listHtBoaInRole.isEmpty()) {
+					htBoaInUserAppService.pushMq(listHtBoaInRole.get(0).getApp(), "addUserRole", JsonUtil.obj2Str(u));
+				}
+			}
 		}
-        
         el = System.currentTimeMillis();
         log.debug(logEnd, "boaInRoleInfo: " + htBoaInUserRole, msg, el, el - sl);
         return Result.buildSuccess();
@@ -205,7 +218,15 @@ public class UserRoleResource {
         HtBoaInUserRole u = htBoaInUserRoleService.findById(id);
         if(u!=null) {
         	htBoaInUserRoleService.delete(u);
+        	if(u!=null) {
+				List<HtBoaInRole> listHtBoaInRole = htBoaInRoleService.findByRoleCode(u.getRoleCode());
+				if(listHtBoaInRole!=null&&!listHtBoaInRole.isEmpty()) {
+					u.setLastModifiedDatetime(new Date());
+					htBoaInUserAppService.pushMq(listHtBoaInRole.get(0).getApp(), "delUserRole", JsonUtil.obj2Str(u));
+				}
+			}
         }
+        
         el = System.currentTimeMillis();
         log.debug(logEnd, "codes: " + id, msg, el, el - sl);
         return Result.buildSuccess();

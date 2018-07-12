@@ -26,7 +26,7 @@ spring:
           physical-strategy: com.ht.ussp.ouc.app.config.MySQLUpperCaseStrategy
     generate-ddl: true
   redis:
-    database : 1
+    database : 0
     host : 172.16.200.111
     port : 6379
     password : hongte888
@@ -48,6 +48,7 @@ ribbon:
 
 
 smsTime: ENC(JbWhu5x90InajOYMT2iJhw==)
+tokenTime: 30  #天，供鸿特金服APP保存token时间
 
 jasypt:
   encryptor: 

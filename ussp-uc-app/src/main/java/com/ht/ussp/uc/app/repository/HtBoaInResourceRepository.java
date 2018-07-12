@@ -24,11 +24,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface HtBoaInResourceRepository extends JpaSpecificationExecutor<HtBoaInResource>, JpaRepository<HtBoaInResource, Long> {
     //查询资源--管理员  (模块、菜单、按钮、api)
-    @Query(value = "select new com.ht.ussp.uc.app.vo.ResVo(resCode,resNameCn,sequence,resType,resParent,resContent,fontIcon,status) from HtBoaInResource where status in ('0','2') and app= :app and resType in(:res_type) order by resParent,sequence")
+    @Query(value = "select new com.ht.ussp.uc.app.vo.ResVo(resCode,resNameCn,sequence,resType,resParent,resContent,fontIcon,status,ruleNum,ruleNumName) from HtBoaInResource where status in ('0','2') and app= :app and resType in(:res_type) order by resParent,sequence")
     List<ResVo> queryResForY(@Param("res_type") List<String> res_type, @Param("app") String app);
 
     //查询资源--非管理员
-    @Query(value = "select new com.ht.ussp.uc.app.vo.ResVo(resCode,resNameCn,sequence,resType,resParent,resContent,fontIcon,status) from  HtBoaInResource  where status in ('0','2') and app= :app and resType in(:res_type) and resCode in(:res_code) order by resParent,sequence")
+    @Query(value = "select new com.ht.ussp.uc.app.vo.ResVo(resCode,resNameCn,sequence,resType,resParent,resContent,fontIcon,status,ruleNum,ruleNumName) from  HtBoaInResource  where status in ('0','2') and app= :app and resType in(:res_type) and resCode in(:res_code) order by resParent,sequence")
     List<ResVo> queryResForN(@Param("res_code") List<String> res_code, @Param("res_type") List<String> res_type, @Param("app") String app);
 
     List<HtBoaInResource> findByResParent(String resPanrent);

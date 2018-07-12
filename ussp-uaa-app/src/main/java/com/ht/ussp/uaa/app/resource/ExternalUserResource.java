@@ -86,22 +86,21 @@ public class ExternalUserResource {
 		String userName = eloginParam.getUserName();
 		String type = eloginParam.getType();
 		String password = eloginParam.getPassword();
-//		String validateCode = eloginParam.getValidateCode();
-
 		Map<String, String> map = new HashMap<>();
+		
 		if (StringUtils.isBlank(app)|| StringUtils.isBlank(ieme) || StringUtils.isBlank(userName)
 				||StringUtils.isBlank(type)||StringUtils.isBlank(password)) {
 			return Result.buildFail(SysStatus.ERROR_PARAM);
 		}
 
-
 		Result result = outUserClient.validateUser(app, userName, password, type);
 		if ("0000".equals(result.getReturnCode())) {
 			String userId = result.getData().toString();
-
 			JwtToken accessToken = createAccessJwtToken(userId, ieme);
-
-			map.put("accessToken", accessToken.getToken());
+			if(outUserClient.saveTokenToRedis(app,userId, accessToken.getToken())) {
+				map.put("accessToken", accessToken.getToken());
+			}
+			
 		} else {
 			return Result.buildFailConvert(result.getCodeDesc(), result.getMsg());
 		}
@@ -130,7 +129,7 @@ public class ExternalUserResource {
 		claims.put("ieme", ieme);
 		String accessToken = Jwts.builder().setClaims(claims).setIssuer(jwtSettings.getTokenIssuer())
 				.setIssuedAt(Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant()))
-				.setExpiration(Date.from(currentTime.plusMinutes(jwtSettings.getOutUserTokenTime())
+				.setExpiration(Date.from(currentTime.plusYears(jwtSettings.getOutUserTokenTime())
 						.atZone(ZoneId.systemDefault()).toInstant()))
 				.signWith(SignatureAlgorithm.HS512, jwtSettings.getTokenSigningKey()).compact();
 

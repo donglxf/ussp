@@ -34,8 +34,8 @@ import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.service.HtBoaInOrgBusinessService;
 import com.ht.ussp.uc.app.service.HtBoaInUserBusinessService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
+import com.ht.ussp.uc.app.vo.LoginInfoVo;
 import com.ht.ussp.uc.app.vo.PageVo;
-import com.ht.ussp.util.JsonUtil;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
@@ -102,8 +102,8 @@ public class OrgBusinessResource {
         HtBoaInBusinessOrg u = null;
         List<HtBoaInBusinessOrg> listHtBoaInBusinessOrg = htBoaInOrgBusinessService.findByOrgCode(htBoaInBusinessOrg.getBusinessOrgCode());
         if(listHtBoaInBusinessOrg!=null&&!listHtBoaInBusinessOrg.isEmpty()) {
-        	u = htBoaInBusinessOrg;
-        	/*u.setBusinessOrgName(htBoaInBusinessOrg.getBusinessOrgName());
+        	u = listHtBoaInBusinessOrg.get(0);
+        	u.setBusinessOrgName(htBoaInBusinessOrg.getBusinessOrgName());
         	u.setActivityCode(htBoaInBusinessOrg.getActivityCode());
         	u.setApprovalCode(htBoaInBusinessOrg.getApprovalCode());
         	u.setOrgLevel(htBoaInBusinessOrg.getOrgLevel());
@@ -114,17 +114,17 @@ public class OrgBusinessResource {
         	u.setDistrictCode(htBoaInBusinessOrg.getDistrictCode());
         	u.setFinanceCode(htBoaInBusinessOrg.getFinanceCode());
         	u.setParentOrgCode(StringUtils.isEmpty(htBoaInBusinessOrg.getParentOrgCode())?null:htBoaInBusinessOrg.getParentOrgCode());
-        	u.setSequence(htBoaInBusinessOrg.getSequence());*/
+        	u.setSequence(htBoaInBusinessOrg.getSequence());
         }
         if(u==null) {
            u = htBoaInBusinessOrg;
+           u.setDataSource(Constants.USER_DATASOURCE_1);
            u.setCreatedDatetime(new Date());
         } 
         u.setUpdateDatetime(new Date());
         u.setJpaVersion(0);
         u.setStatus(0);
         u.setCreateOperator(userId);
-        u.setDataSource(Constants.USER_DATASOURCE_1);
         u=htBoaInOrgBusinessService.add(u);
         el = System.currentTimeMillis();
         log.debug(logEnd, "boaInOrgInfo: " + u, msg, el, el - sl);
@@ -208,12 +208,16 @@ public class OrgBusinessResource {
     @PostMapping(value = "/getOrgInfoByCode")
     public Result getOrgInfoByCode(String orgCode) {
     	List<HtBoaInBusinessOrg> listHtBoaInOrg = htBoaInOrgBusinessService.findByOrgCode(orgCode);
-    	if(listHtBoaInOrg==null||listHtBoaInOrg.isEmpty()) {
-    		return null;
-    	}  
-        return Result.buildSuccess(JsonUtil.obj2Str(listHtBoaInOrg.get(0)));
+        return Result.buildSuccess(listHtBoaInOrg);
     }
         
+    @ApiOperation(value = "根据机构名称查询机构信息",notes="档案管理系统使用")
+    @PostMapping(value = "/getOrgInfoByOrgName")
+    public Result getOrgInfoByOrgName(String orgName) {
+    	List<HtBoaInBusinessOrg> listHtBoaInOrg = htBoaInOrgBusinessService.findByBusinessOrgName(orgName);
+        return Result.buildSuccess(listHtBoaInOrg);
+    }
+    
     @ApiOperation(value = "根据机构编码查询下级机构信息")
     @GetMapping(value = "/getSubOrgInfoByCode")
     public List<HtBoaInBusinessOrg> getSubOrgInfoByCode(String parentOrgCode) {
@@ -277,8 +281,9 @@ public class OrgBusinessResource {
    	@ApiOperation(value = "根据userId获取用户信息",notes="返回所属分公司")
     @PostMapping(value = {"/getUserInfoByUserId" }, produces = {"application/json"} )
     public Result getUserInfoByUserId(String userId) {
-    	HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(userId);
-       return Result.buildSuccess(htBoaInUser);
+      // HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(userId);
+       LoginInfoVo loginInfoVo = htBoaInUserService.queryUserInfo(userId,"");
+       return Result.buildSuccess(loginInfoVo);
     }
     
     @SuppressWarnings("rawtypes")

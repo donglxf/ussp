@@ -35,6 +35,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                     break;
                 case "api":
                     title = "新增API权限";
+                    areas=['600px', '550px']; 
                     break;
                 case "module":
                     title = "新增模块";
@@ -409,6 +410,19 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
             }
         });
     }
+    var refreshDalogAPIRuleDataTable = function (  keyword) {
+        if (!keyword) {
+            keyword = null;
+        }
+        table.reload('resource_api_rule_dalog_datatable', {
+            page: {
+                curr: 1 //重新从第 1 页开始
+            }
+            , where: {
+                keyWord: keyword
+            }
+        });
+    }
     //渲染组织机构树
     appAndResourceTree = $.fn.zTree.init($('#resource_app_auth_ztree_left'), {
             async: {
@@ -624,7 +638,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                     , {field: 'status', width: 60, title: '状态', templet: "#resource_table_status_laytpl"}
                     , {field: 'updateOperator', width: 100, title: '更新人'}
                     , {field: 'lastModifiedDatetime', width: 150, title: '更新时间'}
-                    , {fixed: 'right', width: 200, title: '操作', align: 'center', toolbar: '#resource_table_btn'}
+                    , {fixed: 'right', width: 250, title: '操作', align: 'center', toolbar: '#resource_table_btn'}
                 ]];
                 break;
             case 'module':
@@ -733,7 +747,7 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                 if (result["returnCode"] == "0000") {
                     viewDialog = layer.open({
                         type: 1,
-                        area: ['500px', '550px'],
+                        area: ['600px', '550px'],
                         shadeClose: true,
                         title: "查看资源",
                         content: $("#resource_" + type + "_add_data_div").html(),
@@ -811,7 +825,10 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                  app = nodes[0]["app"];
                  all_areas =  ['750px', '700px'];
             }
-            
+            if("api"==type){
+            	all_areas =  ['600px', '550px'];
+           }
+             
             layer.close(editDialog);
             $.post(config.basePath + 'resource/view?id=' + data.id, null, function (result) {
                 if (result["returnCode"] == "0000") {
@@ -971,7 +988,68 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                     }
                 });
             });
-        }
+        }else if (obj.event === 'rule') { //
+        	 var resCodeApi = data.resCode;
+        	 console.log(resCodeApi);
+        	relevanceDialog = layer.open({
+                type: 1,
+                area: ['1200px', '645px'],
+                shadeClose: true,
+                title: "选择数据权限规则",
+                content: $("#resource_api_rule_data_div").html(),
+                btn: ['确认', '取消'],
+                yes: function (index, layero) {
+                    var apiRuleCheckStatus = table.checkStatus('resource_api_rule_dalog_datatable');
+                    if(apiRuleCheckStatus.data==""||apiRuleCheckStatus.data=="undefine"||apiRuleCheckStatus.data==null||apiRuleCheckStatus.data.length==0){
+                    	//清除数据权限规则
+                    	   layer.confirm('未选择规则,规则将被清空,确认是否清空规则?', function (index2) {
+                               $.post(config.basePath + 'resource/addApiRule?resCode=' + resCodeApi, null, function (result) {
+                            	   layer.close(index2);
+                            	   layer.close(index);
+                            	   layer.alert("数据权限清空");
+                               });
+                           }); 
+                    }else{
+                    	$.post(config.basePath + 'resource/addApiRule?resCode=' + resCodeApi+"&num="+apiRuleCheckStatus.data[0].num+"&numName="+apiRuleCheckStatus.data[0].name, null, function (result) {
+                    		if (result["returnCode"] == '0000') {
+                    			 layer.close(index);
+                                layer.alert("添加数据权限成功");
+                            }
+                        });
+                    }
+                },
+                btn2: function () {
+                    layer.closeAll('tips');
+                },
+                success: function (layero, index) {
+                    table.render({
+                        id: 'resource_api_rule_dalog_datatable'
+                        , elem: $('#resource_api_rule_dalog_datatable', layero)
+                        , url: config.basePath + 'resource/listRuleByPage'
+                        , page: true
+                        , height: "471"
+                        , cols: [[
+                            {type: 'numbers'}
+                            , {type: 'radio',width: 50}
+                            , {field: 'num', title: '规则编号'}
+                            , {field: 'name',   title: '规则名称'}
+                            , {field: 'cmt',   title: '规则描述'}
+                        ]]
+                    });
+                    var $keywordRuleInput = $("#resource_api_rule_dialog_search_keyword", layero);
+                    $('#resource_dalog_api_rule_search', layero).on('click', function () {
+                        var keyWord = $keywordRuleInput.val();
+                        refreshDalogAPIRuleDataTable(keyWord);
+                    });
+                    $keywordRuleInput.keydown(function (e) {
+                        if (e.keyCode == 13) {
+                            var keyWord = $keywordInput.val();
+                            refreshDalogAPIRuleDataTable(keyWord);
+                        }
+                    });
+                }
+            });
+        } 
         /*else if (obj.event === 'enable' ||obj.event === 'show') { //显示
                     layer.confirm('是否设置显示?', function (index) {
                      $.post(config.basePath + 'resource/changeApiState?id=' + data.id+"&status=3", null, function (result) {

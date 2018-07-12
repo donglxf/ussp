@@ -84,11 +84,17 @@ public class HtBoaInOrgService {
         if (null == search || 0 == search.trim().length())
             search = "%%";
 
-
-        if (null != pageable) {
-            Page<BoaInOrgInfo> p = this.htBoaInOrgRepository.lisOrgByPageWeb(pageable, search, orgPath);
-            return p;
-        }
+        if("D01".equals(orgPath)) {//顶级机构查全局
+        	if (null != pageable) {
+                Page<BoaInOrgInfo> p = this.htBoaInOrgRepository.lisOrgByPageWebAll(pageable, search);
+                return p;
+            }
+    	}else {//按条件查询
+    		if (null != pageable) {
+                Page<BoaInOrgInfo> p = this.htBoaInOrgRepository.lisOrgByPageWeb(pageable, search, orgPath);
+                return p;
+            }
+    	}
         return null;
     }
 
@@ -121,6 +127,11 @@ public class HtBoaInOrgService {
     public List<HtBoaInOrg> findByParentOrgCode(String parentOrgCode) {
         return this.htBoaInOrgRepository.findByParentOrgCode(parentOrgCode);
     }
+    
+    public List<HtBoaInOrg> findByDelFlag(Integer delFlag) {
+        return this.htBoaInOrgRepository.findByDelFlag(delFlag);
+    }
+    
     
     public HtBoaInOrg getOrgInfoByOrgType(String orgCode, String orgType) {
 		return getParentOrgs(orgCode,orgType);

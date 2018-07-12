@@ -2,11 +2,14 @@ package com.ht.ussp.uc.app.resource;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,6 +52,7 @@ import com.ht.ussp.uc.app.vo.UserMessageVo;
 import com.ht.ussp.uc.app.vo.UserVo;
 import com.ht.ussp.util.BeanUtils;
 import com.ht.ussp.util.EncryptUtil;
+import com.ht.ussp.util.JsonUtil;
 import com.ht.ussp.util.LogicUtil;
 
 import io.swagger.annotations.ApiImplicitParam;
@@ -83,6 +87,9 @@ public class UserResource{
     private HtBoaInBmUserService htBoaInBmUserService;
     @Autowired
     private HtBoaInUserBusinessService htBoaInUserBusinessService;
+    
+    @Value(value="${bm.bmApi.apiUrl}")
+    private String bmApiUrl;
     
     @ApiOperation(value = "对内：用户个人信息查询", notes = "已登录用户查看自己的个人信息")
     @ApiImplicitParam(name = "userId", value = "用户ID", required = true, paramType = "path", dataType = "int")
@@ -395,6 +402,7 @@ public class UserResource{
         	if(user==null) {
         		return Result.buildSuccess();
         	}
+        	String oldOrgCode = user.getOrgCode(); //原来的机构
         	user.setUserId(userMessageVo.getUserId());
             user.setEmail(userMessageVo.getEmail());
             user.setJobNumber(userMessageVo.getJobNumber());
@@ -407,6 +415,21 @@ public class UserResource{
             user.setUpdateOperator(loginUserId);
             user.setLastModifiedDatetime(new Date());
             HtBoaInUser u = htBoaInUserService.update(user);
+            if(u!=null&&u.getOrgCode()!=null) {
+            	if(!u.getOrgCode().equals(oldOrgCode)) { //机构变动了 则发送mq消息
+            		Map<String,String> m = new HashMap<String,String>();
+            		m.put("userId", u.getUserId());
+            		m.put("userName", u.getUserName());
+            		m.put("mobile", u.getMobile());
+            		m.put("jobNum", u.getJobNumber());
+            		m.put("email", u.getEmail());
+            		m.put("idNo", u.getIdNo());
+            		m.put("oldOrgCode", oldOrgCode);
+            		m.put("newOrgCode", u.getOrgCode());
+            		m.put("lastModifiedDatetime", u.getLastModifiedDatetime()+"");
+            		htBoaInUserAppService.pushMq("", "updateUserOrg", JsonUtil.obj2Str(m));
+            	}
+            }
             try {
             	if(!StringUtils.isEmpty(userMessageVo.getBussinesOrgCode())) {
     				List<HtBoaInUserExt> listHtBoaInUserExt = htBoaInUserBusinessService.findHtBoaInUserExtByUserId(userMessageVo.getUserId());
@@ -453,7 +476,7 @@ public class UserResource{
         }
         return Result.buildFail();
     }
-
+    
     @ApiOperation(value = "对内，获取用户信息")
     @GetMapping(value = "/getUserInfoByUserId")
     public LoginInfoVo getUserInfoByUserId(@RequestParam("userId")String userId, @RequestParam("bmUserId")String bmUserId, @RequestParam("app") String app) {
@@ -464,6 +487,11 @@ public class UserResource{
     			if(!StringUtils.isEmpty(bmUserId)) {
         			if(loginInfoVo==null) {
         				List<HtBoaInBmUser> listHtBoaInBmUser = htBoaInBmUserService.getHtBoaInBmUserByUserId(bmUserId);
+        				//如果本地没有则连接信贷系统获取信贷用户
+        				if(listHtBoaInBmUser==null||listHtBoaInBmUser.isEmpty()) {
+        					listHtBoaInBmUser = htBoaInBmUserService.createBmUserInfo(bmUserId,bmApiUrl);
+        				}
+        				
         				if(listHtBoaInBmUser!=null && !listHtBoaInBmUser.isEmpty()) {
         					loginInfoVo = new LoginInfoVo();
         					loginInfoVo.setBmOrgCode(listHtBoaInBmUser.get(0).getOrgCode());
@@ -477,6 +505,15 @@ public class UserResource{
         						if(u!=null) {
         							loginInfoVo.setUserId(u.getUserId());
         							loginInfoVo.setMobile(u.getMobile());
+        							HtBoaInUserExt htBoaInUserExt = new HtBoaInUserExt();
+        							htBoaInUserExt.setUserId(u.getUserId());
+        							htBoaInUserExt.setBmUserId(listHtBoaInBmUser.get(0).getUserId());
+        							htBoaInUserExt.setBusiOrgCode(listHtBoaInBmUser.get(0).getOrgCode());
+        							htBoaInUserExt.setJpaVersion(0);
+        							htBoaInUserExt.setCreatedDatetime(new Date());
+        							htBoaInUserExt.setLastModifiedDatetime(new Date());
+        							htBoaInUserService.saveHtBoaInUserExt(htBoaInUserExt);
+        							loginInfoVo = htBoaInUserService.queryUserInfo(u.getUserId(),app);
         						}
 							} catch (Exception e) {
 								 e.printStackTrace();

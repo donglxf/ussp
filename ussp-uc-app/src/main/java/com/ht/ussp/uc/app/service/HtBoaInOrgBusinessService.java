@@ -157,6 +157,10 @@ public class HtBoaInOrgBusinessService {
     public List<HtBoaInBusinessOrg> findByOrgCode(String orgCode) {
         return this.htBoaInOrgBusinessRepository.findByBusinessOrgCode(orgCode);
     }
+    
+    public List<HtBoaInBusinessOrg> findByBusinessOrgName(String orgName) {
+        return this.htBoaInOrgBusinessRepository.findByBusinessOrgName(orgName);
+    }
 
     public List<HtBoaInBusinessOrg> findByParentOrgCode(String parentOrgCode) {
         return this.htBoaInOrgBusinessRepository.findByParentOrgCode(parentOrgCode);
@@ -259,7 +263,7 @@ public class HtBoaInOrgBusinessService {
 		if(listSubHtBoaInOrg!=null&&!listSubHtBoaInOrg.isEmpty()) {
 			listHtBoaInOrg.addAll(listSubHtBoaInOrg);
 			for(BoaInOrgInfo o :listSubHtBoaInOrg) {
-				return getSubOrg(listHtBoaInOrg, o.getOrgCode());
+				getSubOrg(listHtBoaInOrg, o.getOrgCode());
 			}
 		} 
 		return listHtBoaInOrg;
@@ -490,7 +494,7 @@ public class HtBoaInOrgBusinessService {
 		List<HtBoaInBusinessOrg> listHtBoaInBusinessOrg = htBoaInOrgBusinessRepository.findAll();
 		List<HtBoaInBusinessOrg> listHtBoaInBusinessOrgUpdate = new ArrayList<HtBoaInBusinessOrg>();
 		for(HtBoaInBusinessOrg htBoaInBusinessOrg : listHtBoaInBusinessOrg) {
-			if(htBoaInBusinessOrg.getOrgLevel()>40) { //片区以下的需要挂靠片区
+			if(htBoaInBusinessOrg.getOrgLevel()>=40) { //片区以下的需要挂靠片区
 				HtBoaInBusinessOrg dispatch = getOrgInfoByOrgType(htBoaInBusinessOrg.getBusinessOrgCode(),"40"); //分公司 小组 部门 需要找到对应的所属片区
 				if(dispatch!=null) {
 					htBoaInBusinessOrg.setDistrictCode(dispatch.getBusinessOrgCode());
@@ -503,6 +507,8 @@ public class HtBoaInOrgBusinessService {
     					if(branchP.getOrgLevel()==60) {
     						htBoaInBusinessOrg.setBranchCode(branchP.getBusinessOrgCode());
     					}
+    				}else {
+    					htBoaInBusinessOrg.setBranchCode(htBoaInBusinessOrg.getBusinessOrgCode());
     				}
             	}
 			}
@@ -533,7 +539,7 @@ public class HtBoaInOrgBusinessService {
 			return htBoaInBusinessOrg;
 		}
 		if("BD01".equals(orgCode)) {
-			return htBoaInBusinessOrg;
+			return null;
 		} else {
 			return  getParentOrgs(htBoaInBusinessOrg.getParentOrgCode(),orgType);
 		}

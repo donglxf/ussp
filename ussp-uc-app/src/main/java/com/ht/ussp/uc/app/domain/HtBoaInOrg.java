@@ -43,10 +43,10 @@ public class HtBoaInOrg implements Serializable {
 	private Date createdDatetime;
 
 	@Column(name="DEL_FLAG")
-	private int delFlag;
+	private Integer delFlag;
 
 	@Column(name="JPA_VERSION")
-	private int jpaVersion;
+	private Integer jpaVersion;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="LAST_MODIFIED_DATETIME", insertable = false, updatable = false)

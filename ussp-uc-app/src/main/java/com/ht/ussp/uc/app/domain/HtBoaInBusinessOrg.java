@@ -72,10 +72,10 @@ public class HtBoaInBusinessOrg implements Serializable {
 	@Column(name="COUNTY")
 	private String county;
 	
+	//数据来源(1：用户权限系统；2：钉钉同步,3：信贷系统机构)
 	@Column(name="DATA_SOURCE")
 	private Integer dataSource;
 	
-	//数据来源(1：用户权限系统；2：钉钉同步,3：信贷系统机构)
 	@Column(name="CREATE_OPERATOR")
 	private String createOperator;
 	

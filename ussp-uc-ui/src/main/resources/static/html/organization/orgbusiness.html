@@ -102,13 +102,13 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">机构名称</label>
                 <div class="layui-input-block">
-                    <input type="text" name="businessOrgName"   maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="text" name="businessOrgName"  lay-verify="required"   maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">机构层级<b>*</b></label>
                 <div class="layui-input-block">
-				    <input type="radio" name="orgLevel" value="100" title="小组">
+				    <input type="radio" name="orgLevel" value="100" title="小组" checked>
 				    <input type="radio" name="orgLevel" value="80" title="部门">
 				    <input type="radio" name="orgLevel" value="60" title="分公司">
 				    <input type="radio" name="orgLevel" value="40" title="片区" >
@@ -116,16 +116,53 @@
                 </div>
             </div>
             <div class="layui-form-item">
+                <label class="layui-form-label">所属机构<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text"   name="parentOrgNamcn" autocomplete="off"  lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="parentOrgCode" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+             <div class="layui-form-item">
+                <label class="layui-form-label">所属片区</label>
+                <div class="layui-input-block">
+                    <input type="text" name="districtCode" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属分公司</label>
+                <div class="layui-input-block">
+                    <input type="text" name="branchCode" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+             <div class="layui-form-item">
+                <label class="layui-form-label">所属省</label>
+                <div class="layui-input-block">
+                    <input type="text" name="province" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属市</label>
+                <div class="layui-input-block">
+                    <input type="text" name="city" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属区</label>
+                <div class="layui-input-block">
+                    <input type="text" name="county" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
                 <label class="layui-form-label">是否总部部门</label>
                 <div class="layui-input-block">
-				    <input type="radio" name="isHeadDept" value="0" title="否">
+				    <input type="radio" name="isHeadDept" value="0" title="否" checked>
 				    <input type="radio" name="isHeadDept" value="1" title="是">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">是否审批中心</label>
                 <div class="layui-input-block">
-				    <input type="radio" name="isAppRovalDept" value="0" title="否">
+				    <input type="radio" name="isAppRovalDept" value="0" title="否" checked>
 				    <input type="radio" name="isAppRovalDept" value="1" title="是">
                 </div>
             </div> 
@@ -147,15 +184,7 @@
                     <input type="text" name="deptUser" maxlength="30" autocomplete="off" placeholder="请输入部门负责人用户编号" class="layui-input layui-input-sm">
                 </div>
             </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">所属机构<b>*</b></label>
-                <div class="layui-input-block">
-                    <input type="text"   name="parentOrgNamcn" autocomplete="off"  lay-verType="tips" class="layui-input layui-input-sm">
-                    <input type="hidden" name="parentOrgCode" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
-                    <input type="hidden" name="orgPath" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
-                    <input type="hidden" name="rootOrgCode" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
-                </div>
-            </div>
+            
             <button class="layui-btn hide" lay-submit="" lay-filter="filter_add_organization_busi_form"></button>
         </form>
     </div>
@@ -165,36 +194,72 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">机构编号<b>*</b></label>
                 <div class="layui-input-block">
-                    <input type="text" name="businessOrgCode" lay-verify="required" maxlength="20" readonly autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm layui-bg-gray">
+                    <input type="text" name="businessOrgCode" lay-verify="required" readonly  maxlength="20" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">机构简称</label>
+                <label class="layui-form-label">机构名称</label>
                 <div class="layui-input-block">
-                    <input type="text" name="businessOrgName"  maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="text" name="businessOrgName"  lay-verify="required"   maxlength="40" autocomplete="off" lay-verType="tips" class="layui-input layui-input-sm">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">机构层级<b>*</b></label>
                 <div class="layui-input-block">
-				    <input type="radio" name="orgLevel" value="100" title="小组">
+				    <input type="radio" name="orgLevel" value="100" title="小组" checked>
 				    <input type="radio" name="orgLevel" value="80" title="部门">
 				    <input type="radio" name="orgLevel" value="60" title="分公司">
 				    <input type="radio" name="orgLevel" value="40" title="片区" >
 				    <input type="radio" name="orgLevel" value="20" title="公司" >
                 </div>
-            </div> 
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属机构<b>*</b></label>
+                <div class="layui-input-block">
+                    <input type="text" name="parentOrgCode" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
              <div class="layui-form-item">
+                <label class="layui-form-label">所属片区</label>
+                <div class="layui-input-block">
+                    <input type="text" name="districtCode" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属分公司</label>
+                <div class="layui-input-block">
+                    <input type="text" name="branchCode" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+             <div class="layui-form-item">
+                <label class="layui-form-label">所属省</label>
+                <div class="layui-input-block">
+                    <input type="text" name="province" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属市</label>
+                <div class="layui-input-block">
+                    <input type="text" name="city" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属区</label>
+                <div class="layui-input-block">
+                    <input type="text" name="county" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                </div>
+            </div>
+            <div class="layui-form-item">
                 <label class="layui-form-label">是否总部部门</label>
                 <div class="layui-input-block">
-				    <input type="radio" name="isHeadDept" value="0" title="否">
+				    <input type="radio" name="isHeadDept" value="0" title="否" checked>
 				    <input type="radio" name="isHeadDept" value="1" title="是">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">是否审批中心</label>
                 <div class="layui-input-block">
-				    <input type="radio" name="isAppRovalDept" value="0" title="否">
+				    <input type="radio" name="isAppRovalDept" value="0" title="否" checked>
 				    <input type="radio" name="isAppRovalDept" value="1" title="是">
                 </div>
             </div> 
@@ -216,16 +281,13 @@
                     <input type="text" name="deptUser" maxlength="30" autocomplete="off" placeholder="请输入部门负责人用户编号" class="layui-input layui-input-sm">
                 </div>
             </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">所属机构<b>*</b></label>
-                <div class="layui-input-block">
-                    <input type="text"   name="parentOrgCode" disabled autocomplete="off"  lay-verType="tips" class="layui-input layui-input-sm">
-                    <input type="hidden" name="orgPath" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
-                    <input type="hidden" name="rootOrgCode" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
-                    <input type="hidden" name="id" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+            <input type="hidden" name="id" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
                     <input type="hidden" name="status" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
-                </div>
-            </div>
+                    <input type="hidden" name="businessGroup" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="financeCode" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="approvalCode" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="activityCode" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
+                    <input type="hidden" name="bmOrgCode" autocomplete="off" readonly lay-verType="tips" class="layui-input layui-input-sm">
             <button class="layui-btn hide" lay-submit="" lay-filter="filter_modify_organization_busi_form"></button>
         </form>
     </div>

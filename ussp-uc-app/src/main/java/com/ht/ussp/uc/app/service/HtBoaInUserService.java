@@ -157,17 +157,24 @@ public class HtBoaInUserService {
         						loginInfoVo.setBussinesOrgCode(htBoaInBusinessOrg.getBusinessOrgCode());
         						loginInfoVo.setBussinesOrgName(htBoaInBusinessOrg.getBusinessOrgName());
         						loginInfoVo.setBranchCode(htBoaInBusinessOrg.getBranchCode());
-        						if(StringUtils.isNotEmpty(htBoaInBusinessOrg.getBranchCode())) {
-        							List<HtBoaInBusinessOrg>  listHtBoaInBusinessOrgBranch = htBoaInOrgBusinessRepository.findByBusinessOrgCode(htBoaInBusinessOrg.getBranchCode());
-        							if(listHtBoaInBusinessOrgBranch!=null&&!listHtBoaInBusinessOrgBranch.isEmpty()) {
-        								loginInfoVo.setBranchName(listHtBoaInBusinessOrgBranch.get(0).getBusinessOrgName());
-        							}
+        						if(60==htBoaInBusinessOrg.getOrgLevel()) {
+        							loginInfoVo.setBranchName(htBoaInBusinessOrg.getBusinessOrgName());
+    								loginInfoVo.setIsAppRovalDept(htBoaInBusinessOrg.getIsAppRovalDept()==null?"0":htBoaInBusinessOrg.getIsAppRovalDept()+"");
+            						loginInfoVo.setIsHeadDept(htBoaInBusinessOrg.getIsHeadDept()==null?"0":htBoaInBusinessOrg.getIsHeadDept()+"");
+        						}else {
+        							if(StringUtils.isNotEmpty(htBoaInBusinessOrg.getBranchCode())) {
+            							List<HtBoaInBusinessOrg>  listHtBoaInBusinessOrgBranch = htBoaInOrgBusinessRepository.findByBusinessOrgCode(htBoaInBusinessOrg.getBranchCode());
+            							if(listHtBoaInBusinessOrgBranch!=null&&!listHtBoaInBusinessOrgBranch.isEmpty()) {
+            								loginInfoVo.setBranchName(listHtBoaInBusinessOrgBranch.get(0).getBusinessOrgName());
+            								loginInfoVo.setIsAppRovalDept(listHtBoaInBusinessOrgBranch.get(0).getIsAppRovalDept()==null?"0":listHtBoaInBusinessOrgBranch.get(0).getIsAppRovalDept()+"");
+                    						loginInfoVo.setIsHeadDept(listHtBoaInBusinessOrgBranch.get(0).getIsHeadDept()==null?"0":listHtBoaInBusinessOrgBranch.get(0).getIsHeadDept()+"");
+            							}
+            						}
         						}
+        						
         						loginInfoVo.setDistrictCode(htBoaInBusinessOrg.getDistrictCode());
         						loginInfoVo.setProvince(htBoaInBusinessOrg.getProvince());
         						loginInfoVo.setCity(htBoaInBusinessOrg.getCity());
-        						loginInfoVo.setIsAppRovalDept(htBoaInBusinessOrg.getIsAppRovalDept()+"");
-        						loginInfoVo.setIsHeadDept(htBoaInBusinessOrg.getIsHeadDept()+"");
         					}
         				}
         			}
@@ -721,9 +728,6 @@ public class HtBoaInUserService {
 					        	htBoaInContrast = htBoaInContrastRepository.save(htBoaInContrast);
 							}
 			    	 }
-					
-					
-					
 				}
 			}
 		} catch (Exception e) {
@@ -732,6 +736,17 @@ public class HtBoaInUserService {
     	return htBoaInUser;
     }
     
+    public HtBoaInUserExt saveHtBoaInUserExt(HtBoaInUserExt htBoaInUserExt) {
+		List<HtBoaInUserExt> listHtBoaInUserExt= htBoaInUserExtRepository.findByUserId(htBoaInUserExt.getUserId());
+		if(listHtBoaInUserExt ==null|| listHtBoaInUserExt.isEmpty()) {
+			List<HtBoaInContrast> listHtBoaInContrast = htBoaInContrastRepository.findByBmBusinessIdAndType(htBoaInUserExt.getBusiOrgCode(), "10");
+			if(listHtBoaInContrast!=null&&!listHtBoaInContrast.isEmpty()) {
+				htBoaInUserExt.setBusiOrgCode(listHtBoaInContrast.get(0).getUcBusinessId());
+			}
+			htBoaInUserExtRepository.save(htBoaInUserExt);
+		}
+		return htBoaInUserExt;
+    }
     
     private String generateNumber(int length) {
         String no = "";
