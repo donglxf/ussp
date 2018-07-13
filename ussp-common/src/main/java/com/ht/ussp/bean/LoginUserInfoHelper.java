@@ -164,9 +164,9 @@ public class LoginUserInfoHelper {
         if (ucClient == null) {
             log.warn("无法获取当前用户所有角色信息，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
         }
-        userIds = (StringUtils.isEmpty(userIds))?userId:userIds;
+        userIds = (StringUtils.isEmpty(userIds))?"":userIds;
         try {
-            return ucClient.getUserRole(userId);
+            return ucClient.getUserRole(userIds);
         } catch (Exception ex) {
             log.error(" 获取当前用户所有角色信息发生异常。", ex);
             return null;

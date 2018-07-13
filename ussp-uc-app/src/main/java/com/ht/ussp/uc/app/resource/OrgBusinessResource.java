@@ -27,7 +27,6 @@ import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInBusinessOrg;
-import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.domain.HtBoaInUserExt;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
@@ -35,6 +34,7 @@ import com.ht.ussp.uc.app.service.HtBoaInOrgBusinessService;
 import com.ht.ussp.uc.app.service.HtBoaInUserBusinessService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.vo.LoginInfoVo;
+import com.ht.ussp.uc.app.vo.NextChildDto;
 import com.ht.ussp.uc.app.vo.PageVo;
 
 import io.swagger.annotations.ApiOperation;
@@ -270,13 +270,7 @@ public class OrgBusinessResource {
        return Result.buildSuccess(listHtBoaInOrg);
     }
     
-    @SuppressWarnings("rawtypes")
-   	@ApiOperation(value = "获取业务机构下所有人",notes="")
-    @PostMapping(value = {"/getBusiOrgUserList" }, produces = {"application/json"} )
-    public Result getBusiOrgUserList(String branch) {
-       return Result.buildSuccess(null);
-    }
-    
+ 
     @SuppressWarnings("rawtypes")
    	@ApiOperation(value = "根据userId获取用户信息",notes="返回所属分公司")
     @PostMapping(value = {"/getUserInfoByUserId" }, produces = {"application/json"} )
@@ -319,10 +313,25 @@ public class OrgBusinessResource {
     
     
     @SuppressWarnings("rawtypes")
+   	@ApiOperation(value = "分公司所属省、市转换",notes="分公司地址，省，市转换")
+    @PostMapping(value = {"/convertBranchCity" }, produces = {"application/json"} )
+    public Result convertBranchCity(String state ) {
+       htBoaInOrgBusinessService.convertBranchCity(state);
+       return Result.buildSuccess();
+    }
+    
+    @SuppressWarnings("rawtypes")
    	@ApiOperation(value = "获取业务机构所属分公司/片区",notes="获取业务机构所属分公司/片区")
     @PostMapping(value = {"/getBusiOrgInfoByOrgType" }, produces = {"application/json"} )
     public Result getBusiOrgInfoByOrgType(String orgCode, String orgType) {
        return Result.buildSuccess(htBoaInOrgBusinessService.getOrgInfoByOrgType(orgCode, orgType));
+    }
+    
+    @SuppressWarnings("rawtypes")
+   	@ApiOperation(value = "获取省市区列表")
+    @PostMapping(value = {"/getNextChilds" }, produces = {"application/json"} )
+    public Result getNextChilds(@RequestBody NextChildDto nextChildDto) {
+       return Result.buildSuccess(htBoaInOrgBusinessService.getNextChilds(nextChildDto));
     }
  
 }

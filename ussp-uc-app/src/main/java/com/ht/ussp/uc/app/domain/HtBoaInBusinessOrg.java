@@ -105,9 +105,29 @@ public class HtBoaInBusinessOrg implements Serializable {
 	@Column(name="DEPT_ADDRESS")
 	private String deptAddress;
 	
-	@Column(name="DEPT_TEL")
+	@Column(name="DEPT_TEL") //联系电话
 	private String deptTel;
+	
+	@Column(name="BRANCH_PHONE_CONTRACT") // 电话(合同)
+	private String branchPhoneContract;
+	
+	@Column(name="BUSINESS_PHONE") //业务专用客服电话
+	private String businessPhone;
 	
 	@Column(name="DEPT_USER")
 	private String deptUser;
+	
+	@Column(name="BRANCH_NAME_CONTRACT") // 分公司名称(合同)
+	private String branchNameContract;
+	
+	@Column(name="BRANCH_ADDRESS_CONTRACT") //分公司地址(合同)
+	private String branchAddressContract;
+	
+	@Column(name="BRANCH_PLEDGE_EMAIL_CONTRACT") //[分公司抵押权人电子邮件地址(合同)]
+	private String branchPledgeEmailContract;
+	
+	@Column(name="LEGAL_PERSON") //法人代表
+	private String legalPerson;
+	
+	
 }

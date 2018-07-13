@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.persistence.criteria.Predicate;
 
@@ -31,12 +32,15 @@ import com.ht.ussp.core.Result;
 import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInBusinessOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInContrast;
+import com.ht.ussp.uc.app.domain.Tareas;
 import com.ht.ussp.uc.app.domain.TbDepartment;
 import com.ht.ussp.uc.app.model.BoaInOrgInfo;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.repository.HtBoaInContrastRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInOrgBusinessRepository;
+import com.ht.ussp.uc.app.repository.TareasRepository;
 import com.ht.ussp.uc.app.repository.TbDepartmentRepository;
+import com.ht.ussp.uc.app.vo.NextChildDto;
 import com.ht.ussp.util.ExcelUtils;
 
 @Service
@@ -50,6 +54,9 @@ public class HtBoaInOrgBusinessService {
 	
 	@Autowired
     private HtBoaInContrastRepository htBoaInContrastRepository;
+	
+	@Autowired
+    private TareasRepository tareasRepository;
 	
 	
 	
@@ -525,6 +532,150 @@ public class HtBoaInOrgBusinessService {
 		System.out.println("转换完成");
 	}
 	
+	public void convertBranchCity(String state ) {
+		List<HtBoaInBusinessOrg> listHtBoaInBusinessOrg = htBoaInOrgBusinessRepository.findAll();
+		List<HtBoaInContrast> listHtBoaInContrastAll = htBoaInContrastRepository.findByType("10");
+		List<TbDepartment> listTbDepartment = tbDepartmentRepository.findAll();
+		List<Tareas> listTareas = tareasRepository.findAll();
+		
+		List<HtBoaInBusinessOrg> listHtBoaInBusinessOrgUpdate = new ArrayList<HtBoaInBusinessOrg>();
+		List<HtBoaInBusinessOrg> listHtBoaInBusinessOrgNew= new ArrayList<HtBoaInBusinessOrg>();
+		//1.将信贷地址，电话，转换到UC
+		for(HtBoaInBusinessOrg htBoaInBusinessOrg : listHtBoaInBusinessOrg) {
+			HtBoaInContrast htBoaInContrast = null;
+			TbDepartment tbDepartment = null;
+			//找到UC 信贷对应的业务机构信息
+			Optional<HtBoaInContrast> htBoaInContrastOptional = listHtBoaInContrastAll.stream().filter(c -> htBoaInBusinessOrg.getBusinessOrgCode().equals(c.getUcBusinessId())).findFirst();
+			if(htBoaInContrastOptional!=null&&htBoaInContrastOptional.isPresent()) {
+				  htBoaInContrast = htBoaInContrastOptional.get();
+			}
+			if(htBoaInContrast!=null) {
+				String bmDeptId = htBoaInContrast.getBmBusinessId();
+				if(StringUtils.isNotEmpty(bmDeptId)) {
+					Optional<TbDepartment> tbDepartmentOptional = listTbDepartment.stream().filter(c -> c.getDeptId().equals(bmDeptId)).findFirst();
+					if(tbDepartmentOptional!=null&&tbDepartmentOptional.isPresent()) {
+						tbDepartment = tbDepartmentOptional.get();
+					}
+				}
+			}
+			if(tbDepartment!=null) {
+				htBoaInBusinessOrg.setDeptAddress(tbDepartment.getBranchAddress());
+				htBoaInBusinessOrg.setBranchNameContract(tbDepartment.getBranchName());
+				htBoaInBusinessOrg.setBranchAddressContract(tbDepartment.getBranchAddress());
+				htBoaInBusinessOrg.setBranchPledgeEmailContract(tbDepartment.getBranchPledgeEmail());
+				htBoaInBusinessOrg.setDeptTel(tbDepartment.getBranchTelephone()); //联系电话
+				htBoaInBusinessOrg.setBranchPhoneContract(tbDepartment.getPhone());//电话（合同）
+				htBoaInBusinessOrg.setBusinessPhone(tbDepartment.getBusinessPhone());//客服电话
+				if("2".equals(state)&&htBoaInBusinessOrg.getOrgLevel()==60&& StringUtils.isEmpty(htBoaInBusinessOrg.getProvince())&&StringUtils.isEmpty(htBoaInBusinessOrg.getCity())&&StringUtils.isNotEmpty(htBoaInBusinessOrg.getBusinessOrgName())) {
+					String c = htBoaInBusinessOrg.getBusinessOrgName().substring(0, htBoaInBusinessOrg.getBusinessOrgName().indexOf("分公司"));
+					htBoaInBusinessOrg.setCity(c);
+				}
+				if(StringUtils.isNotEmpty(tbDepartment.getBranchAddress())) {
+					if(StringUtils.isEmpty(htBoaInBusinessOrg.getProvince())) {
+						if(tbDepartment.getBranchAddress().contains("省")) {
+							String p = tbDepartment.getBranchAddress().substring(0, tbDepartment.getBranchAddress().indexOf("省")+1);
+							htBoaInBusinessOrg.setProvince(p);
+						}else if(tbDepartment.getBranchAddress().contains("自治区")) {
+							String p = tbDepartment.getBranchAddress().substring(0, tbDepartment.getBranchAddress().indexOf("自治区")+3);
+							htBoaInBusinessOrg.setProvince(p);
+						}
+					}
+					if(StringUtils.isEmpty(htBoaInBusinessOrg.getCity())) {
+						if(tbDepartment.getBranchAddress().contains("省")) {
+							String c = tbDepartment.getBranchAddress().substring(tbDepartment.getBranchAddress().indexOf("省")+1, tbDepartment.getBranchAddress().indexOf("市")+1);
+							htBoaInBusinessOrg.setCity(c);
+						}else if(tbDepartment.getBranchAddress().contains("自治区")) {
+							String c = tbDepartment.getBranchAddress().substring(tbDepartment.getBranchAddress().indexOf("自治区")+3, tbDepartment.getBranchAddress().indexOf("市")+1);
+							htBoaInBusinessOrg.setCity(c);
+						}else {
+							if(tbDepartment.getBranchAddress().contains("市")) {
+								String c = tbDepartment.getBranchAddress().substring(0, tbDepartment.getBranchAddress().indexOf("市")+1);
+								htBoaInBusinessOrg.setCity(c);
+							}
+						}
+					}
+				}
+                if(StringUtils.isNotEmpty(htBoaInBusinessOrg.getProvince())) {
+                	Tareas tareas = null;
+                	Optional<Tareas> tareasOptional = listTareas.stream().filter(c -> htBoaInBusinessOrg.getProvince().equals(c.getName())).findFirst();
+					if(tareasOptional!=null&&tareasOptional.isPresent()) {
+						tareas = tareasOptional.get();
+					}
+                	if(tareas!=null) {
+                		htBoaInBusinessOrg.setProvince(tareas.getId());
+                	}
+				}
+				if(StringUtils.isNotEmpty(htBoaInBusinessOrg.getCity())) {
+					Tareas tareas = null;
+                	Optional<Tareas> tareasOptional = listTareas.stream().filter(c -> htBoaInBusinessOrg.getCity().equals(c.getName())).findFirst();
+					if(tareasOptional!=null&&tareasOptional.isPresent()) {
+						tareas = tareasOptional.get();
+					}
+                	if(tareas!=null) {
+                		if(StringUtils.isEmpty(htBoaInBusinessOrg.getProvince())) {
+                			  htBoaInBusinessOrg.setProvince(tareas.getParentId());
+                		}
+                		htBoaInBusinessOrg.setCity(tareas.getId());
+                	}
+				}
+				if(StringUtils.isNotEmpty(htBoaInBusinessOrg.getProvince())) {
+                	Tareas tareas = null;
+                	Optional<Tareas> tareasOptional = listTareas.stream().filter(c -> htBoaInBusinessOrg.getProvince().replaceAll("省", "").equals(c.getName().replaceAll("省", ""))).findFirst();
+					if(tareasOptional!=null&&tareasOptional.isPresent()) {
+						tareas = tareasOptional.get();
+					}
+                	if(tareas!=null) {
+                		htBoaInBusinessOrg.setProvince(tareas.getId());
+                	}
+				}
+				if(StringUtils.isNotEmpty(htBoaInBusinessOrg.getCity())) {
+					Tareas tareas = null;
+                	Optional<Tareas> tareasOptional = listTareas.stream().filter(c -> htBoaInBusinessOrg.getCity().replaceAll("市", "").equals(c.getName().replaceAll("市", ""))).findFirst();
+					if(tareasOptional!=null&&tareasOptional.isPresent()) {
+						tareas = tareasOptional.get();
+					}
+                	if(tareas!=null) {
+                		if(StringUtils.isEmpty(htBoaInBusinessOrg.getProvince())) {
+                			  htBoaInBusinessOrg.setProvince(tareas.getParentId());
+                		}
+                		htBoaInBusinessOrg.setCity(tareas.getId());
+                	}
+				}
+				listHtBoaInBusinessOrgUpdate.add(htBoaInBusinessOrg);
+			}
+		}
+		if(listHtBoaInBusinessOrgUpdate!=null && !listHtBoaInBusinessOrgUpdate.isEmpty()) {
+			listHtBoaInBusinessOrg = htBoaInOrgBusinessRepository.save(listHtBoaInBusinessOrgUpdate);
+		}
+		//转换分公司所属省
+		if(listHtBoaInBusinessOrg!=null&&!listHtBoaInBusinessOrg.isEmpty()) {
+			List<HtBoaInBusinessOrg> listHtBoaInBusinessOrgBranch = listHtBoaInBusinessOrg.stream().filter(c -> 60==c.getOrgLevel()).collect(Collectors.toList());
+	        for(HtBoaInBusinessOrg htBoaInBusinessOrg : listHtBoaInBusinessOrgBranch) {
+	        	List<BoaInOrgInfo>	listSubHtBoaInOrg =  getSubOrgInfo(htBoaInBusinessOrg.getBusinessOrgCode());
+		    	for(BoaInOrgInfo b : listSubHtBoaInOrg) {
+		    		HtBoaInBusinessOrg htBoaInBusinessOrgSub = null;
+                	Optional<HtBoaInBusinessOrg> htBoaInBusinessOrgOptional = listHtBoaInBusinessOrg.stream().filter(c -> c.getBusinessOrgCode().equals(b.getOrgCode())).findFirst();
+					if(htBoaInBusinessOrgOptional!=null&&htBoaInBusinessOrgOptional.isPresent()) {
+						htBoaInBusinessOrgSub = htBoaInBusinessOrgOptional.get();
+					}
+					if(htBoaInBusinessOrgSub!=null) {
+						if(StringUtils.isEmpty(htBoaInBusinessOrgSub.getProvince())) {
+							if(StringUtils.isNotEmpty(htBoaInBusinessOrg.getProvince())) {
+								htBoaInBusinessOrgSub.setProvince(htBoaInBusinessOrg.getProvince());
+								listHtBoaInBusinessOrgNew.add(htBoaInBusinessOrgSub);
+							}
+						}
+					}
+		    	}
+	        }
+	        if(listHtBoaInBusinessOrgNew!=null && !listHtBoaInBusinessOrgNew.isEmpty()) {
+				  htBoaInOrgBusinessRepository.save(listHtBoaInBusinessOrgNew);
+			}
+		}
+        
+		System.out.println("转换完成");
+	}
+	
 	public HtBoaInBusinessOrg getOrgInfoByOrgType(String orgCode, String orgType) {
 		return getParentOrgs(orgCode,orgType);
 	}
@@ -543,6 +694,21 @@ public class HtBoaInOrgBusinessService {
 		} else {
 			return  getParentOrgs(htBoaInBusinessOrg.getParentOrgCode(),orgType);
 		}
+	}
+
+	public List<Tareas> getNextChilds(NextChildDto nextChildDto) {
+		if(StringUtils.isNotEmpty(nextChildDto.getParentId())) {
+			return tareasRepository.findByParentId(nextChildDto.getParentId());
+		}else {
+			if("province".equals(nextChildDto.getTypeCode())) {//province 则查询省   city查询市  county区  其他则查询下级
+				return tareasRepository.findByLevelType("1");
+			}else if("city".equals(nextChildDto.getTypeCode())) {
+				return tareasRepository.findByLevelType("2");
+			}else if("county".equals(nextChildDto.getTypeCode())) {
+				return tareasRepository.findByLevelType("3");
+			}
+		}
+		return null;
 	}
  
 }
