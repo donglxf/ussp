@@ -65,9 +65,39 @@ public class TbDepartment implements Serializable {
 	@Column(name="area_range")
 	private String county;
 	
+	@Column(name="branch_name")
+	private String branchName;
+	
+	@Column(name="branch_address")
+	private String branchAddress;
+	
+	@Column(name="branch_pledge_email")
+	private String branchPledgeEmail;
+	
+	@Column(name="legal_person")
+	private String legalPerson;
+	
+	//客服电话
+	@Column(name="business_phone")
+	private String businessPhone;
+	
+	@Column(name="branch_street")
+	private String branchStreet;
+	
+	//联系电话
+	@Column(name="branch_telephone")
+	private String branchTelephone;
+	
+	//电话(合同)
+	@Column(name="phone")
+	private String phone;
+	
 	//用于转换层级
 	@Column(name="business_region")
 	private String businessRegion;
+	
+	
+	
 	
 
 }

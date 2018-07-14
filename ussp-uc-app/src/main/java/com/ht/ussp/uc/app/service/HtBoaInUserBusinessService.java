@@ -641,22 +641,12 @@ public class HtBoaInUserBusinessService {
             List<Map<String, Object>> roles = this.htBoaInUserRepository
                     .listSelfUserInfo4Role(s.getUserId());
             for (Map<String, Object> o : roles) {
-                s.getRoleCodes()
-                        .add(null != o.get("0") ? o.get("0").toString() : null);
-                s.getRoleNames()
-                        .add(null != o.get("1") ? o.get("1").toString() : null);
-                s.getRoleNameChs()
-                        .add(null != o.get("2") ? o.get("2").toString() : null);
+                s.getRoleCodes() .add(null != o.get("0") ? o.get("0").toString() : null);
             }
             List<Map<String, Object>> positions = this.htBoaInUserRepository
                     .listSelfUserInfo4Position(s.getUserId());
             for (Map<String, Object> o : positions) {
-                s.getPositionCodes()
-                        .add(null != o.get("0") ? o.get("0").toString() : null);
-                s.getPositionNames()
-                        .add(null != o.get("1") ? o.get("1").toString() : null);
-                s.getPositionNameChs()
-                        .add(null != o.get("2") ? o.get("2").toString() : null);
+                s.getPositionCodes() .add(null != o.get("0") ? o.get("0").toString() : null);
             }
         }
         return list;

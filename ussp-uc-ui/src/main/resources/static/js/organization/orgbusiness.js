@@ -20,7 +20,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
             layer.close(addDialog);
             addDialog = layer.open({
                 type: 1,
-                area: ['700px', '720px'],
+                area: ['700px', '820px'],
                 maxmin: true,
                 shadeClose: false,
                 title: "新增机构",
@@ -38,6 +38,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
                     layer.closeAll('tips');
                 },
                 success: function (layero, index) {
+                	 
                     //填充选中的组织机构
                     $("input[name=parentOrgNamcn]", layero).val(nodes[0]["businessOrgName"]);
                     $("input[name=parentOrgCode]", layero).val(nodes[0]["businessOrgCode"]);
@@ -53,7 +54,9 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
                         success: function (result) {
                             $("input[name=businessOrgCode]", layero).val(result);
                         }
-                    })
+                    });
+                    getNextChilds("province",null,layero);
+                    formOnSelect(layero);
                     form.render(null, "filter_add_organization_busi_form");
                     form.on('submit(filter_add_organization_busi_form)', function (data) {
                         $.ajax({
@@ -90,7 +93,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
     var orgTreeUrl = config.basePath +"orgbusiness/tree"; //机构列表
     var checkOrgCodeExistUrl = config.basePath +"orgbusiness/isExistOrgCode"; //校验岗位编码是否已经存在
     var getNewOrgCodeUrl = config.basePath +"orgbusiness/getNewOrgCode"; //获取OrgCode
-    
+    var getNextChildsUrl =  config.basePath +"orgbusiness/getNextChilds"; //获取省市区
     //自定义验证规则
 	form.verify({
 		  //校验编码是否已经存在
@@ -213,7 +216,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
         if (obj.event === 'detail') {
         	 viewDialog = layer.open({
                  type: 1,
-                  area: ['700px', '500px'],
+                  area: ['700px', '820px'],
                  shadeClose: true,
                  title: "机构详情",
                  content: $("#organization_busi_view_data_div").html(),
@@ -222,23 +225,28 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
                      layer.closeAll('tips');
                  },
                  success: function (layero) {
+                	//加载表单数据
                      $.each(data, function (name, value) {
                          var $input = $("input[name=" + name + "]", layero);
                          if ($input && $input.length == 1) {
                              $input.val(value);
                          }
                          if("orgLevel"==name){
-                        	 if(value){
-                        		 $("input:radio[name='orgLevel'][value="+value+"]", layero).attr("checked",true);
-                        	 }
+                         	 if(value){
+                         		 $("input:radio[name='orgLevel'][value="+value+"]", layero).attr("checked",true);
+                         	 }
+                         }
+                         if("isHeadDept"==name){
+                         	 $("input:radio[name='isHeadDept'][value="+value+"]", layero).attr("checked",true);
                         }
-                        if("isHeadDept"==name){
-                        	 $("input:radio[name='isHeadDept'][value="+value+"]", layero).attr("checked",true);
-                       }
                         if("isAppRovalDept"==name){
-                        	$("input:radio[name='isAppRovalDept'][value="+value+"]", layero).attr("checked",true);
-                       }
+                         	$("input:radio[name='isAppRovalDept'][value="+value+"]", layero).attr("checked",true);
+                        }
                      });
+                     getNextChilds("province",null,layero,data.province);
+                     getNextChilds("city",data.province,layero,data.city);
+                     getNextChilds("county",data.city,layero,data.county);
+                     formOnSelect(layero);
                      form.render(null, "filter_view_organization_busi_form");
                  }
              });
@@ -258,7 +266,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
         } else if (obj.event === 'edit') {
             editDialog = layer.open({
             	 type: 1,
-            	  area: ['700px', '720px'],
+            	  area: ['700px', '820px'],
                  maxmin: true,
                  shadeClose: true,
                  title: "修改机构",
@@ -290,12 +298,15 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
                         if("isHeadDept"==name){
                         	 $("input:radio[name='isHeadDept'][value="+value+"]", layero).attr("checked",true);
                        }
-                        if("isAppRovalDept"==name){
+                       if("isAppRovalDept"==name){
                         	$("input:radio[name='isAppRovalDept'][value="+value+"]", layero).attr("checked",true);
                        }
-                       
                     });
+                    getNextChilds("province",null,layero,data.province);
+                    getNextChilds("city",data.province,layero,data.city);
+                    getNextChilds("county",data.city,layero,data.county);
                     
+                    formOnSelect(layero);
                     form.render(null, "filter_modify_organization_busi_form");
                     form.on('submit(filter_modify_organization_busi_form)', function (data) {
                         $.ajax({
@@ -325,10 +336,81 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
                     });
                 }
             });
-            
-            
         }
     });
+    var formOnSelect = function (layeros) {
+        //监听省份下拉改变
+        form.on('select(province)', function(data){
+            getNextChilds("city",data.value,layeros);
+            getNextChilds("county",data.value,layeros);
+        });
+        //监听市下拉改变
+        form.on('select(city)', function(data){
+            getNextChilds("county",data.value,layeros);
+        });
+    };
+    var getNextChilds = function (typeCode,parentId, layeros,defaultValue) {
+        var dto = {
+            typeCode:typeCode,
+            parentId:parentId
+        };
+        $.ajax({
+            type: "POST",
+            url: getNextChildsUrl,
+            contentType: "application/json; charset=utf-8",
+            data:JSON.stringify(dto),
+            success: function (result) {
+            	$('#'+typeCode,layeros).html('<option value>请选择</option>');
+                if (result.returnCode == '0000') {
+                	 $.each(result.data,function(index,item){    // 下拉菜单里添加元素
+                     	var opt = null;  
+                     	if(item.id == defaultValue){
+         	        		opt = new Option(item.name, item.id, false, true);
+         	        	}else{
+         	        		opt = new Option(item.name, item.id);
+         	        	}
+                     	$('#'+typeCode,layeros).append(opt);
+                     });
+                }
+                form.render("select");//下拉菜单渲染 把内容加载进去
+            },
+            error: function (message) {
+                console.error(message);
+            }
+        });
+    };
+    
+    var getEditInitParams = function(type, parentValue, defaultValue){
+    	if(!parentValue){
+    		$.ajax({
+                type: "GET",
+                url: getProvinceUrl+"?typeCode="+type,
+                success: function (result) {
+                	$('#'+type).html('<option value>请选择</option>');
+                    if (result.returnCode == '0000') {
+                        $.each(result.data,function(index,item){    // 下拉菜单里添加元素
+                        	var opt = null;  
+                        	if(item.code == defaultValue){
+            	        		opt = new Option(item.name, item.code, false, true);
+            	        	}else{
+            	        		opt = new Option(item.name, item.code);
+            	        	}
+                        	$('#'+type).append(opt);
+                        });
+                    }
+                    form.render("select");//下拉菜单渲染 把内容加载进去
+                },
+                error: function (message) {
+                    console.error(message);
+                }
+            });
+    	}else{
+    		// 级联下拉数据
+    		getNextChilds(type, parentValue, defaultValue);
+    	}
+        
+    };
+
     table.on('renderComplete(filter_organization_busi_datatable)', function (obj) {
     	ht_auth.render("organization_busi_auth");
     });

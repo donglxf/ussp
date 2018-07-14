@@ -318,7 +318,12 @@ layui.use(['element', 'form', 'ztree', 'table', 'ht_config', 'ht_auth','upload']
                 	    $('input[type=checkbox]:checked', layero).each(function() {
                 	        reqType += $(this).val()+",";
                 	    });
-                	window.location.href=config.basePath + 'web/exportResource?app='+nodes[0]["app"]+"&reqType="+reqType;
+                	    console.log(reqType);
+                	    if(reqType=="menu_resource,"||reqType=="menu_resource_sql,"){
+                	    	window.location.href=config.basePath + 'web/exportResource?app='+nodes[0]["code"]+"&reqType="+reqType;
+                	    } else{
+                	    	window.location.href=config.basePath + 'web/exportResource?app='+nodes[0]["app"]+"&reqType="+reqType;
+                	    }
                 },
                 btn2: function () {
                     layer.closeAll('tips');

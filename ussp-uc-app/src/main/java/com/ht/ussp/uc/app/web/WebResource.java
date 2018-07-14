@@ -254,6 +254,7 @@ public class WebResource{
 		BufferedOutputStream buff = null;
 		StringBuffer write = new StringBuffer();
 		ServletOutputStream outSTr = null;
+		String sqlStr = "";
 		try {
 			if(StringUtils.isEmpty(reqType)) {
 				return ;
@@ -273,9 +274,18 @@ public class WebResource{
 					}else if("role_resource".equals(reqtype)) {
 						List<HtBoaInRoleRes> listHtBoaInResource=htBoaInRoleResService.getAllByApp(app);
 						map.put("roleResource", JsonUtil.obj2Str(listHtBoaInResource));
+					}else if("menu_resource".equals(reqtype)) { //导出菜单相关的资源
+						List<HtBoaInResource> listHtBoaInResource=htBoaInResourceService.getSubResByResCode(app); //res_code
+						map.put("menu_Resource", JsonUtil.obj2Str(listHtBoaInResource));
+					}else if("menu_resource_sql".equals(reqtype)) { //导出菜单相关的资源
+						sqlStr=htBoaInResourceService.getSubResByResCodeSql(app); //res_code
 					}
 				}
-				write.append(JSONUtils.toJSONString(map));
+				if(StringUtils.isEmpty(sqlStr)) {
+					write.append(JSONUtils.toJSONString(map));
+				}else {
+					write.append(sqlStr);
+				}
 				buff.write(write.toString().getBytes("UTF-8"));
 				buff.flush();
 				buff.close();
