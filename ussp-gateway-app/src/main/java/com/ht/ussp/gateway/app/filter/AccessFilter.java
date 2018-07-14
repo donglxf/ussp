@@ -190,7 +190,7 @@ public class AccessFilter extends ZuulFilter {
                     }
                 }
                 return null;
-            } else if ("9921".equals(rm.getResult_msg())) {
+            } else if ("9921".equals(rm.getStatus_code())) {
                 ctx.setSendZuulResponse(false);
                 try {
                     mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_EXPIRED));
@@ -231,8 +231,10 @@ public class AccessFilter extends ZuulFilter {
         String api_key = String.format("%s:%s:%s", userId, app, "api");
         Result result=roleClient.isHasAuth(api_key, validateUrl);
 		if("0000".equals(result.getReturnCode())) {
-        		log.info("ruleNum is:"+result.getData().toString());
+        		if(null!=result.getData()){
         		ctx.addZuulRequestHeader("ruleNum", result.getData().toString());
+        		log.debug("------ruleNum is:"+result.getData().toString());
+        		}
         	}
         if (StringUtils.isEmpty(userId) || StringUtils.isEmpty(app)||!("0000".equals(result.getReturnCode()))) {
             	ctx.setSendZuulResponse(false);

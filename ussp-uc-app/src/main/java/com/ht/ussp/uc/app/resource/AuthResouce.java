@@ -187,7 +187,7 @@ public class AuthResouce {
 		try {
 			List<String> apiValues = redis.opsForList().range(key, 0, -1);
 			if (apiValues == null || apiValues.isEmpty()) {
-				Result.buildFail(SysStatus.NO_RESULT);
+				return Result.buildFail(SysStatus.NO_RESULT);
 			}
 			JSONArray json = JSONArray.parseArray(apiValues.get(0));
 
@@ -195,8 +195,10 @@ public class AuthResouce {
 				for (int i = 0; i < json.size(); i++) {
 					JSONObject job = json.getJSONObject(i);
 					if (url.equals(job.get("resContent"))) {
+						if(job.containsKey("ruleNum")&&!StringUtils.isEmpty(job.get("ruleNum"))) {
 						ruleNum=job.get("ruleNum").toString();
 						log.info("该api对应的规则码是："+ ruleNum);
+						}
 					return Result.buildSuccess(ruleNum);
 					}
 				}
