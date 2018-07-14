@@ -358,7 +358,11 @@ public class RoleResource {
 	@ApiOperation(value = "根据roleCode获取角色信息" )
     @RequestMapping(value = { "/getRoleInfoByCode" }, method = RequestMethod.POST)
     public Result getRoleInfoByCode(String roleCode) {
-        return Result.buildSuccess(htBoaInRoleService.findByRoleCode(roleCode));
+		List<HtBoaInRole> listHtBoaInRole = htBoaInRoleService.findByRoleCode(roleCode);
+		if(listHtBoaInRole!=null&&!listHtBoaInRole.isEmpty()) {
+			return Result.buildSuccess(listHtBoaInRole.get(0));
+		}
+        return Result.buildSuccess(null);
     }
     
 	

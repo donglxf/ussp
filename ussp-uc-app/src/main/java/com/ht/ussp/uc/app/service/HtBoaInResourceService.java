@@ -857,7 +857,7 @@ public class HtBoaInResourceService {
 						sbf.append((addHtBoaInResource.getJpaVersion() == null ? null : "'" + addHtBoaInResource.getJpaVersion() + "'") + ",");
 						sbf.append("0");
 						sbf.append(");" + enter);
-						fallbacksbf.append( "DELETE FROM  HT_BOA_IN_RESOURCE WHERE RES_CODE='" + addHtBoaInResource.getResCode() + "' AND RES_PARENT='" + addHtBoaInResource.getResParent() + "'" + " AND APP='" + addHtBoaInResource.getApp() + "'" + ";" + enter);
+						fallbacksbf.append( "DELETE FROM  HT_BOA_IN_RESOURCE WHERE RES_CODE=" + (addHtBoaInResource.getResCode() == null ? null : "'" + addHtBoaInResource.getResCode() + "'") + " AND RES_PARENT=" + (addHtBoaInResource.getResParent() == null ? null : "'" + addHtBoaInResource.getResParent() + "'") + " AND APP='" + addHtBoaInResource.getApp() + "'" + ";" + enter);
 						isAnais = true;
 					}
 				}
@@ -941,5 +941,54 @@ public class HtBoaInResourceService {
 		result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
 		return result;
 	}
+
+	// 迭代获取子节点以及资源权限
+	public List<HtBoaInResource> getSubResByResCode(String resCode) {
+		List<HtBoaInResource> listHtBoaInResource = htBoaInResourceRepository.findByResCode(resCode);
+		return getSubResByResCode(listHtBoaInResource, resCode);
+	}
+
+	public List<HtBoaInResource> getSubResByResCode(List<HtBoaInResource> listHtBoaInResource, String resCode) {
+		List<HtBoaInResource> subHtBoaInResourceList = htBoaInResourceRepository.findByResParent(resCode);
+		if(listHtBoaInResource==null) {
+			listHtBoaInResource = new ArrayList<HtBoaInResource>();
+		}
+		for(HtBoaInResource htBoaInResource : subHtBoaInResourceList) {
+			listHtBoaInResource.add(htBoaInResource);
+			getSubResByResCode(listHtBoaInResource, htBoaInResource.getResCode());
+		}
+		return listHtBoaInResource;
+	}
+	
+	public String getSubResByResCodeSql(String resCode) {
+		List<HtBoaInResource> listHtBoaInResource = getSubResByResCode(resCode);
+		StringBuffer sbf = new StringBuffer(); // 升级脚本
+		StringBuffer fallbacksbf = new StringBuffer(); // 回滚脚本
+		String enter = "\r\n";
+		if (listHtBoaInResource != null && !listHtBoaInResource.isEmpty()) {
+			sbf.append("-- 添加 " + enter);
+			fallbacksbf.append(enter+"-- 回滚添加 " + enter);
+			for (HtBoaInResource addHtBoaInResource : listHtBoaInResource) {
+				sbf.append( "INSERT INTO `HT_BOA_IN_RESOURCE` (`RES_CODE`, `RES_NAME_CN`, `SEQUENCE`, `RES_TYPE`, `RES_PARENT`, `REMARK`, `STATUS`, `RES_ICON`, `FONT_ICON`, `RES_CONTENT`, `APP`, `JPA_VERSION`, `DEL_FLAG`) VALUES (");
+				sbf.append((addHtBoaInResource.getResCode() == null ? null : "'" + addHtBoaInResource.getResCode() + "'") + ",");
+				sbf.append("'" + addHtBoaInResource.getResNameCn() + "',");
+				sbf.append((addHtBoaInResource.getSequence() == null ? null : "'" + addHtBoaInResource.getSequence() + "'") + ",");
+				sbf.append("'" + addHtBoaInResource.getResType() + "',");
+				sbf.append((addHtBoaInResource.getResParent() == null ? null : "'" + addHtBoaInResource.getResParent() + "'") + ",");
+				sbf.append("'" + addHtBoaInResource.getRemark() + "',");
+				sbf.append((addHtBoaInResource.getStatus() == null ? '0' : "'" + addHtBoaInResource.getStatus() + "'") + ",");
+				sbf.append((addHtBoaInResource.getResIcon() == null ? null : "'" + addHtBoaInResource.getResIcon() + "'") + ",");
+				sbf.append((addHtBoaInResource.getFontIcon() == null ? null : "'" + addHtBoaInResource.getFontIcon() + "'") + ",");
+				sbf.append("'" + addHtBoaInResource.getResContent() + "',");
+				sbf.append((addHtBoaInResource.getApp() == null ? null : "'" + addHtBoaInResource.getApp() + "'") + "," );
+				sbf.append((addHtBoaInResource.getJpaVersion() == null ? null : "'" + addHtBoaInResource.getJpaVersion() + "'") + ",");
+				sbf.append("0");
+				sbf.append(");" + enter);
+				fallbacksbf.append( "DELETE FROM  HT_BOA_IN_RESOURCE WHERE RES_CODE=" + (addHtBoaInResource.getResCode() == null ? null : "'" + addHtBoaInResource.getResCode() + "'") + " AND RES_PARENT=" + (addHtBoaInResource.getResParent() == null ? null : "'" + addHtBoaInResource.getResParent() + "'") + " AND APP='" + addHtBoaInResource.getApp() + "'" + ";" + enter);
+			}
+		}
+		return sbf.toString()+fallbacksbf.toString();
+	}
+	
 
 }
