@@ -179,15 +179,15 @@ public class AuthResouce {
 	 */
 	@GetMapping(value = "/IsHasAuth")
 	@ApiOperation(value = "验证资源")
-	public Boolean IsHasAuth(@RequestParam("key") String key, @RequestParam("url") String url) {
-		Boolean flag = false;
+	public Result IsHasAuth(@RequestParam("key") String key, @RequestParam("url") String url) {
+		String ruleNum=null;
 		if (LogicUtil.isNullOrEmpty(key) || LogicUtil.isNullOrEmpty(url)) {
-			return flag;
+		return Result.buildFail(SysStatus.ERROR_PARAM);
 		}
 		try {
 			List<String> apiValues = redis.opsForList().range(key, 0, -1);
 			if (apiValues == null || apiValues.isEmpty()) {
-				return flag;
+				Result.buildFail(SysStatus.NO_RESULT);
 			}
 			JSONArray json = JSONArray.parseArray(apiValues.get(0));
 
@@ -195,21 +195,19 @@ public class AuthResouce {
 				for (int i = 0; i < json.size(); i++) {
 					JSONObject job = json.getJSONObject(i);
 					if (url.equals(job.get("resContent"))) {
-						// log.info("isHasAuth:" + url.equals(job.get("resContent")));
-						flag = true;
-						return flag;
+						ruleNum=job.get("ruleNum").toString();
+						log.info("该api对应的规则码是："+ ruleNum);
+					return Result.buildSuccess(ruleNum);
 					}
 				}
 
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			return flag;
+			return Result.buildFail();
 		}
-		return flag;
+		return Result.buildSuccess();
 	}
-
-	;
 
 	/**
 	 * @return void
