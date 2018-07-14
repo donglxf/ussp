@@ -229,14 +229,13 @@ public class AccessFilter extends ZuulFilter {
         log.info("----------validate api start------------");
         // 验证api权限
         String api_key = String.format("%s:%s:%s", userId, app, "api");
-        if (StringUtils.isEmpty(userId) || StringUtils.isEmpty(app)) {
-        	Result result=roleClient.isHasAuth(api_key, validateUrl);
-        	if("0000".equals(result.getReturnCode())) {
+        Result result=roleClient.isHasAuth(api_key, validateUrl);
+		if("0000".equals(result.getReturnCode())) {
         		log.info("ruleNum is:"+result.getData().toString());
         		ctx.addZuulRequestHeader("ruleNum", result.getData().toString());
-        	}else {        	
-            ctx.setSendZuulResponse(false);
         	}
+        if (StringUtils.isEmpty(userId) || StringUtils.isEmpty(app)||!("0000".equals(result.getReturnCode()))) {
+            	ctx.setSendZuulResponse(false);
             try {
                 mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.HAS_NO_ACCESS));
             } catch (IOException e) {
