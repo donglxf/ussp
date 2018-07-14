@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.ReturnCodeEnum;
+import com.ht.ussp.uc.app.domain.HtBoaInRole;
 import com.ht.ussp.uc.app.domain.HtBoaInUserRole;
 import com.ht.ussp.uc.app.model.BoaInRoleInfo;
 import com.ht.ussp.uc.app.model.PageConf;
@@ -166,5 +167,9 @@ public class HtBoaInUserRoleService {
 	}
 	public void deleteByUserIdAndRoleCode(String userId, String roleCode) {
 		this.htBoaInUserRoleRepository.deleteByUserIdAndRoleCode(userId,roleCode);
+	}
+	
+	public List<BoaInRoleInfo> getUserRoleCodesByUserId(String userId) {
+		return this.htBoaInUserRoleRepository.getUserRoleCodesByUserId(userId);
 	}
 }

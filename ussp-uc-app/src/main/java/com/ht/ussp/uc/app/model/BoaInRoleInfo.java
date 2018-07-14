@@ -59,7 +59,7 @@ public class BoaInRoleInfo {
     Date lastModifiedDatetime;
     
     @ApiModelProperty(value = "状态", dataType = "int")
-    int delFlag;
+    Integer delFlag;
     
     @ApiModelProperty(value = "系统", dataType = "string")
     String app;
@@ -74,7 +74,7 @@ public class BoaInRoleInfo {
             String rOrgCode, String rOrgName, String rOrgNameCn,
             String rOrgType, String status, String createOperator,
             Date createdDatetime, String updateOperator,
-            Date lastModifiedDatetime,int delFlag,Long id) {
+            Date lastModifiedDatetime,Integer delFlag,Long id) {
         this.roleCode = roleCode;
         this.roleName = roleName;
         this.roleNameCn = roleNameCn;
@@ -94,7 +94,7 @@ public class BoaInRoleInfo {
     public BoaInRoleInfo(String roleCode, String roleName, String roleNameCn,
             String status, String createOperator,
             Date createdDatetime, String updateOperator,
-            Date lastModifiedDatetime,int delFlag,Long id,String app) {
+            Date lastModifiedDatetime,Integer delFlag,Long id,String app) {
         this.roleCode = roleCode;
         this.roleName = roleName;
         this.roleNameCn = roleNameCn;

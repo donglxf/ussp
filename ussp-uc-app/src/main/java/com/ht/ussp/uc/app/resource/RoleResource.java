@@ -353,4 +353,13 @@ public class RoleResource {
 		}
 		return Result.buildSuccess();
 	}
+	
+
+	@ApiOperation(value = "根据roleCode获取角色信息" )
+    @RequestMapping(value = { "/getRoleInfoByCode" }, method = RequestMethod.POST)
+    public Result getRoleInfoByCode(String roleCode) {
+        return Result.buildSuccess(htBoaInRoleService.findByRoleCode(roleCode));
+    }
+    
+	
 }
