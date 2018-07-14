@@ -51,7 +51,7 @@ public interface HtBoaInUserRoleRepository extends JpaRepository<HtBoaInUserRole
 	public void deleteByUserIdAndRoleCode(String userId, String roleCode);
 
 	@Query("SELECT new com.ht.ussp.uc.app.model.BoaInRoleInfo(u.roleCode, u.roleName, u.roleNameCn,  u.status, u.createOperator, u.createdDatetime, u.updateOperator, u.lastModifiedDatetime,ur.delFlag,ur.id,u.app) "
-			+ "FROM HtBoaInUserRole ur ,HtBoaInRole u    WHERE  ur.roleCode = u.roleCode  and ur.userId=?2 GROUP BY u")
+			+ "FROM HtBoaInUserRole ur ,HtBoaInRole u    WHERE  ur.roleCode = u.roleCode  and ur.userId=?1 GROUP BY u")
 	public List<BoaInRoleInfo> getUserRoleCodesByUserId(String userId);
 	
 	
