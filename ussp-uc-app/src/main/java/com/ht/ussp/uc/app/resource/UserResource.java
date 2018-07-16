@@ -679,10 +679,10 @@ public class UserResource{
   
     @PostMapping(value = "/getDtoUserInfo")
     public Result getDtoUserInfo(String userId,String bmuserId) {
-    	LoginInfoDto l = loginUserInfoHelper.getLoginInfo(); 
+//    	LoginInfoDto l = loginUserInfoHelper.getLoginInfo(); 
     	Result rule = loginUserInfoHelper.getRuleContent("UC_A188","","");
     	//return Result.buildSuccess(loginUserInfoHelper.getLoginInfo());
-    	return Result.buildSuccess(JSONUtils.toJSONString(l)+"  "+JSONUtils.toJSONString(rule));
+    	return Result.buildSuccess(rule);
     }
     
 }
