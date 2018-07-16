@@ -591,10 +591,14 @@ public class AuthResouce {
 			if (json.size() > 0) {
 				for (int i = 0; i < json.size(); i++) {
 					JSONObject job = json.getJSONObject(i);
+					/*System.out.println(job.get("ruleNum"));
+					if("CMP3".equals(job.get("ruleNum"))) {
+						System.out.println("");
+					}*/
 					if (ruleNum.equals(job.get("ruleNum"))) {
-						if(job.containsKey("rulucontent")&&!StringUtils.isEmpty(job.get("rulucontent"))) {
-						  log.debug("该api对应的规则码是："+ ruleNum+" rulucontent:"+job.get("rulucontent").toString());
-						  return Result.buildSuccess(job.get("rulucontent").toString());
+						if(job.containsKey("ruleContent")&&!StringUtils.isEmpty(job.get("ruleContent"))) {
+						  log.debug("该api对应的规则码是："+ ruleNum+" ruleContent:"+job.get("ruleContent").toString());
+						  return Result.buildSuccess(job.get("ruleContent").toString());
 						}
 					}
 				}
