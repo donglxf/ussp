@@ -32,6 +32,8 @@ import com.ht.ussp.uc.app.service.HtBoaInResourceService;
 import com.ht.ussp.uc.app.service.HtBoaInRoleResService;
 import com.ht.ussp.uc.app.service.HtBoaInUserAppService;
 import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
+import com.ht.ussp.uc.app.service.HtBoaInUserService;
+import com.ht.ussp.uc.app.vo.LoginInfoVo;
 import com.ht.ussp.uc.app.vo.MenuVo;
 import com.ht.ussp.uc.app.vo.ResVo;
 import com.ht.ussp.uc.app.vo.UserVo;
@@ -67,6 +69,10 @@ public class AuthResouce {
 
 	@Autowired
 	private HtBoaInUserRoleService htBoaInUserRoleService;
+	
+	@Autowired
+	private HtBoaInUserService htBoaInUserService;
+	
 
 	/**
 	 * @return ResponseModal
@@ -107,7 +113,7 @@ public class AuthResouce {
 		String menu_key = String.format("%s:%s:%s", userId, app, "menu");
 		String button_key = String.format("%s:%s:%s", userId, app, "btn");
 		String api_key = String.format("%s:%s:%s", userId, app, "api");
-
+		String userinfo_key = String.format("%s:%s:%s", userId, app, "userinfo");
 		// 管理员资源权限操作
 		// if ("Y".equals(controller)) {
 		// List<ResVo> res = htBoaInResourceService.queryResForY(res_types, app);
@@ -146,6 +152,7 @@ public class AuthResouce {
 		redis.delete(menu_key);
 		redis.delete(button_key);
 		redis.delete(api_key);
+		redis.delete(userinfo_key);
 
 		if (module_res != null && module_res.size() > 0) {
 			redis.opsForList().leftPushAll(module_key, FastJsonUtil.objectToJson(module_res));
@@ -162,9 +169,17 @@ public class AuthResouce {
 		if (api_res != null && api_res.size() > 0) {
 			redis.opsForList().leftPushAll(api_key, FastJsonUtil.objectToJson(api_res));
 		}
-
+		
+		LoginInfoVo loginInfoVo = null;
+		try {
+			loginInfoVo = htBoaInUserService.queryUserInfo(userId,app);
+			if(loginInfoVo!=null) {
+				redis.opsForList().leftPushAll(userinfo_key, FastJsonUtil.objectToJson(loginInfoVo));
+			}
+		} catch (Exception e) {
+			
+		}
 		rm.setSysStatus(SysStatus.SUCCESS);
-
 		return rm;
 
 	}

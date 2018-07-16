@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.druid.support.json.JSONUtils;
 import com.alibaba.druid.util.StringUtils;
 import com.ht.ussp.bean.LoginUserInfoHelper;
 import com.ht.ussp.client.dto.LoginInfoDto;
@@ -30,7 +30,6 @@ import com.ht.ussp.common.Constants;
 import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
-import com.ht.ussp.uc.app.domain.HtBoaInBmUser;
 import com.ht.ussp.uc.app.domain.HtBoaInContrast;
 import com.ht.ussp.uc.app.domain.HtBoaInLogin;
 import com.ht.ussp.uc.app.domain.HtBoaInPwdHist;
@@ -38,7 +37,6 @@ import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.domain.HtBoaInUserExt;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.model.SelfBoaInUserInfo;
-import com.ht.ussp.uc.app.service.HtBoaInBmUserService;
 import com.ht.ussp.uc.app.service.HtBoaInContrastService;
 import com.ht.ussp.uc.app.service.HtBoaInLoginService;
 import com.ht.ussp.uc.app.service.HtBoaInPwdHistService;
@@ -85,9 +83,9 @@ public class UserResource{
     @Autowired
    	private HtBoaInContrastService htBoaInContrastService;
     @Autowired
-    private HtBoaInBmUserService htBoaInBmUserService;
-    @Autowired
     private HtBoaInUserBusinessService htBoaInUserBusinessService;
+    @Autowired
+	protected RedisTemplate<String, String> redis;
     
     @Value(value="${bm.bmApi.apiUrl}")
     private String bmApiUrl;
@@ -465,6 +463,19 @@ public class UserResource{
     @ApiOperation(value = "对内，获取用户登录信息")
     @GetMapping(value = "/getLoginUserInfo")
     public LoginInfoVo getLoginUserInfo(@RequestParam("userId") String userId,@RequestParam("app") String app) {
+    	try {
+    		String userinfo_key = String.format("%s:%s:%s", userId, app, "userinfo");
+    		List<String> userInfos = redis.opsForList().range(userinfo_key, 0, -1);
+			if (userInfos == null || userInfos.isEmpty()) {
+				return htBoaInUserService.queryUserInfo(userId,app);
+			}
+			if(userInfos.get(0)!=null) {
+				LoginInfoVo  logininfo = JsonUtil.json2Obj(userInfos.get(0), LoginInfoVo.class);
+				return logininfo;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
         return htBoaInUserService.queryUserInfo(userId,app);
     }
     
@@ -481,55 +492,7 @@ public class UserResource{
     @ApiOperation(value = "对内，获取用户信息")
     @GetMapping(value = "/getUserInfoByUserId")
     public LoginInfoVo getUserInfoByUserId(@RequestParam("userId")String userId, @RequestParam("bmUserId")String bmUserId, @RequestParam("app") String app) {
-    	LoginInfoVo loginInfoVo = null;
-    	if(StringUtils.isEmpty(userId)||userId.length()==0||"null".equals(userId)) {
-    		List<HtBoaInContrast> listHtBoaInContrast= htBoaInContrastService.getHtBoaInContrastListByBmUserId(bmUserId,"20");
-    		if(listHtBoaInContrast==null||listHtBoaInContrast.isEmpty()) {
-    			if(!StringUtils.isEmpty(bmUserId)) {
-        			if(loginInfoVo==null) {
-        				List<HtBoaInBmUser> listHtBoaInBmUser = htBoaInBmUserService.getHtBoaInBmUserByUserId(bmUserId);
-        				//如果本地没有则连接信贷系统获取信贷用户
-        				if(listHtBoaInBmUser==null||listHtBoaInBmUser.isEmpty()) {
-        					listHtBoaInBmUser = htBoaInBmUserService.createBmUserInfo(bmUserId,bmApiUrl);
-        				}
-        				
-        				if(listHtBoaInBmUser!=null && !listHtBoaInBmUser.isEmpty()) {
-        					loginInfoVo = new LoginInfoVo();
-        					loginInfoVo.setBmOrgCode(listHtBoaInBmUser.get(0).getOrgCode());
-        					loginInfoVo.setBmUserId(bmUserId);
-        					loginInfoVo.setEmail(listHtBoaInBmUser.get(0).getEmail());
-        					loginInfoVo.setJobNumber(listHtBoaInBmUser.get(0).getJobNumber());
-        					loginInfoVo.setUserName(listHtBoaInBmUser.get(0).getUserName());
-        					loginInfoVo.setMobile(listHtBoaInBmUser.get(0).getMobile());
-        					try {//历史用户信息转存（方便贷后查询历史记录） 
-        						HtBoaInUser u = htBoaInUserService.saveBmUserInfo(listHtBoaInBmUser.get(0));
-        						if(u!=null) {
-        							loginInfoVo.setUserId(u.getUserId());
-        							loginInfoVo.setMobile(u.getMobile());
-        							HtBoaInUserExt htBoaInUserExt = new HtBoaInUserExt();
-        							htBoaInUserExt.setUserId(u.getUserId());
-        							htBoaInUserExt.setBmUserId(listHtBoaInBmUser.get(0).getUserId());
-        							htBoaInUserExt.setBusiOrgCode(listHtBoaInBmUser.get(0).getOrgCode());
-        							htBoaInUserExt.setJpaVersion(0);
-        							htBoaInUserExt.setCreatedDatetime(new Date());
-        							htBoaInUserExt.setLastModifiedDatetime(new Date());
-        							htBoaInUserService.saveHtBoaInUserExt(htBoaInUserExt);
-        							loginInfoVo = htBoaInUserService.queryUserInfo(u.getUserId(),app);
-        						}
-							} catch (Exception e) {
-								 e.printStackTrace();
-							}
-        				}
-        	    	}
-        		}
-    		}else {
-    			userId=listHtBoaInContrast.get(0).getUcBusinessId();
-    			loginInfoVo = htBoaInUserService.queryUserInfo(userId,app);
-    		}
-    	}else {
-    		loginInfoVo = htBoaInUserService.queryUserInfo(userId,app);
-    	}
-        return loginInfoVo;
+    	return htBoaInUserService.getUserInfoByUserId(userId, bmUserId, app,bmApiUrl);
     }
     
     @ApiOperation(value = "重置密码并发邮件")
@@ -679,10 +642,10 @@ public class UserResource{
   
     @PostMapping(value = "/getDtoUserInfo")
     public Result getDtoUserInfo(String userId,String bmuserId) {
-//    	LoginInfoDto l = loginUserInfoHelper.getLoginInfo(); 
-    	Result rule = loginUserInfoHelper.getRuleContent("CMP3","UC","0111110000");
+    	LoginInfoDto l = loginUserInfoHelper.getLoginInfo(); 
+    	//	Result rule = loginUserInfoHelper.getRuleContent("CMP3","UC","0111110000");
     	//return Result.buildSuccess(loginUserInfoHelper.getLoginInfo());
-    	return Result.buildSuccess(rule);
+    	return Result.buildSuccess(l);
     }
     
 }
