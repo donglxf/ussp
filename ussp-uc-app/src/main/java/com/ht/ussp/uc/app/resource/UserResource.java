@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.druid.support.json.JSONUtils;
 import com.alibaba.druid.util.StringUtils;
 import com.ht.ussp.bean.LoginUserInfoHelper;
 import com.ht.ussp.client.dto.LoginInfoDto;
@@ -679,8 +680,9 @@ public class UserResource{
     @PostMapping(value = "/getDtoUserInfo")
     public Result getDtoUserInfo(String userId,String bmuserId) {
     	LoginInfoDto l = loginUserInfoHelper.getLoginInfo(); 
+    	Result rule = loginUserInfoHelper.getRuleContent("UC_A188","","");
     	//return Result.buildSuccess(loginUserInfoHelper.getLoginInfo());
-    	return Result.buildSuccess(l);
+    	return Result.buildSuccess(JSONUtils.toJSONString(l)+"  "+JSONUtils.toJSONString(rule));
     }
     
 }

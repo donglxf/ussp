@@ -41,6 +41,9 @@ public class LoginUserInfoHelper {
     
     @Getter
     private String app;
+    
+    @Getter
+    private String ruleNum;
 
     @Autowired(required = false)
     private UCClient ucClient;
@@ -53,6 +56,11 @@ public class LoginUserInfoHelper {
     @ModelAttribute
     public void intLogin2(@RequestHeader(value = "userId", required = false) String userId) {
         this.userId = userId;
+    }
+    
+    @ModelAttribute
+    public void initRuleNum(@RequestHeader(value = "ruleNum", required = false) String ruleNum) {
+        this.ruleNum = ruleNum;
     }
 
     /**
@@ -204,4 +212,32 @@ public class LoginUserInfoHelper {
             return Result.buildFail("获取指定时间范围内更新的用户信息发生异常。",ex.getMessage());
         }
     }
+    
+    
+    /**
+     * 根据内容规则编码获取规则内容
+     * @param ruleNums 内容规则编码，如果为空则自动获取头部对应规则码
+     * @param app  系统编码
+     * @param userId 用户userId
+     * @return
+     */
+    public Result<String> getRuleContent(String ruleNums,String apps,String userid) {
+    	 if (ucClient == null) {
+             log.warn("无法获取数据规则，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
+         }
+    	 ruleNum = ruleNum==null?"":ruleNum;
+    	 ruleNums = StringUtils.isEmpty(ruleNums)?ruleNum:ruleNums;
+    	 app = app==null?"":app;
+    	 apps = StringUtils.isEmpty(apps)?app:apps;
+    	 userId = userId==null?"":ruleNum;
+    	 userid = StringUtils.isEmpty(userid)?userId:userid;
+        try {
+            return ucClient.getRuleContent(ruleNums, apps, userid);
+        } catch (Exception ex) {
+            log.error("根据内容规则编码获取规则内容异常", ex);
+            return Result.buildFail("根据内容规则编码获取规则内容",ex.getMessage());
+        }
+    }
+    
+    
 }         
