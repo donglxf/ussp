@@ -95,8 +95,9 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
     var orgTreeUrl = config.basePath +"orgbusiness/tree"; //机构列表
     var checkOrgCodeExistUrl = config.basePath +"orgbusiness/isExistOrgCode"; //校验岗位编码是否已经存在
     var getNewOrgCodeUrl = config.basePath +"orgbusiness/getNewOrgCode"; //获取OrgCode
-    var getNextChildsUrl =  config.basePath +"orgbusiness/getNextChilds"; //获取省市区
-    var getNextChildsCodeUrl =  config.basePath +"orgbusiness/getNextChildsCode"; //获取省市区
+    var getNextChildsUrl =  config.basePath +"orgbusiness/getNextChilds"; //获取省市区(本地)
+    var getNextChildsCodeUrl =  config.basePath +"orgbusiness/getNextChildsCode"; //获取省市区(参数配置中心)
+    var getProvinceUrl = config.basePath +"orgbusiness/getProvince"; //获取省市区(参数配置中心)
     //自定义验证规则
 	form.verify({
 		  //校验编码是否已经存在
