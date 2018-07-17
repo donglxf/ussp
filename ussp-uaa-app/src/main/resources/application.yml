@@ -1,6 +1,9 @@
 server:
   port: 30136
 
+spring:
+  jackson:
+    time-zone: Asia/Chongqing
 
 #鉴权参数
 uaa:
@@ -8,7 +11,7 @@ uaa:
     jwt:
       tokenExpirationTime: 30  #内部应用token失效时间    单位：分钟
       refreshTokenExpTime: 720  #内部应用刷新token失效时间,单位：分钟  12小时
-      appTokenTime: 365000 #天，系统级鉴权token失效时间
+      appTokenTime: 365 #天，系统级鉴权token失效时间
       tokenIssuer: qiuwenwu@hongte.info
       tokenSigningKey: xm8EV6Hy5RMFK4EEACIDAwQus
       outUserTokenTime: 1000  #外部用户token失效时间  单位：年，目前主要针对鸿特金服APP的需求
@@ -40,8 +43,4 @@ ribbon:
   ConnectTimeout: 10000
   MaxAutoRetries: 0
   MaxAutoRetriesNextServer: 1
-  ServerListRefreshInterval: 1000
-  
-management: 
-  security:
-    enabled: false
+  ServerListRefreshInterval: 1000 
