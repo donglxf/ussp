@@ -55,9 +55,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
                             $("input[name=businessOrgCode]", layero).val(result);
                         }
                     });
-                    //getNextChilds("province",null,layero);
-                    //获取省份信息
-                    getEditInitParams("province");
+                    getNextChilds("province",null,layero);
                     formOnSelect(layero);
                     form.render(null, "filter_add_organization_busi_form");
                     form.on('submit(filter_add_organization_busi_form)', function (data) {
@@ -95,9 +93,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
     var orgTreeUrl = config.basePath +"orgbusiness/tree"; //机构列表
     var checkOrgCodeExistUrl = config.basePath +"orgbusiness/isExistOrgCode"; //校验岗位编码是否已经存在
     var getNewOrgCodeUrl = config.basePath +"orgbusiness/getNewOrgCode"; //获取OrgCode
-    var getNextChildsUrl =  config.basePath +"orgbusiness/getNextChilds"; //获取省市区(本地)
-    var getNextChildsCodeUrl =  config.basePath +"orgbusiness/getNextChildsCode"; //获取省市区(参数配置中心)
-    var getProvinceUrl = config.basePath +"orgbusiness/getProvince"; //获取省市区(参数配置中心)
+    var getNextChildsUrl =  config.basePath +"orgbusiness/getNextChilds"; //获取省市区
     //自定义验证规则
 	form.verify({
 		  //校验编码是否已经存在
@@ -354,19 +350,13 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
         });
     };
     var getNextChilds = function (typeCode,parentId, layeros,defaultValue) {
-        /*var dto = {
+        var dto = {
             typeCode:typeCode,
             parentId:parentId
-        };*/
-        var dto = {
-                typeCode:typeCode+"Code",
-                version:"latest",
-                valCode:parentId
-            };
+        };
         $.ajax({
             type: "POST",
-//            url: getNextChildsUrl,
-            url: getNextChildsCodeUrl,
+            url: getNextChildsUrl,
             contentType: "application/json; charset=utf-8",
             data:JSON.stringify(dto),
             success: function (result) {
@@ -391,12 +381,10 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
     };
     
     var getEditInitParams = function(type, parentValue, defaultValue){
-    	var typeCode = type+"Code";
     	if(!parentValue){
     		$.ajax({
                 type: "GET",
-                //url: getProvinceUrl+"?typeCode="+type,
-                url: getProvinceUrl+"?typeCode="+typeCode,
+                url: getProvinceUrl+"?typeCode="+type,
                 success: function (result) {
                 	$('#'+type).html('<option value>请选择</option>');
                     if (result.returnCode == '0000') {
