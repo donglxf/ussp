@@ -236,9 +236,9 @@ public class HtBoaInResourceService {
 					}
 				}
 				if(ruleNumList!=null&&!ruleNumList.isEmpty()) {
-					ruleNumList.add("CMP3");
+/*					ruleNumList.add("CMP3");
 					userId = "0111200805";
-					//获取数据权限规则
+*/					//获取数据权限规则
 					Map<String, Object> paramter = new HashMap<String, Object>();
 			    	paramter.put("ruleNums", ruleNumList);
 			    	paramter.put("userId", userId);

@@ -14,9 +14,10 @@ eureka:
     prefer-ip-address: true
     lease-expiration-duration-in-seconds: 1
     lease-renewal-interval-in-seconds: 1
-  client:
+  client: 
     healthcheck:
       enabled: true
+
 
 ---
 spring:
@@ -26,13 +27,21 @@ spring:
       enabled: false
     bus:
       enabled: false
+  zipkin:
+    base-url: http://localhost:9999/
+  sleuth:
+    sampler:
+      percentage: 1.0
+  rabbitmq:
+    host: 172.16.200.111
+    port: 5672
+    username: admin
+    password: hongte888
+    virtual-host: /
 eureka:
   client:
     serviceUrl:
       defaultZone: ${EUREKA_SERVER_ADDRESS:http://localhost:30101/eureka/}
-  instance: 
-    secure-health-check-url: http://localhost:30136/actuator/health
-    health-check-url: http://localhost:30136/actuator/health
 
 ---
 spring:

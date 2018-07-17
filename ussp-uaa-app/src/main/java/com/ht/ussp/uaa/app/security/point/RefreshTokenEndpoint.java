@@ -158,8 +158,8 @@ public class RefreshTokenEndpoint {
 
 	@RequestMapping(value = "/hello")
 	public String hello() {
-		System.out.println("----hello");
-		return "hello";
+		log.info("----------hello");
+		return "hello2";
 
 	}
 }

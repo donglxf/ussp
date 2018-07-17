@@ -10,7 +10,9 @@
 package com.ht.ussp.uc.app.resource;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,7 @@ import com.ht.ussp.core.Result;
 import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInBusinessOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInUserExt;
+import com.ht.ussp.uc.app.feignclients.PccRemoteClient;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.service.HtBoaInOrgBusinessService;
@@ -53,12 +56,13 @@ import lombok.extern.log4j.Log4j2;
 public class OrgBusinessResource {
     @Autowired
     private HtBoaInOrgBusinessService htBoaInOrgBusinessService;
-    
     @Autowired
     private HtBoaInUserBusinessService htBoaInUserBusinessService;
-
     @Autowired
     private HtBoaInUserService htBoaInUserService;
+    @Autowired
+    private PccRemoteClient pccRemoteClient;
+    
 
     @PostMapping(value = "/tree", produces = {"application/json"})
     public List<HtBoaInBusinessOrg> getOrgTreeList(String parenOrgCode) {
@@ -334,4 +338,24 @@ public class OrgBusinessResource {
        return Result.buildSuccess(htBoaInOrgBusinessService.getNextChilds(nextChildDto));
     }
  
+    /**
+	 * 获取省份下拉列表
+	 * @return
+	 */
+	@ApiOperation(value = "获取省市区信息")
+	@GetMapping(value = "/getProvince", produces = { "application/json" })
+	public Result getProvince(@RequestParam("typeCode") String typeCode){
+		Map<String,Object> params = new HashMap<>();
+		params.put("typeCode",typeCode);
+		params.put("version","latest");
+		return  pccRemoteClient.getProvince(params);
+	}
+
+	@ApiOperation(value = "获取省市区信息")
+	@PostMapping(value = "/getNextChildsCode",produces = { "application/json" })
+	public Result getNextChildsCode(@RequestBody NextChildDto dto){
+		Result result = pccRemoteClient.getNextChildres(dto);
+		return result;
+	}
+
 }

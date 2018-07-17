@@ -13,8 +13,8 @@ eureka:
     prefer-ip-address: true
   server:
     enable-self-preservation: false  #关闭保护机制，以确保注册中心将不可用的实例正确剔除
-    eviction-interval-timer-in-ms: 2000
-    response-cache-update-interval-ms: 2000
+    eviction-interval-timer-in-ms: 10000
+    response-cache-update-interval-ms: 10000
   client:
     register-with-eureka: false
     fetch-registry: false

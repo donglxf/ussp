@@ -1,9 +1,6 @@
 server:
   port: 30136
 
-spring:
-  jackson:
-    time-zone: Asia/Chongqing
 
 #鉴权参数
 uaa:
@@ -45,3 +42,23 @@ ribbon:
   MaxAutoRetriesNextServer: 1
   ServerListRefreshInterval: 1000
   
+management: 
+  security:
+    enabled: false
+
+spring: 
+  jackson:
+    time-zone: Asia/Chongqing
+  boot:
+    admin:
+      url: http://localhost:30136
+info:
+  name: client
+  description: uaaDescription
+  version: v1.0
+endpoints:
+  trace:
+    enabled: true
+    sensitive: false
+    
+    

@@ -10,7 +10,7 @@ spring:
     bus:
       enabled: false
   profiles:
-    active: local
+    active: dev
 eureka:
   instance:
     prefer-ip-address: true

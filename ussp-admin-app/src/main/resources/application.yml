@@ -20,3 +20,7 @@ eureka:
 management: 
   security:
     enabled: false
+
+info:
+  version:@project.version@
+        
