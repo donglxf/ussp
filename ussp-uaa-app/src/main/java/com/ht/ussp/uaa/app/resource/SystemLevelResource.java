@@ -93,7 +93,7 @@ public class SystemLevelResource {
 				.setIssuedAt(Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant()))
 				.setExpiration(Date.from(
 						currentTime.plusDays(jwtSettings.getAppTokenTime()).atZone(ZoneId.systemDefault()).toInstant()))
-				.signWith(SignatureAlgorithm.HS512, jwtSettings.getTokenSigningKey()).compact();
+				.signWith(SignatureAlgorithm.HS256, jwtSettings.getTokenSigningKey()).compact();
 		log.info(app + "'s token has created:" + token);
 		return new AccessJwtToken(token, claims);
 
