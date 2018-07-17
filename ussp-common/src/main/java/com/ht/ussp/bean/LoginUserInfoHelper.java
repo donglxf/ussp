@@ -53,7 +53,7 @@ public class LoginUserInfoHelper {
 	@ModelAttribute
 	public void intLogin2(@RequestHeader(value = "userId", required = false) String userId) {
 
-		if (null != userId && userId.length() <= 0) {
+		if (null != userId && userId.length() > 0) {
 			this.userId = userId;
 		}
 	}
