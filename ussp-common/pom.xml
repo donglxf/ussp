@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.ht.ussp</groupId>
 	<artifactId>ussp-common</artifactId>
-	<version>0.0.31</version>
+	<version>20180717-snapshot</version>
 	<name>统一服务工具包</name>
 	<packaging>jar</packaging>
  	<!-- <properties>  
