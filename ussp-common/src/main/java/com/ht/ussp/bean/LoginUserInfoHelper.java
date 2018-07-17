@@ -36,92 +36,94 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @ControllerAdvice
 public class LoginUserInfoHelper {
-    @Getter
-    private String userId;
-    
-    @Getter
-    private String app;
+	@Getter
+	private String userId;
 
-    @Autowired(required = false)
-    private UCClient ucClient;
+	@Getter
+	private String app;
 
-    @ModelAttribute
-    public void intLogin(@RequestHeader(value = "app", required = false) String app) {
-        this.app = app;
-    }
- 
-    @ModelAttribute
-    public void intLogin2(@RequestHeader(value = "userId", required = false) String userId) {
-        this.userId = userId;
-    }
+	@Autowired(required = false)
+	private UCClient ucClient;
 
-    /**
-     * 获取用户登录信息<br>
-     *
-     * @author 谭荣巧
-     * @Date 2018/1/31 10:41
-     */
-    public LoginInfoDto getLoginInfo() {
-        if (StringUtils.isEmpty(userId)) {
-            return null;
-        }
-        if (ucClient == null) {
-            log.warn("无法获取用户登录信息，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
-        }
-        try {
-            return ucClient.getLoginUserInfo(userId,app);
-        } catch (Exception ex) {
-            log.error("获取登录信息发生异常。", ex);
-            return null;
-        }
-    }
-    
-    /**
-     * 获取当前用户所有权限信息
-     * 资源类型枚举值：ResTypeEnum.RES_TYPE_API.getReturnCode()
-     * @return
-     */
-    public List<ResDto> getUserResouce(String resType) {
-        if (StringUtils.isEmpty(userId)) {
-            return null;
-        }
-        if (ucClient == null) {
-            log.warn("无法获取当前用户所有权限信息，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
-        }
-        try {
-            return ucClient.getUserResouce(userId, resType, app);
-        } catch (Exception ex) {
-            log.error("获取当前用户所有权限信息发生异常。", ex);
-            return null;
-        }
-    }
-    
-    /**
-     * 获取当前用户所有角色信息
-     * @return
-     */
-    public List<BoaInRoleInfoDto>  getUserRole() {
-        if (StringUtils.isEmpty(userId)) {
-            return null;
-        }
-        if (ucClient == null) {
-            log.warn("无法获取当前用户所有角色信息，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
-        }
-        try {
-            return ucClient.getUserRole(userId);
-        } catch (Exception ex) {
-            log.error(" 获取当前用户所有角色信息发生异常。", ex);
-            return null;
-        }
-    }
-    
+	@ModelAttribute
+	public void intLogin(@RequestHeader(value = "app", required = false) String app) {
+		this.app = app;
+	}
 
-    /**
-     * 根据userId获取用户信息
-     * @param userId 若为空则根据bmUserId查询
-     * @param bmUserId 若userId不为空则按userId查询,userId为空则根据bmUserId查询,
-     * @return
-     */
+	@ModelAttribute
+	public void intLogin2(@RequestHeader(value = "userId", required = false) String userId) {
+
+		if (null != userId && userId.length() >0) {
+			this.userId = userId;
+		}
+	}
+
+	/**
+	 * 获取用户登录信息<br>
+	 *
+	 * @author 谭荣巧
+	 * @Date 2018/1/31 10:41
+	 */
+	public LoginInfoDto getLoginInfo() {
+		if (StringUtils.isEmpty(userId)) {
+			return null;
+		}
+		if (ucClient == null) {
+			log.warn("无法获取用户登录信息，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
+		}
+		try {
+			return ucClient.getLoginUserInfo(userId, app);
+		} catch (Exception ex) {
+			log.error("获取登录信息发生异常。", ex);
+			return null;
+		}
+	}
+
+	/**
+	 * 获取当前用户所有权限信息
+	 * 资源类型枚举值：ResTypeEnum.RES_TYPE_API.getReturnCode()
+	 * @return
+	 */
+	public List<ResDto> getUserResouce(String resType) {
+		if (StringUtils.isEmpty(userId)) {
+			return null;
+		}
+		if (ucClient == null) {
+			log.warn("无法获取当前用户所有权限信息，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
+		}
+		try {
+			return ucClient.getUserResouce(userId, resType, app);
+		} catch (Exception ex) {
+			log.error("获取当前用户所有权限信息发生异常。", ex);
+			return null;
+		}
+	}
+
+	/**
+	 * 获取当前用户所有角色信息
+	 * @return
+	 */
+	public List<BoaInRoleInfoDto> getUserRole() {
+		if (StringUtils.isEmpty(userId)) {
+			return null;
+		}
+		if (ucClient == null) {
+			log.warn("无法获取当前用户所有角色信息，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
+		}
+		try {
+			return ucClient.getUserRole(userId);
+		} catch (Exception ex) {
+			log.error(" 获取当前用户所有角色信息发生异常。", ex);
+			return null;
+		}
+	}
+
+	/**
+	 * 根据userId获取用户信息
+	 * @param userId 若为空则根据bmUserId查询
+	 * @param bmUserId 若userId不为空则按userId查询,userId为空则根据bmUserId查询,
+	 * @return
+	 */
 	public LoginInfoDto getUserInfoByUserId(String userId, String bmUserId) {
 		if (ucClient == null) {
 			log.warn("无法获取用户信息，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
@@ -130,78 +132,78 @@ public class LoginUserInfoHelper {
 			userId = userId == null ? "" : userId;
 			bmUserId = bmUserId == null ? "" : bmUserId;
 			app = app == null ? "" : app;
-			return ucClient.getUserInfoByUserId(userId, bmUserId,app);
+			return ucClient.getUserInfoByUserId(userId, bmUserId, app);
 		} catch (Exception ex) {
 			log.error("获取登录信息发生异常。", ex);
 			return null;
 		}
 	}
-    
-	
+
 	/**
-     * 获取用户所有权限信息
-     * 资源类型枚举值：ResTypeEnum.RES_TYPE_API.getReturnCode()
-     * @return
-     */
-    public List<ResDto> getUserResouces(String resType,String userIds) {
-        if (ucClient == null) {
-            log.warn("无法获取当前用户所有权限信息，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
-        }
-        userIds = (StringUtils.isEmpty(userIds))?userId:userIds;
-        try {
-            return ucClient.getUserResouce(userIds, resType, app);
-        } catch (Exception ex) {
-            log.error("获取当前用户所有权限信息发生异常。", ex);
-            return null;
-        }
-    }
-    
-    /**
-     * 获取用户所有角色信息
-     * @return
-     */
-    public List<BoaInRoleInfoDto> getUserRoles(String userIds) {
-        if (ucClient == null) {
-            log.warn("无法获取当前用户所有角色信息，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
-        }
-        userIds = (StringUtils.isEmpty(userIds))?"":userIds;
-        try {
-            return ucClient.getUserRole(userIds);
-        } catch (Exception ex) {
-            log.error(" 获取当前用户所有角色信息发生异常。", ex);
-            return null;
-        }
-    }
-	
-    /**
-     * 获取指定时间范围内更新的用户信息<br>
-     * startTime YYYY-MM-dd HH:mm:ss
-     * endTime YYYY-MM-dd HH:mm:ss
-     */
-    public List<LoginInfoDto> getUserListByTime(String startTime,String endTime) {
-        if (ucClient == null) {
-            log.warn("无法获取指定时间范围内更新的用户信息，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
-        }
-        try {
-            return ucClient.getUserListByTime(startTime,endTime);
-        } catch (Exception ex) {
-            log.error("获取指定时间范围内更新的用户信息发生异常。", ex);
-            return null;
-        }
-    }
-    
-    /**
-     * 获取所有用户系统
-     * @param startTime
-     * @param endTime
-     * @return
-     */
-    public Result getAllApp() {
-        try {
-            return ucClient.getAllApp();
-        } catch (Exception ex) {
-            log.error("获取指定时间范围内更新的用户信息发生异常。", ex);
-            return Result.buildFail("获取指定时间范围内更新的用户信息发生异常。",ex.getMessage());
-        }
-    }
-}         
+	 * 获取用户所有权限信息
+	 * 资源类型枚举值：ResTypeEnum.RES_TYPE_API.getReturnCode()
+	 * @return
+	 */
+	public List<ResDto> getUserResouces(String resType, String userIds) {
+		if (ucClient == null) {
+			log.warn("无法获取当前用户所有权限信息，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
+		}
+		userIds = (StringUtils.isEmpty(userIds)) ? userId : userIds;
+		try {
+			return ucClient.getUserResouce(userIds, resType, app);
+		} catch (Exception ex) {
+			log.error("获取当前用户所有权限信息发生异常。", ex);
+			return null;
+		}
+	}
+
+	/**
+	 * 获取用户所有角色信息
+	 * @return
+	 */
+	public List<BoaInRoleInfoDto> getUserRoles(String userIds) {
+		if (ucClient == null) {
+			log.warn("无法获取当前用户所有角色信息，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
+		}
+		userIds = (StringUtils.isEmpty(userIds)) ? "" : userIds;
+		try {
+			return ucClient.getUserRole(userIds);
+		} catch (Exception ex) {
+			log.error(" 获取当前用户所有角色信息发生异常。", ex);
+			return null;
+		}
+	}
+
+	/**
+	 * 获取指定时间范围内更新的用户信息<br>
+	 * startTime YYYY-MM-dd HH:mm:ss
+	 * endTime YYYY-MM-dd HH:mm:ss
+	 */
+	public List<LoginInfoDto> getUserListByTime(String startTime, String endTime) {
+		if (ucClient == null) {
+			log.warn(
+					"无法获取指定时间范围内更新的用户信息，可能没有启用Fegin组件，启用后，请在@EnableFeignClients加入basePackages = {\"com.ht.ussp.client\"}");
+		}
+		try {
+			return ucClient.getUserListByTime(startTime, endTime);
+		} catch (Exception ex) {
+			log.error("获取指定时间范围内更新的用户信息发生异常。", ex);
+			return null;
+		}
+	}
+
+	/**
+	 * 获取所有用户系统
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
+	public Result getAllApp() {
+		try {
+			return ucClient.getAllApp();
+		} catch (Exception ex) {
+			log.error("获取指定时间范围内更新的用户信息发生异常。", ex);
+			return Result.buildFail("获取指定时间范围内更新的用户信息发生异常。", ex.getMessage());
+		}
+	}
+}
