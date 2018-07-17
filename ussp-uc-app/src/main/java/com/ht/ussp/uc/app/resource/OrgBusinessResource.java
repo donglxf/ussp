@@ -31,8 +31,10 @@ import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInBusinessOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInUserExt;
 import com.ht.ussp.uc.app.feignclients.PccRemoteClient;
+import com.ht.ussp.uc.app.model.BoaInBusiOrgInfo;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
+import com.ht.ussp.uc.app.service.HtBoaInCompanyService;
 import com.ht.ussp.uc.app.service.HtBoaInOrgBusinessService;
 import com.ht.ussp.uc.app.service.HtBoaInUserBusinessService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
@@ -62,7 +64,8 @@ public class OrgBusinessResource {
     private HtBoaInUserService htBoaInUserService;
     @Autowired
     private PccRemoteClient pccRemoteClient;
-    
+    @Autowired
+    private HtBoaInCompanyService htBoaInCompanyService;
 
     @PostMapping(value = "/tree", produces = {"application/json"})
     public List<HtBoaInBusinessOrg> getOrgTreeList(String parenOrgCode) {
@@ -357,5 +360,13 @@ public class OrgBusinessResource {
 		Result result = pccRemoteClient.getNextChildres(dto);
 		return result;
 	}
+	
+	@ApiOperation(value = "获取分公司详细信息")
+	@PostMapping(value = "/company/getCompnayInfo",produces = { "application/json" })
+	public Result getCompnayInfo(@RequestParam("branchCode")String branchCode){
+		List<BoaInBusiOrgInfo> result = htBoaInCompanyService.getCompnayInfo(branchCode);
+		return Result.buildSuccess(result);
+	} 
+	
 
 }

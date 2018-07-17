@@ -11,8 +11,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.persistence.criteria.Predicate;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +32,7 @@ import com.ht.ussp.uc.app.domain.HtBoaInBusinessOrg;
 import com.ht.ussp.uc.app.domain.HtBoaInContrast;
 import com.ht.ussp.uc.app.domain.Tareas;
 import com.ht.ussp.uc.app.domain.TbDepartment;
+import com.ht.ussp.uc.app.model.BoaInBusiOrgInfo;
 import com.ht.ussp.uc.app.model.BoaInOrgInfo;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.repository.HtBoaInContrastRepository;
@@ -104,32 +103,34 @@ public class HtBoaInOrgBusinessService {
         if (query != null && query.size() > 0 && query.get("keyWord") != null) {
         	keyWord = query.get("keyWord");
         }
-
         String orgCodeSp = orgCode;
         String keyWordSp = keyWord == null?"":keyWord;
         if (null != pageable) {
-            PageResult result = new PageResult();
+        	PageResult result = new PageResult();
     		Specification<HtBoaInBusinessOrg> specification = null;
+    		Page<BoaInBusiOrgInfo> pageData = null;
     		
     		if(StringUtils.isNotEmpty(orgCodeSp)) {
-    			specification = (root, query1, cb) -> {
+    			pageData= htBoaInOrgBusinessRepository.listCompnayInfoByPageWebByParent(pageable, keyWord, orgCodeSp);
+    			/*specification = (root, query1, cb) -> {
         			Predicate p1 = cb.like(root.get("businessOrgName").as(String.class), "%" + keyWordSp + "%");
         			Predicate p2 = cb.like(root.get("businessOrgCode").as(String.class), "%" + keyWordSp + "%" );
         			Predicate p3 = cb.equal(root.get("parentOrgCode").as(String.class),   orgCodeSp );
         			// 把Predicate应用到CriteriaQuery中去,因为还可以给CriteriaQuery添加其他的功能，比如排序、分组啥的
         			query1.where(cb.and(cb.or(p1, p2),p3));
         			return query1.getRestriction();
-    			};
+    			};*/
     		}else {
-    			specification = (root, query1, cb) -> {
+    			pageData = htBoaInOrgBusinessRepository.listCompnayInfoByPageWeb(pageable, keyWord);
+    			/*specification = (root, query1, cb) -> {
         			Predicate p1 = cb.like(root.get("businessOrgName").as(String.class), "%" + keyWordSp + "%");
         			Predicate p2 = cb.like(root.get("businessOrgCode").as(String.class), "%" + keyWordSp + "%" );
         			// 把Predicate应用到CriteriaQuery中去,因为还可以给CriteriaQuery添加其他的功能，比如排序、分组啥的
         			query1.where(cb.or(p1, p2));
         			return query1.getRestriction();
-    			};
+    			};*/
     		}
-    		Page<HtBoaInBusinessOrg> pageData = htBoaInOrgBusinessRepository.findAll(specification, pageable);
+    		//Page<HtBoaInBusinessOrg> pageData = htBoaInOrgBusinessRepository.findAll(specification, pageable);
     		if (pageData != null) {
     			result.count(pageData.getTotalElements()).data(pageData.getContent());
     		}
@@ -560,12 +561,13 @@ public class HtBoaInOrgBusinessService {
 			}
 			if(tbDepartment!=null) {
 				htBoaInBusinessOrg.setDeptAddress(tbDepartment.getBranchAddress());
-				htBoaInBusinessOrg.setBranchNameContract(tbDepartment.getBranchName());
+				/*htBoaInBusinessOrg.setBranchNameContract(tbDepartment.getBranchName());
 				htBoaInBusinessOrg.setBranchAddressContract(tbDepartment.getBranchAddress());
 				htBoaInBusinessOrg.setBranchPledgeEmailContract(tbDepartment.getBranchPledgeEmail());
 				htBoaInBusinessOrg.setDeptTel(tbDepartment.getBranchTelephone()); //联系电话
 				htBoaInBusinessOrg.setBranchPhoneContract(tbDepartment.getPhone());//电话（合同）
 				htBoaInBusinessOrg.setBusinessPhone(tbDepartment.getBusinessPhone());//客服电话
+*/				
 				if("2".equals(state)&&htBoaInBusinessOrg.getOrgLevel()==60&& StringUtils.isEmpty(htBoaInBusinessOrg.getProvince())&&StringUtils.isEmpty(htBoaInBusinessOrg.getCity())&&StringUtils.isNotEmpty(htBoaInBusinessOrg.getBusinessOrgName())) {
 					String c = htBoaInBusinessOrg.getBusinessOrgName().substring(0, htBoaInBusinessOrg.getBusinessOrgName().indexOf("分公司"));
 					htBoaInBusinessOrg.setCity(c);
