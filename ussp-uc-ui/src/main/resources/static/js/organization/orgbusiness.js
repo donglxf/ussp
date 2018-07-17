@@ -360,7 +360,7 @@ layui.use(['form', 'ztree', 'table','ht_config', 'ht_auth', ], function () {
         var dto = {
                 typeCode:typeCode+"Code",
                 version:"latest",
-                valCode:valCode
+                valCode:parentId
             };
         $.ajax({
             type: "POST",
