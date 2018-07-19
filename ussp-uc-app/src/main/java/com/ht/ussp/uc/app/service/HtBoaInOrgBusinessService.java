@@ -110,8 +110,8 @@ public class HtBoaInOrgBusinessService {
     		Specification<HtBoaInBusinessOrg> specification = null;
     		Page<BoaInBusiOrgInfo> pageData = null;
     		
-    		if(StringUtils.isNotEmpty(orgCodeSp)) {
-    			pageData= htBoaInOrgBusinessRepository.listCompnayInfoByPageWebByParent(pageable, keyWord, orgCodeSp);
+//    		if(StringUtils.isNotEmpty(orgCodeSp)) {
+//    			pageData= htBoaInOrgBusinessRepository.listCompnayInfoByPageWebByParent(pageable, keyWord, orgCodeSp);
     			/*specification = (root, query1, cb) -> {
         			Predicate p1 = cb.like(root.get("businessOrgName").as(String.class), "%" + keyWordSp + "%");
         			Predicate p2 = cb.like(root.get("businessOrgCode").as(String.class), "%" + keyWordSp + "%" );
@@ -120,8 +120,8 @@ public class HtBoaInOrgBusinessService {
         			query1.where(cb.and(cb.or(p1, p2),p3));
         			return query1.getRestriction();
     			};*/
-    		}else {
-    			pageData = htBoaInOrgBusinessRepository.listCompnayInfoByPageWeb(pageable, keyWord);
+//    		}else {
+//    			pageData = htBoaInOrgBusinessRepository.listCompnayInfoByPageWeb(pageable, keyWord);
     			/*specification = (root, query1, cb) -> {
         			Predicate p1 = cb.like(root.get("businessOrgName").as(String.class), "%" + keyWordSp + "%");
         			Predicate p2 = cb.like(root.get("businessOrgCode").as(String.class), "%" + keyWordSp + "%" );
@@ -129,7 +129,7 @@ public class HtBoaInOrgBusinessService {
         			query1.where(cb.or(p1, p2));
         			return query1.getRestriction();
     			};*/
-    		}
+//    		}
     		//Page<HtBoaInBusinessOrg> pageData = htBoaInOrgBusinessRepository.findAll(specification, pageable);
     		if (pageData != null) {
     			result.count(pageData.getTotalElements()).data(pageData.getContent());

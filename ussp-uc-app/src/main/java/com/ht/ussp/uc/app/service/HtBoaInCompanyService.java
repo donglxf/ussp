@@ -6,16 +6,35 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ht.ussp.uc.app.domain.HtBoaInCompany;
-import com.ht.ussp.uc.app.model.BoaInBusiOrgInfo;
+import com.ht.ussp.uc.app.dto.HtBoaInCompanyDTO;
 import com.ht.ussp.uc.app.repository.HtBoaInCompanyRepository;
+import com.ht.ussp.uc.app.repository.HtBoaInUserBusinessRepository;
+import com.ht.ussp.uc.app.repository.HtBoaInUserExtRepository;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
+
+/**
+ * 
+ * @ClassName: HtBoaInCompanyService
+ * @Description: 公司信息服务层
+ * @author wim qiuwenwu@hongte.info
+ * @date 2018年7月19日 下午6:23:13
+ */
 @Service
 public class HtBoaInCompanyService {
 
 	@Autowired
 	private HtBoaInCompanyRepository htBoaInCompanyRepository;
+
+	@Autowired
+	private HtBoaInUserExtRepository htBoaInUserExtRepository;
+	
+	@Autowired
+	private HtBoaInUserBusinessRepository htBoaInUserBusinessRepository;
 
 	public List<HtBoaInCompany> findAll(HtBoaInCompany u) {
 		ExampleMatcher matcher = ExampleMatcher.matching();
@@ -35,8 +54,34 @@ public class HtBoaInCompanyService {
 		return this.htBoaInCompanyRepository.save(u);
 	}
 
-	public List<BoaInBusiOrgInfo> getCompnayInfo(String branchCode) {
-		return htBoaInCompanyRepository.listCompnayInfo(branchCode);
+	// public List<BoaInBusiOrgInfo> getCompnayInfo(String branchCode) {
+	// return htBoaInCompanyRepository.listCompnayInfo(branchCode);
+	// }
+
+	// 通过公司机构码获取公司详情
+	public HtBoaInCompany findByCompanyCode(String companyCode) {
+		return htBoaInCompanyRepository.findByCompanyCode(companyCode);
 	}
 
+	// 通过userId获取用户业务机构
+	public String getBusinessOrgCode(String userId) {
+		return htBoaInUserExtRepository.getBusinessOrgCode(userId);
+	}
+	
+	//通过业务机构码获取分公司编码
+	public String getBranchCode(String busiOrgCode) {
+		return htBoaInUserBusinessRepository.getBranchCode(busiOrgCode);
+	}
+	
+	//修改分公司信息
+	@Transactional(rollbackFor = Exception.class)
+	public void updateCompanyInfo(HtBoaInCompanyDTO htBoaInCompanyDTO,String userId) {
+		HtBoaInCompany htBoaInCompanyOld=htBoaInCompanyRepository.findByCompanyCode(htBoaInCompanyDTO.getCompanyCode());
+		htBoaInCompanyOld.setUpdateOperator(userId);
+		BeanUtil.copyProperties(htBoaInCompanyDTO,htBoaInCompanyOld, new CopyOptions() {{
+            setIgnoreNullValue(true);
+        }});
+		htBoaInCompanyRepository.save(htBoaInCompanyOld);
+	}
+	
 }

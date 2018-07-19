@@ -14,11 +14,23 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
+
 import lombok.Data;
 
+/**
+ * 
+ * @ClassName: HtBoaInCompany
+ * @Description: 公司实体类
+ * @author wim qiuwenwu@hongte.info
+ * @date 2018年7月19日 下午7:49:54
+ */
 @Data
 @Entity
 @Table(name="HT_BOA_IN_COMPANY")
+@DynamicUpdate(true)
+@SelectBeforeUpdate(true)
 @NamedQuery(name="HtBoaInCompany.findAll", query="SELECT h FROM HtBoaInCompany h")
 public class HtBoaInCompany implements Serializable {
 	private static final long serialVersionUID = 1L;

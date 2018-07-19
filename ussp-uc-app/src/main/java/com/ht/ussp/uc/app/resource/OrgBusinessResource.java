@@ -361,12 +361,12 @@ public class OrgBusinessResource {
 		return result;
 	}
 	
-	@ApiOperation(value = "获取分公司详细信息")
-	@PostMapping(value = "/company/getCompnayInfo",produces = { "application/json" })
-	public Result getCompnayInfo(@RequestParam("branchCode")String branchCode){
-		List<BoaInBusiOrgInfo> result = htBoaInCompanyService.getCompnayInfo(branchCode);
-		return Result.buildSuccess(result);
-	} 
+//	@ApiOperation(value = "获取分公司详细信息")
+//	@PostMapping(value = "/company/getCompnayInfo",produces = { "application/json" })
+//	public Result getCompnayInfo(@RequestParam("branchCode")String branchCode){
+//		List<BoaInBusiOrgInfo> result = htBoaInCompanyService.getCompnayInfo(branchCode);
+//		return Result.buildSuccess(result);
+//	} 
 	
 
 }
