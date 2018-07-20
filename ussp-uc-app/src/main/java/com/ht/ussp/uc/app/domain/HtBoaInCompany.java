@@ -29,8 +29,8 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name="HT_BOA_IN_COMPANY")
-@DynamicUpdate(true)
-@SelectBeforeUpdate(true)
+//@DynamicUpdate(true)
+//@SelectBeforeUpdate(true)
 @NamedQuery(name="HtBoaInCompany.findAll", query="SELECT h FROM HtBoaInCompany h")
 public class HtBoaInCompany implements Serializable {
 	private static final long serialVersionUID = 1L;

@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.core.Result;
-import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInCompany;
 import com.ht.ussp.uc.app.dto.HtBoaInCompanyDTO;
 import com.ht.ussp.uc.app.repository.HtBoaInCompanyRepository;

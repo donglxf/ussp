@@ -1,8 +1,6 @@
 package com.ht.ussp.uc.app.resource;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInCompany;
+import com.ht.ussp.uc.app.domain.HtBoaInCompanyAccount;
+import com.ht.ussp.uc.app.dto.HtBoaInCompanyAccountDTO;
 import com.ht.ussp.uc.app.dto.HtBoaInCompanyDTO;
-import com.ht.ussp.uc.app.repository.HtBoaInUserExtRepository;
+import com.ht.ussp.uc.app.service.HtBoaInCompanyAccountService;
 import com.ht.ussp.uc.app.service.HtBoaInCompanyService;
 import com.ht.ussp.util.BeanUtils;
 
-import cn.hutool.core.bean.BeanUtil;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 
@@ -41,7 +40,7 @@ public class CompanyResource {
 	private HtBoaInCompanyService htBoaInCompanyService;
 
 	@Autowired
-	private HtBoaInUserExtRepository htBoaInUserExtRepository;
+	private HtBoaInCompanyAccountService HtBoaInCompanyAccountService;
 
 	/**
 	 * 
@@ -92,7 +91,8 @@ public class CompanyResource {
 	@ApiOperation(value = "修改分公司信息")
 	public Result updateCompanyInfo(@RequestBody HtBoaInCompanyDTO htBoaInCompanyDTO,
 			@RequestParam("userId") String userId) {
-		if (null == htBoaInCompanyDTO || StringUtils.isEmpty(htBoaInCompanyDTO.getCompanyCode())) {
+		if (null == htBoaInCompanyDTO || StringUtils.isEmpty(htBoaInCompanyDTO.getCompanyCode())
+				|| StringUtils.isBlank(userId)) {
 			return Result.buildFail(SysStatus.ERROR_PARAM);
 		}
 		try {
@@ -110,5 +110,68 @@ public class CompanyResource {
 		return Result.buildSuccess();
 
 	}
+
+	/**
+	 * 
+	 * @Title: getComAccByCompanyCode 
+	 * @Description: 通过分公司编码查询账户 
+	 * @return Result
+	 * @throws
+	 * @author wim qiuwenwu@hongte.info 
+	 * @date 2018年7月20日 上午11:34:24
+	 */
+	@GetMapping(value = "/getComAccByCompanyCode")
+	@ApiOperation(value = "通过分公司编码查询账户")
+	public Result getComAccByCompanyCode(@RequestParam("companyCode") String companyCode) {
+		if (null == companyCode || companyCode.length() == 0) {
+			return Result.buildFail(SysStatus.ERROR_PARAM);
+		}
+		try {
+			List<HtBoaInCompanyAccount> HtBoaInCompanyAccount = HtBoaInCompanyAccountService
+					.getComAccByCompanyCode(companyCode);
+			if (null == HtBoaInCompanyAccount||HtBoaInCompanyAccount.isEmpty()) {
+				return Result.buildFail(SysStatus.NO_RESULT);
+			}
+			if(HtBoaInCompanyAccount.size()>1) {
+				log.debug("---记录有多条，机构编码是："+companyCode);
+				return Result.buildFail(SysStatus.EXCEPTION);
+			}
+			HtBoaInCompanyAccountDTO htBoaInCompanyAccountDTO=new HtBoaInCompanyAccountDTO();
+			BeanUtils.deepCopy(HtBoaInCompanyAccount.get(0),htBoaInCompanyAccountDTO);
+			return Result.buildSuccess(htBoaInCompanyAccountDTO);
+		} catch (Exception e) {
+			log.debug("---查询分公司账户失败---" + e.getMessage());
+			return Result.buildFail();
+		}
+	}
+
+	/**
+	 * 
+	 * @Title: addComAcc 
+	 * @Description: 新增公司账户 
+	 * @return Result
+	 * @throws
+	 * @author wim qiuwenwu@hongte.info 
+	 * @date 2018年7月20日 下午2:23:52
+	 */
+	@PostMapping(value = "/addComAcc")
+	@ApiOperation(value = "新增公司账户")
+	public Result addComAcc(@RequestBody HtBoaInCompanyAccountDTO htBoaInCompanyAccountDTO,
+			@RequestParam("userId") String userId) {
+		if (null == htBoaInCompanyAccountDTO || StringUtils.isEmpty(htBoaInCompanyAccountDTO.getAccountCode())
+				|| StringUtils.isBlank(userId)) {
+			return Result.buildFail(SysStatus.ERROR_PARAM);
+		}
+		Result result = HtBoaInCompanyAccountService.addComAcc(htBoaInCompanyAccountDTO, userId);
+			System.out.println(result);
+			if ("0000".equals(result.getReturnCode())) {
+				return Result.buildSuccess();
+			} else if ("9994".equals(result.getReturnCode())) {
+				return Result.buildFail(SysStatus.RECORD_HAS_EXIST);
+			} else {
+				return Result.buildFail();
+			}
+	}
+	
 
 }

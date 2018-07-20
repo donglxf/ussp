@@ -57,13 +57,13 @@ public class HtBoaInCompanyAccount implements Serializable {
 	private Date createdDatetime;
 	//删除标识
 	@Column(name = "DEL_FLAG")
-	private int delFlag;
+	private Boolean delFlag;
 	// 是否居间账户
 	@Column(name = "IS_INTERMEDIARY_ACCOUNT")
-	private byte isIntermediaryAccount;
+	private Boolean isIntermediaryAccount;
 	// 是否还款账户
 	@Column(name = "IS_RETUEN_ACCOUNT")
-	private byte isRetuenAccount;
+	private Boolean isRetuenAccount;
 	
 	@Column(name = "JPA_VERSION")
 	private int jpaVersion;
