@@ -75,7 +75,7 @@ public class HtBoaInCompany implements Serializable {
 	private Date createdDatetime;
 
 	@Column(name="DEL_FLAG")
-	private int delFlag;
+	private Boolean delFlag;
 
 	@Column(name="HIGHEST_DEBT_RATIO")
 	private BigDecimal highestDebtRatio;

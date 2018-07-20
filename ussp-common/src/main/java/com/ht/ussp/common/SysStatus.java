@@ -45,6 +45,7 @@ public enum SysStatus {
 	REDIS_TOKEN_VALID("9937","TOKEN与缓存中的不匹配"),
 	REDIS_TOKEN_FAIL("9938","验证缓存TOKEN异常"),
 	
+	RECORD_HAS_DELETED("9995","该记录已被删除"),
 	NO_RESULT("9996","查无数据"),
 	ERROR_PARAM("9997", "参数错误"),
 	EXCEPTION("9998", "执行异常"),

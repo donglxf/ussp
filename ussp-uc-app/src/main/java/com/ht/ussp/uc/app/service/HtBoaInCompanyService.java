@@ -8,6 +8,9 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ht.ussp.common.SysStatus;
+import com.ht.ussp.core.Result;
+import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInCompany;
 import com.ht.ussp.uc.app.dto.HtBoaInCompanyDTO;
 import com.ht.ussp.uc.app.repository.HtBoaInCompanyRepository;
@@ -75,13 +78,21 @@ public class HtBoaInCompanyService {
 	
 	//修改分公司信息
 	@Transactional(rollbackFor = Exception.class)
-	public void updateCompanyInfo(HtBoaInCompanyDTO htBoaInCompanyDTO,String userId) {
+	public Result updateCompanyInfo(HtBoaInCompanyDTO htBoaInCompanyDTO,String userId) {
 		HtBoaInCompany htBoaInCompanyOld=htBoaInCompanyRepository.findByCompanyCode(htBoaInCompanyDTO.getCompanyCode());
+		if(null==htBoaInCompanyOld) {
+			return Result.buildFail(SysStatus.NO_RESULT);
+		}
+		if(htBoaInCompanyOld.getDelFlag()==true) {
+			return Result.buildFail(SysStatus.RECORD_HAS_DELETED);
+			
+		}
 		htBoaInCompanyOld.setUpdateOperator(userId);
 		BeanUtil.copyProperties(htBoaInCompanyDTO,htBoaInCompanyOld, new CopyOptions() {{
             setIgnoreNullValue(true);
         }});
 		htBoaInCompanyRepository.save(htBoaInCompanyOld);
+		return Result.buildSuccess();
 	}
 	
 }

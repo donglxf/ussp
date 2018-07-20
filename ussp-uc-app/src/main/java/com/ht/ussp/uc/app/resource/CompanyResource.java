@@ -79,17 +79,32 @@ public class CompanyResource {
 		}
 	}
 
+	/**
+	 * 
+	 * @Title: updateCompanyInfo 
+	 * @Description: 修改分公司信息 
+	 * @return Result
+	 * @throws
+	 * @author wim qiuwenwu@hongte.info 
+	 * @date 2018年7月20日 上午9:03:37
+	 */
 	@PostMapping(value = "/updateCompanyInfo")
 	@ApiOperation(value = "修改分公司信息")
 	public Result updateCompanyInfo(@RequestBody HtBoaInCompanyDTO htBoaInCompanyDTO,
 			@RequestParam("userId") String userId) {
-		if (null == htBoaInCompanyDTO && StringUtils.isEmpty(htBoaInCompanyDTO.getCompanyCode())) {
+		if (null == htBoaInCompanyDTO || StringUtils.isEmpty(htBoaInCompanyDTO.getCompanyCode())) {
 			return Result.buildFail(SysStatus.ERROR_PARAM);
 		}
 		try {
-			htBoaInCompanyService.updateCompanyInfo(htBoaInCompanyDTO, userId);
+			Result result = htBoaInCompanyService.updateCompanyInfo(htBoaInCompanyDTO, userId);
+			if ("9995".equals(result.getReturnCode())) {
+				return Result.buildFail(SysStatus.RECORD_HAS_DELETED);
+			}
+			if ("9996".equals(result.getReturnCode())) {
+				return Result.buildFail(SysStatus.NO_RESULT);
+			}
 		} catch (Exception e) {
-			log.debug("-----修改分公司信息失败："+e.getStackTrace());
+			log.debug("-----修改分公司信息失败：" + e.getStackTrace());
 			return Result.buildFail();
 		}
 		return Result.buildSuccess();
