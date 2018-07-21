@@ -8,6 +8,7 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.esotericsoftware.minlog.Log;
 import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInCompany;
@@ -56,10 +57,6 @@ public class HtBoaInCompanyService {
 		return this.htBoaInCompanyRepository.save(u);
 	}
 
-	// public List<BoaInBusiOrgInfo> getCompnayInfo(String branchCode) {
-	// return htBoaInCompanyRepository.listCompnayInfo(branchCode);
-	// }
-
 	// 通过公司机构码获取公司详情
 	public HtBoaInCompany findByCompanyCode(String companyCode) {
 		return htBoaInCompanyRepository.findByCompanyCode(companyCode);
@@ -80,9 +77,20 @@ public class HtBoaInCompanyService {
 	public Result updateCompanyInfo(HtBoaInCompanyDTO htBoaInCompanyDTO,String userId) {
 		HtBoaInCompany htBoaInCompanyOld=htBoaInCompanyRepository.findByCompanyCode(htBoaInCompanyDTO.getCompanyCode());
 		if(null==htBoaInCompanyOld) {
-			return Result.buildFail(SysStatus.NO_RESULT);
+			//如果无记录，则添加一条记录
+			HtBoaInCompany htBoaInCompany=new HtBoaInCompany();
+			BeanUtil.copyProperties(htBoaInCompanyDTO,htBoaInCompany);
+			htBoaInCompany.setCreateOperator(userId);
+			htBoaInCompany.setDelFlag(false);
+			htBoaInCompanyRepository.save(htBoaInCompany);
+			return Result.buildSuccess();
 		}
-		if(htBoaInCompanyOld.getDelFlag()==true) {
+		//如果删除标志为空，将其标志为有效
+		if(null==htBoaInCompanyOld.getDelFlag()) {
+			htBoaInCompanyOld.setDelFlag(false);
+		}
+		Log.debug(htBoaInCompanyOld.getCompanyCode()+"的删除标志是："+htBoaInCompanyOld.getDelFlag());
+		if(null!=htBoaInCompanyOld.getDelFlag()&&htBoaInCompanyOld.getDelFlag()==true) {
 			return Result.buildFail(SysStatus.RECORD_HAS_DELETED);
 			
 		}

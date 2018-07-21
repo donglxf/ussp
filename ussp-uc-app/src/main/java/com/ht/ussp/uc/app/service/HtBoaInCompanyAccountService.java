@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.esotericsoftware.minlog.Log;
 import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInCompanyAccount;
@@ -28,6 +29,7 @@ public class HtBoaInCompanyAccountService {
 	 * @author wim qiuwenwu@hongte.info 
 	 * @date 2018年7月20日 上午11:14:23
 	 */
+	@Transactional(rollbackFor = Exception.class)
 	public Result updateComAcc(HtBoaInCompanyAccountDTO htBoaInCompanyAccountDTO) {
 
 		return Result.buildSuccess();
@@ -40,9 +42,15 @@ public class HtBoaInCompanyAccountService {
 	 * @return Result
 	 * @throws
 	 * @author wim qiuwenwu@hongte.info 
-	 * @date 2018年7月20日 上午11:14:12
+	 * @date 2018年7月20日 上午11:14:12s
 	 */
+	@Transactional(rollbackFor = Exception.class)
 	public Result delComAcc(String accountCode) {
+		HtBoaInCompanyAccount htBoaInCompanyAccount=htBoaInCompanyAccountRepository.findByAccountCode(accountCode);
+		if(null==htBoaInCompanyAccount||htBoaInCompanyAccount.getDelFlag()==true) {
+			Log.debug("无记录或被标记为已删除："+htBoaInCompanyAccount.getDelFlag());
+			return Result.buildFail(SysStatus.NO_RESULT);
+		}
 		htBoaInCompanyAccountRepository.delComAcc(accountCode);
 		return Result.buildSuccess();
 	}

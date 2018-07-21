@@ -1,6 +1,9 @@
 package com.ht.ussp.uc.app.resource;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +44,63 @@ public class CompanyResource {
 
 	@Autowired
 	private HtBoaInCompanyAccountService HtBoaInCompanyAccountService;
+	
+	
+	/**
+	 * 
+	 * @Title: getCompanyInfoDetailByUserId 
+	 * @Description: 通过userId获取分公司及其账户详情 
+	 * @return Result
+	 * @throws
+	 * @author wim qiuwenwu@hongte.info 
+	 * @date 2018年7月21日 下午4:47:57
+	 */
+	@GetMapping(value = "/getCompanyInfoDetailByUserId")
+	@ApiOperation(value = "通过userId获取分公司及其账户详情")
+	public Result getCompanyInfoDetailByUserId(@RequestParam("userId") String userId) {
+		
+		Map<String, Object> map=new HashMap<String,Object>();
+		if (null != userId && userId.length() > 0) {
+			// 通过用户ID获取业务机构码
+			String businessOrgCode = htBoaInCompanyService.getBusinessOrgCode(userId);
+			if (StringUtils.isEmpty(businessOrgCode)) {
+				return Result.buildFail(SysStatus.NO_RESULT);
+			}
+			// 通过业务机构码获取分公司机构码
+			String branchCode = htBoaInCompanyService.getBranchCode(businessOrgCode);
+			if (StringUtils.isEmpty(branchCode)) {
+				return Result.buildFail(SysStatus.NO_RESULT);
+			}
+			// 分公司机构码获取公司信息
+			HtBoaInCompany htBoaInCompany = htBoaInCompanyService.findByCompanyCode(branchCode);
+			if (null == htBoaInCompany) {
+				return Result.buildFail(SysStatus.NO_RESULT);
+			}
+			HtBoaInCompanyDTO htBoaInCompanyDTO = new HtBoaInCompanyDTO();
+			BeanUtils.deepCopy(htBoaInCompany, htBoaInCompanyDTO);
+			map.put("companyInfo", htBoaInCompanyDTO);
+			
+			//通过分公司机构码获取公司银行账户信息(区间账户和还款账户，list)
+						
+			List<HtBoaInCompanyAccount> HtBoaInCompanyAccount = HtBoaInCompanyAccountService
+					.getComAccByCompanyCode(branchCode);
+			List<HtBoaInCompanyAccountDTO> list=new ArrayList<HtBoaInCompanyAccountDTO>();
+			
+			for(int i=0;i<HtBoaInCompanyAccount.size();i++) {
+				HtBoaInCompanyAccountDTO htBoaInCompanyAccountDTO=new HtBoaInCompanyAccountDTO();
+				BeanUtils.deepCopy(HtBoaInCompanyAccount.get(i),htBoaInCompanyAccountDTO);
+				list.add(htBoaInCompanyAccountDTO);
+			}
+			map.put("companyAccount", list);
+			return Result.buildSuccess(map);
+			
+		} else {
+			return Result.buildFail(SysStatus.ERROR_PARAM);
+		}
+	}
+
+	
+	
 
 	/**
 	 * 
@@ -132,13 +192,16 @@ public class CompanyResource {
 			if (null == HtBoaInCompanyAccount||HtBoaInCompanyAccount.isEmpty()) {
 				return Result.buildFail(SysStatus.NO_RESULT);
 			}
-			if(HtBoaInCompanyAccount.size()>1) {
-				log.debug("---记录有多条，机构编码是："+companyCode);
-				return Result.buildFail(SysStatus.EXCEPTION);
+			
+			List<HtBoaInCompanyAccountDTO> list=new ArrayList<HtBoaInCompanyAccountDTO>();
+			
+			for(int i=0;i<HtBoaInCompanyAccount.size();i++) {
+				HtBoaInCompanyAccountDTO htBoaInCompanyAccountDTO=new HtBoaInCompanyAccountDTO();
+				BeanUtils.deepCopy(HtBoaInCompanyAccount.get(i),htBoaInCompanyAccountDTO);
+				list.add(htBoaInCompanyAccountDTO);
 			}
-			HtBoaInCompanyAccountDTO htBoaInCompanyAccountDTO=new HtBoaInCompanyAccountDTO();
-			BeanUtils.deepCopy(HtBoaInCompanyAccount.get(0),htBoaInCompanyAccountDTO);
-			return Result.buildSuccess(htBoaInCompanyAccountDTO);
+			return Result.buildSuccess(list);
+			
 		} catch (Exception e) {
 			log.debug("---查询分公司账户失败---" + e.getMessage());
 			return Result.buildFail();
@@ -173,5 +236,27 @@ public class CompanyResource {
 			}
 	}
 	
+	/**
+	 * 
+	 * @Title: delComAcc 
+	 * @Description: 删除公司账户--逻辑删除 
+	 * @return Result
+	 * @throws
+	 * @author wim qiuwenwu@hongte.info 
+	 * @date 2018年7月21日 下午3:28:59
+	 */
+	@PostMapping(value = "/delComAcc")
+	@ApiOperation(value = "删除公司账户")
+	public Result delComAcc(@RequestParam("accountCode") String accountCode) {
+		try {
+		HtBoaInCompanyAccountService.delComAcc(accountCode);
+		}catch(Exception e){
+			return Result.buildFail();
+		}
+		return Result.buildSuccess();
+		
+	}
 
+	
+	
 }
