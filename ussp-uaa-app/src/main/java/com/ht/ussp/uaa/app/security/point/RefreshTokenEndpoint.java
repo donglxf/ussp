@@ -134,9 +134,11 @@ public class RefreshTokenEndpoint {
 		ValidateJwtVo vdj = new ValidateJwtVo();
 		
 		try {
+			log.debug("----tokenPayload is:"+tokenPayload);
 		RawAccessJwtToken accessToken = new RawAccessJwtToken(tokenExtractor.extract(tokenPayload));
 		
 		jwsClaims = accessToken.parseClaims(jwtSettings.getTokenSigningKey());
+		log.debug("-----jwsClaims is :"+jwsClaims);
 		 userId = jwsClaims.getBody().get("userId").toString();
 		 orgCode = jwsClaims.getBody().get("orgCode").toString();
 		 vdj.setUserId(userId);
@@ -145,13 +147,13 @@ public class RefreshTokenEndpoint {
 		 rm.setResult(vdj);
 		}catch(BadCredentialsException ex) {
 			rm.setSysStatus(SysStatus.TOKEN_IS_VALID);
-			log.info("----token invalid----");
+			log.debug("----token invalid----");
 		}catch (JwtExpiredTokenException expiredEx) {
 			rm.setSysStatus(SysStatus.TOKEN_IS_EXPIRED);
-			log.info("----token expired----");
+			log.debug("----token expired----");
         }catch (AuthenticationServiceException asEx) {
 			rm.setSysStatus(SysStatus.ERROR_PARAM);
-			log.info("----invalid token's header----");
+			log.debug("----invalid token's header----");
         }
 		return rm;
 	}
