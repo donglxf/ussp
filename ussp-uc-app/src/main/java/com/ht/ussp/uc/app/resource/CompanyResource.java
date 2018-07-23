@@ -268,7 +268,7 @@ public class CompanyResource {
 	 * @date 2018年7月23日 下午6:07:04
 	 */
 	@PostMapping(value = "/updateComAcc")
-	@ApiOperation(value = "修改分公司信息")
+	@ApiOperation(value = "修改分公司账户信息")
 	public Result updateComAcc(@RequestBody HtBoaInCompanyAccountDTO htBoaInCompanyAccountDTO,
 			@RequestParam("userId") String userId) {
 		if(null==htBoaInCompanyAccountDTO||StringUtils.isEmpty(htBoaInCompanyAccountDTO.getCompanyCode())
