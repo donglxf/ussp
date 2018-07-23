@@ -14,6 +14,7 @@ import com.ht.ussp.uc.app.dto.HtBoaInCompanyAccountDTO;
 import com.ht.ussp.uc.app.repository.HtBoaInCompanyAccountRepository;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 
 @Service
 public class HtBoaInCompanyAccountService {
@@ -30,9 +31,32 @@ public class HtBoaInCompanyAccountService {
 	 * @date 2018年7月20日 上午11:14:23
 	 */
 	@Transactional(rollbackFor = Exception.class)
-	public Result updateComAcc(HtBoaInCompanyAccountDTO htBoaInCompanyAccountDTO) {
+	public Result updateComAcc(HtBoaInCompanyAccountDTO htBoaInCompanyAccountDTO, String userId) {
+		if (null != htBoaInCompanyAccountDTO && null != htBoaInCompanyAccountDTO.getAccountCode()
+				&& htBoaInCompanyAccountDTO.getAccountCode().length() > 0) {
+			HtBoaInCompanyAccount htBoaInCompanyAccount = htBoaInCompanyAccountRepository
+					.findByAccountCode(htBoaInCompanyAccountDTO.getAccountCode());
+			if (null == htBoaInCompanyAccount) {
+				return Result.buildFail(SysStatus.NO_RESULT);
+			} else if (null != htBoaInCompanyAccount.getDelFlag() && htBoaInCompanyAccount.getDelFlag() == true) {
+				return Result.buildFail(SysStatus.RECORD_HAS_DELETED);
+			} else if (null == htBoaInCompanyAccount.getDelFlag()) {
+				htBoaInCompanyAccount.setDelFlag(false);
+			}
+			htBoaInCompanyAccount.setUpdateOperator(userId);
 
-		return Result.buildSuccess();
+			BeanUtil.copyProperties(htBoaInCompanyAccountDTO, htBoaInCompanyAccount, new CopyOptions() {
+				{
+					setIgnoreNullValue(true);
+				}
+			});
+
+			htBoaInCompanyAccountRepository.save(htBoaInCompanyAccount);
+			return Result.buildSuccess();
+
+		} else {
+			return Result.buildFail(SysStatus.ERROR_PARAM);
+		}
 	}
 
 	/**
@@ -46,9 +70,9 @@ public class HtBoaInCompanyAccountService {
 	 */
 	@Transactional(rollbackFor = Exception.class)
 	public Result delComAcc(String accountCode) {
-		HtBoaInCompanyAccount htBoaInCompanyAccount=htBoaInCompanyAccountRepository.findByAccountCode(accountCode);
-		if(null==htBoaInCompanyAccount||htBoaInCompanyAccount.getDelFlag()==true) {
-			Log.debug("无记录或被标记为已删除："+htBoaInCompanyAccount.getDelFlag());
+		HtBoaInCompanyAccount htBoaInCompanyAccount = htBoaInCompanyAccountRepository.findByAccountCode(accountCode);
+		if (null == htBoaInCompanyAccount || htBoaInCompanyAccount.getDelFlag() == true) {
+			Log.debug("无记录或被标记为已删除：" + htBoaInCompanyAccount.getDelFlag());
 			return Result.buildFail(SysStatus.NO_RESULT);
 		}
 		htBoaInCompanyAccountRepository.delComAcc(accountCode);
@@ -66,18 +90,18 @@ public class HtBoaInCompanyAccountService {
 	 */
 	@Transactional(rollbackFor = Exception.class)
 	public Result addComAcc(HtBoaInCompanyAccountDTO htBoaInCompanyAccountDTO, String userId) {
-		
+
 		try {
 			// 如果有记录，且标记为未删除，不可新增
 			List<HtBoaInCompanyAccount> oldhtBoaInCompanyAccount = htBoaInCompanyAccountRepository
 					.findByAccountCodeAndDelFlag(htBoaInCompanyAccountDTO.getAccountCode(), false);
-			if (null != oldhtBoaInCompanyAccount&&!oldhtBoaInCompanyAccount.isEmpty()) {
+			if (null != oldhtBoaInCompanyAccount && !oldhtBoaInCompanyAccount.isEmpty()) {
 				return Result.buildFail(SysStatus.RECORD_HAS_EXIST);
 			}
-			HtBoaInCompanyAccount result=new HtBoaInCompanyAccount();
-			
+			HtBoaInCompanyAccount result = new HtBoaInCompanyAccount();
+
 			BeanUtil.copyProperties(htBoaInCompanyAccountDTO, result);
-			result.setCreateOperator(userId);	
+			result.setCreateOperator(userId);
 			result.setDelFlag(false);
 			htBoaInCompanyAccountRepository.save(result);
 		} catch (Exception e) {
