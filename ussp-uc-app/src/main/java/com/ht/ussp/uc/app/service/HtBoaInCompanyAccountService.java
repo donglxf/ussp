@@ -66,8 +66,9 @@ public class HtBoaInCompanyAccountService {
 	 */
 	@Transactional(rollbackFor = Exception.class)
 	public Result addComAcc(HtBoaInCompanyAccountDTO htBoaInCompanyAccountDTO, String userId) {
-		// 如果有记录，且标记为未删除，不可新增
+		
 		try {
+			// 如果有记录，且标记为未删除，不可新增
 			List<HtBoaInCompanyAccount> oldhtBoaInCompanyAccount = htBoaInCompanyAccountRepository
 					.findByAccountCodeAndDelFlag(htBoaInCompanyAccountDTO.getAccountCode(), false);
 			if (null != oldhtBoaInCompanyAccount&&!oldhtBoaInCompanyAccount.isEmpty()) {
@@ -76,7 +77,7 @@ public class HtBoaInCompanyAccountService {
 			HtBoaInCompanyAccount result=new HtBoaInCompanyAccount();
 			
 			BeanUtil.copyProperties(htBoaInCompanyAccountDTO, result);
-			result.setCreateOperator(userId);
+			result.setCreateOperator(userId);	
 			result.setDelFlag(false);
 			htBoaInCompanyAccountRepository.save(result);
 		} catch (Exception e) {
