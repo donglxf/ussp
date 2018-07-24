@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,13 +16,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.ussp.common.SysStatus;
+import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
+import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInCompany;
 import com.ht.ussp.uc.app.domain.HtBoaInCompanyAccount;
 import com.ht.ussp.uc.app.dto.HtBoaInCompanyAccountDTO;
 import com.ht.ussp.uc.app.dto.HtBoaInCompanyDTO;
+import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.service.HtBoaInCompanyAccountService;
 import com.ht.ussp.uc.app.service.HtBoaInCompanyService;
+import com.ht.ussp.uc.app.vo.PageVo;
 import com.ht.ussp.util.BeanUtils;
 
 import io.swagger.annotations.ApiOperation;
@@ -55,6 +60,7 @@ public class CompanyResource {
 	 * @author wim qiuwenwu@hongte.info 
 	 * @date 2018年7月21日 下午4:47:57
 	 */
+	@SuppressWarnings("rawtypes")
 	@GetMapping(value = "/getCompanyInfoDetailByUserId")
 	@ApiOperation(value = "通过userId获取分公司及其账户详情")
 	public Result getCompanyInfoDetailByUserId(@RequestParam("userId") String userId) {
@@ -111,6 +117,7 @@ public class CompanyResource {
 	 * @author wim qiuwenwu@hongte.info 
 	 * @date 2018年7月19日 下午5:07:41
 	 */
+	@SuppressWarnings("rawtypes")
 	@GetMapping(value = "/getCompanyInfoByUserId")
 	@ApiOperation(value = "通过userId获取分公司详情")
 	public Result getCompanyInfoByUserId(@RequestParam("userId") String userId) {
@@ -147,6 +154,7 @@ public class CompanyResource {
 	 * @author wim qiuwenwu@hongte.info 
 	 * @date 2018年7月20日 上午9:03:37
 	 */
+	@SuppressWarnings("rawtypes")
 	@PostMapping(value = "/updateCompanyInfo")
 	@ApiOperation(value = "修改分公司信息")
 	public Result updateCompanyInfo(@RequestBody HtBoaInCompanyDTO htBoaInCompanyDTO,
@@ -180,6 +188,7 @@ public class CompanyResource {
 	 * @author wim qiuwenwu@hongte.info 
 	 * @date 2018年7月20日 上午11:34:24
 	 */
+	@SuppressWarnings("rawtypes")
 	@GetMapping(value = "/getComAccByCompanyCode")
 	@ApiOperation(value = "通过分公司编码查询账户")
 	public Result getComAccByCompanyCode(@RequestParam("companyCode") String companyCode) {
@@ -217,6 +226,7 @@ public class CompanyResource {
 	 * @author wim qiuwenwu@hongte.info 
 	 * @date 2018年7月20日 下午2:23:52
 	 */
+	@SuppressWarnings("rawtypes")
 	@PostMapping(value = "/addComAcc")
 	@ApiOperation(value = "新增公司账户")
 	public Result addComAcc(@RequestBody HtBoaInCompanyAccountDTO htBoaInCompanyAccountDTO,
@@ -245,6 +255,7 @@ public class CompanyResource {
 	 * @author wim qiuwenwu@hongte.info 
 	 * @date 2018年7月21日 下午3:28:59
 	 */
+	@SuppressWarnings("rawtypes")
 	@PostMapping(value = "/delComAcc")
 	@ApiOperation(value = "删除公司账户")
 	public Result delComAcc(@RequestParam("accountCode") String accountCode) {
@@ -257,6 +268,106 @@ public class CompanyResource {
 		
 	}
 
-	
+	/**
+	 * 获取分公司
+	 * @author xiaojianfeng@hongte.info
+	 * @date 2018年7月23日
+	 * @tags @return
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@PostMapping(value = "/getCompanyList")
+	@ApiOperation(value = "获取分公司")
+	public Result getCompanyList(PageVo page) {
+		log.info("[获取分公司]获取分公司列表接口, param:[{}]", page);
+		PageResult result = new PageResult();
+		PageConf pageConf = new PageConf();
+		pageConf.setPage(page.getPage());
+		pageConf.setSize(page.getLimit());
+		pageConf.setSearch(page.getKeyWord());
+			// 分公司机构码获取公司信息
+		//HtBoaInCompany bo = new HtBoaInCompany();
+		//BeanUtils.deepCopy(u,bo);
+		//HtBoaInCompany u = new HtBoaInCompany();
+		Page<HtBoaInCompany> htBoaInCompanys = htBoaInCompanyService.findAllByPage(pageConf);
+			if (null == htBoaInCompanys) {
+				return PageResult.buildFail();
+			}else {
+				result.count(htBoaInCompanys.getTotalElements()).data(htBoaInCompanys.getContent());
+			}
+			result.returnCode(ReturnCodeEnum.SUCCESS.getReturnCode()).codeDesc(ReturnCodeEnum.SUCCESS.getCodeDesc());
+			//HtBoaInCompanyDTO htBoaInCompanyDTO = new HtBoaInCompanyDTO();
+			//BeanUtil.toListBean(htBoaInCompanys, HtBoaInCompanyDTO.class);
+			return result;
+	}
+	/**
+	 * 
+	 * @Title: updateComAcc 
+	 * @Description: 修改分公司账户信息 
+	 * @return Result
+	 * @throws
+	 * @author wim qiuwenwu@hongte.info 
+	 * @date 2018年7月23日 下午6:07:04
+	 */
+	@PostMapping(value = "/updateComAcc")
+	@ApiOperation(value = "修改分公司账户信息")
+	public Result updateComAcc(@RequestBody HtBoaInCompanyAccountDTO htBoaInCompanyAccountDTO,
+			@RequestParam("userId") String userId) {
+		if(null==htBoaInCompanyAccountDTO||StringUtils.isEmpty(htBoaInCompanyAccountDTO.getCompanyCode())
+				|| StringUtils.isBlank(userId)) {
+			return Result.buildFail(SysStatus.ERROR_PARAM);
+		}
+		
+		try {
+		Result result=HtBoaInCompanyAccountService.updateComAcc(htBoaInCompanyAccountDTO, userId);
+		
+		if("9997".equals(result.getReturnCode())) {
+			return Result.buildFail(SysStatus.ERROR_PARAM);
+		}else if("9995".equals(result.getReturnCode())) {
+			return Result.buildFail(SysStatus.RECORD_HAS_DELETED);
+		}else if("9996".equals(result.getReturnCode())) {
+			return Result.buildFail(SysStatus.NO_RESULT);
+		}
+		}catch(Exception e) {
+			log.debug("-----修改分公司账户信息失败：" + e.getStackTrace());
+			return Result.buildFail();
+		}
+		return Result.buildSuccess();
+		
+	}
+	/**
+	 * 
+	 * @Title: updateComAcc 
+	 * @Description: 修改分公司账户信息 
+	 * @return Result
+	 * @throws
+	 * @author wim qiuwenwu@hongte.info 
+	 * @date 2018年7月23日 下午6:07:04
+	 */
+	@PostMapping(value = "/updateComAcc")
+	@ApiOperation(value = "修改分公司账户信息")
+	public Result updateComAcc(@RequestBody HtBoaInCompanyAccountDTO htBoaInCompanyAccountDTO,
+			@RequestParam("userId") String userId) {
+		if(null==htBoaInCompanyAccountDTO||StringUtils.isEmpty(htBoaInCompanyAccountDTO.getCompanyCode())
+				|| StringUtils.isBlank(userId)) {
+			return Result.buildFail(SysStatus.ERROR_PARAM);
+		}
+		
+		try {
+		Result result=HtBoaInCompanyAccountService.updateComAcc(htBoaInCompanyAccountDTO, userId);
+		
+		if("9997".equals(result.getReturnCode())) {
+			return Result.buildFail(SysStatus.ERROR_PARAM);
+		}else if("9995".equals(result.getReturnCode())) {
+			return Result.buildFail(SysStatus.RECORD_HAS_DELETED);
+		}else if("9996".equals(result.getReturnCode())) {
+			return Result.buildFail(SysStatus.NO_RESULT);
+		}
+		}catch(Exception e) {
+			log.debug("-----修改分公司账户信息失败：" + e.getStackTrace());
+			return Result.buildFail();
+		}
+		return Result.buildSuccess();
+		
+	}
 	
 }

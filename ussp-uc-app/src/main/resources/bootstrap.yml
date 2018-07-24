@@ -37,6 +37,7 @@ eureka:
   client:
     serviceUrl:
       defaultZone: ${EUREKA_SERVER_ADDRESS:http://localhost:30101/eureka/}
+ #     defaultZone: http://172.16.200.110:30101/eureka/
 
 bm:
   bmApi:
