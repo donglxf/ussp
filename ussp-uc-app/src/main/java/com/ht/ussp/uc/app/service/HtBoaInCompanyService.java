@@ -1,10 +1,21 @@
 package com.ht.ussp.uc.app.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +24,7 @@ import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.HtBoaInCompany;
 import com.ht.ussp.uc.app.dto.HtBoaInCompanyDTO;
+import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.repository.HtBoaInCompanyRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInUserBusinessRepository;
 import com.ht.ussp.uc.app.repository.HtBoaInUserExtRepository;
@@ -73,6 +85,7 @@ public class HtBoaInCompanyService {
 	}
 	
 	//修改分公司信息
+	@SuppressWarnings("rawtypes")
 	@Transactional(rollbackFor = Exception.class)
 	public Result updateCompanyInfo(HtBoaInCompanyDTO htBoaInCompanyDTO,String userId) {
 		HtBoaInCompany htBoaInCompanyOld=htBoaInCompanyRepository.findByCompanyCode(htBoaInCompanyDTO.getCompanyCode());
@@ -102,4 +115,30 @@ public class HtBoaInCompanyService {
 		return Result.buildSuccess();
 	}
 	
+	public Page<HtBoaInCompany> findAllByPage(PageConf pageConf){
+		 //规格定义
+        Specification<HtBoaInCompany> specification = new Specification<HtBoaInCompany>() {
+            /**
+             * 构造断言
+             * @param root 实体对象引用
+             * @param query 规则查询对象
+             * @param cb 规则构建对象
+             * @return 断言
+             */
+            @Override
+            public Predicate toPredicate(Root<HtBoaInCompany> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                List<Predicate> predicates = new ArrayList<>(); //所有的断言
+                if(StringUtils.isNotBlank(pageConf.getSearch())){ //添加断言
+                    Predicate likeNickName = cb.like(root.get("nickName").as(String.class),pageConf.getSearch()+"%");
+                    predicates.add(likeNickName);
+                }
+                return cb.and(predicates.toArray(new Predicate[0]));
+            }
+        };
+        //分页信息
+        Pageable pageable = new PageRequest(pageConf.getPage(),pageConf.getSize()); //页码：前端从1开始，jpa从0开始，做个转换
+        Page<HtBoaInCompany>  paga = htBoaInCompanyRepository.findAll(specification, pageable);
+		return paga;
+		
+	}
 }

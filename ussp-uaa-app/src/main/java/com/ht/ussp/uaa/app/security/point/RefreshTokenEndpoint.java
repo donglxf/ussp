@@ -76,12 +76,12 @@ public class RefreshTokenEndpoint {
 			try {
 				mapper.writeValue(response.getWriter(), new ResponseModal(SysStatus.TOKEN_IS_VALID));
 			} catch (IOException e) {
-				log.debug("write response result TOKEN_IS_VALID:"+e.getMessage());
+				log.info("write response result TOKEN_IS_VALID:"+e.getMessage());
 			}finally {
 				try {
 					response.getWriter().close();
 				} catch (IOException e) {
-					log.debug("close io exception:"+e.getMessage());
+					log.info("close io exception:"+e.getMessage());
 				}
 			}
 			return null;
@@ -89,12 +89,12 @@ public class RefreshTokenEndpoint {
 			try {
 				mapper.writeValue(response.getWriter(), new ResponseModal(SysStatus.TOKEN_IS_EXPIRED));
 			} catch (IOException e) {
-				log.debug("write response result TOKEN_IS_EXPIRED:"+e.getMessage());
+				log.info("write response result TOKEN_IS_EXPIRED:"+e.getMessage());
 			}finally {
 				try {
 					response.getWriter().close();
 				} catch (IOException e) {
-					log.debug("close io exception:"+e.getMessage());
+					log.info("close io exception:"+e.getMessage());
 				}
 			}
 			return null;
@@ -102,12 +102,12 @@ public class RefreshTokenEndpoint {
         	try {
 				mapper.writeValue(response.getWriter(),new ResponseModal(SysStatus.HEADER_CANNOT_NULL));
 			} catch (IOException e) {
-				log.debug("write response result HEADER_CANNOT_NULL:"+e.getMessage());
+				log.info("write response result HEADER_CANNOT_NULL:"+e.getMessage());
 			}finally {
 				try {
 					response.getWriter().close();
 				} catch (IOException e) {
-					log.debug("close io exception:"+e.getMessage());
+					log.info("close io exception:"+e.getMessage());
 				}
 			}
         	return null;
@@ -134,9 +134,11 @@ public class RefreshTokenEndpoint {
 		ValidateJwtVo vdj = new ValidateJwtVo();
 		
 		try {
+			log.info("----tokenPayload is:"+tokenPayload);
 		RawAccessJwtToken accessToken = new RawAccessJwtToken(tokenExtractor.extract(tokenPayload));
 		
 		jwsClaims = accessToken.parseClaims(jwtSettings.getTokenSigningKey());
+		log.info("-----jwsClaims is :"+jwsClaims);
 		 userId = jwsClaims.getBody().get("userId").toString();
 		 orgCode = jwsClaims.getBody().get("orgCode").toString();
 		 vdj.setUserId(userId);

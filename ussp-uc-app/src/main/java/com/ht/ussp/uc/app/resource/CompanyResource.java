@@ -246,6 +246,7 @@ public class CompanyResource {
 			}
 	}
 	
+	
 	/**
 	 * 
 	 * @Title: delComAcc 
@@ -269,6 +270,7 @@ public class CompanyResource {
 	}
 
 	/**
+<<<<<<< HEAD
 	 * 获取分公司
 	 * @author xiaojianfeng@hongte.info
 	 * @date 2018年7月23日
@@ -368,6 +370,57 @@ public class CompanyResource {
 		}
 		return Result.buildSuccess();
 		
+=======
+	 * 
+	 * @Title: updateComAcc 
+	 * @Description: 修改分公司账户信息 
+	 * @return Result
+	 * @throws
+	 * @author wim qiuwenwu@hongte.info 
+	 * @date 2018年7月23日 下午6:07:04
+	 */
+	@PostMapping(value = "/updateComAcc")
+	@ApiOperation(value = "修改分公司账户信息")
+	public Result updateComAcc(@RequestBody HtBoaInCompanyAccountDTO htBoaInCompanyAccountDTO,
+			@RequestParam("userId") String userId) {
+		if(null==htBoaInCompanyAccountDTO||StringUtils.isEmpty(htBoaInCompanyAccountDTO.getCompanyCode())
+				|| StringUtils.isBlank(userId)) {
+			return Result.buildFail(SysStatus.ERROR_PARAM);
+		}
+		
+		try {
+		Result result=HtBoaInCompanyAccountService.updateComAcc(htBoaInCompanyAccountDTO, userId);
+		
+		if("9997".equals(result.getReturnCode())) {
+			return Result.buildFail(SysStatus.ERROR_PARAM);
+		}else if("9995".equals(result.getReturnCode())) {
+			return Result.buildFail(SysStatus.RECORD_HAS_DELETED);
+		}else if("9996".equals(result.getReturnCode())) {
+			return Result.buildFail(SysStatus.NO_RESULT);
+		}
+		}catch(Exception e) {
+			log.debug("-----修改分公司账户信息失败：" + e.getStackTrace());
+			return Result.buildFail();
+		}
+		return Result.buildSuccess();
+		
+	}
+	
+	@PostMapping(value = "/getCompanyInfo")
+	@ApiOperation(value = "通过机构码获取公司详情")
+	public Result<HtBoaInCompanyDTO> getCompanyInfo(@RequestParam("companyCode") String companyCode) {
+		if(null==companyCode||companyCode.length()==0) {
+		return Result.buildFail(SysStatus.ERROR_PARAM);
+	}
+		HtBoaInCompany htBoaInCompany=htBoaInCompanyService.findByCompanyCode(companyCode);
+		if(null!=htBoaInCompany&&htBoaInCompany.getTuandaiGuid()!=null) {
+			HtBoaInCompanyDTO htBoaInCompanyDTO=new HtBoaInCompanyDTO();
+			BeanUtils.deepCopy(htBoaInCompany,htBoaInCompanyDTO);
+			return Result.buildSuccess(htBoaInCompanyDTO);
+		}else {
+			return Result.buildFail(SysStatus.NO_RESULT);
+		}
+>>>>>>> branch 'dev' of http://172.16.200.102/dev2/ussp.git
 	}
 	
 }

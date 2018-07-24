@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -30,14 +31,18 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.ht.ussp.common.Constants;
+import com.ht.ussp.common.SysStatus;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInApp;
+import com.ht.ussp.uc.app.domain.HtBoaInRole;
+import com.ht.ussp.uc.app.dto.RoleDTO;
 import com.ht.ussp.uc.app.model.BoaInAppInfo;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
 import com.ht.ussp.uc.app.service.HtBoaInAppService;
+import com.ht.ussp.uc.app.service.HtBoaInRoleService;
 import com.ht.ussp.uc.app.vo.PageVo;
 import com.ht.ussp.util.LogicUtil;
 
@@ -59,6 +64,38 @@ public class AppResource {
 
 	@Autowired
 	private HtBoaInAppService htBoaInAppService;
+
+	@Autowired
+	private HtBoaInRoleService htBoaInRoleService;
+
+	@ApiOperation(value = "通过app编码获取角色编码和角色名称")
+	@RequestMapping(value = { "/getRoleInfoList" }, method = RequestMethod.POST)
+	public Result<List<RoleDTO>> getRoleInfoList(@RequestParam("app") String app) {
+		List<RoleDTO> temp=new ArrayList<RoleDTO>();
+		if(null==app&&app.length()==0) {
+			return Result.buildFail(SysStatus.ERROR_PARAM);
+			
+		}
+		try {
+			List<HtBoaInRole> list=htBoaInRoleService.getAllByApp(app);
+		if(null!=list&&!list.isEmpty()) {
+			for(int i=0;i<list.size();i++) {
+				RoleDTO rd=new RoleDTO();
+			    rd.setRoleCode(list.get(i).getRoleCode());
+				rd.setRoleName(list.get(i).getRoleName());
+				temp.add(rd);
+			}
+			
+		}else {
+			return Result.buildFail(SysStatus.NO_RESULT);
+		}
+			
+		return Result.buildSuccess(temp);
+		}catch(Exception e) {
+			return Result.buildFail();
+		}
+
+	}
 
 	@ApiOperation(value = "查询所有系统信息")
 	@RequestMapping(value = { "/getAllApp" }, method = RequestMethod.POST)
@@ -115,7 +152,8 @@ public class AppResource {
 		u.setLastModifiedDatetime(new Date());
 		u.setName(boaInAppInfo.getNameCn());
 		u.setNameCn(boaInAppInfo.getNameCn());
-		u.setMaxLoginCount(StringUtils.isNotEmpty(boaInAppInfo.getMaxLoginCount()+"")?boaInAppInfo.getMaxLoginCount():0);
+		u.setMaxLoginCount(
+				StringUtils.isNotEmpty(boaInAppInfo.getMaxLoginCount() + "") ? boaInAppInfo.getMaxLoginCount() : 0);
 		u.setTips(boaInAppInfo.getTips());
 		u.setSysToken(boaInAppInfo.getSysToken());
 		u.setIsPush(boaInAppInfo.getIsPush());
@@ -288,26 +326,26 @@ public class AppResource {
 	 * @author wim qiuwenwu@hongte.info 
 	 * @date 2018年5月15日 上午10:56:29
 	 */
-	
+
 	@GetMapping(value = "/isOS")
 	@ApiOperation(value = "判断是否为外部系统")
 	public Boolean isOS(@RequestParam("app") String app) {
 		List<HtBoaInApp> HtBoaInApp = htBoaInAppService.findByAppCode(app);
-		
-		if(LogicUtil.isNullOrEmpty(HtBoaInApp)) {
+
+		if (LogicUtil.isNullOrEmpty(HtBoaInApp)) {
 			return false;
-		}else if(HtBoaInApp.size() > 1){
- 				log.info("系统编码不唯一");
- 				return false;
-			
-		}else if(HtBoaInApp.get(0).getIsOS() == null){
+		} else if (HtBoaInApp.size() > 1) {
+			log.info("系统编码不唯一");
 			return false;
-		}else if(HtBoaInApp.get(0).getIsOS()==0){
+
+		} else if (HtBoaInApp.get(0).getIsOS() == null) {
+			return false;
+		} else if (HtBoaInApp.get(0).getIsOS() == 0) {
 			return true;
-		}else {
+		} else {
 			return false;
 		}
-		
+
 	}
 
 }
