@@ -301,77 +301,8 @@ public class CompanyResource {
 			//BeanUtil.toListBean(htBoaInCompanys, HtBoaInCompanyDTO.class);
 			return result;
 	}
-	/**
-	 * 
-	 * @Title: updateComAcc 
-	 * @Description: 修改分公司账户信息 
-	 * @return Result
-	 * @throws
-	 * @author wim qiuwenwu@hongte.info 
-	 * @date 2018年7月23日 下午6:07:04
-	 */
-	@PostMapping(value = "/updateComAcc")
-	@ApiOperation(value = "修改分公司账户信息")
-	public Result updateComAcc(@RequestBody HtBoaInCompanyAccountDTO htBoaInCompanyAccountDTO,
-			@RequestParam("userId") String userId) {
-		if(null==htBoaInCompanyAccountDTO||StringUtils.isEmpty(htBoaInCompanyAccountDTO.getCompanyCode())
-				|| StringUtils.isBlank(userId)) {
-			return Result.buildFail(SysStatus.ERROR_PARAM);
-		}
-		
-		try {
-		Result result=HtBoaInCompanyAccountService.updateComAcc(htBoaInCompanyAccountDTO, userId);
-		
-		if("9997".equals(result.getReturnCode())) {
-			return Result.buildFail(SysStatus.ERROR_PARAM);
-		}else if("9995".equals(result.getReturnCode())) {
-			return Result.buildFail(SysStatus.RECORD_HAS_DELETED);
-		}else if("9996".equals(result.getReturnCode())) {
-			return Result.buildFail(SysStatus.NO_RESULT);
-		}
-		}catch(Exception e) {
-			log.debug("-----修改分公司账户信息失败：" + e.getStackTrace());
-			return Result.buildFail();
-		}
-		return Result.buildSuccess();
-		
-	}
-	/**
-	 * 
-	 * @Title: updateComAcc 
-	 * @Description: 修改分公司账户信息 
-	 * @return Result
-	 * @throws
-	 * @author wim qiuwenwu@hongte.info 
-	 * @date 2018年7月23日 下午6:07:04
-	 */
-	@PostMapping(value = "/updateComAcc")
-	@ApiOperation(value = "修改分公司账户信息")
-	public Result updateComAcc(@RequestBody HtBoaInCompanyAccountDTO htBoaInCompanyAccountDTO,
-			@RequestParam("userId") String userId) {
-		if(null==htBoaInCompanyAccountDTO||StringUtils.isEmpty(htBoaInCompanyAccountDTO.getCompanyCode())
-				|| StringUtils.isBlank(userId)) {
-			return Result.buildFail(SysStatus.ERROR_PARAM);
-		}
-		
-		try {
-		Result result=HtBoaInCompanyAccountService.updateComAcc(htBoaInCompanyAccountDTO, userId);
-		
-		if("9997".equals(result.getReturnCode())) {
-			return Result.buildFail(SysStatus.ERROR_PARAM);
-		}else if("9995".equals(result.getReturnCode())) {
-			return Result.buildFail(SysStatus.RECORD_HAS_DELETED);
-		}else if("9996".equals(result.getReturnCode())) {
-			return Result.buildFail(SysStatus.NO_RESULT);
-		}
-		}catch(Exception e) {
-			log.debug("-----修改分公司账户信息失败：" + e.getStackTrace());
-			return Result.buildFail();
-		}
-		return Result.buildSuccess();
-		
-=======
-	 * 
+	
+	/** 
 	 * @Title: updateComAcc 
 	 * @Description: 修改分公司账户信息 
 	 * @return Result
@@ -420,7 +351,6 @@ public class CompanyResource {
 		}else {
 			return Result.buildFail(SysStatus.NO_RESULT);
 		}
->>>>>>> branch 'dev' of http://172.16.200.102/dev2/ussp.git
 	}
 	
 }
