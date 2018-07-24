@@ -295,8 +295,8 @@ public class CompanyResource {
 	}
 	
 	@PostMapping(value = "/getCompanyInfo")
-	@ApiOperation(value = "通过机构码获取GUID")
-	public Result<HtBoaInCompany> getGUIDByCompanyCode(@RequestParam("companyCode") String companyCode) {
+	@ApiOperation(value = "通过机构码获取公司详情")
+	public Result<HtBoaInCompany> getCompanyInfo(@RequestParam("companyCode") String companyCode) {
 		if(null==companyCode&&companyCode.length()==0) {
 		return Result.buildFail(SysStatus.ERROR_PARAM);
 	}
