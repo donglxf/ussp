@@ -247,6 +247,9 @@ public class HtBoaInUserAppService {
 				
 				HtBoaInApp htBoaInApp = listHtBoaInApp.get(0);
 				Log.info("--------o-------"+o);
+				Log.info("--------htBoaInApp-------"+htBoaInApp);
+				Log.info("--------htBoaInApp app-------"+htBoaInApp.getApp());
+				Log.info("--------app-------"+app);
 				Log.info("--------htBoaInApp status-------"+htBoaInApp.getStatus());
 				Log.info("--------htBoaInApp ispush-------"+htBoaInApp.getIsPush());
 				if(htBoaInApp!=null) {
