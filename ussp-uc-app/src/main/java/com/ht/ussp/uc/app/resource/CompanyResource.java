@@ -294,4 +294,18 @@ public class CompanyResource {
 		
 	}
 	
+	@PostMapping(value = "/getGUIDByCompanyCode")
+	@ApiOperation(value = "通过机构码获取GUID")
+	public Result getGUIDByCompanyCode(@RequestParam("companyCode") String companyCode) {
+		if(null==companyCode&&companyCode.length()==0) {
+		return Result.buildFail(SysStatus.ERROR_PARAM);
+	}
+		HtBoaInCompany htBoaInCompany=htBoaInCompanyService.findByCompanyCode(companyCode);
+		if(null!=htBoaInCompany&&htBoaInCompany.getTuandaiGuid()!=null) {
+			return Result.buildSuccess(htBoaInCompany.getTuandaiGuid());
+		}else {
+			return Result.buildFail(SysStatus.NO_RESULT);
+		}
+	}
+	
 }
