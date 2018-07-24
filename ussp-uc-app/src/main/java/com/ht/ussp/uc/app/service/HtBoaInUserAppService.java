@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
+import com.esotericsoftware.minlog.Log;
 import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.config.AmqpConfig;
@@ -243,11 +244,16 @@ public class HtBoaInUserAppService {
 		if(StringUtils.isNotEmpty(app)) {
 			List<HtBoaInApp> listHtBoaInApp =  htBoaInAppRepository.findByApp(app);
 			if(listHtBoaInApp!=null&&!listHtBoaInApp.isEmpty()) {
+				
 				HtBoaInApp htBoaInApp = listHtBoaInApp.get(0);
+				Log.info("--------o-------"+o);
+				Log.info("--------htBoaInApp status-------"+htBoaInApp.getStatus());
+				Log.info("--------htBoaInApp ispush-------"+htBoaInApp.getIsPush());
 				if(htBoaInApp!=null) {
 					if("0".equals(htBoaInApp.getStatus())&&"1".equals(htBoaInApp.getIsPush())) { //推送添加的人员
 						Map<String,String> reMap = new HashMap<String,String>();
 						reMap.put(opType, o);
+						Log.info("--------o-------"+opType);
 						rabbitMessagingTemplate.convertAndSend(AmqpConfig.UC_EXCHANGE, AmqpConfig.UC_ROUTING_NODELAY,reMap);
 					}
 				}
