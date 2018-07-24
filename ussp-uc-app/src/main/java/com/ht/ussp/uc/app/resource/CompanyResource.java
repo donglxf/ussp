@@ -296,13 +296,15 @@ public class CompanyResource {
 	
 	@PostMapping(value = "/getCompanyInfo")
 	@ApiOperation(value = "通过机构码获取公司详情")
-	public Result<HtBoaInCompany> getCompanyInfo(@RequestParam("companyCode") String companyCode) {
+	public Result<HtBoaInCompanyDTO> getCompanyInfo(@RequestParam("companyCode") String companyCode) {
 		if(null==companyCode&&companyCode.length()==0) {
 		return Result.buildFail(SysStatus.ERROR_PARAM);
 	}
 		HtBoaInCompany htBoaInCompany=htBoaInCompanyService.findByCompanyCode(companyCode);
 		if(null!=htBoaInCompany&&htBoaInCompany.getTuandaiGuid()!=null) {
-			return Result.buildSuccess(htBoaInCompany);
+			HtBoaInCompanyDTO htBoaInCompanyDTO=new HtBoaInCompanyDTO();
+			BeanUtils.deepCopy(htBoaInCompany,htBoaInCompanyDTO);
+			return Result.buildSuccess(htBoaInCompanyDTO);
 		}else {
 			return Result.buildFail(SysStatus.NO_RESULT);
 		}
