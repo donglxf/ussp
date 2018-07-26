@@ -337,7 +337,7 @@ public class CompanyResource {
 		
 	}
 	
-	@PostMapping(value = "/getCompanyInfo")
+	@GetMapping(value = "/getCompanyInfo")
 	@ApiOperation(value = "通过机构码获取公司详情")
 	public Result<HtBoaInCompanyDTO> getCompanyInfo(@RequestParam("companyCode") String companyCode) {
 		if(null==companyCode||companyCode.length()==0) {
