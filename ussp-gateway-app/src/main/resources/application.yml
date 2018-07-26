@@ -16,15 +16,15 @@ hystrix:
       execution:
         isolation:
           thread:
-            timeoutInMilliseconds: 20000
+            timeoutInMilliseconds: 600000
           strategy: THREAD
       fallback:
          isolation:
           semaphore:
             maxConcurrentRequests: 1000
 ribbon:  
-  ReadTimeout: 10000  
-  ConnectTimeout: 10000
+  ReadTimeout: 600000  
+  ConnectTimeout: 600000
   MaxAutoRetries: 2
   MaxAutoRetriesNextServer: 0
   ServerListRefreshInterval: 1000
@@ -39,8 +39,8 @@ zuul:
   host:
     maxTotalConnections: 2000
     maxPerRouteConnections: 800
-    socket-timeout-millis: 60000
-    connect-timeout-millis: 60000
+    socket-timeout-millis: 600000
+    connect-timeout-millis: 600000
   semaphore:
     maxSemaphores: 1500
   routes:

@@ -22,10 +22,22 @@ spring:
       enabled: false
     bus:
       enabled: false
+  zipkin: 
+    base-url: http://localhost:9999/
+  sleuth:
+    sampler:
+      percentage: 1.0
+  rabbitmq:
+    host: 172.16.200.111
+    port: 5672
+    username: admin
+    password: hongte888
+    virtual-host: /
 eureka:
   client:
     serviceUrl:
       defaultZone: ${EUREKA_SERVER_ADDRESS:http://localhost:30101/eureka/}
+ #     defaultZone: http://172.16.200.110:30101/eureka/
 
 bm:
   bmApi:

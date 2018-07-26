@@ -1,7 +1,6 @@
 package com.ht.ussp.uc.app.model;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import io.swagger.annotations.ApiModel;
@@ -56,22 +55,10 @@ public class SelfBoaInUserInfo {
     String orgType;
 
     @ApiModelProperty(value = "岗位编码", dataType = "string")
-    List<String> positionCodes = new ArrayList<String>();
-
-    @ApiModelProperty(value = "岗位名称", dataType = "string")
-    List<String> positionNames = new ArrayList<String>();
-
-    @ApiModelProperty(value = "岗位名称中文", dataType = "string")
-    List<String> positionNameChs = new ArrayList<String>();
+    List  positionCodes = new ArrayList();
 
     @ApiModelProperty(value = "角色编码", dataType = "string")
-    List<String> roleCodes = new ArrayList<String>();
-
-    @ApiModelProperty(value = "角色英文名", dataType = "string")
-    List<String> roleNames = new ArrayList<String>();
-
-    @ApiModelProperty(value = "角色中文名", dataType = "string")
-    List<String> roleNameChs = new ArrayList<String>();
+    List  roleCodes = new ArrayList();
 
     @ApiModelProperty(value = "工号", dataType = "string")
     String jobNumber;

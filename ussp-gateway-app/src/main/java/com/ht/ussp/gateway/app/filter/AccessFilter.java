@@ -9,9 +9,11 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.netflix.zuul.filters.ZuulProperties;
+import org.springframework.cloud.sleuth.Tracer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.ussp.common.SysStatus;
+import com.ht.ussp.core.Result;
 import com.ht.ussp.gateway.app.feignClients.RoleClient;
 import com.ht.ussp.gateway.app.feignClients.UaaClient;
 import com.ht.ussp.gateway.app.model.ResponseModal;
@@ -52,6 +54,9 @@ public class AccessFilter extends ZuulFilter {
 
     @Autowired
     private RoleClient roleClient;
+    
+    @Autowired
+    private Tracer tracer;
 
     @Override
     public boolean shouldFilter() {
@@ -65,7 +70,6 @@ public class AccessFilter extends ZuulFilter {
 
     @Override
     public Object run() {
-
         RequestContext ctx = RequestContext.getCurrentContext();
         ctx.getResponse().setCharacterEncoding("UTF-8");
         HttpServletRequest request = ctx.getRequest();
@@ -74,6 +78,7 @@ public class AccessFilter extends ZuulFilter {
         // 必须带Authorization
         String tokenPayload = request.getHeader("Authorization");
         String app = request.getHeader("app");
+        tracer.addTag("app", app);
         String validateUrl = getUrl(uri, bestMatchingPattern);
         log.info("----------validateUrl------------" + validateUrl);
         // 不鉴权的URL直接路由
@@ -169,6 +174,7 @@ public class AccessFilter extends ZuulFilter {
                 userId = vdt.getUserId();
                 ctx.addZuulRequestHeader("userId", userId);
                 ctx.addZuulRequestHeader("orgCode", vdt.getOrgCode());
+                tracer.addTag("userId", userId);
                 log.info("----------validate JWT SUCCESSFUL------------");
             } else if ("9922".equals(rm.getStatus_code()) || "9997".equals(rm.getStatus_code())) {
                 ctx.setSendZuulResponse(false);
@@ -184,7 +190,7 @@ public class AccessFilter extends ZuulFilter {
                     }
                 }
                 return null;
-            } else if ("9921".equals(rm.getResult_msg())) {
+            } else if ("9921".equals(rm.getStatus_code())) {
                 ctx.setSendZuulResponse(false);
                 try {
                     mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.TOKEN_IS_EXPIRED));
@@ -223,8 +229,15 @@ public class AccessFilter extends ZuulFilter {
         log.info("----------validate api start------------");
         // 验证api权限
         String api_key = String.format("%s:%s:%s", userId, app, "api");
-        if (StringUtils.isEmpty(userId) || StringUtils.isEmpty(app) || !roleClient.isHasAuth(api_key, validateUrl)) {
-            ctx.setSendZuulResponse(false);
+        Result result=roleClient.isHasAuth(api_key, validateUrl);
+		if("0000".equals(result.getReturnCode())) {
+        		if(null!=result.getData()){
+        		ctx.addZuulRequestHeader("ruleNum", result.getData().toString());
+        		log.debug("------ruleNum is:"+result.getData().toString());
+        		}
+        	}
+        if (StringUtils.isEmpty(userId) || StringUtils.isEmpty(app)||!("0000".equals(result.getReturnCode()))) {
+            	ctx.setSendZuulResponse(false);
             try {
                 mapper.writeValue(ctx.getResponse().getWriter(), new ResponseModal(SysStatus.HAS_NO_ACCESS));
             } catch (IOException e) {

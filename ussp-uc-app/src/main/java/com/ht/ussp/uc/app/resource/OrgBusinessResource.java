@@ -10,7 +10,9 @@
 package com.ht.ussp.uc.app.resource;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +29,17 @@ import com.ht.ussp.core.PageResult;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.core.ReturnCodeEnum;
 import com.ht.ussp.uc.app.domain.HtBoaInBusinessOrg;
-import com.ht.ussp.uc.app.domain.HtBoaInUser;
 import com.ht.ussp.uc.app.domain.HtBoaInUserExt;
+import com.ht.ussp.uc.app.feignclients.PccRemoteClient;
+import com.ht.ussp.uc.app.model.BoaInBusiOrgInfo;
 import com.ht.ussp.uc.app.model.PageConf;
 import com.ht.ussp.uc.app.model.ResponseModal;
+import com.ht.ussp.uc.app.service.HtBoaInCompanyService;
 import com.ht.ussp.uc.app.service.HtBoaInOrgBusinessService;
 import com.ht.ussp.uc.app.service.HtBoaInUserBusinessService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
+import com.ht.ussp.uc.app.vo.LoginInfoVo;
+import com.ht.ussp.uc.app.vo.NextChildDto;
 import com.ht.ussp.uc.app.vo.PageVo;
 
 import io.swagger.annotations.ApiOperation;
@@ -52,12 +58,14 @@ import lombok.extern.log4j.Log4j2;
 public class OrgBusinessResource {
     @Autowired
     private HtBoaInOrgBusinessService htBoaInOrgBusinessService;
-    
     @Autowired
     private HtBoaInUserBusinessService htBoaInUserBusinessService;
-
     @Autowired
     private HtBoaInUserService htBoaInUserService;
+    @Autowired
+    private PccRemoteClient pccRemoteClient;
+    @Autowired
+    private HtBoaInCompanyService htBoaInCompanyService;
 
     @PostMapping(value = "/tree", produces = {"application/json"})
     public List<HtBoaInBusinessOrg> getOrgTreeList(String parenOrgCode) {
@@ -101,8 +109,8 @@ public class OrgBusinessResource {
         HtBoaInBusinessOrg u = null;
         List<HtBoaInBusinessOrg> listHtBoaInBusinessOrg = htBoaInOrgBusinessService.findByOrgCode(htBoaInBusinessOrg.getBusinessOrgCode());
         if(listHtBoaInBusinessOrg!=null&&!listHtBoaInBusinessOrg.isEmpty()) {
-        	u = htBoaInBusinessOrg;
-        	/*u.setBusinessOrgName(htBoaInBusinessOrg.getBusinessOrgName());
+        	u = listHtBoaInBusinessOrg.get(0);
+        	u.setBusinessOrgName(htBoaInBusinessOrg.getBusinessOrgName());
         	u.setActivityCode(htBoaInBusinessOrg.getActivityCode());
         	u.setApprovalCode(htBoaInBusinessOrg.getApprovalCode());
         	u.setOrgLevel(htBoaInBusinessOrg.getOrgLevel());
@@ -113,17 +121,17 @@ public class OrgBusinessResource {
         	u.setDistrictCode(htBoaInBusinessOrg.getDistrictCode());
         	u.setFinanceCode(htBoaInBusinessOrg.getFinanceCode());
         	u.setParentOrgCode(StringUtils.isEmpty(htBoaInBusinessOrg.getParentOrgCode())?null:htBoaInBusinessOrg.getParentOrgCode());
-        	u.setSequence(htBoaInBusinessOrg.getSequence());*/
+        	u.setSequence(htBoaInBusinessOrg.getSequence());
         }
         if(u==null) {
            u = htBoaInBusinessOrg;
+           u.setDataSource(Constants.USER_DATASOURCE_1);
            u.setCreatedDatetime(new Date());
         } 
         u.setUpdateDatetime(new Date());
         u.setJpaVersion(0);
         u.setStatus(0);
         u.setCreateOperator(userId);
-        u.setDataSource(Constants.USER_DATASOURCE_1);
         u=htBoaInOrgBusinessService.add(u);
         el = System.currentTimeMillis();
         log.debug(logEnd, "boaInOrgInfo: " + u, msg, el, el - sl);
@@ -269,19 +277,14 @@ public class OrgBusinessResource {
        return Result.buildSuccess(listHtBoaInOrg);
     }
     
-    @SuppressWarnings("rawtypes")
-   	@ApiOperation(value = "获取业务机构下所有人",notes="")
-    @PostMapping(value = {"/getBusiOrgUserList" }, produces = {"application/json"} )
-    public Result getBusiOrgUserList(String branch) {
-       return Result.buildSuccess(null);
-    }
-    
+ 
     @SuppressWarnings("rawtypes")
    	@ApiOperation(value = "根据userId获取用户信息",notes="返回所属分公司")
     @PostMapping(value = {"/getUserInfoByUserId" }, produces = {"application/json"} )
     public Result getUserInfoByUserId(String userId) {
-    	HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(userId);
-       return Result.buildSuccess(htBoaInUser);
+      // HtBoaInUser htBoaInUser = htBoaInUserService.findByUserId(userId);
+       LoginInfoVo loginInfoVo = htBoaInUserService.queryUserInfo(userId,"");
+       return Result.buildSuccess(loginInfoVo);
     }
     
     @SuppressWarnings("rawtypes")
@@ -317,10 +320,53 @@ public class OrgBusinessResource {
     
     
     @SuppressWarnings("rawtypes")
+   	@ApiOperation(value = "分公司所属省、市转换",notes="分公司地址，省，市转换")
+    @PostMapping(value = {"/convertBranchCity" }, produces = {"application/json"} )
+    public Result convertBranchCity(String state ) {
+       htBoaInOrgBusinessService.convertBranchCity(state);
+       return Result.buildSuccess();
+    }
+    
+    @SuppressWarnings("rawtypes")
    	@ApiOperation(value = "获取业务机构所属分公司/片区",notes="获取业务机构所属分公司/片区")
     @PostMapping(value = {"/getBusiOrgInfoByOrgType" }, produces = {"application/json"} )
     public Result getBusiOrgInfoByOrgType(String orgCode, String orgType) {
        return Result.buildSuccess(htBoaInOrgBusinessService.getOrgInfoByOrgType(orgCode, orgType));
     }
+    
+    @SuppressWarnings("rawtypes")
+   	@ApiOperation(value = "获取省市区列表")
+    @PostMapping(value = {"/getNextChilds" }, produces = {"application/json"} )
+    public Result getNextChilds(@RequestBody NextChildDto nextChildDto) {
+       return Result.buildSuccess(htBoaInOrgBusinessService.getNextChilds(nextChildDto));
+    }
  
+    /**
+	 * 获取省份下拉列表
+	 * @return
+	 */
+	@ApiOperation(value = "获取省市区信息")
+	@GetMapping(value = "/getProvince", produces = { "application/json" })
+	public Result getProvince(@RequestParam("typeCode") String typeCode){
+		Map<String,Object> params = new HashMap<>();
+		params.put("typeCode",typeCode);
+		params.put("version","latest");
+		return  pccRemoteClient.getProvince(params);
+	}
+
+	@ApiOperation(value = "获取省市区信息")
+	@PostMapping(value = "/getNextChildsCode",produces = { "application/json" })
+	public Result getNextChildsCode(@RequestBody NextChildDto dto){
+		Result result = pccRemoteClient.getNextChildres(dto);
+		return result;
+	}
+	
+//	@ApiOperation(value = "获取分公司详细信息")
+//	@PostMapping(value = "/company/getCompnayInfo",produces = { "application/json" })
+//	public Result getCompnayInfo(@RequestParam("branchCode")String branchCode){
+//		List<BoaInBusiOrgInfo> result = htBoaInCompanyService.getCompnayInfo(branchCode);
+//		return Result.buildSuccess(result);
+//	} 
+	
+
 }

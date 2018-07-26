@@ -25,7 +25,7 @@ import lombok.extern.log4j.Log4j2;
 @Component
 public class SmsHelper {
 
-	@Autowired
+	@Autowired(required = false)
 	private SmsClient smsClient;
 
 	@Autowired(required = false)

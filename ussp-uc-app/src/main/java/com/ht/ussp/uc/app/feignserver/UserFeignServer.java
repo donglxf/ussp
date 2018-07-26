@@ -1,9 +1,11 @@
 package com.ht.ussp.uc.app.feignserver;
 
 import java.net.URLDecoder;
+import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,10 +19,8 @@ import com.alibaba.druid.util.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.ht.ussp.core.Result;
 import com.ht.ussp.uc.app.domain.DdUser;
-import com.ht.ussp.uc.app.domain.HtBoaInBmUser;
 import com.ht.ussp.uc.app.domain.HtBoaInContrast;
 import com.ht.ussp.uc.app.domain.HtBoaInUser;
-import com.ht.ussp.uc.app.domain.HtBoaInUserExt;
 import com.ht.ussp.uc.app.domain.HtBoaInUserRole;
 import com.ht.ussp.uc.app.feignclients.UaaClient;
 import com.ht.ussp.uc.app.model.ResponseModal;
@@ -32,7 +32,6 @@ import com.ht.ussp.uc.app.service.HtBoaInUserBusinessService;
 import com.ht.ussp.uc.app.service.HtBoaInUserRoleService;
 import com.ht.ussp.uc.app.service.HtBoaInUserService;
 import com.ht.ussp.uc.app.vo.BmUserVo;
-import com.ht.ussp.uc.app.vo.LoginInfoVo;
 import com.ht.ussp.uc.app.vo.UserMessageVo;
 import com.ht.ussp.util.md5.DESC;
 import com.ht.ussp.util.md5.DecodeResult;
@@ -155,54 +154,7 @@ public class UserFeignServer{
     @ApiOperation(value = "获取指定userId用户信息",notes="userId为空并且bmUserId不为空，则根据信贷userId查询UC用户信息（userId：Uc用户id,bmUserId:信贷用户id,app:系统编码）")
     @GetMapping(value = "/getUserInfoByUserId")
     public Result getUserInfoByUserId(@RequestParam("userId")String userId, @RequestParam("bmUserId")String bmUserId, @RequestParam("app") String app) {
-    	LoginInfoVo loginInfoVo = null;
-    	if(StringUtils.isEmpty(userId)||userId.length()==0||"null".equals(userId)) {
-    		List<HtBoaInContrast> listHtBoaInContrast= htBoaInContrastService.getHtBoaInContrastListByBmUserId(bmUserId,"20");
-    		if(listHtBoaInContrast==null||listHtBoaInContrast.isEmpty()) {
-    			if(!StringUtils.isEmpty(bmUserId)) {
-        			if(loginInfoVo==null) {
-        				List<HtBoaInBmUser> listHtBoaInBmUser = htBoaInBmUserService.getHtBoaInBmUserByUserId(bmUserId);
-        				//如果本地没有则连接信贷系统获取信贷用户
-        				if(listHtBoaInBmUser==null||listHtBoaInBmUser.isEmpty()) {
-        					listHtBoaInBmUser = htBoaInBmUserService.createBmUserInfo(bmUserId,bmApiUrl);
-        				}
-        				if(listHtBoaInBmUser!=null && !listHtBoaInBmUser.isEmpty()) {
-        					loginInfoVo = new LoginInfoVo();
-        					loginInfoVo.setBmOrgCode(listHtBoaInBmUser.get(0).getOrgCode());
-        					loginInfoVo.setBmUserId(bmUserId);
-        					loginInfoVo.setEmail(listHtBoaInBmUser.get(0).getEmail());
-        					loginInfoVo.setJobNumber(listHtBoaInBmUser.get(0).getJobNumber());
-        					loginInfoVo.setUserName(listHtBoaInBmUser.get(0).getUserName());
-        					loginInfoVo.setMobile(listHtBoaInBmUser.get(0).getMobile());
-        					try {//历史用户信息转存（方便贷后查询历史记录） 
-        						HtBoaInUser u = htBoaInUserService.saveBmUserInfo(listHtBoaInBmUser.get(0));
-        						if(u!=null) {
-        							loginInfoVo.setUserId(u.getUserId());
-        							loginInfoVo.setMobile(u.getMobile());
-        							HtBoaInUserExt htBoaInUserExt = new HtBoaInUserExt();
-        							htBoaInUserExt.setUserId(u.getUserId());
-        							htBoaInUserExt.setBmUserId(listHtBoaInBmUser.get(0).getUserId());
-        							htBoaInUserExt.setBusiOrgCode(listHtBoaInBmUser.get(0).getOrgCode());
-        							htBoaInUserExt.setJpaVersion(0);
-        							htBoaInUserExt.setCreatedDatetime(new Date());
-        							htBoaInUserExt.setLastModifiedDatetime(new Date());
-        							htBoaInUserService.saveHtBoaInUserExt(htBoaInUserExt);
-        							loginInfoVo = htBoaInUserService.queryUserInfo(userId,app);
-        						}
-							} catch (Exception e) {
-								 e.printStackTrace();
-							}
-        				}
-        	    	}
-        		}
-    		}else {
-    			userId=listHtBoaInContrast.get(0).getUcBusinessId();
-    			loginInfoVo = htBoaInUserService.queryUserInfo(userId,app);
-    		}
-    	}else {
-    		loginInfoVo = htBoaInUserService.queryUserInfo(userId,app);
-    	}
-        return Result.buildSuccess(loginInfoVo);
+        return Result.buildSuccess(htBoaInUserService.getUserInfoByUserId(userId, bmUserId, app, bmApiUrl));
     }
     
     @ApiOperation(value = "查询角色下所有用户", notes = "查询角色下所有用户")
@@ -255,6 +207,8 @@ public class UserFeignServer{
     @PostMapping(value = "/getUserListByBusiOrg")
     public Result getUserListByBusiOrg(@RequestParam("busiOrgCode")String busiOrgCode, @RequestParam("isAllSub")String isAllSub) {
     	List<UserMessageVo> listUserMessageVo = htBoaInUserBusinessService.getUserBusiListByBusiOrgCode(busiOrgCode,isAllSub);
+    	Collections.sort(listUserMessageVo,(UserMessageVo o1,UserMessageVo o2)-> Collator.getInstance(Locale.CHINESE).compare(o1.getUserName(),o2.getUserName()));
+        //testEntities.forEach((TestEntity t)->System.out.println(t.toString()));
         return Result.buildSuccess(listUserMessageVo);
     }
     

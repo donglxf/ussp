@@ -72,7 +72,8 @@ public class HtBoaInUserService {
     private HtBoaInUserBusinessService htBoaInUserBusinessService;
     @Autowired
     private HtBoaInOrgBusinessRepository htBoaInOrgBusinessRepository;
-    
+    @Autowired
+   	private HtBoaInContrastService htBoaInContrastService;
     /**
      * @return HtBoaInUser
      * @throws
@@ -130,7 +131,6 @@ public class HtBoaInUserService {
 					}
 				}
         	}
-        	
         	//获取用户是否是系统管理员
         	if(StringUtils.isNotEmpty(app)) {
         		HtBoaInUserApp htBoaInUserApp = null;
@@ -183,6 +183,59 @@ public class HtBoaInUserService {
         }
         return loginInfoVo;
     }
+    
+    public LoginInfoVo getUserInfoByUserId( String userId, String bmUserId, String app,String bmApiUrl) {
+    	LoginInfoVo loginInfoVo = null;
+    	if(StringUtils.isEmpty(userId)||userId.length()==0||"null".equals(userId)) {
+    		List<HtBoaInContrast> listHtBoaInContrast= htBoaInContrastService.getHtBoaInContrastListByBmUserId(bmUserId,"20");
+    		if(listHtBoaInContrast==null||listHtBoaInContrast.isEmpty()) {
+    			if(!StringUtils.isEmpty(bmUserId)) {
+        			if(loginInfoVo==null) {
+        				List<HtBoaInBmUser> listHtBoaInBmUser = htBoaInBmUserService.getHtBoaInBmUserByUserId(bmUserId);
+        				//如果本地没有则连接信贷系统获取信贷用户
+        				if(listHtBoaInBmUser==null||listHtBoaInBmUser.isEmpty()) {
+        					listHtBoaInBmUser = htBoaInBmUserService.createBmUserInfo(bmUserId,bmApiUrl);
+        				}
+        				
+        				if(listHtBoaInBmUser!=null && !listHtBoaInBmUser.isEmpty()) {
+        					loginInfoVo = new LoginInfoVo();
+        					loginInfoVo.setBmOrgCode(listHtBoaInBmUser.get(0).getOrgCode());
+        					loginInfoVo.setBmUserId(bmUserId);
+        					loginInfoVo.setEmail(listHtBoaInBmUser.get(0).getEmail());
+        					loginInfoVo.setJobNumber(listHtBoaInBmUser.get(0).getJobNumber());
+        					loginInfoVo.setUserName(listHtBoaInBmUser.get(0).getUserName());
+        					loginInfoVo.setMobile(listHtBoaInBmUser.get(0).getMobile());
+        					try {//历史用户信息转存（方便贷后查询历史记录） 
+        						HtBoaInUser u =  saveBmUserInfo(listHtBoaInBmUser.get(0));
+        						if(u!=null) {
+        							loginInfoVo.setUserId(u.getUserId());
+        							loginInfoVo.setMobile(u.getMobile());
+        							HtBoaInUserExt htBoaInUserExt = new HtBoaInUserExt();
+        							htBoaInUserExt.setUserId(u.getUserId());
+        							htBoaInUserExt.setBmUserId(listHtBoaInBmUser.get(0).getUserId());
+        							htBoaInUserExt.setBusiOrgCode(listHtBoaInBmUser.get(0).getOrgCode());
+        							htBoaInUserExt.setJpaVersion(0);
+        							htBoaInUserExt.setCreatedDatetime(new Date());
+        							htBoaInUserExt.setLastModifiedDatetime(new Date());
+        							 saveHtBoaInUserExt(htBoaInUserExt);
+        							loginInfoVo = queryUserInfo(u.getUserId(),app);
+        						}
+							} catch (Exception e) {
+								 e.printStackTrace();
+							}
+        				}
+        	    	}
+        		}
+    		}else {
+    			userId=listHtBoaInContrast.get(0).getUcBusinessId();
+    			loginInfoVo =  queryUserInfo(userId,app);
+    		}
+    	}else {
+    		loginInfoVo =  queryUserInfo(userId,app);
+    	}
+        return loginInfoVo;
+    }
+    
     
     /**
      * 用户信息分页查询<br>
@@ -795,20 +848,12 @@ public class HtBoaInUserService {
             for (Map<String, Object> o : roles) {
                 s.getRoleCodes()
                         .add(null != o.get("0") ? o.get("0").toString() : null);
-                s.getRoleNames()
-                        .add(null != o.get("1") ? o.get("1").toString() : null);
-                s.getRoleNameChs()
-                        .add(null != o.get("2") ? o.get("2").toString() : null);
             }
             List<Map<String, Object>> positions = this.htBoaInUserRepository
                     .listSelfUserInfo4Position(s.getUserId());
             for (Map<String, Object> o : positions) {
                 s.getPositionCodes()
                         .add(null != o.get("0") ? o.get("0").toString() : null);
-                s.getPositionNames()
-                        .add(null != o.get("1") ? o.get("1").toString() : null);
-                s.getPositionNameChs()
-                        .add(null != o.get("2") ? o.get("2").toString() : null);
             }
         }
         return list;

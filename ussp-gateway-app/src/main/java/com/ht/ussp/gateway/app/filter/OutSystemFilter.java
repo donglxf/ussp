@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.netflix.zuul.filters.ZuulProperties;
+import org.springframework.cloud.sleuth.Tracer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.ussp.common.SysStatus;
@@ -57,6 +58,9 @@ public class OutSystemFilter extends ZuulFilter {
 	@Autowired
 	private OucClient oucClient;
 	
+    @Autowired
+    private Tracer tracer;
+	
 	@Override
 	public boolean shouldFilter() {
 		return true;
@@ -71,6 +75,7 @@ public class OutSystemFilter extends ZuulFilter {
 		String ieme=request.getHeader("ieme");
 		String uri = request.getRequestURI().toString();
 		log.info("----------------url:"+request.getRequestURL());
+		tracer.addTag("app", app);
 	
 		// 鉴权app不能为空
 		if (StringUtils.isEmpty(app)) {
@@ -205,6 +210,8 @@ public class OutSystemFilter extends ZuulFilter {
 					log.debug("====validate out system success,the userId is:"+userId);
 					ctx.addZuulRequestHeader("userId", userId);
 					ctx.addZuulRequestHeader("ieme", iemeTemp);
+					 tracer.addTag("userId", userId);
+					 tracer.addTag("ieme", ieme);
 					ctx.setSendZuulResponse(true);
 						return null;
 				} else if ("9922".equals(result.getReturnCode())) {

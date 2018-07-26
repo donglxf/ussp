@@ -215,10 +215,11 @@ public class UcDataResource {
 	public Result getUserInfoForApp(String appCode) { 
 		List<SelfBoaInUserInfo> listSelfBoaInUserInfo = htBoaInUserAppService.getUserInfoForApp(appCode);
 		for(SelfBoaInUserInfo selfBoaInUserInfo : listSelfBoaInUserInfo) {
+			List<BoaInRoleInfo> listRoleCodes = htBoaInUserRoleService.getUserRoleCodesByUserId(selfBoaInUserInfo.getUserId());
 			//获取用户角色
-			selfBoaInUserInfo.setRoleCodes(htBoaInUserRoleService.getAllRoleCodes(selfBoaInUserInfo.getUserId()));
+			selfBoaInUserInfo.setRoleCodes(listRoleCodes);
 			//获取用户岗位
-			selfBoaInUserInfo.setPositionCodes(htBoaInPositionUserService.queryRoleCodes(selfBoaInUserInfo.getUserId()));
+			//selfBoaInUserInfo.setPositionCodes(htBoaInPositionUserService.queryRoleCodes(selfBoaInUserInfo.getUserId()));
 		}
 		return Result.buildSuccess(listSelfBoaInUserInfo);
 	} 

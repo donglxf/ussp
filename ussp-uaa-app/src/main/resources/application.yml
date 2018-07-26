@@ -43,5 +43,4 @@ ribbon:
   ConnectTimeout: 10000
   MaxAutoRetries: 0
   MaxAutoRetriesNextServer: 1
-  ServerListRefreshInterval: 1000
-  
+  ServerListRefreshInterval: 1000 

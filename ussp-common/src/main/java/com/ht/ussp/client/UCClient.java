@@ -57,6 +57,14 @@ public interface UCClient {
     LoginInfoDto getLoginUserInfo(@RequestParam("userId") String userId, @RequestParam("app") String app);
     
     /**
+     * 根据规则码获取规则内容
+     * @param ruleNum
+     * @return
+     */
+    @PostMapping("/auth/getRuleContent")
+	Result<String> getRuleContent(@RequestParam("ruleNum")String ruleNum,@RequestParam("app")String app, @RequestParam("userId")String userId);
+    
+    /**
      * 根据userId获取bmUserId
      * @param userId
      * @param bmUserId
@@ -212,5 +220,6 @@ public interface UCClient {
 	
 	@PostMapping("/orgbusiness/getBusiOrgInfoByOrgType")
 	Result getBusiOrgInfoByOrgType(@RequestParam("orgCode")String orgCode,@RequestParam("orgType") String orgType);
+
 }
 

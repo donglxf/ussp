@@ -1,0 +1,39 @@
+
+  	<div class="layui-tab" >
+  	
+	  <ul class="layui-tab-title">
+		<li class="layui-this">公司信息</li>
+	    <li>公司账户</li>
+	  </ul>
+	  
+	  <div class="layui-tab-content">
+	 	<!-- 公司信息  -->
+	    <div class="layui-tab-item layui-show">
+	      <div class="row row-lg" style="padding-left: 15px;padding-right: 15px;">
+		    	 <div class="pull-right col-xs-4 row">
+	                <div class="input-group input-group-sm">
+	                    <input type="text" class="form-control input-sm" maxlength="60" id="customerInfo_search_keyword"
+	                           placeholder="请输入客户编号/客户名称"/>
+	                    <div class="input-group-btn">
+	                        <button type="button" class="layui-btn layui-btn-sm" data-type="search">
+	                            <i class="fa fa-search"></i>
+	                        </button>
+	                    </div>
+	                </div>
+	            </div>
+            </div>
+			<table class="layui-hide" id="boaInCompany" lay-filter="filter_boaInCompany"></table>
+			<script type="text/html" id="boaInCompany_datatable_bar">
+                <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" ht-auth="detail">查看</a>
+                <a class="layui-btn layui-btn-xs" lay-event="edit" ht-auth="edit">编辑</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" ht-auth="del">删除</a>
+            </script>
+		</div>
+	    <!-- 公司账户  -->
+	    <div class="layui-tab-item">
+			<loadpage src="companyAccount.html"></loadpage>
+		</div>
+	  </div>
+	  <loadpage src="companyAdd.html"></loadpage>
+	</div> 
+	<script src="/js/company/company.js"></script>

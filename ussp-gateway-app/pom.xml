@@ -19,7 +19,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<start-class>com.ht.ussp.gateway.app.GatewayApplication</start-class>
-		<maven.deploy.skip>true</maven.deploy.skip>
+<!-- 		<maven.deploy.skip>true</maven.deploy.skip> -->
 		<docker.image.prefix>ussp</docker.image.prefix>
 
 		<docker-maven-plugin.version>1.0.0</docker-maven-plugin.version>
@@ -131,6 +131,28 @@
 			<artifactId>ussp-common</artifactId>
 			<version>0.0.30</version>
 		</dependency>
+		
+			<!--添加sleuth和zipkin目录  -->
+		  <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-sleuth-zipkin-stream</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-stream-rabbit</artifactId>
+        </dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-sleuth</artifactId>
+			<version>2.0.0.RELEASE</version>
+		</dependency>
+    
+    <dependency>
+	    <groupId>org.jolokia</groupId>
+	    <artifactId>jolokia-core</artifactId>
+	</dependency>
+	
+		
 	</dependencies>
 
 	<dependencyManagement>

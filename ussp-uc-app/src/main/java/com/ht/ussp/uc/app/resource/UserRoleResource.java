@@ -221,6 +221,7 @@ public class UserRoleResource {
         	if(u!=null) {
 				List<HtBoaInRole> listHtBoaInRole = htBoaInRoleService.findByRoleCode(u.getRoleCode());
 				if(listHtBoaInRole!=null&&!listHtBoaInRole.isEmpty()) {
+					u.setLastModifiedDatetime(new Date());
 					htBoaInUserAppService.pushMq(listHtBoaInRole.get(0).getApp(), "delUserRole", JsonUtil.obj2Str(u));
 				}
 			}

@@ -1,27 +1,26 @@
 spring:
-    profiles.active: dev
-    
----
-server:
-  port: 10001
-spring:
-  profiles: dev
   application:
     name: ussp-admin-app
-    boot:
-      admin:
-        url: http://localhost:10001/
-        username: "${security.user.name}"
-        password: "${security.user.password}"
-        client:
-          metadata:
-            user.name: "${security.user.name}"
-            user.password:  "${security.user.password}"
+  boot:
+    admin:
+      routes:
+        endpoints: env,metrics,trace,dump,jolokia,info,configprops,trace,logfile,refresh,flyway,liquibase,heapdump,hystrix.stream
+server:
+  port: 9998
 
-management:
-  context-path: "/actuator"
 
-security:
-   user:
-     name: admin
-     password: 123456
+eureka:
+  instance:
+    lease-expiration-duration-in-seconds: 1
+    lease-renewal-interval-in-seconds: 1
+  client: 
+    serviceUrl: 
+      defaultZone: http://localhost:30101/eureka/
+      
+management: 
+  security:
+    enabled: false
+
+info:
+  version:@project.version@
+        

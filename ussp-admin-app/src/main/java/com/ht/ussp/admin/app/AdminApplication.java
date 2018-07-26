@@ -1,28 +1,25 @@
 package com.ht.ussp.admin.app;
 
-import de.codecentric.boot.admin.config.EnableAdminServer;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.support.SpringBootServletInitializer;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+
+import de.codecentric.boot.admin.config.EnableAdminServer;
 
 /**
- * 摘要:
- *
- * @author xyt
- * @create 2018-01-12 下午4:51
- **/
+ * 
+ * @ClassName: AdminApplication
+ * @Description: spring boot admin用户监控cloud中所有boot项目
+ * @author wim qiuwenwu@hongte.info
+ * @date 2018年7月13日 上午9:38:32
+ */
 
-@Configuration
-@EnableAutoConfiguration
 @EnableAdminServer
-public class AdminApplication extends SpringBootServletInitializer {
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(AdminApplication.class);
-    }
-
-    public static void main(String[] args) {
+@EnableDiscoveryClient
+@SpringBootApplication
+public class AdminApplication{
+     public static void main(String[] args) {
         SpringApplication.run(AdminApplication.class, args);
     }
+    
 }
