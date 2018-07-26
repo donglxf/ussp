@@ -1,0 +1,70 @@
+	<div id="add_companyInfo_div" class="hide">
+	<form class="layui-form" action="" lay-filter="example">
+		<div class="layui-form-item">
+			<label class="layui-form-label">地址</label>
+			<div class="layui-input-block">
+				<input type="text" name="companyAddress" lay-verify="title"
+					autocomplete="off" placeholder="地址" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">合同地址</label>
+			<div class="layui-input-block">
+				<input type="text" name="companyAddressContract" lay-verify="required"
+					placeholder="请输入合同地址" autocomplete="off" class="layui-input">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">验证手机</label>
+				<div class="layui-input-inline">
+					<input type="tel" name="phone" lay-verify="required|phone"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">验证邮箱</label>
+				<div class="layui-input-inline">
+					<input type="text" name="email" lay-verify="email"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">多规则验证</label>
+				<div class="layui-input-inline">
+					<input type="text" name="number" lay-verify="required|number"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">验证日期</label>
+				<div class="layui-input-inline">
+					<input type="text" name="date" id="date" lay-verify="date"
+						placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">验证身份证</label>
+			<div class="layui-input-block">
+				<input type="text" name="identity" lay-verify="identity"
+					placeholder="" autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">自定义验证</label>
+			<div class="layui-input-inline">
+				<input type="password" name="password" lay-verify="pass"
+					placeholder="请输入密码" autocomplete="off" class="layui-input">
+			</div>
+			<div class="layui-form-mid layui-word-aux">请填写6到12位密码</div>
+		</div>
+
+	</form>
+</div>
+

@@ -1,0 +1,139 @@
+<div id="update_companyfo_div" class="hide">
+    <form data-parentclassifycode="CARD_INFO" lay-form-url="bankCard/updateInfo" method="post"
+          class="layui-form" style="margin-top: 20px"
+          lay-filter="filter_update_card_form">
+        <button class="layui-btn hide" lay-submit="" lay-filter="filter_update_card_form"></button>
+        <input type='hidden' name='id'>
+        <input type='hidden' name='optimisticLock'>
+        <input type='hidden' name='customerCode'>
+        <input type='hidden' name='isDelete'>
+        <fieldset class="layui-elem-field site-demo-button ">
+            <legend style="font-size:16px;width:auto;border:0">基础信息</legend>
+            <div class="layui-col-md2"><label class="layui-form-label layui-table-cell" title="银行账号">银行账号<b>*</b></label></div>
+            <div class="layui-col-md4"><input type="text" name="bankAccounts" maxlength="64" lay-verify="required"
+                                              lay-filter="bankAccounts" autocomplete="off" readonly
+                                              class="layui-input layui-input-sm"></div>
+            <div class="layui-col-md2"><label class="layui-form-label layui-table-cell" title="预留手机号">预留手机号<b>*</b></label>
+            </div>
+            <div class="layui-col-md4"><input type="text" name="phone" maxlength="64" lay-verify="required|phone"
+                                              lay-filter="phone" autocomplete="off"
+                                              class="layui-input layui-input-sm"></div>
+            <div class="layui-col-md2"><label class="layui-form-label layui-table-cell" title="开户行">开户行<b>*</b></label>
+            </div>
+            <div class="layui-col-md4">
+            <span data-pcc='{"ctrl_type":"select","type_code":"bank","val_field":"bankName"}'
+                  name="bankCode"
+                  lay-filter="update_p_bank_code"
+                  lay-verify="required"
+                  lay-verify="required"></span>
+                <input type="hidden" name="bankName">
+
+            </div>
+
+            <div class="layui-col-md2"><label class="layui-form-label layui-table-cell" title="支行名称">支行名称</label></div>
+            <div class="layui-col-md4"><input type="text" name="branchBankName"
+                                              lay-filter="branchBankName" autocomplete="off"
+                                              maxlength="128"
+                                              class="layui-input layui-input-sm"></div>
+            <div class="layui-col-md2"><label class="layui-form-label layui-table-cell"
+                                              title="归属省">归属省</label>
+            </div>
+            <div class="layui-col-md4">
+                <select style="height: 60px;" lay-search pcc-cascading
+                        data-pcc-cascading='{"type":"root"
+                                                ,"type_code":"provinceCode"
+                                                ,"child_field":"bankCityCode"
+                                                ,"val_field":"bankProvinceName"}'
+                        name="bankProvinceCode"
+                        lay-filter="update_p_bank_province_code"></select>
+                <input type="hidden" name="bankProvinceName">
+
+
+            </div>
+            <div class="layui-col-md2"><label class="layui-form-label layui-table-cell" title="归属市">归属市</label>
+            </div>
+            <div class="layui-col-md4">
+                <select lay-search pcc-cascading
+                        data-pcc-cascading='{"type_code":"city"
+                                                ,"val_field":"bankCityName"}'
+                        name="bankCityCode"
+                        lay-filter="update_p_bank_city_code"></select>
+                <input type="hidden" name="bankCityName">
+            </div>
+            <div class="layui-col-md2"><label class="layui-form-label layui-table-cell" title="转账类型">转账类型</label>
+            </div>
+            <div class="layui-col-md4">
+                <input type="radio" lay-filter="transferType" name="transferType" value="1"
+                       title="对公" checked>
+                <input type="radio" lay-filter="transferType" name="transferType" value="2"
+                       title="对私">
+            </div>
+        </fieldset>
+        <fieldset class="layui-elem-field site-demo-button customer_other_info" style="display: none;">
+            <legend style="font-size:16px;width:auto;border:0">其他信息</legend>
+            <div class="layui-col-md2"><label
+                    class="layui-form-label layui-table-cell"
+                    title="创建人ID">创建人ID</label></div>
+            <div class="layui-col-md4">
+                <input type="text" v-name="createUserId" class="layui-input layui-input-sm">
+            </div>
+            <div class="layui-col-md2"><label
+                    class="layui-form-label layui-table-cell"
+                    title="创建人名称">创建人名称</label></div>
+            <div class="layui-col-md4">
+                <input type="text" v-name="createUserName" class="layui-input layui-input-sm">
+            </div>
+            <div class="layui-col-md2"><label
+                    class="layui-form-label layui-table-cell"
+                    title="创建人机构编号">创建人机构编号</label></div>
+            <div class="layui-col-md4">
+                <input type="text" v-name="createOrgCode" class="layui-input layui-input-sm">
+            </div>
+            <div class="layui-col-md2"><label
+                    class="layui-form-label layui-table-cell"
+                    title="创建人机构名称">创建人机构名称</label></div>
+            <div class="layui-col-md4">
+                <input type="text" v-name="createOrgName" class="layui-input layui-input-sm">
+            </div>
+            <div class="layui-col-md2"><label
+                    class="layui-form-label layui-table-cell"
+                    title="创建时间">创建时间</label></div>
+            <div class="layui-col-md4">
+                <input type="text" v-name="createDatetime" class="layui-input layui-input-sm">
+            </div>
+            <div class="layui-col-md2"><label
+                    class="layui-form-label layui-table-cell"
+                    title="更新人ID">更新人ID</label></div>
+            <div class="layui-col-md4">
+                <input type="text" v-name="modifedUserId" class="layui-input layui-input-sm">
+            </div>
+            <div class="layui-col-md2"><label
+                    class="layui-form-label layui-table-cell"
+                    title="更新人名称">更新人名称</label></div>
+            <div class="layui-col-md4">
+                <input type="text" v-name="modifedUserName" class="layui-input layui-input-sm">
+            </div>
+            <div class="layui-col-md2"><label
+                    class="layui-form-label layui-table-cell"
+                    title="更新人机构编号">更新人机构编号</label></div>
+            <div class="layui-col-md4">
+                <input type="text" v-name="modifedOrgCode" class="layui-input layui-input-sm">
+            </div>
+            <div class="layui-col-md2"><label
+                    class="layui-form-label layui-table-cell"
+                    title="更新人机构名称">更新人机构名称</label></div>
+            <div class="layui-col-md4">
+                <input type="text" v-name="modifedOrgName" class="layui-input layui-input-sm">
+            </div>
+            <div class="layui-col-md2"><label
+                    class="layui-form-label layui-table-cell"
+                    title="修改时间">更新人机构名称</label></div>
+            <div class="layui-col-md4">
+                <input type="text" v-name="modifedDatetime" class="layui-input layui-input-sm">
+            </div>
+
+        </fieldset>
+    </form>
+
+
+</div>
