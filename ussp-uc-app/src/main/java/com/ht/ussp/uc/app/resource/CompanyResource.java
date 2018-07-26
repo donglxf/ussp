@@ -270,7 +270,6 @@ public class CompanyResource {
 	}
 
 	/**
-<<<<<<< HEAD
 	 * 获取分公司
 	 * @author xiaojianfeng@hongte.info
 	 * @date 2018年7月23日
